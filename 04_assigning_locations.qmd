@@ -32,7 +32,8 @@ This document imports data from @clawson_mapping_2022 on known and modelled mari
 
 aqua_locs <- file.path(prepdata_path, "mariculture_locations_FAO_codes.qs") %>% 
     qd_read() %>% 
-    rename(ISO3_Code = iso3c)
+    rename(ISO3_Code = iso3c) %>% 
+    mutate(across(where(is.character), str_trim))
 ```
 
 ```{r fig-locs}
@@ -55,7 +56,8 @@ p_bigmap_mercator +
 #| code-summary: "Get prepared production data - already filtered by assigned model names"
 
 FAO_aqua <- file.path(prepdata_path, "FAO_with_models_final_production.csv") %>% 
-    read.csv()
+    read.csv() %>% 
+    mutate(across(where(is.character), str_trim))
 
 # Get FAO fishing region code keys and add to production data
 FAO_code_key <- file.path(prepdata_path, "FAO_code_key.csv") %>% 
@@ -150,11 +152,38 @@ For each country and FAO fishing region combination, we follow these steps:
 ```{r check-missing-areas}
 #| code-summary: "Check which countries/FAO codes are present in each dataset."
 
+# CHECK COUNTRY NAMES!
+countries_fix <- left_join(
+    FAO_aqua_means %>% distinct(ISO3_Code, country), 
+    aqua_locs %>% st_drop_geometry() %>% distinct(ISO3_Code, country),
+    by = "ISO3_Code"
+) %>% 
+    mutate(country = case_when(
+        is.na(country.x) ~ country.y, 
+        is.na(country.y) ~ country.x, 
+        T ~ country.y
+    )) %>% 
+    select(ISO3_Code, country)
+
+# Fix country names!
+FAO_aqua_means <- FAO_aqua_means %>% 
+    rows_update(countries_fix, by = c("ISO3_Code"))
+locs_crs <- st_crs(aqua_locs)
+aqua_locs <- aqua_locs %>%
+    mutate(lon = st_coordinates(aqua_locs)[, 1], lat = st_coordinates(aqua_locs)[, 2]) %>% 
+    st_drop_geometry() %>%
+    rows_update(
+        filter(countries_fix, ISO3_Code %in% aqua_locs$ISO3_Code), 
+        by = "ISO3_Code"
+    ) %>%
+    st_as_sf(coords = c("lon", "lat"), crs = locs_crs)
+
 all_regions_production <- FAO_aqua_means %>% 
-    distinct(ISO3_Code, F_CODE)
+    distinct(ISO3_Code, country, F_CODE)
 
 all_regions_locations <- aqua_locs %>% 
-    distinct(ISO3_Code, F_CODE)
+    st_drop_geometry() %>% 
+    distinct(ISO3_Code, country, F_CODE)
 
 # In production but not locations
 in_prod_not_loc <- anti_join(all_regions_production, all_regions_locations, by = c("ISO3_Code", "F_CODE"))
@@ -171,6 +200,7 @@ cat(sprintf(
 Any farmed locations that don't correspond with any production data will be excluded (they're likely species not included in the `model_names` chosen). Any production values not included in the farmed locations will be included - farmed locations will be generated for them later.
 
 ```{r groups-ordered}
+#| code-summary: "Put groups in order of most specific -> most general"
 
 # Location groups are handled in order, from most specific -> most general (in terms of the number of model names assigned to them)
 groups_order <- c(
@@ -247,7 +277,7 @@ options(width = 120)
 tuna_locations %>% 
     filter(is.na(farm_ID)) %>% 
     mutate(number_of_farms = 0) %>% 
-    distinct(country, model_name, number_of_farms, value) %>% 
+    distinct(country, F_CODE, model_name, number_of_farms, value) %>% 
     arrange(-value)
 
 # These countries were assigned production - I want to check how many farms were assigned and how much the estimated tonnage has changed from the location to production process. A small increase in production is fine, but a decrease indicates that too many farms were assigned (it's too spread out)
@@ -420,7 +450,7 @@ options(width = 120)
 mud_crab_locations %>% 
     filter(is.na(farm_ID)) %>% 
     mutate(number_of_farms = 0) %>% 
-    distinct(country, model_name, number_of_farms, value) %>% 
+    distinct(country, F_CODE, model_name, number_of_farms, value) %>% 
     arrange(-value)
 
 # These countries were assigned production - I want to check how many farms were assigned and how much the estimated tonnage has changed from the location to production process. A small increase in production is fine, but a decrease indicates that too many farms were assigned (it's too spread out)
