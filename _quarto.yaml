@@ -27,6 +27,8 @@ format:
       body-width: 1250px
       margin-width: 200px
       gutter-width: 2em
+    mermaid:
+      theme: default
         
 execute:
   eval: true

@@ -107,6 +107,19 @@ quantity <- quantity %>%
   ) %>% 
   select(-c(country_un_code, species_alpha_3_code, area_code, environment_alpha_2_code))
 
+# Clean up countries that don't exist/have been renamed
+quantity <- quantity %>% 
+  filter(!ISO3_Code %in% c("YUG", "SUN", "SCG", "ANT")) %>%
+  mutate(
+    country = case_when(
+      ISO3_Code == "EAZ" ~ "United Republic of Tanzania",
+      T ~ country
+    ),
+    ISO3_Code = case_when(
+      ISO3_Code == "EAZ" ~ "TZA",
+      T ~ ISO3_Code
+    ))
+
 # Save two versions - one marine only, one marine + brackish
 quantity %>% 
   filter(environment != "Brackishwater") %>% 

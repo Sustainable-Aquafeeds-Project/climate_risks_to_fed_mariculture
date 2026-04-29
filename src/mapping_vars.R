@@ -7,6 +7,7 @@ library(rnaturalearthdata)
 library(rnaturalearthhires)
 
 # The Mercator projection -------------------------------------------------------------------------
+crs_mercat <- "+proj=merc +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs"
 worldmap_mercator <- ne_countries(scale = "large", returnclass = "sf")
 graticules_mercator <- st_graticule(worldmap_mercator, lon = seq(-180, 180, 30), lat = seq(-90, 90, 30)) 
 
