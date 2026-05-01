@@ -1,0 +1,232 @@
+---
+title: "Extracting farm temperature data"
+author: Tormey Reimer
+date: today
+---
+
+# Introduction
+
+The purpose of this markdown is to extract daily temperature timeseries from SST data to drive fish growth in the correct places. The steps in this markdown are:
+
+1. Pull farm locations data (previously determined from FAO stocking locations)
+2. Record whether the farm is in the southern or north hemisphere (determines cohort stocking date)
+3. Pull SST data from .tif file and construct "typical" temperature year for each farm location
+4. Gapfill missing temperature data using closest farm in the same FAO stocking area
+5. Save temperature data both with and without geometry information
+6. Determine which farms have a mean temperature <=6 C (will be omitted)
+
+
+```{r setup, include=F, cache=F}
+#| code-summary: R setup
+
+library(tidyverse)
+library(terra)
+library(qs)
+library(here)
+library(sf)
+library(furrr)
+library(future)
+library(arrow)
+library(readxl)
+library(units)
+library(tictoc)
+library(conflicted)
+conflicts_prefer(dplyr::select(), dplyr::filter(), .quiet = T)
+
+here("src") %>% 
+  list.files(pattern = "\\.R$", full.names = TRUE) %>% 
+  walk(source)
+```
+
+# Farm locations
+
+Get global farm locations and determine whether they're in the southern or northern hemisphere.
+
+``` {r farm-locations}
+#| code-summary: Get all farm locations, determine hemisphere
+
+farms <- here(input_farm_coords_path, "farm_locations_w_fishing_areas.qs") %>% 
+  qread() %>% 
+  mutate(
+    latitude = sf::st_coordinates(geometry)[,2],
+    hemisphere = case_when(latitude > 0 ~ "N", TRUE ~ "S")
+  ) %>% 
+  select(-latitude) %>% 
+  mutate(rownum = row_number())
+```
+
+Get daily temperatures for a typical year.
+
+```{r daily-temperatures}
+#| code-summary: Create typical year of SST for all farms
+
+day_number <- seq(1:365)
+
+# For testing:
+# dn <- 100
+
+temp_data <- purrr::map_dfc(
+  day_number, 
+  function(dn){  
+    sst_test <- file.path(input_farm_sst_path, "SST_gf_rasters", sprintf("sst_nasa_mur_L4_0.25_mean_2017_2022_day_%s.tif", fixnum(dn, 3))) %>% 
+      terra::rast()
+    # plot(sst_test)
+
+    # Extract with simple method first
+    sst_simple <- terra::extract(sst_test, farms, method = "simple", ID = F) %>% 
+      rename(simple = focal_mean)
+
+    # Extract with bilinear for comparison
+    sst_bilinear <- terra::extract(sst_test, farms, method = "bilinear") %>% 
+      rename(bilinear = focal_mean)
+
+    # Use simple where available, bilinear where NA
+    sst_simple %>% 
+      cbind(sst_bilinear) %>% 
+      mutate(day = paste0("day_", dn)) %>% 
+      mutate(focal_mean = case_when(is.na(simple)~bilinear, T ~ simple)) %>% 
+      select(-c(simple, bilinear)) %>%
+      pivot_wider(names_from = "day", values_from = "focal_mean") %>% 
+      select(-ID)
+  },
+  .progress = T
+) %>%
+  mutate(rownum = row_number())
+
+farms_w_temp_df <- farms %>%
+  left_join(temp_data, by = c("rownum" = "rownum")) %>% 
+  pivot_longer(
+    cols = starts_with("day_"),
+    names_to = "day", names_prefix = "day_", names_transform = list(day = as.integer),
+    values_to = "temp_c"
+  )
+```
+
+Check which farms have missing temp data. The above method already tries bilinear interpretation, so this will need something a little more custom.
+
+``` {r missing-data}
+#| code-summary: Check which farms have missing temp data
+
+(
+  missing_temp_farms <- farms_w_temp_df %>% 
+    filter(temp_c %>% is.na()) %>% 
+    group_by(rownum) %>% 
+    reframe(num_missing = n())
+)
+missing_temp_farms <- farms %>% 
+  filter(rownum %in% unique(missing_temp_farms$rownum))
+# There are just 2 farms missing data
+
+day_number = c(1:365)
+temp_data <- purrr::map_dfc(
+  day_number, 
+  function(dn){
+    sst_test <- file.path(input_farm_sst_path, "SST_gf_rasters", sprintf("sst_nasa_mur_L4_0.25_mean_2017_2022_day_%s.tif", fixnum(dn, 3))) %>% 
+      terra::rast()
+    # plot(sst_test)
+
+    # Get cell numbers for each point
+    cell_nums <- terra::cellFromXY(sst_test, terra::crds(terra::vect(missing_temp_farms)))
+
+    # Get adjacent cells (includes the 16 surrounding cells)
+    adj_cells <- sst_values <- terra::adjacent(sst_test, cell_nums, directions = 16)
+    for (r in 1:nrow(adj_cells)) {
+      sst_values[r, ] <- sst_test[adj_cells[r, ]]$focal_mean
+    }
+
+    data.frame(
+      ID = 1:nrow(sst_values),
+      focal_mean = rowMeans(sst_values, na.rm = TRUE)
+      ) %>% 
+      mutate(day = paste0("day_", dn)) %>% 
+      pivot_wider(names_from = "day", values_from = "focal_mean") %>% 
+      select(-ID)
+  },
+  .progress = T
+) %>%
+  mutate(rownum = missing_temp_farms$rownum)
+
+farms_w_temp_df_2 <- farms %>%
+  merge(temp_data, by = c("rownum" = "rownum"), all.x = F, all.y = T) %>% 
+  pivot_longer(
+    cols = starts_with("day_"),
+    names_to = "day", names_prefix = "day_", names_transform = list(day = as.integer),
+    values_to = "temp_c"
+  ) %>% 
+  filter(!is.na(temp_c))
+
+farms_w_temp_df <- farms_w_temp_df %>% 
+  filter(!rownum %in% farms_w_temp_df_2$rownum) %>% 
+  rbind(farms_w_temp_df_2)
+```
+
+``` {r save}
+#| code-summary: Save data
+
+# Create three identical years
+farms_w_temp_df <- rbind(
+  farms_w_temp_df,
+  farms_w_temp_df %>% 
+    mutate(day = day + 365),
+  farms_w_temp_df %>% 
+    mutate(day = day + 365 + 365)
+)
+
+qsave(farms_w_temp_df, file.path(input_farm_coords_path, "possible_salmonid_locations_w_temps.qs"))
+```
+
+# Mean farm temperatures
+
+Now get overall mean temperatures of farms to exclude those where mean temp < 6 degrees C.
+
+```{r mean-temp}
+#| code-summay: Get mean temperature of farms
+
+mean_temps <- farms_w_temp_df %>% 
+  group_by(hemisphere, country, fao_code, rownum) %>% 
+  reframe(
+    mean_temp = mean(temp_c),
+    sd_temp = sd(temp_c)
+    )
+
+mean_temps %>% 
+  mutate(too_cold = case_when(mean_temp < 6 ~ 1, T ~ 0)) %>% 
+  group_by(hemisphere, country, fao_code) %>% 
+  reframe(
+    total_sites = n(),
+    too_cold = sum(too_cold),
+    prop_too_cold = too_cold/total_sites
+  )
+
+cold_farms <- mean_temps$rownum[mean_temps$mean_temp < 6]
+```
+
+This doesn't mean that those farms are the most suited to growing salmon (their temperatures can still dip below 6 degrees).
+
+```{r fig-view-temperatures}
+farms_w_temp_df %>% 
+  filter(day <= 365 & !rownum %in% cold_farms) %>% 
+  group_by(hemisphere, country, fao_code, day) %>% 
+  reframe(
+    mean_temp = mean(temp_c),
+    sd_temp = sd(temp_c)
+  ) %>% 
+  ggplot(aes(
+    x = day, y = mean_temp, ymin = mean_temp-sd_temp, ymax = mean_temp+sd_temp,
+    colour = interaction(fao_code, country), fill = interaction(fao_code, country)
+    )) +
+  geom_line(linewidth = 1) +
+  geom_ribbon(alpha = 0.25) +
+  facet_grid(rows = vars(hemisphere)) +
+  prettyplot_300() +
+  theme(legend.position = "bottom")
+```
+
+This data is saved as "suitable" salmon locations. Individual farms are assigned production in the next step.
+
+```{r save-suitable}
+qsave(
+  farms_w_temp_df %>% filter(!rownum %in% cold_farms),
+  file.path(input_farm_coords_path, "suitable_salmonid_locations_w_temps.qs")
+)
+```

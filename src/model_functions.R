@@ -220,9 +220,9 @@ apportion_feed <- function(provided, ingested, ingred_proportion, ingred_macro, 
 #'   Length must equal the number of days in the simulation as defined by
 #'   \code{times}.
 #' @param feed_params Named list with one element per macronutrient
-#'   (\code{Proteins}, \code{Lipids}, \code{Carbohydrates}). Each element is
+#'   (\code{protein}, \code{lipid}, \code{carb}). Each element is
 #'   itself a named list with fields \code{proportion}, \code{macro}, and
-#'   \code{digest}.
+#'   \code{digestibility}.
 #' @param times Named numeric vector with elements \code{t_start},
 #'   \code{t_end}, and \code{dt}.
 #' @param init_weight Numeric scalar. Initial individual weight (g).
@@ -361,13 +361,13 @@ check_fish_growth_inputs <- function(
   }
 
   # ---- 4. feed_params --------------------------------------------------------
-  required_nutrients  <- c("Proteins", "Lipids", "Carbohydrates")
-  required_feed_fields <- c("proportion", "macro", "digest")
+  required_nutrients  <- c("protein", "lipid", "carb")
+  required_feed_fields <- c("proportion", "macro", "digestibility")
 
   if (missing(feed_params)) {
     add_problem("Parameter `feed_params` is missing. Provide a named list with elements ",
-                "\"Proteins\", \"Lipids\", and \"Carbohydrates\", each being a list with ",
-                "fields \"proportion\", \"macro\", and \"digest\".")
+                "\"protein\", \"lipid\", and \"carb\", each being a list with ",
+                "fields \"proportion\", \"macro\", and \"digestibility\".")
   } else {
     if (!is.list(feed_params)) {
       add_problem("Provided parameter `feed_params` must be a list, but has class: <",
@@ -376,7 +376,7 @@ check_fish_growth_inputs <- function(
       missing_nuts <- setdiff(required_nutrients, names(feed_params))
       for (nm in missing_nuts) {
         add_problem("Provided parameter `feed_params` is missing a \"", nm, "\" list. ",
-                    "Add a list named \"", nm, "\" with fields \"proportion\", \"macro\", and \"digest\".")
+                    "Add a list named \"", nm, "\" with fields \"proportion\", \"macro\", and \"digestibility\".")
       }
       # Check sub-fields for each present nutrient
       present_nuts <- intersect(required_nutrients, names(feed_params))
@@ -389,7 +389,7 @@ check_fish_growth_inputs <- function(
           missing_fields <- setdiff(required_feed_fields, names(elem))
           for (fld in missing_fields) {
             add_problem("`feed_params[[\"", nut, "\"]]` is missing the \"", fld, "\" field. ",
-                        "Each nutrient list must have \"proportion\", \"macro\", and \"digest\".")
+                        "Each nutrient list must have \"proportion\", \"macro\", and \"digestibility\".")
           }
           # Check that present fields are numeric scalars
           present_fields <- intersect(required_feed_fields, names(elem))
@@ -507,9 +507,9 @@ check_fish_growth_inputs <- function(
 #' @param water_temp     Numeric vector. Water temperature (°C) at each
 #'   time-step. Length must equal the number of days in the simulation.
 #' @param feed_params    Named list with one element per macronutrient
-#'   (\code{Proteins}, \code{Lipids}, \code{Carbohydrates}). Each element is
+#'   (\code{protein}, \code{lipid}, \code{carb}). Each element is
 #'   itself a list with fields \code{ingred_proportion}, \code{ingred_macro}, and
-#'   \code{digest}.
+#'   \code{digestibility}.
 #' @param times          Named numeric vector with elements \code{t_start},
 #'   \code{t_end}, and \code{dt} (time-step size in days).
 #' @param init_weight    Numeric. Initial individual weight (g).
@@ -536,7 +536,7 @@ fish_growth <- function(
   times,
   init_weight,
   ingmax,
-  output_vars = c("weight", "dw", "water_temp", "T_response", "P_excr", "L_excr", "C_excr", "P_uneat", "L_uneat", "C_uneat", "food_prov", "food_enc", "rel_feeding", "ing_pot", "ing_act", "E_assim", "E_somat", "anab", "catab", "O2", "NH4", "total_excr", "total_uneat", "metab", "nitrogen_excr", "nitrogen_uneat", "carbon_excr", "carbon_uneat", "total_carbon", "total_nitrogen")
+  output_vars = c("weight", "dw", "water_temp", "T_response", "P_excr", "L_excr", "C_excr", "P_uneat", "L_uneat", "C_uneat", "food_prov", "food_enc", "rel_feeding", "ing_pot", "ing_act", "E_assim", "E_somat", "anab", "catab", "O2", "NH4", "total_excr", "total_uneat", "metab", "nitrogen_excr", "nitrogen_uneat", "carbon_excr", "carbon_uneat", "total_carbon", "total_nitrogen", "SGR")
 ) {
   # Pre-calculate array sizes
   n_days <- length(times['t_start']:times['t_end'])
@@ -579,21 +579,21 @@ fish_growth <- function(
     app_carbs    <- apportion_feed(
       result[i, 'food_prov'],
       result[i, 'ing_act'],
-      feed_params[['Carbohydrates']]$proportion,
-      feed_params[['Carbohydrates']]$macro,
-      feed_params[['Carbohydrates']]$digest
+      feed_params[['carb']]$proportion,
+      feed_params[['carb']]$macro,
+      feed_params[['carb']]$digestibility
     )
     app_lipids   <- apportion_feed(
       result[i, 'food_prov'], result[i, 'ing_act'],
-      feed_params[['Lipids']]$proportion,
-      feed_params[['Lipids']]$macro,
-      feed_params[['Lipids']]$digest
+      feed_params[['lipid']]$proportion,
+      feed_params[['lipid']]$macro,
+      feed_params[['lipid']]$digestibility
     )
     app_proteins <- apportion_feed(
       result[i, 'food_prov'], result[i, 'ing_act'],
-      feed_params[['Proteins']]$proportion,
-      feed_params[['Proteins']]$macro,
-      feed_params[['Proteins']]$digest
+      feed_params[['protein']]$proportion,
+      feed_params[['protein']]$macro,
+      feed_params[['protein']]$digestibility
     )
 
     # Excretion and uneaten-feed waste
@@ -630,6 +630,7 @@ fish_growth <- function(
   nitrogen_uneat <- get_nitrogen(result[, 'P_uneat'])
   carbon_excr    <- get_carbon(P = result[, 'P_excr'],  L = result[, 'L_excr'],  C = result[, 'C_excr'])
   carbon_uneat   <- get_carbon(P = result[, 'P_uneat'], L = result[, 'L_uneat'], C = result[, 'C_uneat'])
+  SGR            <- ((log(result[, 'weight']) - log(result[1, 'weight'])) / (result[, 'days']-1)) * 100
 
   agg_mat <- cbind(
     total_excr     = result[, 'P_excr']  + result[, 'L_excr']  + result[, 'C_excr'],
@@ -640,7 +641,8 @@ fish_growth <- function(
     carbon_excr    = carbon_excr,
     carbon_uneat   = carbon_uneat,
     total_carbon   = carbon_excr   + carbon_uneat,
-    total_nitrogen = nitrogen_excr + nitrogen_uneat
+    total_nitrogen = nitrogen_excr + nitrogen_uneat,
+    SGR            = SGR
   )
 
   result <- cbind(result, agg_mat)
@@ -649,7 +651,6 @@ fish_growth <- function(
   keep_cols <- c('days', base::intersect(output_vars, colnames(result)))
   return(result[, keep_cols, drop = FALSE])
 }
-
 
 # ---------------------------------------------------------------------------
 # Farm-level growth models
@@ -703,7 +704,7 @@ farm_growth_full <- function(
   times,
   use_MC_population = TRUE, 
   MC_pop, 
-  output_vars = c("weight", "dw", "water_temp", "T_response", "P_excr", "L_excr", "C_excr", "P_uneat", "L_uneat", "C_uneat", "food_prov", "food_enc", "rel_feeding", "ing_pot", "ing_act", "E_assim", "E_somat", "anab", "catab", "O2", "NH4", "total_excr", "total_uneat", "metab", "nitrogen_excr", "nitrogen_uneat", "carbon_excr", "carbon_uneat", "total_carbon", "total_nitrogen")
+  output_vars = c("weight", "dw", "water_temp", "T_response", "P_excr", "L_excr", "C_excr", "P_uneat", "L_uneat", "C_uneat", "food_prov", "food_enc", "rel_feeding", "ing_pot", "ing_act", "E_assim", "E_somat", "anab", "catab", "O2", "NH4", "total_excr", "total_uneat", "metab", "nitrogen_excr", "nitrogen_uneat", "carbon_excr", "carbon_uneat", "total_carbon", "total_nitrogen","SGR")
 ) {
 
   # When uniform population is requested, zero out variability and use one individual
@@ -957,5 +958,64 @@ decomposed_to_tidy <- function(
       mutate(measure = as.factor(selected_vars[col_idx]))
     colnames(res) <- c("fish", "prod_t", "value", "measure")
     res
+  })
+}
+
+format_feeds <- function(feeds_df, ingredients_df, digestibility_df) {
+  feed_names <- unique(feeds_df$feed)
+  ing_names <- unique(feeds_df$ingredient)
+  macro_names <- c("protein", "lipid", "carb")
+
+  # check for missing ingredients
+  missing_from_ingredients <- setdiff(ing_names, ingredients_df$ingredient)
+  missing_from_digestibility <- setdiff(ing_names, digestibility_df$ingredient)
+
+  if (length(missing_from_ingredients) > 0) {
+    stop("The following ingredients in `feeds_df` are missing from `ingredients_df`: ",
+        paste(missing_from_ingredients, collapse = ", "))
+  }
+
+  if (length(missing_from_digestibility) > 0) {
+    stop("The following ingredients in `feeds_df` are missing from `digestibility_df`: ",
+        paste(missing_from_digestibility, collapse = ", "))
+  }
+  
+  feeds_df_full <- feeds_df %>% 
+    left_join(
+      ingredients_df %>% select(ingredient, protein, lipid, carb),
+      by = "ingredient",
+      relationship = "many-to-many"
+    ) %>% 
+    left_join(
+      digestibility_df %>% select(ingredient, protein_digestibility, lipid_digestibility, carb_digestibility),
+      by = "ingredient",
+      relationship = "many-to-many"
+    )
+
+    map(feed_names, function(fn) {
+      df <- feeds_df_full %>% 
+        filter(feed == fn)
+      map(macro_names, function(mn) {
+        df2 <- df %>% select(feed, ingredient, proportion, contains(mn))
+        colnames(df2) <- c("feed", "ingredient", "proportion", "macro", "digestibility")
+        df2
+      }) %>% 
+      setNames(macro_names)
+    }) %>% 
+    setNames(feed_names)
+}
+
+sum_feeds <- function(feed_params) {
+  map(feed_params, function(ls) {
+    map(ls, function(macro_df) {
+      macro_df %>% 
+        group_by(feed) %>% 
+        reframe(
+          p = sum(proportion),
+          m = sum(proportion * macro)/sum(proportion),
+          d = sum(proportion) * sum(proportion * digestibility * macro)/sum(proportion * macro)
+        ) %>% 
+        rename(proportion = p, macro = m, digestibility = d)
+    })
   })
 }

@@ -6,7 +6,7 @@ project:
     - index.qmd
     - documentation-qmds/00_model_function_demonstration.qmd
     - documentation-qmds/01_choosing_species.qmd
-    - documentation-qmds/02_01_check_species_atlantic_salmon.qmd
+    - documentation-qmds/02_01_check_species_european_seabass.qmd
     - documentation-qmds/04_assigning_locations.qmd
 
 format:
