@@ -1,0 +1,576 @@
+---
+title: "6.0: Testing how production will work (with seabream)"
+subtitle: "FAO Climate Change Risks to Fed Mariculture"
+author: 
+  - "Tormey Reimer"
+date: last-modified
+---
+
+::: {style="display: flex; justify-content: space-between;"}
+[← Previous: Extracting future temperatures](05_extracting_future_temperatures.qmd)
+
+[Next: Home →](index.qmd)
+:::
+
+# Overview {#sec-overview}
+
+```{r setup}
+#| cache: false
+#| echo: false
+#| warning: false
+#| message: false
+#| output: false
+
+library(tidyverse)
+library(here)
+library(readxl)
+library(janitor)
+library(lhs)
+library(scales)
+library(gt)
+library(qs2)
+library(slider)
+library(units)
+```
+
+```{r source-scripts}
+#| cache: false
+#| echo: false
+#| warning: false
+#| message: false
+#| output: false
+#| code-summary: "Source R scripts in use"
+
+here("src", "dirs.R") %>% source()
+here("src", "model_functions.R") %>% source()
+here("src", "display_globals.R") %>% source()
+```
+
+This document runs the production for the `seabream` model.
+
+# Species and feed parameters {#sec-species-params}
+
+```{r species-parameters}
+#| code-summary: 'Load species parameters for seabream'
+
+species_params <- file.path(prepdata_path, "species_parameters", "species_parameters_seabream.qs") %>% 
+  qd_read()
+```
+
+```{r feed-params}
+#| code-summary: "Load feed and ingredient data and calculate feed composition parameters"
+
+feeds_df <- read_excel(here("data", "raw_data", "feed_profiles_and_composition.xlsx"), sheet = "all_feeds") %>%
+  select(feed, ingredient, proportion) %>% 
+  filter(feed == "Gilthead seabream 1")
+
+ingredients_df <- read_excel(here("data", "raw_data", "all_ingredients.xlsx"), sheet = "all_ingredients") %>% 
+  select(ingredient, protein, lipid, carb)
+
+digestibility_df <- read_excel(here("data", "raw_data", "all_ingredients.xlsx"), sheet = "all_ingredients") %>% 
+  select(ingredient, mean_protein_digestibility, mean_lipid_digestibility, mean_carb_digestibility) %>% 
+  rename(
+    protein_digestibility = mean_protein_digestibility, 
+    lipid_digestibility = mean_lipid_digestibility, 
+    carb_digestibility = mean_carb_digestibility
+  )
+
+feed_params <- sum_feeds(
+  format_feeds(feeds_df, ingredients_df, digestibility_df)
+  )[[1]]
+```
+
+# Temperatures
+
+```{r load-temperatures}
+#| code-summary: Load temperatures for all farms assigned for seabram
+
+farm_temps <- qs2::qs_read(file.path(prepdata_path, "farm_temps_bymodel", "farm_temps_seabream.qs")) %>% 
+  sf::st_drop_geometry()
+```
+
+```{r subset-of-farms}
+#| code-summary: Pick a subset so this test runs faster
+
+farm_IDs_subset <- farm_temps %>% 
+  distinct(ISO3_Code, farm_ID) %>% 
+  group_by(ISO3_Code) %>% 
+  slice_sample(n = 1) %>% 
+  ungroup() %>% pull(farm_ID)
+ 
+farm_temps <- farm_temps %>% 
+  filter(farm_ID %in% farm_IDs_subset)
+farm_temps <- split(farm_temps, farm_temps$farm_ID)
+```
+
+```{r fig-farm_temperatures}
+#| code-summary: Show how farm temperatures change over time
+#| fig-cap: SST in the subset of farms chosen for this exercise
+#| fig-height: 10
+
+temp <- farm_temps %>% 
+  bind_rows() %>% 
+  mutate(year = year(date)) %>% 
+  group_by(country, year) %>% 
+  reframe(sst = mean(sst))
+temp_2025 <- temp %>% 
+  filter(year == 2025) %>% 
+  rename(sst_2025 = sst) %>% 
+  select(-year)
+
+temp <- temp %>% 
+  left_join(temp_2025, by = "country") %>% 
+  mutate(sst_change = sst - sst_2025)
+
+temp %>% 
+  ggplot(aes(x = year, y = sst_change, colour = country)) +
+  geom_line(linewidth = 0.75) +
+  geom_hline(yintercept = 0, colour = "black", linewidth = 0.5, linetype = "dashed") +
+  scale_y_continuous(breaks = seq(-5, 5, 0.5)) +
+  scale_x_continuous(breaks = seq(2025, 2100, 10)) +
+  prettyplot() +
+  theme(legend.position = "bottom") +
+  labs(x = "Date", y = "Change in farm SST (annual mean)")
+```
+
+# Species production
+
+Per-farm production has been set in the data based on current FAO production statistics. We are going to upscale the individual bioenergetic model to each farm by setting a per-farm population (based in 2025), accounting for expected per-annum mortality. 
+
+```{r set-grow-times}
+#| code-summary: Set the grow-times for the species - essentially, the times where it will be most optimal at each farm
+
+# ft <- farm_temps[[25]]
+farm_temps <- farm_temps %>% 
+  map(function(ft) {
+    # Isolate the temperatures at this farm
+    temp <- ft %>% 
+      sf::st_drop_geometry() %>% 
+      filter(year == 2025) %>% 
+      mutate(doy = as.integer(format(date, "%j"))) %>% 
+      select(doy, sst)
+
+    # Repeat year
+    temp <- rbind(
+      temp, 
+      temp %>% mutate(doy = doy + 365)
+    )
+
+    # Get feeding response at each DOY
+    temp$fr <- sapply(
+        X = temp$sst, 
+        FUN = feeding_rate, 
+        species_params = species_params
+      )
+    temp$fr[is.na(temp$fr)] <- 0
+
+    # Get the best "growing window" for this species
+    grow_days <- species_params[["gd"]] %>% as.integer()
+    gds <- temp %>% 
+      mutate(
+        roll_fr = slide_dbl(fr, sum, .before = 0, .after = grow_days - 1)
+      ) %>%
+      # Remove windows that don't have a full 653 days ahead
+      slice(1:(n() - grow_days + 1)) %>%
+      slice_max(roll_fr, n = 1) %>%
+      mutate(end_doy = doy + grow_days - 1)
+
+    ft %>% 
+      mutate(
+        doy_start = gds$doy,
+        doy_end = gds$end_doy
+      )
+  },
+  .progress = T
+)
+
+# Summarise
+farm_temps %>% 
+  bind_rows() %>% 
+  group_by(country) %>% 
+  reframe(
+    mean_start = mean(doy_start),
+    min_start = min(doy_start),
+    max_start = max(doy_start),
+    mean_end = mean(doy_end),
+    min_end = min(doy_end),
+    max_end = max(doy_end)
+  )
+```
+
+```{r set-population}
+#| code-summary: Assign a population to each farm to acheive expected production (using 2025 temperatures)
+#| cache: false
+# Running this chunk takes about 20 seconds but it's too large to cache with Quarto
+
+# ft <- farm_temps[[1]]
+farm_temps_pops <- farm_temps %>% 
+  map(function(ft) {
+    times <- c(
+      t_start = unique(ft$doy_start),
+      t_end   = unique(ft$doy_end),
+      dt      = 1L
+    )
+    doys <- seq(times['t_start'], times['t_end'], times['dt'])
+
+    # Filter to actual days in use
+    ft_gd <- ft %>% 
+      sf::st_drop_geometry() %>% 
+      filter(year == 2025) %>% 
+      mutate(doy = as.integer(format(date, "%j")))
+    ft_gd <- rbind(
+      ft_gd,
+      ft_gd %>% mutate(doy = doy + 365)
+    ) %>% 
+      filter(doy %in% doys)
+
+    # Get harvest size at this farm
+    one_fish <- fish_growth(
+      species_params = species_params,
+      water_temp     = ft_gd$sst,
+      feed_params    = feed_params,
+      times          = times,
+      init_weight    = species_params["meanW"],    # Use mean stocking weight
+      ingmax         = species_params["meanImax"]  # Use mean ingestion coefficient
+    ) %>% as.data.frame()
+
+    # IMPORTANT - the number of grow_days is changed here, so that the fish gets as close to CS as possible
+    harvest_doy <- one_fish$days[which.min(abs(one_fish$weight - species_params["CS"]))]
+    species_params["gd"] <- length(seq(times['t_start'], harvest_doy, times['dt']))       # update species params
+    ft$doy_end <- ft$doy_start + species_params["gd"] - 1
+
+    harvest_size <- one_fish$weight[one_fish$days == harvest_doy]
+    harvest_t <- unique(ft$prod_perfarm) %>% set_units("t") %>% set_units("g") %>% drop_units()
+    ft$harvest_n <- harvest_t/harvest_size
+    ft
+  },
+  .progress = T
+)
+```
+
+## Maintaining consistency through the future {#sec-future-consistency}
+
+If we just run the model now, we are going to run into the problem that warmer temperatures -> smaller fish (especially for salmon, a cold-water species), resulting in lower production. This will confound feed required, as smaller individuals eat less BUT warmer individuals have higher metabolism and eat more. Therefore, we need to explicitly decide on what to change and what to keep constant through time.
+
+*Total harvested biomass = Individual size (after grow days) * Population*
+
+* **Option 1: Let total harvested biomass adapt**. Keep all individual and population parameters fixed through time, and let total harvested biomass change with temperature. While this might be the simplest option to implement/understand, it's possibly also the least realistic as it assumes that fish farmers will take no adaptive action to prevent their harvests from declining.
+* **Option 2: Let fish grow out as needed**. Keep a fixed population and total harvested biomass, and adjust the length of the grow-out period to acheive the required total harvested biomass. On an individual farm level this makes sense (a farmer will just let his stock keep growing until they reach market size), but creates problems from a modelling perspective - fish may never reach market size if temperature changes to much, or a 2-year cohort might become a 3-year cohort (causing problems with reaching the annual production target).
+* **Option 3: Let population absorb the difference**. Keep a fixed number of grow-out days, and change farm population to maintain the same total harvested biomass. This possibly makes the most sense, as "population" is an arbitrary calculation used to reach total harvested biomass. 
+
+```{r option-1-let-total-harvested-biomass-adapt}
+#| code-summary: Run the model with all species and population parameters fixed through time
+#| eval: false
+
+# ftp <- farm_temps_pops[[1]]
+option_1_changes <- map_dfr(farm_temps_pops, function (ftp) {
+  # start_year <- (2025:2098)[1]
+  map_dfr(2025:2098, function(start_year) {
+    ftpy <- ftp %>%
+      filter(year %in% c(start_year, start_year + 1)) %>% 
+      mutate(
+        doy = as.integer(format(date, "%j")),
+        doy = case_when(
+          year == start_year ~ doy, 
+          leap_year(date) ~ doy + 366,
+          T ~ doy + 365
+        )
+      ) %>% 
+      filter(doy >= doy_start)
+    ftpy <- ftpy[1:species_params["gd"], ] # required because some years are leap years, so the end date will be a little different
+    times <- c(t_start = unique(ftpy$doy_start), t_end = (unique(ftpy$doy_start) + nrow(ftpy) - 1), dt = 1L)
+    
+    results_full <- farm_growth_full(
+      species_params = species_params, 
+      feed_params = feed_params, 
+      water_temp = ftpy$sst, 
+      times = times,
+      use_MC_population = F
+    )
+    results_consolidate <- consolidate_farm(results_full)
+    results_farm <- scale_farm_population(
+      consolidated = results_consolidate, 
+      N_pop = generate_pop(
+        harvest_n = unique(ftpy$harvest_n), 
+        mort = species_params["mortmyt"], 
+        times = times
+      )
+    )
+
+    data.frame(
+      start_year = start_year,
+      individual_weight = last(results_consolidate[["stats"]][["weight"]][,1]),
+      farm_biomass = last(results_farm[["stats"]][["weight_scaled"]][,1]),
+      farm_food_prov = sum(results_farm[["stats"]][["food_prov_scaled"]][,1], na.rm = T)
+    )
+  }) %>% 
+    mutate(
+      country = unique(ftp$country),
+      farm_ID = unique(ftp$farm_ID)
+    )
+},
+.progress = T
+)
+
+qd_save(
+  option_1_changes,
+  file.path(data_path, "intermediates", "option_1_changes.qs")
+)
+```
+
+As expected, individual biomass decreases over time due to increasing SST (@fig-look-at-option-1). This results in declining farmed biomass (with the same population) and decreasing total feed provided. However, feed provided per unit of biomass produced increases.
+
+```{r fig-look-at-option-1}
+#| code-summary: Look at option 1 outcomes
+#| fig-cap: Outputs from Option 1 above - population and species parameters are kept constant through time, so the individual fish weight and harvested biomass are allowed to adapt. Results show a single farm within each country.
+#| fig-height: 12
+#| cache: false
+
+option_1_changes <- file.path(data_path, "intermediates", "option_1_changes.qs") %>% 
+  qd_read() %>%  
+  mutate(country = as.factor(country))
+
+p1 <- ggplot(option_1_changes, aes(x = start_year, y = individual_weight, colour = country)) +
+  geom_line(linewidth = 0.75) +
+  labs(x = "Start year", y = "Individual weight", title = "Individual weight by year") +
+  prettyplot()
+
+p2 <- ggplot(option_1_changes, aes(x = start_year, y = farm_biomass, colour = country)) +
+  geom_line(linewidth = 0.75) +
+  labs(x = "Start year", y = "Farm biomass", title = "Farm biomass by year") +
+  prettyplot()
+
+p3 <- ggplot(option_1_changes, aes(x = start_year, y = farm_food_prov, colour = country)) +
+  geom_line(linewidth = 0.75) +
+  labs(x = "Start year", y = "Feed provided", title = "Feed provided by year") +
+  prettyplot()
+
+p4 <- ggplot(option_1_changes, aes(x = farm_biomass, y = farm_food_prov, colour = country)) +
+  geom_line(linewidth = 0.75) +
+  labs(x = "Farm biomass", y = "Feed provided", title = "Feed provided by farm biomass") +
+  prettyplot()
+
+(p1 + p2) / (p3 + p4) +
+  plot_layout(guides = "collect") &
+  theme(legend.position = "bottom")
+```
+
+```{r option-2-let-fish-grow-out-as-needed}
+#| code-summary: Run the model with all species and population parameters fixed through time, except for the growout period which changes to adapt with the climate
+#| eval: false
+
+# ftp <- farm_temps_pops[[1]]
+option_2_changes <- map_dfr(farm_temps_pops, function (ftp) {
+  # start_year <- (2025:2097)[1]
+  map_dfr(2025:2097, function(start_year) {
+    ftpy <- ftp %>%
+      filter(year %in% c(start_year, start_year + 1, start_year + 2)) %>% 
+      mutate(
+        doy = as.integer(format(date, "%j")),
+        doy = case_when(
+          year == start_year ~ doy,                                                                     # days in 2025 keep their current doy
+          leap_year(date) & year == (start_year + 1) ~ doy + 366,                                       # days in 2026 get an extra doy IF 2025 is a leap year
+          (leap_year(start_year) | leap_year(start_year + 1)) & year == (start_year + 2) ~ doy + 731,   # days in 2027 get an extra doy IF 2025 OR 2026 is a leap year
+          year == (start_year + 1) ~ doy + 365,                                                         # if no leap years, days in 2026 get doy + 365
+          year == (start_year + 2) ~ doy + 730,                                                         # if no leap years, days in 2027 get doy + 730
+        )
+      ) %>% 
+      filter(doy >= doy_start)
+    ftpy <- ftpy[1:(species_params["gd"] + 60), ] # required because some years are leap years, so the end date will be a little different - AND give leeway of two months to allow for a changing number of growout days
+    times <- c(t_start = unique(ftpy$doy_start), t_end = (unique(ftpy$doy_start) + nrow(ftpy) - 1), dt = 1L)
+    
+    results_full <- farm_growth_full(
+      species_params = species_params, 
+      feed_params = feed_params, 
+      water_temp = ftpy$sst, 
+      times = times,
+      use_MC_population = F
+    )
+    results_consolidate <- consolidate_farm(results_full)
+
+    # Adapt growout days to reach CS
+    reached_CS <- which.min(abs(results_consolidate[["stats"]][["weight"]][,1] - species_params["CS"]))
+    growdays <- results_consolidate[["days"]][reached_CS]
+    results_consolidate_2 <-  list(
+      days  = results_consolidate$days[1:reached_CS],
+      stats = purrr::map(results_consolidate$stats, \(m) m[1:reached_CS, , drop = FALSE])
+    )
+
+    results_farm <- scale_farm_population(
+      consolidated = results_consolidate_2, 
+      N_pop = generate_pop(
+        harvest_n = unique(ftpy$harvest_n), 
+        mort = species_params["mortmyt"], 
+        times = times
+      )
+    )
+
+    data.frame(
+      start_year = start_year,
+      days_to_harvest = reached_CS,
+      individual_weight = results_consolidate_2[["stats"]][["weight"]][reached_CS, 1],
+      farm_biomass = results_farm[["stats"]][["weight_scaled"]][reached_CS, 1],
+      farm_food_prov = sum(results_farm[["stats"]][["food_prov_scaled"]][1:reached_CS, 1], na.rm = T)
+    )
+  }) %>% 
+    mutate(
+      country = unique(ftp$country),
+      farm_ID = unique(ftp$farm_ID)
+    )
+},
+.progress = T
+)
+
+qd_save(
+  option_2_changes,
+  file.path(data_path, "intermediates", "option_2_changes.qs")
+)
+```
+
+*Note that for the purposes of demonstrating option 2 the time series only go up to 2097 - this is because the growout days eventually exceeded 730 days (2 years). This is going to be an issue for the final production runs, as our target harvest biomass is predicated on an annual production from 2-year cohorts.*
+
+The results of Option 2 look very similar to Option 1 (@fig-look-at-option-2). Despite the changes in...
+
+```{r fig-look-at-option-2}
+#| code-summary: Look at option 2 outcomes
+#| fig-cap: Outputs from Option 2 above - population and species parameters are kept constant through time, but the number of growout days is allowed to adapt so that the individual fish weight and harvested biomass remain consistent through time. Results show a single farm within each country.
+#| fig-height: 12
+#| cache: false
+
+option_2_changes <- file.path(data_path, "intermediates", "option_2_changes.qs") %>% 
+  qd_read() %>%  
+  mutate(country = as.factor(country))
+
+p1 <- ggplot(option_2_changes, aes(x = start_year, y = days_to_harvest, colour = country)) +
+  geom_line(linewidth = 0.75) +
+  labs(x = "Start year", y = "Growout days", title = "Growout days by year") +
+  prettyplot()
+
+p2 <- ggplot(option_2_changes, aes(x = start_year, y = farm_biomass, colour = country)) +
+  geom_line(linewidth = 0.75) +
+  labs(x = "Start year", y = "Farm biomass", title = "Farm biomass by year") +
+  prettyplot()
+
+p3 <- ggplot(option_2_changes, aes(x = start_year, y = farm_food_prov, colour = country)) +
+  geom_line(linewidth = 0.75) +
+  labs(x = "Start year", y = "Feed provided", title = "Feed provided by year") +
+  prettyplot()
+
+p4 <- ggplot(option_2_changes, aes(x = farm_biomass, y = farm_food_prov, colour = country)) +
+  geom_line(linewidth = 0.75) +
+  labs(x = "Farm biomass", y = "Feed provided", title = "Feed provided by farm biomass") +
+  prettyplot()
+
+(p1 + p2) / (p3 + p4) +
+  plot_layout(guides = "collect") &
+  theme(legend.position = "bottom")
+```
+
+```{r option-3-let-population-change}
+#| code-summary: Run the model with all species parameters and target harvested biomass fixed through time, with population allowed to change to adapt with the climate
+#| eval: false
+
+# ftp <- farm_temps_pops[[1]]
+option_3_changes <- map_dfr(farm_temps_pops, function (ftp) {
+  # start_year <- (2025:2098)[1]
+  map_dfr(2025:2097, function(start_year) {
+    ftpy <- ftp %>%
+      filter(year %in% c(start_year, start_year + 1)) %>% 
+      mutate(
+        doy = as.integer(format(date, "%j")),
+        doy = case_when(
+          year == start_year ~ doy, 
+          leap_year(date) ~ doy + 366,
+          T ~ doy + 365
+        )
+      ) %>% 
+      filter(doy >= doy_start)
+    ftpy <- ftpy[1:species_params["gd"], ] # required because some years are leap years, so the end date will be a little different
+    times <- c(t_start = unique(ftpy$doy_start), t_end = (unique(ftpy$doy_start) + nrow(ftpy) - 1), dt = 1L)
+    
+    results_full <- farm_growth_full(
+      species_params = species_params, 
+      feed_params = feed_params, 
+      water_temp = ftpy$sst, 
+      times = times,
+      use_MC_population = F
+    )
+    results_consolidate <- consolidate_farm(results_full)
+
+    # Adapt population to absorb the changes in individual size
+    harvest_ind_weight <- last(results_consolidate[["stats"]][["weight"]][,1])
+    target_biomass <- unique(ftpy$prod_perfarm) %>% set_units("t") %>% set_units("g") %>% drop_units()
+    N_pop_adj <- generate_pop(
+      harvest_n = target_biomass/harvest_ind_weight, 
+      mort = species_params["mortmyt"], 
+      times = times
+    )
+
+    results_farm <- scale_farm_population(
+      consolidated = results_consolidate, 
+      N_pop = N_pop_adj
+    )
+
+    data.frame(
+      start_year = start_year,
+      population = target_biomass/harvest_ind_weight,
+      farm_biomass = last(results_farm[["stats"]][["weight_scaled"]][,1]),
+      farm_food_prov = sum(results_farm[["stats"]][["food_prov_scaled"]][,1], na.rm = T)
+    )
+  }) %>% 
+    mutate(
+      country = unique(ftp$country),
+      farm_ID = unique(ftp$farm_ID)
+    )
+},
+.progress = T
+)
+
+qd_save(
+  option_3_changes,
+  file.path(data_path, "intermediates", "option_3_changes.qs")
+)
+```
+
+As expected, population increases with increasing SST (@fig-look-at-option-3). Feed provided by year also increases with SST, although much less dramatically. In combination, feed provided per harvested biomass increases slightly with increasing SST, likely due to the decrease in mean fish weight and the (marginally) less efficient use of feed by smaller individuals.
+
+```{r fig-look-at-option-3}
+#| code-summary: Look at option 3 outcomes
+#| fig-cap: Outputs from Option 3 above - species parameters and target harvested biomass are kept constant through time, and population is changed to absorb the difference. Results show a single farm within each country.
+#| fig-height: 12
+#| cache: false
+
+option_3_changes <- file.path(data_path, "intermediates", "option_3_changes.qs") %>% 
+  qd_read() %>%  
+  mutate(country = as.factor(country))
+
+p1 <- ggplot(option_3_changes, aes(x = start_year, y = population, colour = country)) +
+  geom_line(linewidth = 0.75) +
+  labs(x = "Start year", y = "Farm population", title = "Farm population by year") +
+  prettyplot()
+
+p2 <- ggplot(option_3_changes, aes(x = start_year, y = farm_biomass, colour = country)) +
+  geom_line(linewidth = 0.75) +
+  labs(x = "Start year", y = "Farm biomass", title = "Farm biomass by year") +
+  prettyplot()
+
+p3 <- ggplot(option_3_changes, aes(x = start_year, y = farm_food_prov, colour = country)) +
+  geom_line(linewidth = 0.75) +
+  labs(x = "Start year", y = "Feed provided", title = "Feed provided by year") +
+  prettyplot()
+
+p4 <- ggplot(option_3_changes, aes(y = farm_food_prov/farm_biomass, x = start_year, colour = country)) +
+  geom_line() +
+  labs(x = "Farm biomass", y = "Feed provided/farmed biomass", title = "Feed provided by farm biomass") +
+  prettyplot()
+
+(p1 + p2) / (p3 + p4) #+
+  # plot_layout(guides = "collect") &
+  # theme(legend.position = "bottom")
+```
+
+::: {style="display: flex; justify-content: space-between;"}
+[← Previous: Extracting future temperatures](05_extracting_future_temperatures.qmd)
+
+[Next: Home →](index.qmd)
+:::
