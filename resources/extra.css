@@ -29,3 +29,11 @@ tblcaption {
   margin-bottom: 1em;
 }
 
+.mermaid svg .edge-thickness-normal {
+  stroke-width: 5px !important;
+  stroke: #e74c3c !important;
+}
+
+.mermaid svg .node rect {
+  fill: #4a90d9 !important;
+}

@@ -6,10 +6,19 @@ project:
     - index.qmd
     - documentation-qmds/00_model_function_demonstration.qmd
     - documentation-qmds/01_choosing_species.qmd
-    - documentation-qmds/02_01_check_species_european_seabass.qmd
-    - documentation-qmds/02_02_check_species_seabream.qmd
-    - documentation-qmds/02_05_check_species_atlantic_salmon.qmd
-    - documentation-qmds/04_assigning_locations.qmd
+    - documentation-qmds/02_assigning_locations.qmd
+    - documentation-qmds/03_01_check_species_seabream.qmd
+    - documentation-qmds/03_02_check_species_european_seabass.qmd
+    - documentation-qmds/03_03_check_species_atlantic_salmon.qmd
+    - documentation-qmds/03_04_check_species_rainbow_trout.qmd
+    - documentation-qmds/03_06_check_species_golden_pompano.qmd
+    - documentation-qmds/03_07_check_species_grouper.qmd
+    - documentation-qmds/03_08_check_species_japanese_amberjack.qmd
+    - documentation-qmds/03_17_all_species_parameters.qmd
+    - documentation-qmds/03_18_species_temperature_responses.qmd
+    - documentation-qmds/04_extracting_future_temperatures.qmd
+    - documentation-qmds/05_test_production.qmd
+    - documentation-qmds/06_01_run_production_seabream.qmd
 
 format:
   html:

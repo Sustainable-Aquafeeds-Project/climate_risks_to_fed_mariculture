@@ -16,23 +16,23 @@ library(here)
 
 # species_params named vector — parameter definitions
 # --- Bioenergetic parameters ---
-# species_params['alpha']         [-]            Feeding catabolism coefficient
-# species_params['epsprot']       [J/gprot]      Energy content of protein
+# species_params['alpha']         [-]            Feeding catabolism coefficient - Dimensionless proportion (0–1) of assimilated feed energy lost to the catabolic cost of digestion and processing (specific dynamic action / heat increment of feeding)
+# species_params['epsprot']       [J/gprot]      Energy content of protein - how much energy is gained from protein, essentially the "assimilation efficiecy"
 # species_params['epslip']        [J/glip]       Energy content of lipid
 # species_params['epscarb']       [J/gcarb]      Energy content of carbohydrate
-# species_params['epsO2']         [J/gO2]        Energy consumed by the respiration of 1 g of oxygen
-# species_params['pk']            [1/day]        Temperature coefficient for the fasting catabolism
-# species_params['k0']            [1/°C]         Fasting catabolism at 0°C
-# species_params['m']             [-]            Weight exponent for the anabolism
-# species_params['n']             [-]            Weight exponent for the catabolism
-# species_params['betac']         [-]            Shape coefficient for the H(Tw) function
+# species_params['epsO2']         [J/gO2]        Oxycalorific coefficient: energy released per gram of oxygen consumed in respiration
+# species_params['pk']            [1/°C]         Coefficient that scales fasting (basal) catabolism with temperature. Larger pk means basal energy losses climb faster with warming
+# species_params['k0']            [1/d]          Mass-specific fasting catabolism rate at 0 °C: the allometric coefficient for the rate at which a fish catabolises its own body mass when unfed, before temperature scaling
+# species_params['m']             [-]            Allometric weight exponent governing how ingestion (and therefore anabolism) scales with body mass
+# species_params['n']             [-]            Allometric weight exponent for fasting catabolism. Catabolism scales sub-linearly with body mass — larger species have a lower mass-specific metabolic rate
+# species_params['betac']         [/°C]          Shape coefficient for the H(Tw) function, setting how sharply the temperature-feeding response peaks around the optimum (larger betac = sharper peak)
 # species_params['Tma']           [°C]           Maximum feeding temperature
 # species_params['Toa']           [°C]           Optimal feeding temperature
 # species_params['Taa']           [°C]           Lowest (minimum) feeding temperature
-# species_params['omega']         [gO2/g]        Oxygen consumption–weight loss ratio
-# species_params['a']             [J/gtissue]    Energy content of fish tissue
-# species_params['k']             [-]            Weight exponent for energy content
-# species_params['eff']           [-]            Food ingestion efficiency
+# species_params['omega']         [gO2/g]        Oxygen-consumption-to-weight-loss ratio: grams of O₂ consumed per gram of body tissue catabolised. Together with epsO2, gives the energy yield per gram of tissue oxidised.
+# species_params['a']             [J/gtissue]    Coefficient of the whole-body energy-content allometry
+# species_params['k']             [-]            Allometric exponent for whole-body energy content vs weight (k = 1 means size-independent energy density, k > 1 means energy density increases with size)
+# species_params['eff']           [-]            Food ingestion efficiency (range 0-1) - the proportion of encountered feed which is actually ingested
 # --- Population / individual-variability parameters ---
 # species_params['meanW']         [g]            Mean initial individual weight
 # species_params['deltaW']        [g]            SD of initial individual weight
@@ -566,8 +566,7 @@ fish_growth <- function(
       species_params = species_params,
       water_temp     = result[i, 'water_temp'],
       ing_pot        = result[i, 'ing_pot'],
-      ing_pot_min    = ingmax * (result[i, 'weight']^species_params['m']) *
-                         feeding_rate(species_params['Taa'], species_params)
+      ing_pot_min    = ingmax * (result[i, 'weight']^species_params['m']) * feeding_rate(species_params['Taa'], species_params)
     )
     result[i, 'food_enc'] <- species_params['eff'] * result[i, 'food_prov']
     result[i, 'ing_act']  <- min(result[i, 'food_enc'], result[i, 'ing_pot'])

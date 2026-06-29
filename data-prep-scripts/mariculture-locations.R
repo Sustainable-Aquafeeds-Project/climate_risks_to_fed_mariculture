@@ -1,7 +1,6 @@
 # Description ----------------------------------------------------------------------------------------------
 # This document prepares the aquaculture locations from:
-# Clawson, G., Kuempel, C. D., Frazier, M., Blasco, G., Cottrell, R. S., Froehlich, H. E., Metian, M., Nash, K. L., Többen, J., Verstaen, J., Williams, D. R., & Halpern, B. S. (2022). Mapping the spatial distribution of global mariculture production. Aquaculture, 553, 738066. https://doi.org/10.1016/j.aquaculture.2022.738066
-# and combines it with FAO fishing regions, ready to be paired with FAO production data.
+# Clawson, G., Kuempel, C. D., Frazier, M., Blasco, G., Cottrell, R. S., Froehlich, H. E., Metian, M., Nash, K. L., Többen, J., Verstaen, J., Williams, D. R., & Halpern, B. S. (2022). Mapping the spatial distribution of global mariculture production. Aquaculture, 553, 738066. https://doi.org/10.1016/j.aquaculture.2022.738066 and combines it with FAO fishing regions, ready to be paired with FAO production data.
 
 library(tidyverse)
 library(terra)
