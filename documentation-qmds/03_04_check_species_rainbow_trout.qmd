@@ -1,0 +1,722 @@
+---
+title: "3.4: Species parameterisation for `rainbow_trout`"
+subtitle: "FAO Climate Change Risks to Fed Mariculture"
+author: 
+  - "Tormey Reimer"
+date: last-modified
+---
+
+::: {style="display: flex; justify-content: space-between;"}
+[← Previous: Parameterise species: `atlantic_salmon`](03_03_check_species_atlantic_salmon.qmd)
+
+[Next: Parameterise species: `drum_croaker` →](03_05_check_species_drum_croaker.qmd)
+:::
+
+# Overview {#sec-overview}
+
+```{r setup}
+#| cache: false
+#| echo: false
+#| warning: false
+#| message: false
+#| output: false
+
+library(tidyverse)
+library(here)
+library(readxl)
+library(janitor)
+library(lhs)
+library(scales)
+library(gt)
+library(qs2)
+library(janitor)
+library(slider)
+```
+
+```{r source-scripts}
+#| cache: false
+#| echo: false
+#| warning: false
+#| message: false
+#| output: false
+#| code-summary: Source R scripts in use
+
+here("src", "dirs.R") %>% source()
+here("src", "model_functions.R") %>% source()
+here("src", "display_globals.R") %>% source()
+```
+
+This document runs the checking and calibration process on the `rainbow_trout` model. For a full description of the process, see [parameterise_species_seabream](03_01_check_species_seabream.qmd). 
+
+# Species parameters {#sec-species-params}
+
+As we are only running a single representative individual, the Monte-Carlo parameters are not in use.
+
+```{r load-parameters}
+#| code-summary: Load species parameters for rainbow_trout
+
+this_species <- "rainbow_trout"
+
+parameters_species <- read_excel(
+  file.path(rawdata_path, 'parameters_species.xlsx'),
+  sheet = this_species,
+  trim_ws = T,
+  n_max = 28
+) %>%
+  clean_names() %>% 
+  select(used_in_script, value, flexibility)
+
+species_params <- parameters_species %>% pull(value) %>% as.numeric()
+names(species_params) <- parameters_species %>% pull(used_in_script)
+
+species_params[["overFmean"]] <- 0.025
+species_params[["overFdelta"]] <- 0.0025
+```
+
+# Environmental/feed parameters {#sec-environmental-params}
+
+```{r feed-params}
+#| code-summary: Load feed and ingredient data and calculate feed composition parameters
+
+feeds_df <- read_excel(here("data", "raw_data", "feed_profiles_and_composition.xlsx"), sheet = "all_feeds") %>%
+  select(feed, ingredient, proportion) %>% 
+  filter(feed == "Rainbow trout 1")
+
+ingredients_df <- read_excel(here("data", "raw_data", "all_ingredients.xlsx"), sheet = "all_ingredients") %>% 
+  select(ingredient, protein, lipid, carb)
+
+digestibility_df <- read_excel(here("data", "raw_data", "all_ingredients.xlsx"), sheet = "all_ingredients") %>% 
+  clean_names() %>% 
+  rename(
+    protein_digestibility = mean_protein_digestibility, 
+    lipid_digestibility = mean_lipid_digestibility, 
+    carb_digestibility = mean_carb_digestibility
+  ) %>% 
+  select(ingredient, protein_digestibility, lipid_digestibility, carb_digestibility)
+
+feed_params <- sum_feeds(
+  format_feeds(feeds_df, ingredients_df, digestibility_df)
+  )[[1]]
+
+qs_save(feed_params, file.path(prepdata_path, "feed_parameters", "feed_parameters_rainbow_trout.qs"))
+```
+
+In the feed used for this species:
+
+* Protein is `r round(100*feed_params[["protein"]]$digestibility, 1)`% digestible
+* Lipid is `r round(100*feed_params[["lipid"]]$digestibility, 1)`% digestible
+* Carbohydrate is `r round(100*feed_params[["carb"]]$digestibility, 1)`% digestible
+
+```{r fig-nutritional-profile}
+#| code-summary: Plot feed nutritional profile showing digestible and indigestible fractions
+#| fig-cap: "Feed nutritional profile for rainbow_trout showing digestible and indigestible proportions of protein, lipid, and carbohydrate."
+#| fig-height: 5
+
+feed_params %>% 
+  map2(., names(feed_params), function(fp, nm) {
+    fp %>% mutate(name = nm)
+  }) %>% 
+  bind_rows() %>% 
+  mutate(digestible = macro * digestibility, indigestible = macro - digestible) %>% 
+  select(name, indigestible, digestible) %>% 
+  pivot_longer(cols = -name, names_to = "type", values_to = "value") %>% 
+  mutate(
+    type = factor(type, levels = c("indigestible", "digestible"), labels = c("Indigestible", "Digestible")),
+    name = factor(name, levels = c("protein", "lipid", "carb"), labels = c("Protein", "Lipid", "Carbohydrate"))
+  ) %>% 
+  ggplot(aes(x = name, y = 100*value, fill = type)) +
+  geom_col() +
+  scale_fill_brewer(palette = "Set1") +
+  prettyplot() +
+  theme(legend.position = "right", axis.title.x = element_blank()) +
+  labs(main = "Feed nutritional profile", y = "Proportion of total feed (%)")
+```
+
+The temperature timeseries used is based on the mean current temperatures at farms assigned to this model group in [02_assigning_locations](02_assigning_locations.qmd).
+
+```{r environmental-params}
+#| code-summary: Define simulation times and temperature timeseries
+
+# Get current mean temperatures for farms assigned to this model
+farm_temps_all <- file.path(prepdata_path, "farm_temps_bymodel", "meanyear_farm_temps_rainbow_trout.qs") %>% 
+  qs_read() %>% 
+  group_by(model_name, doy) %>% 
+  reframe(sst = mean(sst))
+
+farm_temps_all <- rbind(
+  farm_temps_all,
+  farm_temps_all %>% mutate(doy = doy + 365),
+  farm_temps_all %>% mutate(doy = doy + 730)
+)
+
+# Get feeding response at each DOY
+farm_temps_all$fr <- sapply(
+    X = farm_temps_all$sst, 
+    FUN = feeding_rate, 
+    species_params = species_params
+  )
+farm_temps_all$fr[is.na(farm_temps_all$fr)] <- 0
+
+# Get a good growing window
+grow_days <- species_params[["gd"]] %>% as.integer()
+gds <- farm_temps_all %>% 
+  mutate(
+    roll_fr = slide_dbl(fr, sum, .before = 0, .after = grow_days - 1)
+  ) %>%
+  slice(1:(nrow(farm_temps_all) - grow_days + 1)) %>%
+  slice_max(roll_fr, n = 1) %>%
+  mutate(end_doy = doy + grow_days - 1)
+
+times <- c(
+  t_start = gds$doy[1],
+  t_end   = gds$end_doy[1],
+  dt      = 1L
+)
+
+farm_temps <- farm_temps_all %>% 
+  filter(doy >= times['t_start'] & doy <= times['t_end'])
+
+# ggplot(farm_temps, aes(x = doy, y = sst)) +
+#   geom_line() +
+#   theme_classic()
+```
+
+# Run model with raw parameters {#sec-run-model-raw}
+
+```{r check-inputs}
+#| code-summary: Check that all parameters being passed to the model functions are correct
+
+check_fish_growth_inputs(
+  species_params = species_params,
+  water_temp     = farm_temps$sst,
+  feed_params    = feed_params,
+  times          = c(
+    "t_start" = min(farm_temps$doy),
+    "t_end" = max(farm_temps$doy),
+    "dt" = 1
+  ),
+  init_weight    = species_params['meanW'],
+  ingmax         = species_params['meanImax']
+)
+```
+
+```{r run-model}
+#| code-summary: Run fish_growth() for a representative individual
+
+set.seed(42)
+one_fish <- fish_growth(
+  species_params = species_params,
+  water_temp     = farm_temps$sst,
+  feed_params    = feed_params,
+  times          = c(
+    "t_start" = min(farm_temps$doy),
+    "t_end" = max(farm_temps$doy),
+    "dt" = 1
+  ),
+  init_weight    = species_params['meanW'],
+  ingmax         = species_params['meanImax']
+)
+
+cat(sprintf(
+  'Initial weight: %.1f g  |  Final weight: %.1f g (%.1f g)  |  Approx. FCR: %.2f |  Final SGR: %.1f \n',
+  one_fish[1, 'weight'],
+  tail(one_fish[, 'weight'], 1), species_params['CS'],
+  sum(one_fish[, 'food_prov'], na.rm = T) / (tail(one_fish[, 'weight'], 1) - one_fish[1, 'weight']),
+  tail(one_fish[, 'SGR'], 1)
+))
+```
+
+The model outputs here are looking ok, but harvest size is being substantially overestimated (@fig-outputs). This is no unexpected, as many of the parameters were here taken from the `atlantic_salmon` model, which has a much larger harvest size.
+
+```{r fig-outputs}
+#| code-summary: Plot all fish_growth() outputs facetted by measure
+#| fig-cap: "All fish_growth() output variables for a representative individual over a single grow-out period using the default temperature timeseries and feed composition."
+#| fig-height: 10
+#| echo: false
+#| warning: false
+#| message: false
+
+of_df <- as.data.frame(one_fish) %>%
+  pivot_longer(
+    cols      = !contains('days'),
+    names_to  = 'output_var',
+    values_to = 'value'
+  )
+
+plot_sim_results(of_df, CS = species_params["CS"])
+```
+
+# Model sensitivity {#sec-sensitivity}
+
+```{r set-parameter-flexibility}
+#| code-summary: Set uncertainty of parameters (and remove parameters not being tested for sensitivity)
+
+# "flexibility" refers to the flexibility I'm willing to give each parameter (ie uncertainty)
+flex_params <- parameters_species %>% 
+  select(param = used_in_script, flexibility) %>% 
+  filter(!is.na(flexibility)) %>% 
+  arrange(flexibility)
+```
+
+```{r parameter-sensitivity}
+#| code-summary: Calculate parameter sensitivity for weight and SGR across plus-minus 10 percent parameter perturbations
+
+species_params_sens <- map(
+  flex_params$param,
+  function(nm) {
+    map(c(0.9, 1.0, 1.1), function(level) {
+      species_params[nm] <- species_params[nm] * level
+      species_params
+    }) %>% 
+      setNames(c("low", "med", "high"))
+  }
+) %>% 
+  setNames(flex_params$param)
+
+set.seed(42)
+sens_results <- map2_dfr(
+  species_params_sens, 
+  names(species_params_sens),
+  function(sp, nm) {
+    map_dfr(sp, function(sp_lev) {
+      fish_growth(
+        species_params = sp_lev,
+        water_temp     = farm_temps$sst,
+        feed_params    = feed_params,
+        times          = c(
+          "t_start" = min(farm_temps$doy),
+          "t_end" = max(farm_temps$doy),
+          "dt" = 1
+        ),
+        init_weight    = sp_lev['meanW'],
+        ingmax         = sp_lev['meanImax']
+      ) %>% 
+        as.data.frame() %>% 
+        tail(1) %>% 
+        select(weight, SGR)
+    }) %>% 
+      mutate(
+        param = nm, 
+        level = names(sp)
+      )
+  }
+) 
+
+# Calculate sensitivity
+sens_results <- sens_results %>%
+  group_by(param) %>%
+  summarise(across(c(weight, SGR), ~ (.x[level == "high"] - .x[level == "low"]) / (.x[level == "med"] * 0.2), .names = "{.col}")) %>% 
+  pivot_longer(
+    cols = !contains("param"),
+    values_to = "sens", names_to = "output",
+    names_transform = c(output = as.factor)
+  ) %>% 
+  left_join(flex_params, by = "param") %>% 
+  mutate(param = factor(param, levels = rev(flex_params$param)))
+```
+
+@fig-sensitivity shows how sensitive the model output (individual weight/SGR) is to changes in each parameter - ie the positive/negative impact of increasing that parameter by 10%.
+
+```{r fig-sensitivity}
+#| code-summary: Plot parameter sensitivity as a barplot facetted by output variable
+#| fig-cap: "Sensitivity of final weight and SGR to ±10% perturbations of each model parameter. Values represent the proportional change in output per unit change in parameter."
+sens_results %>%
+  ggplot(aes(x = param, y = sens, fill = output)) +
+  geom_col(colour = "black") +
+  coord_flip() +
+  facet_wrap(~output) +
+  prettyplot()
+```
+
+# Hypercube adjustment {#sec-hypercube}
+
+The hypercube adjustment uses Latin Hypercube Sampling (LHS) to search for parameter combinations that bring model output closer to the target weight (commercial size). 
+
+```{r hypercube-ranges}
+#| code-summary: Calculate per-parameter sampling ranges from sensitivity and flexibility
+
+# Combine sensitivity across both output variables (mean absolute sensitivity)
+sens_combined <- sens_results %>%
+  group_by(param, flexibility) %>%
+  summarise(mean_abs_sens = mean(abs(sens)), .groups = "drop")
+
+# Range score: inversely proportional to mean absolute sensitivity and flexibility rank.
+# Cap 1/sens to avoid blow-up when sensitivity is near zero.
+max_inv_sens <- 20
+min_inv_sens <- 0.1
+sens_combined <- sens_combined %>%
+  mutate(
+    inv_sens  = pmax(min_inv_sens, pmin(1 / pmax(mean_abs_sens, 1 / max_inv_sens), max_inv_sens)),
+    raw_range = inv_sens * (1 / flexibility)
+  )
+
+# Cap range changes at +-10%
+sens_combined <- sens_combined %>%
+  mutate(
+    param        = as.character(param),
+    sample_range = scales::rescale(raw_range, to = c(0.005, 0.10))
+  )
+```
+
+```{r fig-hypercube-ranges}
+#| code-summary: Plot sampling ranges per parameter
+#| fig-cap: "LHS sampling range (as a proportion of baseline value) for each parameter. Wider bars indicate parameters that are less sensitive and/or more flexible, giving the sampler more room to explore. Sampling range is capped at +-10% of baseline."
+#| fig-height: 5
+#| fig-width: 7
+
+sens_combined %>%
+  mutate(param = factor(param, levels = param[order(sample_range)])) %>%
+  ggplot(aes(x = param, y = sample_range * 100)) +
+  geom_col(fill = "#2171b5", colour = "black", width = 0.7) +
+  coord_flip() +
+  labs(x = "Parameter", y = "Sampling range (+-% of baseline)") +
+  theme_classic()
+```
+
+```{r hypercube-targets}
+#| code-summary: Define target experimental data as a list of experiments - each with its own temperature timeseries and named target outputs
+
+# Each entry in `target_experiments` represents one experimental condition.
+# `water_temp` : data.frame with columns `day` (integer) and `temp_C` (numeric)
+#                matching that experiment's temperature conditions.
+# `targets`    : a named numeric vector of any model output columns to fit.
+#                Different experiments can supply different (or overlapping) outputs.
+
+# SS fitness is computed as the MEAN squared error across all (experiment × output)
+# observations, so experiments with more targets do not dominate the fit.
+target_experiments <- list(
+  list(
+    water_temp = farm_temps$sst,
+    targets    = c(weight_change = unname(species_params["CS"] - species_params["meanW"])),
+    meanW      = species_params["meanW"]
+  )
+)
+
+n_pairs <- length(target_experiments)
+
+# This function processes the fish_growth() output to get it ready for comparison. It's defined here so that if different comparisons are added in this chunk I can change the calculation everywhere at once
+get_comparison_stats <- function(df) {
+  dfdf <- as.data.frame(df)
+  data.frame(
+    weight_change = tail(dfdf$weight, 1) - head(dfdf$weight, 1),
+    SGR = tail(dfdf$SGR, 1)
+  )
+}
+```
+
+```{r hypercube-sample}
+#| code-summary: Generate LHS parameter samples and run model for each (1000 samples x n_pairs with progress updates every 100)
+
+n_samples     <- 2500
+param_names   <- sens_combined$param
+sample_ranges <- sens_combined$sample_range
+n_params      <- length(param_names)
+
+set.seed(42)
+lhs_raw <- randomLHS(n_samples, n_params)
+
+# Map [0, 1] to [1 - range, 1 + range] multipliers for each parameter
+multiplier_matrix <- sweep(lhs_raw * 2 - 1, 2, sample_ranges, "*") + 1
+colnames(multiplier_matrix) <- param_names
+
+# Run model once per experiment for each LHS sample.
+# All final-row model output columns are retained so any named target can be used.
+lhs_results <- vector("list", n_samples)
+start_time  <- proc.time()["elapsed"]
+
+for (i in seq_len(n_samples)) {
+  if (i %% 500 == 0) {
+    elapsed <- round(proc.time()["elapsed"] - start_time, 1)
+    rate    <- i / elapsed
+    eta     <- round((n_samples - i) / rate, 1)
+    cat(sprintf(
+      "Sample %4d / %d | elapsed: %.0fs | ETA: %.0fs\n",
+      i, n_samples, elapsed, eta
+    ))
+  }
+
+  sp <- species_params
+  for (j in param_names) {
+    sp[j] <- species_params[j] * multiplier_matrix[i, j]
+  }
+
+  # Run once per experiment; keep all output columns from the final timestep
+  pair_results <- vector("list", n_pairs)
+  for (k in seq_len(n_pairs)) {
+    wt <- target_experiments[[k]]$water_temp
+
+    change_params <- names(target_experiments[[k]])[names(target_experiments[[k]]) %in% names(species_params)]
+    if (length(change_params) > 0) {
+      for (c in change_params) {
+        sp[c] <- unlist(target_experiments[[k]][c])
+      }      
+    }
+
+    result <- tryCatch(
+      fish_growth(
+        species_params = sp,
+        water_temp     = wt,
+        feed_params    = feed_params,
+        times          = c(
+          "t_start" = 1,
+          "t_end"   = length(wt),
+          "dt"      = 1
+        ),
+        init_weight = sp["meanW"],
+        ingmax      = sp["meanImax"]
+      ),
+      error = function(e) NULL
+    )
+    if (!is.null(result)) {
+      final <- get_comparison_stats(result)
+      pair_results[[k]] <- final %>% mutate(sample = i, pair = k, .before = 1)
+    }
+  }
+
+  pair_df <- bind_rows(pair_results)
+  # Only retain samples where all experiments completed successfully
+  if (nrow(pair_df) == n_pairs) {
+    lhs_results[[i]] <- pair_df
+  }
+}
+
+cat(sprintf(
+  "Done. Total time: %.1fs\n",
+  proc.time()["elapsed"] - start_time
+))
+
+# One row per (sample, experiment)
+lhs_results_df <- bind_rows(lhs_results)
+```
+
+```{r hypercube-fitness}
+#| code-summary: Calculate absolute weight difference between modelled and target weight change for each LHS sample
+
+target_wt_change <- target_experiments[[1]]$targets[["weight_change"]]
+
+# Absolute difference between modelled and target weight change per sample
+lhs_fit_df <- lhs_results_df %>%
+  group_by(sample) %>%
+  summarise(abs_diff = abs(weight_change - target_wt_change), .groups = "drop")
+
+# Attach multipliers for inspection of top-performing samples
+multipliers_df <- as.data.frame(multiplier_matrix) %>%
+  mutate(sample = seq_len(n_samples))
+
+lhs_fit_df <- lhs_fit_df %>%
+  left_join(multipliers_df, by = "sample")
+
+# Baseline: run the unadjusted model and compute absolute difference
+baseline_result <- fish_growth(
+  species_params = species_params,
+  water_temp     = target_experiments[[1]]$water_temp,
+  feed_params    = feed_params,
+  times          = c(
+    "t_start" = 1,
+    "t_end"   = length(target_experiments[[1]]$water_temp),
+    "dt"      = 1
+  ),
+  init_weight = species_params["meanW"],
+  ingmax      = species_params["meanImax"]
+)
+
+baseline_abs_diff <- abs(get_comparison_stats(baseline_result)$weight_change - target_wt_change)
+
+cat(sprintf(
+  "Samples completed: %d / %d\n",
+  n_distinct(lhs_fit_df$sample), n_samples
+))
+```
+
+@fig-hypercube-abs-diff shows the distribution of absolute weight differences across all samples.
+
+```{r fig-hypercube-abs-diff}
+#| code-summary: Plot distribution of absolute weight differences across all LHS samples
+#| fig-cap: "Distribution of absolute differences between modelled and target weight change across all LHS samples. Lower values indicate better fit to the target data. The red dashed line shows the baseline (unadjusted) absolute difference."
+#| fig-height: 4
+#| fig-width: 7
+
+lhs_fit_df %>%
+  ggplot(aes(x = abs_diff)) +
+  geom_histogram(bins = 50, fill = "#2171b5", colour = "black", linewidth = 0.2) +
+  geom_vline(xintercept = baseline_abs_diff, colour = "red", linetype = "dashed") +
+  labs(x = "Absolute weight difference (g)", y = "Count") +
+  theme_classic()
+```
+
+The parameter multipliers for the best-fitting sample (relative to baseline) are:
+
+```{r tbl-hypercube-best-params}
+#| code-summary: Show parameter multipliers for the best-fitting sample
+#| tbl-cap: "Parameter multipliers and adjusted values for the best-fitting LHS sample. Parameters are sorted by the magnitude of their percentage change from baseline."
+
+best_sample <- lhs_fit_df %>%
+  arrange(abs_diff) %>%
+  slice_head(n = 1) %>%
+  pull(sample)
+
+best_lhs_results <- lhs_fit_df %>%
+  filter(sample == best_sample) %>%
+  select(all_of(param_names)) %>%
+  pivot_longer(everything(), names_to = "param", values_to = "multiplier") 
+  
+# If the change is extremely small (<0.05% of baseline) then the baseline version is kept
+best_lhs_results <- best_lhs_results %>%
+  mutate(
+    multiplier    = case_when(round(multiplier, 2) == 1.00 ~ 1, T ~ multiplier),
+    pct_change    = (multiplier - 1) * 100,
+    baseline_val  = species_params[param],
+    adjusted_val  = baseline_val * multiplier
+  ) %>%
+  filter(multiplier != 1) %>% 
+  arrange(desc(abs(pct_change)))
+
+best_lhs_results %>%
+  gt() %>%
+  fmt_number(columns = c(multiplier, pct_change), decimals = 2) %>%
+  fmt_number(columns = c(baseline_val, adjusted_val), decimals = 4) %>% 
+  cols_label(
+    param        = "Parameter",
+    multiplier   = "Multiplier",
+    pct_change   = "% change",
+    baseline_val = "Raw value",
+    adjusted_val = "Calibrated value"
+  )
+```
+
+# Calibrated run {#sec-calibrated}
+
+```{r display-new-values}
+#| code-summary: Replace calibrated species parameters with new values
+
+new_params <- best_lhs_results$adjusted_val
+names(new_params) <- best_lhs_results$param
+species_params_new <- species_params
+for(nm in names(new_params)) {
+  species_params_new[nm] <- new_params[nm]
+}
+species_params_new["gd"] <- round(species_params_new["gd"], 0)
+
+spn <- data.frame(
+  Parameter = names(species_params_new),
+  Original_Value = unname(species_params),
+  New_Value = unname(species_params_new),
+  Pct_Change = 100*unname((species_params-species_params_new)/species_params)
+)
+```
+
+```{r run-calibrated-model}
+#| code-summary: Run fish_growth() with the calibrated parameter values
+
+# Run with the default temperature timeseries for the trajectory plot (same as
+# the initial checks above), giving a single representative growth trajectory.
+set.seed(42)
+
+times <- c(
+  "t_start" = gds$doy[1],
+  "t_end"   = gds$doy[1] + unname(species_params_new["gd"]) - 1,
+  "dt"      = 1
+)
+
+farm_temps_new <- farm_temps_all %>% 
+  filter(doy >= times['t_start'] & doy <= times['t_end'])
+
+one_fish_new <- fish_growth(
+  species_params = species_params_new,
+  water_temp     = farm_temps_new$sst,
+  feed_params    = feed_params,
+  times          = times,
+  init_weight    = species_params_new['meanW'],
+  ingmax         = species_params_new['meanImax']
+)
+
+# Also validate against each paired experimental temperature series to confirm
+# that the best parameter set improves fit across all observed conditions.
+calibrated_pair_results <- map_dfr(seq_len(n_pairs), function(k) {
+  wt <- target_experiments[[k]]$water_temp
+  sp <- species_params_new
+  if (!is.null(target_experiments[[k]]$initW)) {sp["meanW"] <- target_experiments[[k]]$initW}
+  set.seed(42)
+  result <- fish_growth(
+    species_params = sp,
+    water_temp     = wt,
+    feed_params    = feed_params,
+    times          = c(
+      "t_start" = 1,
+      "t_end"   = length(wt),
+      "dt"      = 1
+    ),
+    init_weight = sp['meanW'],
+    ingmax      = sp['meanImax']
+  )
+  get_comparison_stats(result) %>% mutate(pair = k)
+})
+
+# Summary comparison: calibrated vs. target per experiment
+# Only columns that appear in each experiment's `targets` vector are shown.
+calibrated_summary <- map_dfr(seq_len(n_pairs), function(k) {
+  row  <- calibrated_pair_results %>% filter(pair == k)
+  tgts <- target_experiments[[k]]$targets
+  map_dfr(names(tgts), function(col) {
+    data.frame(
+      pair      = k,
+      output    = col,
+      modelled  = row[[col]],
+      target    = tgts[[col]],
+      diff      = row[[col]] - tgts[[col]]
+    )
+  })
+})
+
+```
+
+```{r tbl-calibrated-summary}
+#| code-summary: Display modelled vs target values for each experiment after calibration
+#| tbl-cap: "Comparison of calibrated model output against target values for each experiment."
+
+calibrated_summary %>%
+  gt() %>%
+  fmt_number(columns = c(modelled, target, diff), decimals = 2) %>% 
+  cols_label(
+    pair     = "Run",
+    output   = "Output variable",
+    modelled = "Modelled",
+    target   = "Target",
+    diff     = "Difference"
+  )
+```
+
+@fig-outputs-calibrated shows all output variables over the grow-out period.
+
+```{r fig-outputs-calibrated}
+#| code-summary: Plot all calibrated fish_growth() outputs facetted by measure
+#| fig-cap: "All fish_growth() output variables for a representative individual over a single grow-out period using the default temperature timeseries and feed composition, with the the calibrated parameter values."
+#| fig-height: 10
+#| echo: false
+#| warning: false
+#| message: false
+
+ofn <- as.data.frame(one_fish_new) %>%
+  pivot_longer(
+    cols      = !contains('days'),
+    names_to  = 'output_var',
+    values_to = 'value'
+  )
+
+plot_sim_results(ofn, CS = species_params_new["CS"])
+```
+
+```{r save-params}
+#| code-summary: Save calibrated species parameters
+
+qd_save(
+  species_params_new, 
+  file.path(prepdata_path, "species_parameters", "species_parameters_rainbow_trout.qs")
+)
+```
+
+::: {style="display: flex; justify-content: space-between;"}
+[← Previous: Parameterise species: `atlantic_salmon`](03_03_check_species_atlantic_salmon.qmd)
+
+[Next: Parameterise species: `drum_croaker` →](03_05_check_species_drum_croaker.qmd)
+:::
