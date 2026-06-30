@@ -11,6 +11,7 @@ project:
     - documentation-qmds/03_02_check_species_european_seabass.qmd
     - documentation-qmds/03_03_check_species_atlantic_salmon.qmd
     - documentation-qmds/03_04_check_species_rainbow_trout.qmd
+    - documentation-qmds/03_05_check_species_drum_croaker.qmd
     - documentation-qmds/03_06_check_species_golden_pompano.qmd
     - documentation-qmds/03_07_check_species_grouper.qmd
     - documentation-qmds/03_08_check_species_japanese_amberjack.qmd
