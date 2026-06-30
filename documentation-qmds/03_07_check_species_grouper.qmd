@@ -1,5 +1,5 @@
 ---
-title: "3.6: Species parameterisation for `golden_pompano`"
+title: "3.7: Species parameterisation for `grouper`"
 subtitle: "FAO Climate Change Risks to Fed Mariculture"
 author: 
   - "Tormey Reimer"
@@ -7,9 +7,9 @@ date: last-modified
 ---
 
 ::: {style="display: flex; justify-content: space-between;"}
-[← Previous: Parameterise species: `drum_croaker`](03_05_check_species_drum_croaker.qmd)
+[← Previous: Parameterise species: `golden_pompano`](03_06_check_species_golden_pompano.qmd)
 
-[Next: Parameterise species: `grouper` →](03_07_check_species_grouper.qmd)
+[Next: Parameterise species: `japanese_amberjack` →](03_08_check_species_japanese_amberjack.qmd)
 :::
 
 # Overview {#sec-overview}
@@ -46,16 +46,16 @@ here("src", "model_functions.R") %>% source()
 here("src", "display_globals.R") %>% source()
 ```
 
-This document runs the checking and calibration process on the `golden_pompano` model. For a full description of the process, see [parameterise_species_seabream](03_01_check_species_seabream.qmd). 
+This document runs the checking and calibration process on the `grouper` model. For a full description of the process, see [parameterise_species_seabream](03_01_check_species_seabream.qmd). 
 
 # Species parameters {#sec-species-params}
 
 As we are only running a single representative individual, the Monte-Carlo parameters are not in use.
 
 ```{r load-parameters}
-#| code-summary: Load species parameters for golden_pompano
+#| code-summary: Load species parameters for grouper
 
-this_species <- "golden_pompano"
+this_species <- "grouper"
 
 parameters_species <- read_excel(
   file.path(rawdata_path, 'parameters_species.xlsx'),
@@ -80,7 +80,7 @@ species_params[["overFdelta"]] <- 0.0025
 
 feeds_df <- read_excel(here("data", "raw_data", "feed_profiles_and_composition.xlsx"), sheet = "all_feeds") %>%
   select(feed, ingredient, proportion) %>% 
-  filter(feed == "Pompano 1")
+  filter(feed == "Grouper 1")
 
 ingredients_df <- read_excel(here("data", "raw_data", "all_ingredients.xlsx"), sheet = "all_ingredients") %>% 
   select(ingredient, protein, lipid, carb)
@@ -98,7 +98,7 @@ feed_params <- sum_feeds(
   format_feeds(feeds_df, ingredients_df, digestibility_df)
   )[[1]]
 
-qs_save(feed_params, file.path(prepdata_path, "feed_parameters", "feed_parameters_golden_pompano.qs"))
+qs_save(feed_params, file.path(prepdata_path, "feed_parameters", "feed_parameters_grouper.qs"))
 ```
 
 ```{r tbl-feed-nutrition}
@@ -120,7 +120,7 @@ The temperature timeseries used is based on the mean current temperatures at far
 #| code-summary: Define simulation times and temperature timeseries
 
 # Get current mean temperatures for farms assigned to this model
-farm_temps_all <- file.path(prepdata_path, "farm_temps_bymodel", "meanyear_farm_temps_golden_pompano.qs") %>% 
+farm_temps_all <- file.path(prepdata_path, "farm_temps_bymodel", "meanyear_farm_temps_grouper.qs") %>% 
   qs_read() %>% 
   group_by(model_name, doy) %>% 
   reframe(sst = mean(sst))
@@ -691,12 +691,12 @@ plot_sim_results(ofn, CS = species_params_new["CS"])
 
 qd_save(
   species_params_new, 
-  file.path(prepdata_path, "species_parameters", "species_parameters_golden_pompano.qs")
+  file.path(prepdata_path, "species_parameters", "species_parameters_grouper.qs")
 )
 ```
 
 ::: {style="display: flex; justify-content: space-between;"}
-[← Previous: Parameterise species: `drum_croaker`](03_05_check_species_drum_croaker.qmd)
+[← Previous: Parameterise species: `golden_pompano`](03_06_check_species_golden_pompano.qmd)
 
-[Next: Parameterise species: `grouper` →](03_07_check_species_grouper.qmd)
+[Next: Parameterise species: `japanese_amberjack` →](03_08_check_species_japanese_amberjack.qmd)
 :::
