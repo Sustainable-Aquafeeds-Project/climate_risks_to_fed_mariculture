@@ -1,5 +1,5 @@
 ---
-title: "6.0: Testing how production will work (with seabream)"
+title: "5.0: Testing how production will work (with seabream)"
 subtitle: "FAO Climate Change Risks to Fed Mariculture"
 author: 
   - "Tormey Reimer"
@@ -7,9 +7,9 @@ date: last-modified
 ---
 
 ::: {style="display: flex; justify-content: space-between;"}
-[← Previous: Extracting future temperatures](05_extracting_future_temperatures.qmd)
+[← Previous: Extracting future temperatures](04_extracting_future_temperatures.qmd)
 
-[Next: Home →](index.qmd)
+[Next: Run future production: seabream →](05_01_run_production_seabream.qmd)
 :::
 
 # Overview {#sec-overview}
@@ -570,7 +570,7 @@ p4 <- ggplot(option_3_changes, aes(y = farm_food_prov/farm_biomass, x = start_ye
 ```
 
 ::: {style="display: flex; justify-content: space-between;"}
-[← Previous: Extracting future temperatures](05_extracting_future_temperatures.qmd)
+[← Previous: Extracting future temperatures](04_extracting_future_temperatures.qmd)
 
-[Next: Home →](index.qmd)
+[Next: Run future production: seabream →](05_01_run_production_seabream.qmd)
 :::

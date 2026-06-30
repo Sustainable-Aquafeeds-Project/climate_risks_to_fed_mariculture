@@ -1,0 +1,889 @@
+---
+title: "3.17: Summarising all species parameters"
+subtitle: "FAO Climate Change Risks to Fed Mariculture"
+author: 
+  - "Tormey Reimer"
+date: last-modified
+---
+
+::: {style="display: flex; justify-content: space-between;"}
+[← Previous: Choosing species](01_choosing_species.qmd)
+
+[Next: Species temperature responses →](03_02_species_temperature_responses.qmd)
+:::
+
+```{r setup}
+#| cache: false
+#| echo: false
+#| warning: false
+#| message: false
+#| output: false
+
+library(tidyverse)
+library(here)
+library(readxl)
+library(janitor)
+library(gt)
+library(qs2)
+library(janitor)
+```
+
+```{r source-scripts}
+#| cache: false
+#| echo: false
+#| warning: false
+#| message: false
+#| output: false
+#| code-summary: "Source R scripts in use"
+
+here("src", "dirs.R") %>% source()
+here("src", "model_functions.R") %>% source()
+here("src", "display_globals.R") %>% source()
+
+# Helper: bold the calibrated value if it differs from raw
+bold_if_diff <- function(raw, calib) {
+  if (isTRUE(raw == calib)) as.character(calib) else paste0("**", calib, "**")
+}
+```
+
+```{r DEFAULTS}
+default <- rep(NA, 28)
+names(default) <- c("a", "alpha", "betac", "CS", "deltaImax", "deltaW", "doy", "eff", "epscarb", "epslip", "epsO2", "epsprot", "FCR", "gd", "k", "k0", "m", "meanImax", "meanW", "mortmyt", "n", "omega", "pk", "Taa", "Tma", "Toa", "overFmean", "overFdelta")
+
+params_seabream_raw <- params_european_seabass_raw <- params_golden_pompano_raw <- params_atlantic_salmon_raw <- params_rainbow_trout_raw <- params_drum_croaker_raw <- params_golden_pompano_raw <- params_grouper_raw <- params_japanese_amberjack_raw <- params_japanese_seabass_raw <- params_milkfish_raw <- params_nile_tilapia_raw <- params_olive_flounder_raw <- params_tuna_raw <- params_abalone_raw <- params_mud_crab_raw <- params_whiteleg_shrimp_raw <- params_tiger_prawn_raw <- params_seabream_calib <- params_european_seabass_calib <- params_golden_pompano_calib <- params_atlantic_salmon_calib <- params_rainbow_trout_calib <- params_drum_croaker_calib <- params_golden_pompano_calib <- params_grouper_calib <- params_japanese_amberjack_calib <- params_japanese_seabass_calib <- params_milkfish_calib <- params_nile_tilapia_calib <- params_olive_flounder_calib <- params_tuna_calib <- params_abalone_calib <- params_mud_crab_calib <- params_whiteleg_shrimp_calib <- params_tiger_prawn_calib <- default
+```
+
+# Overview {#sec-overview}
+
+The calibration process for the growth parameters in this study had two aims:
+
+1. To have each species reach close to their specified commercial size within the correct time (growout days) under a realistic temperature regime (global average of their farms).
+2. To have the most relevant ingestion parameters (total ingestion, FCR/FE) from the model give reasonable values.
+
+The below tables specify the raw and final calibrated values for each species, with sources and justifications for each.
+
+# Get all parameters
+
+```{r get-params-seabream}
+params <- read_excel(
+  file.path(rawdata_path, 'parameters_species.xlsx'),
+  sheet = "seabream",
+  trim_ws = T, n_max = 26
+) %>%
+  clean_names() %>% 
+  select(used_in_script, value)
+
+params_seabream_raw <- params$value
+names(params_seabream_raw) <- params$used_in_script
+
+params_seabream_calib <- qd_read(
+  file.path(prepdata_path, "species_parameters", 'species_parameters_seabream.qs')
+)
+
+rm(params)
+```
+
+Seabream was one of the species originally modelled in @baldan_r_2018, so the "raw" values in @tbl-seabream-params are taken directly from that study.
+
+| Parameter | Raw value | Calibrated value | Source |
+|:-----:|:-----:|:-----:|:---------------------------------------------------------------------------|
+| a         | `r params_seabream_raw["a"]`         | `r bold_if_diff(params_seabream_raw["a"], params_seabream_calib["a"])`                 | |
+| alpha     | `r params_seabream_raw["alpha"]`     | `r bold_if_diff(params_seabream_raw["alpha"], params_seabream_calib["alpha"])`         | |
+| betac     | `r params_seabream_raw["betac"]`     | `r bold_if_diff(params_seabream_raw["betac"], params_seabream_calib["betac"])`         | |
+| CS        | `r params_seabream_raw["CS"]`        | `r bold_if_diff(params_seabream_raw["CS"], params_seabream_calib["CS"])`               | |
+| deltaImax | `r params_seabream_raw["deltaImax"]` | `r bold_if_diff(params_seabream_raw["deltaImax"], params_seabream_calib["deltaImax"])` | |
+| deltaW    | `r params_seabream_raw["deltaW"]`    | `r bold_if_diff(params_seabream_raw["deltaW"], params_seabream_calib["deltaW"])`       | |
+| eff       | `r params_seabream_raw["eff"]`       | `r bold_if_diff(params_seabream_raw["eff"], params_seabream_calib["eff"])`             | |
+| epscarb   | `r params_seabream_raw["epscarb"]`   | `r bold_if_diff(params_seabream_raw["epscarb"], params_seabream_calib["epscarb"])`     | |
+| epslip    | `r params_seabream_raw["epslip"]`    | `r bold_if_diff(params_seabream_raw["epslip"], params_seabream_calib["epslip"])`       | |
+| epsO2     | `r params_seabream_raw["epsO2"]`     | `r bold_if_diff(params_seabream_raw["epsO2"], params_seabream_calib["epsO2"])`         | |
+| epsprot   | `r params_seabream_raw["epsprot"]`   | `r bold_if_diff(params_seabream_raw["epsprot"], params_seabream_calib["epsprot"])`     | |
+| gd        | `r params_seabream_raw["gd"]`        | `r bold_if_diff(params_seabream_raw["gd"], params_seabream_calib["gd"])`               | |
+| k         | `r params_seabream_raw["k"]`         | `r bold_if_diff(params_seabream_raw["k"], params_seabream_calib["k"])`                 | |
+| k0        | `r params_seabream_raw["k0"]`        | `r bold_if_diff(params_seabream_raw["k0"], params_seabream_calib["k0"])`               | |
+| m         | `r params_seabream_raw["m"]`         | `r bold_if_diff(params_seabream_raw["m"], params_seabream_calib["m"])`                 | |
+| meanImax  | `r params_seabream_raw["meanImax"]`  | `r bold_if_diff(params_seabream_raw["meanImax"], params_seabream_calib["meanImax"])`   | |
+| meanW     | `r params_seabream_raw["meanW"]`     | `r bold_if_diff(params_seabream_raw["meanW"], params_seabream_calib["meanW"])`         | |
+| mortmyt   | `r params_seabream_raw["mortmyt"]`   | `r bold_if_diff(params_seabream_raw["mortmyt"], params_seabream_calib["mortmyt"])`     | |
+| n         | `r params_seabream_raw["n"]`         | `r bold_if_diff(params_seabream_raw["n"], params_seabream_calib["n"])`                 | |
+| omega     | `r params_seabream_raw["omega"]`     | `r bold_if_diff(params_seabream_raw["omega"], params_seabream_calib["omega"])`         | |
+| pk        | `r params_seabream_raw["pk"]`        | `r bold_if_diff(params_seabream_raw["pk"], params_seabream_calib["pk"])`               | |
+| Taa       | `r params_seabream_raw["Taa"]`       | `r bold_if_diff(params_seabream_raw["Taa"], params_seabream_calib["Taa"])`             | |
+| Tma       | `r params_seabream_raw["Tma"]`       | `r bold_if_diff(params_seabream_raw["Tma"], params_seabream_calib["Tma"])`             | |
+| Toa       | `r params_seabream_raw["Toa"]`       | `r bold_if_diff(params_seabream_raw["Toa"], params_seabream_calib["Toa"])`             | |
+
+: Raw and calibrated parameter values for the `seabream` model. **Bold** values indicate parameters that changed during calibration. {#tbl-seabream-params}
+
+```{r get-params-european_seabass}
+params <- read_excel(
+  file.path(rawdata_path, 'parameters_species.xlsx'),
+  sheet = "european_seabass",
+  trim_ws = T, n_max = 26
+) %>%
+  clean_names() %>% 
+  select(used_in_script, value)
+
+params_european_seabass_raw <- params$value
+names(params_european_seabass_raw) <- params$used_in_script
+
+params_european_seabass_calib <- qd_read(
+  file.path(prepdata_path, "species_parameters", 'species_parameters_european_seabass.qs')
+)
+
+rm(params)
+```
+
+| Parameter | Raw value | Calibrated value | Source |
+|:-----:|:-----:|:-----:|:---------------------------------------------------------------------------|
+| a         | `r params_european_seabass_raw["a"]`         | `r bold_if_diff(params_european_seabass_raw["a"], params_european_seabass_calib["a"])`                 | |
+| alpha     | `r params_european_seabass_raw["alpha"]`     | `r bold_if_diff(params_european_seabass_raw["alpha"], params_european_seabass_calib["alpha"])`         | |
+| betac     | `r params_european_seabass_raw["betac"]`     | `r bold_if_diff(params_european_seabass_raw["betac"], params_european_seabass_calib["betac"])`         | |
+| CS        | `r params_european_seabass_raw["CS"]`        | `r bold_if_diff(params_european_seabass_raw["CS"], params_european_seabass_calib["CS"])`               | |
+| deltaImax | `r params_european_seabass_raw["deltaImax"]` | `r bold_if_diff(params_european_seabass_raw["deltaImax"], params_european_seabass_calib["deltaImax"])` | |
+| deltaW    | `r params_european_seabass_raw["deltaW"]`    | `r bold_if_diff(params_european_seabass_raw["deltaW"], params_european_seabass_calib["deltaW"])`       | |
+| eff       | `r params_european_seabass_raw["eff"]`       | `r bold_if_diff(params_european_seabass_raw["eff"], params_european_seabass_calib["eff"])`             | |
+| epscarb   | `r params_european_seabass_raw["epscarb"]`   | `r bold_if_diff(params_european_seabass_raw["epscarb"], params_european_seabass_calib["epscarb"])`     | |
+| epslip    | `r params_european_seabass_raw["epslip"]`    | `r bold_if_diff(params_european_seabass_raw["epslip"], params_european_seabass_calib["epslip"])`       | |
+| epsO2     | `r params_european_seabass_raw["epsO2"]`     | `r bold_if_diff(params_european_seabass_raw["epsO2"], params_european_seabass_calib["epsO2"])`         | |
+| epsprot   | `r params_european_seabass_raw["epsprot"]`   | `r bold_if_diff(params_european_seabass_raw["epsprot"], params_european_seabass_calib["epsprot"])`     | |
+| gd        | `r params_european_seabass_raw["gd"]`        | `r bold_if_diff(params_european_seabass_raw["gd"], params_european_seabass_calib["gd"])`               | |
+| k         | `r params_european_seabass_raw["k"]`         | `r bold_if_diff(params_european_seabass_raw["k"], params_european_seabass_calib["k"])`                 | |
+| k0        | `r params_european_seabass_raw["k0"]`        | `r bold_if_diff(params_european_seabass_raw["k0"], params_european_seabass_calib["k0"])`               | |
+| m         | `r params_european_seabass_raw["m"]`         | `r bold_if_diff(params_european_seabass_raw["m"], params_european_seabass_calib["m"])`                 | |
+| meanImax  | `r params_european_seabass_raw["meanImax"]`  | `r bold_if_diff(params_european_seabass_raw["meanImax"], params_european_seabass_calib["meanImax"])`   | |
+| meanW     | `r params_european_seabass_raw["meanW"]`     | `r bold_if_diff(params_european_seabass_raw["meanW"], params_european_seabass_calib["meanW"])`         | |
+| mortmyt   | `r params_european_seabass_raw["mortmyt"]`   | `r bold_if_diff(params_european_seabass_raw["mortmyt"], params_european_seabass_calib["mortmyt"])`     | |
+| n         | `r params_european_seabass_raw["n"]`         | `r bold_if_diff(params_european_seabass_raw["n"], params_european_seabass_calib["n"])`                 | |
+| omega     | `r params_european_seabass_raw["omega"]`     | `r bold_if_diff(params_european_seabass_raw["omega"], params_european_seabass_calib["omega"])`         | |
+| pk        | `r params_european_seabass_raw["pk"]`        | `r bold_if_diff(params_european_seabass_raw["pk"], params_european_seabass_calib["pk"])`               | |
+| Taa       | `r params_european_seabass_raw["Taa"]`       | `r bold_if_diff(params_european_seabass_raw["Taa"], params_european_seabass_calib["Taa"])`             | |
+| Tma       | `r params_european_seabass_raw["Tma"]`       | `r bold_if_diff(params_european_seabass_raw["Tma"], params_european_seabass_calib["Tma"])`             | |
+| Toa       | `r params_european_seabass_raw["Toa"]`       | `r bold_if_diff(params_european_seabass_raw["Toa"], params_european_seabass_calib["Toa"])`             | |
+
+: Raw and calibrated parameter values for the `european_seabass` model. **Bold** values indicate parameters that changed during calibration. {#tbl-european_seabass-params}
+
+```{r get-params-atlantic_salmon}
+params <- read_excel(
+  file.path(rawdata_path, 'parameters_species.xlsx'),
+  sheet = "atlantic_salmon",
+  trim_ws = T, n_max = 26
+) %>%
+  clean_names() %>% 
+  select(used_in_script, value)
+
+params_atlantic_salmon_raw <- params$value
+names(params_atlantic_salmon_raw) <- params$used_in_script
+
+params_atlantic_salmon_calib <- qd_read(
+  file.path(prepdata_path, "species_parameters", 'species_parameters_atlantic_salmon.qs')
+)
+
+rm(params)
+```
+
+| Parameter | Raw value | Calibrated value | Source |
+|:-----:|:-----:|:-----:|:---------------------------------------------------------------------------|
+| a         | `r params_atlantic_salmon_raw["a"]`         | `r bold_if_diff(params_atlantic_salmon_raw["a"], params_atlantic_salmon_calib["a"])`                 | |
+| alpha     | `r params_atlantic_salmon_raw["alpha"]`     | `r bold_if_diff(params_atlantic_salmon_raw["alpha"], params_atlantic_salmon_calib["alpha"])`         | |
+| betac     | `r params_atlantic_salmon_raw["betac"]`     | `r bold_if_diff(params_atlantic_salmon_raw["betac"], params_atlantic_salmon_calib["betac"])`         | |
+| CS        | `r params_atlantic_salmon_raw["CS"]`        | `r bold_if_diff(params_atlantic_salmon_raw["CS"], params_atlantic_salmon_calib["CS"])`               | |
+| deltaImax | `r params_atlantic_salmon_raw["deltaImax"]` | `r bold_if_diff(params_atlantic_salmon_raw["deltaImax"], params_atlantic_salmon_calib["deltaImax"])` | |
+| deltaW    | `r params_atlantic_salmon_raw["deltaW"]`    | `r bold_if_diff(params_atlantic_salmon_raw["deltaW"], params_atlantic_salmon_calib["deltaW"])`       | |
+| eff       | `r params_atlantic_salmon_raw["eff"]`       | `r bold_if_diff(params_atlantic_salmon_raw["eff"], params_atlantic_salmon_calib["eff"])`             | |
+| epscarb   | `r params_atlantic_salmon_raw["epscarb"]`   | `r bold_if_diff(params_atlantic_salmon_raw["epscarb"], params_atlantic_salmon_calib["epscarb"])`     | |
+| epslip    | `r params_atlantic_salmon_raw["epslip"]`    | `r bold_if_diff(params_atlantic_salmon_raw["epslip"], params_atlantic_salmon_calib["epslip"])`       | |
+| epsO2     | `r params_atlantic_salmon_raw["epsO2"]`     | `r bold_if_diff(params_atlantic_salmon_raw["epsO2"], params_atlantic_salmon_calib["epsO2"])`         | |
+| epsprot   | `r params_atlantic_salmon_raw["epsprot"]`   | `r bold_if_diff(params_atlantic_salmon_raw["epsprot"], params_atlantic_salmon_calib["epsprot"])`     | |
+| gd        | `r params_atlantic_salmon_raw["gd"]`        | `r bold_if_diff(params_atlantic_salmon_raw["gd"], params_atlantic_salmon_calib["gd"])`               | |
+| k         | `r params_atlantic_salmon_raw["k"]`         | `r bold_if_diff(params_atlantic_salmon_raw["k"], params_atlantic_salmon_calib["k"])`                 | |
+| k0        | `r params_atlantic_salmon_raw["k0"]`        | `r bold_if_diff(params_atlantic_salmon_raw["k0"], params_atlantic_salmon_calib["k0"])`               | |
+| m         | `r params_atlantic_salmon_raw["m"]`         | `r bold_if_diff(params_atlantic_salmon_raw["m"], params_atlantic_salmon_calib["m"])`                 | |
+| meanImax  | `r params_atlantic_salmon_raw["meanImax"]`  | `r bold_if_diff(params_atlantic_salmon_raw["meanImax"], params_atlantic_salmon_calib["meanImax"])`   | |
+| meanW     | `r params_atlantic_salmon_raw["meanW"]`     | `r bold_if_diff(params_atlantic_salmon_raw["meanW"], params_atlantic_salmon_calib["meanW"])`         | |
+| mortmyt   | `r params_atlantic_salmon_raw["mortmyt"]`   | `r bold_if_diff(params_atlantic_salmon_raw["mortmyt"], params_atlantic_salmon_calib["mortmyt"])`     | |
+| n         | `r params_atlantic_salmon_raw["n"]`         | `r bold_if_diff(params_atlantic_salmon_raw["n"], params_atlantic_salmon_calib["n"])`                 | |
+| omega     | `r params_atlantic_salmon_raw["omega"]`     | `r bold_if_diff(params_atlantic_salmon_raw["omega"], params_atlantic_salmon_calib["omega"])`         | |
+| pk        | `r params_atlantic_salmon_raw["pk"]`        | `r bold_if_diff(params_atlantic_salmon_raw["pk"], params_atlantic_salmon_calib["pk"])`               | |
+| Taa       | `r params_atlantic_salmon_raw["Taa"]`       | `r bold_if_diff(params_atlantic_salmon_raw["Taa"], params_atlantic_salmon_calib["Taa"])`             | |
+| Tma       | `r params_atlantic_salmon_raw["Tma"]`       | `r bold_if_diff(params_atlantic_salmon_raw["Tma"], params_atlantic_salmon_calib["Tma"])`             | |
+| Toa       | `r params_atlantic_salmon_raw["Toa"]`       | `r bold_if_diff(params_atlantic_salmon_raw["Toa"], params_atlantic_salmon_calib["Toa"])`             | |
+
+: Raw and calibrated parameter values for the `atlantic_salmon` model. **Bold** values indicate parameters that changed during calibration. {#tbl-atlantic_salmon-params}
+
+```{r get-params-rainbow_trout}
+params <- read_excel(
+  file.path(rawdata_path, 'parameters_species.xlsx'),
+  sheet = "rainbow_trout",
+  trim_ws = T, n_max = 26
+) %>%
+  clean_names() %>% 
+  select(used_in_script, value)
+
+params_rainbow_trout_raw <- params$value
+names(params_rainbow_trout_raw) <- params$used_in_script
+
+params_rainbow_trout_calib <- qd_read(
+  file.path(prepdata_path, "species_parameters", 'species_parameters_rainbow_trout.qs')
+)
+
+rm(params)
+```
+
+| Parameter | Raw value | Calibrated value | Source |
+|:-----:|:-----:|:-----:|:---------------------------------------------------------------------------|
+| a         | `r params_rainbow_trout_raw["a"]`         | `r bold_if_diff(params_rainbow_trout_raw["a"], params_rainbow_trout_calib["a"])`                 | |
+| alpha     | `r params_rainbow_trout_raw["alpha"]`     | `r bold_if_diff(params_rainbow_trout_raw["alpha"], params_rainbow_trout_calib["alpha"])`         | |
+| betac     | `r params_rainbow_trout_raw["betac"]`     | `r bold_if_diff(params_rainbow_trout_raw["betac"], params_rainbow_trout_calib["betac"])`         | |
+| CS        | `r params_rainbow_trout_raw["CS"]`        | `r bold_if_diff(params_rainbow_trout_raw["CS"], params_rainbow_trout_calib["CS"])`               | |
+| deltaImax | `r params_rainbow_trout_raw["deltaImax"]` | `r bold_if_diff(params_rainbow_trout_raw["deltaImax"], params_rainbow_trout_calib["deltaImax"])` | |
+| deltaW    | `r params_rainbow_trout_raw["deltaW"]`    | `r bold_if_diff(params_rainbow_trout_raw["deltaW"], params_rainbow_trout_calib["deltaW"])`       | |
+| eff       | `r params_rainbow_trout_raw["eff"]`       | `r bold_if_diff(params_rainbow_trout_raw["eff"], params_rainbow_trout_calib["eff"])`             | |
+| epscarb   | `r params_rainbow_trout_raw["epscarb"]`   | `r bold_if_diff(params_rainbow_trout_raw["epscarb"], params_rainbow_trout_calib["epscarb"])`     | |
+| epslip    | `r params_rainbow_trout_raw["epslip"]`    | `r bold_if_diff(params_rainbow_trout_raw["epslip"], params_rainbow_trout_calib["epslip"])`       | |
+| epsO2     | `r params_rainbow_trout_raw["epsO2"]`     | `r bold_if_diff(params_rainbow_trout_raw["epsO2"], params_rainbow_trout_calib["epsO2"])`         | |
+| epsprot   | `r params_rainbow_trout_raw["epsprot"]`   | `r bold_if_diff(params_rainbow_trout_raw["epsprot"], params_rainbow_trout_calib["epsprot"])`     | |
+| gd        | `r params_rainbow_trout_raw["gd"]`        | `r bold_if_diff(params_rainbow_trout_raw["gd"], params_rainbow_trout_calib["gd"])`               | |
+| k         | `r params_rainbow_trout_raw["k"]`         | `r bold_if_diff(params_rainbow_trout_raw["k"], params_rainbow_trout_calib["k"])`                 | |
+| k0        | `r params_rainbow_trout_raw["k0"]`        | `r bold_if_diff(params_rainbow_trout_raw["k0"], params_rainbow_trout_calib["k0"])`               | |
+| m         | `r params_rainbow_trout_raw["m"]`         | `r bold_if_diff(params_rainbow_trout_raw["m"], params_rainbow_trout_calib["m"])`                 | |
+| meanImax  | `r params_rainbow_trout_raw["meanImax"]`  | `r bold_if_diff(params_rainbow_trout_raw["meanImax"], params_rainbow_trout_calib["meanImax"])`   | |
+| meanW     | `r params_rainbow_trout_raw["meanW"]`     | `r bold_if_diff(params_rainbow_trout_raw["meanW"], params_rainbow_trout_calib["meanW"])`         | |
+| mortmyt   | `r params_rainbow_trout_raw["mortmyt"]`   | `r bold_if_diff(params_rainbow_trout_raw["mortmyt"], params_rainbow_trout_calib["mortmyt"])`     | |
+| n         | `r params_rainbow_trout_raw["n"]`         | `r bold_if_diff(params_rainbow_trout_raw["n"], params_rainbow_trout_calib["n"])`                 | |
+| omega     | `r params_rainbow_trout_raw["omega"]`     | `r bold_if_diff(params_rainbow_trout_raw["omega"], params_rainbow_trout_calib["omega"])`         | |
+| pk        | `r params_rainbow_trout_raw["pk"]`        | `r bold_if_diff(params_rainbow_trout_raw["pk"], params_rainbow_trout_calib["pk"])`               | |
+| Taa       | `r params_rainbow_trout_raw["Taa"]`       | `r bold_if_diff(params_rainbow_trout_raw["Taa"], params_rainbow_trout_calib["Taa"])`             | |
+| Tma       | `r params_rainbow_trout_raw["Tma"]`       | `r bold_if_diff(params_rainbow_trout_raw["Tma"], params_rainbow_trout_calib["Tma"])`             | |
+| Toa       | `r params_rainbow_trout_raw["Toa"]`       | `r bold_if_diff(params_rainbow_trout_raw["Toa"], params_rainbow_trout_calib["Toa"])`             | |
+
+: Raw and calibrated parameter values for the `rainbow_trout` model. **Bold** values indicate parameters that changed during calibration. {#tbl-rainbow_trout-params}
+
+```{r get-params-drum_croaker}
+params <- read_excel(
+  file.path(rawdata_path, 'parameters_species.xlsx'),
+  sheet = "drum_croaker",
+  trim_ws = T, n_max = 26
+) %>%
+  clean_names() %>% 
+  select(used_in_script, value)
+
+params_drum_croaker_raw <- params$value
+names(params_drum_croaker_raw) <- params$used_in_script
+
+params_drum_croaker_calib <- qd_read(
+  file.path(prepdata_path, "species_parameters", 'species_parameters_drum_croaker.qs')
+)
+
+rm(params)
+```
+
+| Parameter | Raw value | Calibrated value | Source |
+|:-----:|:-----:|:-----:|:---------------------------------------------------------------------------|
+| a         | `r params_drum_croaker_raw["a"]`         | `r bold_if_diff(params_drum_croaker_raw["a"], params_drum_croaker_calib["a"])`                 | |
+| alpha     | `r params_drum_croaker_raw["alpha"]`     | `r bold_if_diff(params_drum_croaker_raw["alpha"], params_drum_croaker_calib["alpha"])`         | |
+| betac     | `r params_drum_croaker_raw["betac"]`     | `r bold_if_diff(params_drum_croaker_raw["betac"], params_drum_croaker_calib["betac"])`         | |
+| CS        | `r params_drum_croaker_raw["CS"]`        | `r bold_if_diff(params_drum_croaker_raw["CS"], params_drum_croaker_calib["CS"])`               | |
+| deltaImax | `r params_drum_croaker_raw["deltaImax"]` | `r bold_if_diff(params_drum_croaker_raw["deltaImax"], params_drum_croaker_calib["deltaImax"])` | |
+| deltaW    | `r params_drum_croaker_raw["deltaW"]`    | `r bold_if_diff(params_drum_croaker_raw["deltaW"], params_drum_croaker_calib["deltaW"])`       | |
+| eff       | `r params_drum_croaker_raw["eff"]`       | `r bold_if_diff(params_drum_croaker_raw["eff"], params_drum_croaker_calib["eff"])`             | |
+| epscarb   | `r params_drum_croaker_raw["epscarb"]`   | `r bold_if_diff(params_drum_croaker_raw["epscarb"], params_drum_croaker_calib["epscarb"])`     | |
+| epslip    | `r params_drum_croaker_raw["epslip"]`    | `r bold_if_diff(params_drum_croaker_raw["epslip"], params_drum_croaker_calib["epslip"])`       | |
+| epsO2     | `r params_drum_croaker_raw["epsO2"]`     | `r bold_if_diff(params_drum_croaker_raw["epsO2"], params_drum_croaker_calib["epsO2"])`         | |
+| epsprot   | `r params_drum_croaker_raw["epsprot"]`   | `r bold_if_diff(params_drum_croaker_raw["epsprot"], params_drum_croaker_calib["epsprot"])`     | |
+| gd        | `r params_drum_croaker_raw["gd"]`        | `r bold_if_diff(params_drum_croaker_raw["gd"], params_drum_croaker_calib["gd"])`               | |
+| k         | `r params_drum_croaker_raw["k"]`         | `r bold_if_diff(params_drum_croaker_raw["k"], params_drum_croaker_calib["k"])`                 | |
+| k0        | `r params_drum_croaker_raw["k0"]`        | `r bold_if_diff(params_drum_croaker_raw["k0"], params_drum_croaker_calib["k0"])`               | |
+| m         | `r params_drum_croaker_raw["m"]`         | `r bold_if_diff(params_drum_croaker_raw["m"], params_drum_croaker_calib["m"])`                 | |
+| meanImax  | `r params_drum_croaker_raw["meanImax"]`  | `r bold_if_diff(params_drum_croaker_raw["meanImax"], params_drum_croaker_calib["meanImax"])`   | |
+| meanW     | `r params_drum_croaker_raw["meanW"]`     | `r bold_if_diff(params_drum_croaker_raw["meanW"], params_drum_croaker_calib["meanW"])`         | |
+| mortmyt   | `r params_drum_croaker_raw["mortmyt"]`   | `r bold_if_diff(params_drum_croaker_raw["mortmyt"], params_drum_croaker_calib["mortmyt"])`     | |
+| n         | `r params_drum_croaker_raw["n"]`         | `r bold_if_diff(params_drum_croaker_raw["n"], params_drum_croaker_calib["n"])`                 | |
+| omega     | `r params_drum_croaker_raw["omega"]`     | `r bold_if_diff(params_drum_croaker_raw["omega"], params_drum_croaker_calib["omega"])`         | |
+| pk        | `r params_drum_croaker_raw["pk"]`        | `r bold_if_diff(params_drum_croaker_raw["pk"], params_drum_croaker_calib["pk"])`               | |
+| Taa       | `r params_drum_croaker_raw["Taa"]`       | `r bold_if_diff(params_drum_croaker_raw["Taa"], params_drum_croaker_calib["Taa"])`             | |
+| Tma       | `r params_drum_croaker_raw["Tma"]`       | `r bold_if_diff(params_drum_croaker_raw["Tma"], params_drum_croaker_calib["Tma"])`             | |
+| Toa       | `r params_drum_croaker_raw["Toa"]`       | `r bold_if_diff(params_drum_croaker_raw["Toa"], params_drum_croaker_calib["Toa"])`             | |
+
+: Raw and calibrated parameter values for the `drum_croaker` model. **Bold** values indicate parameters that changed during calibration. {#tbl-drum_croaker-params}
+
+```{r get-params-golden_pompano}
+params <- read_excel(
+  file.path(rawdata_path, 'parameters_species.xlsx'),
+  sheet = "golden_pompano",
+  trim_ws = T, n_max = 26
+) %>%
+  clean_names() %>% 
+  select(used_in_script, value)
+
+params_golden_pompano_raw <- params$value
+names(params_golden_pompano_raw) <- params$used_in_script
+
+params_golden_pompano_calib <- qd_read(
+  file.path(prepdata_path, "species_parameters", 'species_parameters_golden_pompano.qs')
+)
+
+rm(params)
+```
+
+| Parameter | Raw value | Calibrated value | Source |
+|:-----:|:-----:|:-----:|:---------------------------------------------------------------------------|
+| a         | `r params_golden_pompano_raw["a"]`         | `r bold_if_diff(params_golden_pompano_raw["a"], params_golden_pompano_calib["a"])`                 | |
+| alpha     | `r params_golden_pompano_raw["alpha"]`     | `r bold_if_diff(params_golden_pompano_raw["alpha"], params_golden_pompano_calib["alpha"])`         | |
+| betac     | `r params_golden_pompano_raw["betac"]`     | `r bold_if_diff(params_golden_pompano_raw["betac"], params_golden_pompano_calib["betac"])`         | |
+| CS        | `r params_golden_pompano_raw["CS"]`        | `r bold_if_diff(params_golden_pompano_raw["CS"], params_golden_pompano_calib["CS"])`               | |
+| deltaImax | `r params_golden_pompano_raw["deltaImax"]` | `r bold_if_diff(params_golden_pompano_raw["deltaImax"], params_golden_pompano_calib["deltaImax"])` | |
+| deltaW    | `r params_golden_pompano_raw["deltaW"]`    | `r bold_if_diff(params_golden_pompano_raw["deltaW"], params_golden_pompano_calib["deltaW"])`       | |
+| eff       | `r params_golden_pompano_raw["eff"]`       | `r bold_if_diff(params_golden_pompano_raw["eff"], params_golden_pompano_calib["eff"])`             | |
+| epscarb   | `r params_golden_pompano_raw["epscarb"]`   | `r bold_if_diff(params_golden_pompano_raw["epscarb"], params_golden_pompano_calib["epscarb"])`     | |
+| epslip    | `r params_golden_pompano_raw["epslip"]`    | `r bold_if_diff(params_golden_pompano_raw["epslip"], params_golden_pompano_calib["epslip"])`       | |
+| epsO2     | `r params_golden_pompano_raw["epsO2"]`     | `r bold_if_diff(params_golden_pompano_raw["epsO2"], params_golden_pompano_calib["epsO2"])`         | |
+| epsprot   | `r params_golden_pompano_raw["epsprot"]`   | `r bold_if_diff(params_golden_pompano_raw["epsprot"], params_golden_pompano_calib["epsprot"])`     | |
+| gd        | `r params_golden_pompano_raw["gd"]`        | `r bold_if_diff(params_golden_pompano_raw["gd"], params_golden_pompano_calib["gd"])`               | |
+| k         | `r params_golden_pompano_raw["k"]`         | `r bold_if_diff(params_golden_pompano_raw["k"], params_golden_pompano_calib["k"])`                 | |
+| k0        | `r params_golden_pompano_raw["k0"]`        | `r bold_if_diff(params_golden_pompano_raw["k0"], params_golden_pompano_calib["k0"])`               | |
+| m         | `r params_golden_pompano_raw["m"]`         | `r bold_if_diff(params_golden_pompano_raw["m"], params_golden_pompano_calib["m"])`                 | |
+| meanImax  | `r params_golden_pompano_raw["meanImax"]`  | `r bold_if_diff(params_golden_pompano_raw["meanImax"], params_golden_pompano_calib["meanImax"])`   | |
+| meanW     | `r params_golden_pompano_raw["meanW"]`     | `r bold_if_diff(params_golden_pompano_raw["meanW"], params_golden_pompano_calib["meanW"])`         | |
+| mortmyt   | `r params_golden_pompano_raw["mortmyt"]`   | `r bold_if_diff(params_golden_pompano_raw["mortmyt"], params_golden_pompano_calib["mortmyt"])`     | |
+| n         | `r params_golden_pompano_raw["n"]`         | `r bold_if_diff(params_golden_pompano_raw["n"], params_golden_pompano_calib["n"])`                 | |
+| omega     | `r params_golden_pompano_raw["omega"]`     | `r bold_if_diff(params_golden_pompano_raw["omega"], params_golden_pompano_calib["omega"])`         | |
+| pk        | `r params_golden_pompano_raw["pk"]`        | `r bold_if_diff(params_golden_pompano_raw["pk"], params_golden_pompano_calib["pk"])`               | |
+| Taa       | `r params_golden_pompano_raw["Taa"]`       | `r bold_if_diff(params_golden_pompano_raw["Taa"], params_golden_pompano_calib["Taa"])`             | |
+| Tma       | `r params_golden_pompano_raw["Tma"]`       | `r bold_if_diff(params_golden_pompano_raw["Tma"], params_golden_pompano_calib["Tma"])`             | |
+| Toa       | `r params_golden_pompano_raw["Toa"]`       | `r bold_if_diff(params_golden_pompano_raw["Toa"], params_golden_pompano_calib["Toa"])`             | |
+
+: Raw and calibrated parameter values for the `golden_pompano` model. **Bold** values indicate parameters that changed during calibration. {#tbl-golden_pompano-params}
+
+```{r get-params-grouper}
+params <- read_excel(
+  file.path(rawdata_path, 'parameters_species.xlsx'),
+  sheet = "grouper",
+  trim_ws = T, n_max = 26
+) %>%
+  clean_names() %>% 
+  select(used_in_script, value)
+
+params_grouper_raw <- params$value
+names(params_grouper_raw) <- params$used_in_script
+
+params_grouper_calib <- qd_read(
+  file.path(prepdata_path, "species_parameters", 'species_parameters_grouper.qs')
+)
+
+rm(params)
+```
+
+| Parameter | Raw value | Calibrated value | Source |
+|:-----:|:-----:|:-----:|:---------------------------------------------------------------------------|
+| a         | `r params_grouper_raw["a"]`         | `r bold_if_diff(params_grouper_raw["a"], params_grouper_calib["a"])`                 | |
+| alpha     | `r params_grouper_raw["alpha"]`     | `r bold_if_diff(params_grouper_raw["alpha"], params_grouper_calib["alpha"])`         | |
+| betac     | `r params_grouper_raw["betac"]`     | `r bold_if_diff(params_grouper_raw["betac"], params_grouper_calib["betac"])`         | |
+| CS        | `r params_grouper_raw["CS"]`        | `r bold_if_diff(params_grouper_raw["CS"], params_grouper_calib["CS"])`               | |
+| deltaImax | `r params_grouper_raw["deltaImax"]` | `r bold_if_diff(params_grouper_raw["deltaImax"], params_grouper_calib["deltaImax"])` | |
+| deltaW    | `r params_grouper_raw["deltaW"]`    | `r bold_if_diff(params_grouper_raw["deltaW"], params_grouper_calib["deltaW"])`       | |
+| eff       | `r params_grouper_raw["eff"]`       | `r bold_if_diff(params_grouper_raw["eff"], params_grouper_calib["eff"])`             | |
+| epscarb   | `r params_grouper_raw["epscarb"]`   | `r bold_if_diff(params_grouper_raw["epscarb"], params_grouper_calib["epscarb"])`     | |
+| epslip    | `r params_grouper_raw["epslip"]`    | `r bold_if_diff(params_grouper_raw["epslip"], params_grouper_calib["epslip"])`       | |
+| epsO2     | `r params_grouper_raw["epsO2"]`     | `r bold_if_diff(params_grouper_raw["epsO2"], params_grouper_calib["epsO2"])`         | |
+| epsprot   | `r params_grouper_raw["epsprot"]`   | `r bold_if_diff(params_grouper_raw["epsprot"], params_grouper_calib["epsprot"])`     | |
+| gd        | `r params_grouper_raw["gd"]`        | `r bold_if_diff(params_grouper_raw["gd"], params_grouper_calib["gd"])`               | |
+| k         | `r params_grouper_raw["k"]`         | `r bold_if_diff(params_grouper_raw["k"], params_grouper_calib["k"])`                 | |
+| k0        | `r params_grouper_raw["k0"]`        | `r bold_if_diff(params_grouper_raw["k0"], params_grouper_calib["k0"])`               | |
+| m         | `r params_grouper_raw["m"]`         | `r bold_if_diff(params_grouper_raw["m"], params_grouper_calib["m"])`                 | |
+| meanImax  | `r params_grouper_raw["meanImax"]`  | `r bold_if_diff(params_grouper_raw["meanImax"], params_grouper_calib["meanImax"])`   | |
+| meanW     | `r params_grouper_raw["meanW"]`     | `r bold_if_diff(params_grouper_raw["meanW"], params_grouper_calib["meanW"])`         | |
+| mortmyt   | `r params_grouper_raw["mortmyt"]`   | `r bold_if_diff(params_grouper_raw["mortmyt"], params_grouper_calib["mortmyt"])`     | |
+| n         | `r params_grouper_raw["n"]`         | `r bold_if_diff(params_grouper_raw["n"], params_grouper_calib["n"])`                 | |
+| omega     | `r params_grouper_raw["omega"]`     | `r bold_if_diff(params_grouper_raw["omega"], params_grouper_calib["omega"])`         | |
+| pk        | `r params_grouper_raw["pk"]`        | `r bold_if_diff(params_grouper_raw["pk"], params_grouper_calib["pk"])`               | |
+| Taa       | `r params_grouper_raw["Taa"]`       | `r bold_if_diff(params_grouper_raw["Taa"], params_grouper_calib["Taa"])`             | |
+| Tma       | `r params_grouper_raw["Tma"]`       | `r bold_if_diff(params_grouper_raw["Tma"], params_grouper_calib["Tma"])`             | |
+| Toa       | `r params_grouper_raw["Toa"]`       | `r bold_if_diff(params_grouper_raw["Toa"], params_grouper_calib["Toa"])`             | |
+
+: Raw and calibrated parameter values for the `grouper` model. **Bold** values indicate parameters that changed during calibration. {#tbl-grouper-params}
+
+```{r get-params-japanese_amberjack, eval = F}
+params <- read_excel(
+  file.path(rawdata_path, 'parameters_species.xlsx'),
+  sheet = "japanese_amberjack",
+  trim_ws = T, n_max = 26
+) %>%
+  clean_names() %>% 
+  select(used_in_script, value)
+
+params_japanese_amberjack_raw <- params$value
+names(params_japanese_amberjack_raw) <- params$used_in_script
+
+params_japanese_amberjack_calib <- qd_read(
+  file.path(prepdata_path, "species_parameters", 'species_parameters_japanese_amberjack.qs')
+)
+
+rm(params)
+```
+
+| Parameter | Raw value | Calibrated value | Source |
+|:-----:|:-----:|:-----:|:---------------------------------------------------------------------------|
+| a         | `r params_japanese_amberjack_raw["a"]`         | `r bold_if_diff(params_japanese_amberjack_raw["a"], params_japanese_amberjack_calib["a"])`                 | |
+| alpha     | `r params_japanese_amberjack_raw["alpha"]`     | `r bold_if_diff(params_japanese_amberjack_raw["alpha"], params_japanese_amberjack_calib["alpha"])`         | |
+| betac     | `r params_japanese_amberjack_raw["betac"]`     | `r bold_if_diff(params_japanese_amberjack_raw["betac"], params_japanese_amberjack_calib["betac"])`         | |
+| CS        | `r params_japanese_amberjack_raw["CS"]`        | `r bold_if_diff(params_japanese_amberjack_raw["CS"], params_japanese_amberjack_calib["CS"])`               | |
+| deltaImax | `r params_japanese_amberjack_raw["deltaImax"]` | `r bold_if_diff(params_japanese_amberjack_raw["deltaImax"], params_japanese_amberjack_calib["deltaImax"])` | |
+| deltaW    | `r params_japanese_amberjack_raw["deltaW"]`    | `r bold_if_diff(params_japanese_amberjack_raw["deltaW"], params_japanese_amberjack_calib["deltaW"])`       | |
+| eff       | `r params_japanese_amberjack_raw["eff"]`       | `r bold_if_diff(params_japanese_amberjack_raw["eff"], params_japanese_amberjack_calib["eff"])`             | |
+| epscarb   | `r params_japanese_amberjack_raw["epscarb"]`   | `r bold_if_diff(params_japanese_amberjack_raw["epscarb"], params_japanese_amberjack_calib["epscarb"])`     | |
+| epslip    | `r params_japanese_amberjack_raw["epslip"]`    | `r bold_if_diff(params_japanese_amberjack_raw["epslip"], params_japanese_amberjack_calib["epslip"])`       | |
+| epsO2     | `r params_japanese_amberjack_raw["epsO2"]`     | `r bold_if_diff(params_japanese_amberjack_raw["epsO2"], params_japanese_amberjack_calib["epsO2"])`         | |
+| epsprot   | `r params_japanese_amberjack_raw["epsprot"]`   | `r bold_if_diff(params_japanese_amberjack_raw["epsprot"], params_japanese_amberjack_calib["epsprot"])`     | |
+| gd        | `r params_japanese_amberjack_raw["gd"]`        | `r bold_if_diff(params_japanese_amberjack_raw["gd"], params_japanese_amberjack_calib["gd"])`               | |
+| k         | `r params_japanese_amberjack_raw["k"]`         | `r bold_if_diff(params_japanese_amberjack_raw["k"], params_japanese_amberjack_calib["k"])`                 | |
+| k0        | `r params_japanese_amberjack_raw["k0"]`        | `r bold_if_diff(params_japanese_amberjack_raw["k0"], params_japanese_amberjack_calib["k0"])`               | |
+| m         | `r params_japanese_amberjack_raw["m"]`         | `r bold_if_diff(params_japanese_amberjack_raw["m"], params_japanese_amberjack_calib["m"])`                 | |
+| meanImax  | `r params_japanese_amberjack_raw["meanImax"]`  | `r bold_if_diff(params_japanese_amberjack_raw["meanImax"], params_japanese_amberjack_calib["meanImax"])`   | |
+| meanW     | `r params_japanese_amberjack_raw["meanW"]`     | `r bold_if_diff(params_japanese_amberjack_raw["meanW"], params_japanese_amberjack_calib["meanW"])`         | |
+| mortmyt   | `r params_japanese_amberjack_raw["mortmyt"]`   | `r bold_if_diff(params_japanese_amberjack_raw["mortmyt"], params_japanese_amberjack_calib["mortmyt"])`     | |
+| n         | `r params_japanese_amberjack_raw["n"]`         | `r bold_if_diff(params_japanese_amberjack_raw["n"], params_japanese_amberjack_calib["n"])`                 | |
+| omega     | `r params_japanese_amberjack_raw["omega"]`     | `r bold_if_diff(params_japanese_amberjack_raw["omega"], params_japanese_amberjack_calib["omega"])`         | |
+| pk        | `r params_japanese_amberjack_raw["pk"]`        | `r bold_if_diff(params_japanese_amberjack_raw["pk"], params_japanese_amberjack_calib["pk"])`               | |
+| Taa       | `r params_japanese_amberjack_raw["Taa"]`       | `r bold_if_diff(params_japanese_amberjack_raw["Taa"], params_japanese_amberjack_calib["Taa"])`             | |
+| Tma       | `r params_japanese_amberjack_raw["Tma"]`       | `r bold_if_diff(params_japanese_amberjack_raw["Tma"], params_japanese_amberjack_calib["Tma"])`             | |
+| Toa       | `r params_japanese_amberjack_raw["Toa"]`       | `r bold_if_diff(params_japanese_amberjack_raw["Toa"], params_japanese_amberjack_calib["Toa"])`             | |
+
+: Raw and calibrated parameter values for the `japanese_amberjack` model. **Bold** values indicate parameters that changed during calibration. {#tbl-japanese_amberjack-params}
+
+```{r get-params-japanese_seabass, eval = F}
+params <- read_excel(
+  file.path(rawdata_path, 'parameters_species.xlsx'),
+  sheet = "japanese_seabass",
+  trim_ws = T, n_max = 26
+) %>%
+  clean_names() %>% 
+  select(used_in_script, value)
+
+params_japanese_seabass_raw <- params$value
+names(params_japanese_seabass_raw) <- params$used_in_script
+
+params_japanese_seabass_calib <- qd_read(
+  file.path(prepdata_path, "species_parameters", 'species_parameters_japanese_seabass.qs')
+)
+
+rm(params)
+```
+
+| Parameter | Raw value | Calibrated value | Source |
+|:-----:|:-----:|:-----:|:---------------------------------------------------------------------------|
+| a         | `r params_japanese_seabass_raw["a"]`         | `r bold_if_diff(params_japanese_seabass_raw["a"], params_japanese_seabass_calib["a"])`                 | |
+| alpha     | `r params_japanese_seabass_raw["alpha"]`     | `r bold_if_diff(params_japanese_seabass_raw["alpha"], params_japanese_seabass_calib["alpha"])`         | |
+| betac     | `r params_japanese_seabass_raw["betac"]`     | `r bold_if_diff(params_japanese_seabass_raw["betac"], params_japanese_seabass_calib["betac"])`         | |
+| CS        | `r params_japanese_seabass_raw["CS"]`        | `r bold_if_diff(params_japanese_seabass_raw["CS"], params_japanese_seabass_calib["CS"])`               | |
+| deltaImax | `r params_japanese_seabass_raw["deltaImax"]` | `r bold_if_diff(params_japanese_seabass_raw["deltaImax"], params_japanese_seabass_calib["deltaImax"])` | |
+| deltaW    | `r params_japanese_seabass_raw["deltaW"]`    | `r bold_if_diff(params_japanese_seabass_raw["deltaW"], params_japanese_seabass_calib["deltaW"])`       | |
+| eff       | `r params_japanese_seabass_raw["eff"]`       | `r bold_if_diff(params_japanese_seabass_raw["eff"], params_japanese_seabass_calib["eff"])`             | |
+| epscarb   | `r params_japanese_seabass_raw["epscarb"]`   | `r bold_if_diff(params_japanese_seabass_raw["epscarb"], params_japanese_seabass_calib["epscarb"])`     | |
+| epslip    | `r params_japanese_seabass_raw["epslip"]`    | `r bold_if_diff(params_japanese_seabass_raw["epslip"], params_japanese_seabass_calib["epslip"])`       | |
+| epsO2     | `r params_japanese_seabass_raw["epsO2"]`     | `r bold_if_diff(params_japanese_seabass_raw["epsO2"], params_japanese_seabass_calib["epsO2"])`         | |
+| epsprot   | `r params_japanese_seabass_raw["epsprot"]`   | `r bold_if_diff(params_japanese_seabass_raw["epsprot"], params_japanese_seabass_calib["epsprot"])`     | |
+| gd        | `r params_japanese_seabass_raw["gd"]`        | `r bold_if_diff(params_japanese_seabass_raw["gd"], params_japanese_seabass_calib["gd"])`               | |
+| k         | `r params_japanese_seabass_raw["k"]`         | `r bold_if_diff(params_japanese_seabass_raw["k"], params_japanese_seabass_calib["k"])`                 | |
+| k0        | `r params_japanese_seabass_raw["k0"]`        | `r bold_if_diff(params_japanese_seabass_raw["k0"], params_japanese_seabass_calib["k0"])`               | |
+| m         | `r params_japanese_seabass_raw["m"]`         | `r bold_if_diff(params_japanese_seabass_raw["m"], params_japanese_seabass_calib["m"])`                 | |
+| meanImax  | `r params_japanese_seabass_raw["meanImax"]`  | `r bold_if_diff(params_japanese_seabass_raw["meanImax"], params_japanese_seabass_calib["meanImax"])`   | |
+| meanW     | `r params_japanese_seabass_raw["meanW"]`     | `r bold_if_diff(params_japanese_seabass_raw["meanW"], params_japanese_seabass_calib["meanW"])`         | |
+| mortmyt   | `r params_japanese_seabass_raw["mortmyt"]`   | `r bold_if_diff(params_japanese_seabass_raw["mortmyt"], params_japanese_seabass_calib["mortmyt"])`     | |
+| n         | `r params_japanese_seabass_raw["n"]`         | `r bold_if_diff(params_japanese_seabass_raw["n"], params_japanese_seabass_calib["n"])`                 | |
+| omega     | `r params_japanese_seabass_raw["omega"]`     | `r bold_if_diff(params_japanese_seabass_raw["omega"], params_japanese_seabass_calib["omega"])`         | |
+| pk        | `r params_japanese_seabass_raw["pk"]`        | `r bold_if_diff(params_japanese_seabass_raw["pk"], params_japanese_seabass_calib["pk"])`               | |
+| Taa       | `r params_japanese_seabass_raw["Taa"]`       | `r bold_if_diff(params_japanese_seabass_raw["Taa"], params_japanese_seabass_calib["Taa"])`             | |
+| Tma       | `r params_japanese_seabass_raw["Tma"]`       | `r bold_if_diff(params_japanese_seabass_raw["Tma"], params_japanese_seabass_calib["Tma"])`             | |
+| Toa       | `r params_japanese_seabass_raw["Toa"]`       | `r bold_if_diff(params_japanese_seabass_raw["Toa"], params_japanese_seabass_calib["Toa"])`             | |
+
+: Raw and calibrated parameter values for the `japanese_seabass` model. **Bold** values indicate parameters that changed during calibration. {#tbl-japanese_seabass-params}
+
+```{r get-params-milkfish, eval = F}
+params <- read_excel(
+  file.path(rawdata_path, 'parameters_species.xlsx'),
+  sheet = "milkfish",
+  trim_ws = T, n_max = 26
+) %>%
+  clean_names() %>% 
+  select(used_in_script, value)
+
+params_milkfish_raw <- params$value
+names(params_milkfish_raw) <- params$used_in_script
+
+params_milkfish_calib <- qd_read(
+  file.path(prepdata_path, "species_parameters", 'species_parameters_milkfish.qs')
+)
+
+rm(params)
+```
+
+| Parameter | Raw value | Calibrated value | Source |
+|:-----:|:-----:|:-----:|:---------------------------------------------------------------------------|
+| a         | `r params_milkfish_raw["a"]`         | `r bold_if_diff(params_milkfish_raw["a"], params_milkfish_calib["a"])`                 | |
+| alpha     | `r params_milkfish_raw["alpha"]`     | `r bold_if_diff(params_milkfish_raw["alpha"], params_milkfish_calib["alpha"])`         | |
+| betac     | `r params_milkfish_raw["betac"]`     | `r bold_if_diff(params_milkfish_raw["betac"], params_milkfish_calib["betac"])`         | |
+| CS        | `r params_milkfish_raw["CS"]`        | `r bold_if_diff(params_milkfish_raw["CS"], params_milkfish_calib["CS"])`               | |
+| deltaImax | `r params_milkfish_raw["deltaImax"]` | `r bold_if_diff(params_milkfish_raw["deltaImax"], params_milkfish_calib["deltaImax"])` | |
+| deltaW    | `r params_milkfish_raw["deltaW"]`    | `r bold_if_diff(params_milkfish_raw["deltaW"], params_milkfish_calib["deltaW"])`       | |
+| eff       | `r params_milkfish_raw["eff"]`       | `r bold_if_diff(params_milkfish_raw["eff"], params_milkfish_calib["eff"])`             | |
+| epscarb   | `r params_milkfish_raw["epscarb"]`   | `r bold_if_diff(params_milkfish_raw["epscarb"], params_milkfish_calib["epscarb"])`     | |
+| epslip    | `r params_milkfish_raw["epslip"]`    | `r bold_if_diff(params_milkfish_raw["epslip"], params_milkfish_calib["epslip"])`       | |
+| epsO2     | `r params_milkfish_raw["epsO2"]`     | `r bold_if_diff(params_milkfish_raw["epsO2"], params_milkfish_calib["epsO2"])`         | |
+| epsprot   | `r params_milkfish_raw["epsprot"]`   | `r bold_if_diff(params_milkfish_raw["epsprot"], params_milkfish_calib["epsprot"])`     | |
+| gd        | `r params_milkfish_raw["gd"]`        | `r bold_if_diff(params_milkfish_raw["gd"], params_milkfish_calib["gd"])`               | |
+| k         | `r params_milkfish_raw["k"]`         | `r bold_if_diff(params_milkfish_raw["k"], params_milkfish_calib["k"])`                 | |
+| k0        | `r params_milkfish_raw["k0"]`        | `r bold_if_diff(params_milkfish_raw["k0"], params_milkfish_calib["k0"])`               | |
+| m         | `r params_milkfish_raw["m"]`         | `r bold_if_diff(params_milkfish_raw["m"], params_milkfish_calib["m"])`                 | |
+| meanImax  | `r params_milkfish_raw["meanImax"]`  | `r bold_if_diff(params_milkfish_raw["meanImax"], params_milkfish_calib["meanImax"])`   | |
+| meanW     | `r params_milkfish_raw["meanW"]`     | `r bold_if_diff(params_milkfish_raw["meanW"], params_milkfish_calib["meanW"])`         | |
+| mortmyt   | `r params_milkfish_raw["mortmyt"]`   | `r bold_if_diff(params_milkfish_raw["mortmyt"], params_milkfish_calib["mortmyt"])`     | |
+| n         | `r params_milkfish_raw["n"]`         | `r bold_if_diff(params_milkfish_raw["n"], params_milkfish_calib["n"])`                 | |
+| omega     | `r params_milkfish_raw["omega"]`     | `r bold_if_diff(params_milkfish_raw["omega"], params_milkfish_calib["omega"])`         | |
+| pk        | `r params_milkfish_raw["pk"]`        | `r bold_if_diff(params_milkfish_raw["pk"], params_milkfish_calib["pk"])`               | |
+| Taa       | `r params_milkfish_raw["Taa"]`       | `r bold_if_diff(params_milkfish_raw["Taa"], params_milkfish_calib["Taa"])`             | |
+| Tma       | `r params_milkfish_raw["Tma"]`       | `r bold_if_diff(params_milkfish_raw["Tma"], params_milkfish_calib["Tma"])`             | |
+| Toa       | `r params_milkfish_raw["Toa"]`       | `r bold_if_diff(params_milkfish_raw["Toa"], params_milkfish_calib["Toa"])`             | |
+
+: Raw and calibrated parameter values for the `milkfish` model. **Bold** values indicate parameters that changed during calibration. {#tbl-milkfish-params}
+
+```{r get-params-nile_tilapia, eval = F}
+params <- read_excel(
+  file.path(rawdata_path, 'parameters_species.xlsx'),
+  sheet = "nile_tilapia",
+  trim_ws = T, n_max = 26
+) %>%
+  clean_names() %>% 
+  select(used_in_script, value)
+
+params_nile_tilapia_raw <- params$value
+names(params_nile_tilapia_raw) <- params$used_in_script
+
+params_nile_tilapia_calib <- qd_read(
+  file.path(prepdata_path, "species_parameters", 'species_parameters_nile_tilapia.qs')
+)
+
+rm(params)
+```
+
+| Parameter | Raw value | Calibrated value | Source |
+|:-----:|:-----:|:-----:|:---------------------------------------------------------------------------|
+| a         | `r params_nile_tilapia_raw["a"]`         | `r bold_if_diff(params_nile_tilapia_raw["a"], params_nile_tilapia_calib["a"])`                 | |
+| alpha     | `r params_nile_tilapia_raw["alpha"]`     | `r bold_if_diff(params_nile_tilapia_raw["alpha"], params_nile_tilapia_calib["alpha"])`         | |
+| betac     | `r params_nile_tilapia_raw["betac"]`     | `r bold_if_diff(params_nile_tilapia_raw["betac"], params_nile_tilapia_calib["betac"])`         | |
+| CS        | `r params_nile_tilapia_raw["CS"]`        | `r bold_if_diff(params_nile_tilapia_raw["CS"], params_nile_tilapia_calib["CS"])`               | |
+| deltaImax | `r params_nile_tilapia_raw["deltaImax"]` | `r bold_if_diff(params_nile_tilapia_raw["deltaImax"], params_nile_tilapia_calib["deltaImax"])` | |
+| deltaW    | `r params_nile_tilapia_raw["deltaW"]`    | `r bold_if_diff(params_nile_tilapia_raw["deltaW"], params_nile_tilapia_calib["deltaW"])`       | |
+| eff       | `r params_nile_tilapia_raw["eff"]`       | `r bold_if_diff(params_nile_tilapia_raw["eff"], params_nile_tilapia_calib["eff"])`             | |
+| epscarb   | `r params_nile_tilapia_raw["epscarb"]`   | `r bold_if_diff(params_nile_tilapia_raw["epscarb"], params_nile_tilapia_calib["epscarb"])`     | |
+| epslip    | `r params_nile_tilapia_raw["epslip"]`    | `r bold_if_diff(params_nile_tilapia_raw["epslip"], params_nile_tilapia_calib["epslip"])`       | |
+| epsO2     | `r params_nile_tilapia_raw["epsO2"]`     | `r bold_if_diff(params_nile_tilapia_raw["epsO2"], params_nile_tilapia_calib["epsO2"])`         | |
+| epsprot   | `r params_nile_tilapia_raw["epsprot"]`   | `r bold_if_diff(params_nile_tilapia_raw["epsprot"], params_nile_tilapia_calib["epsprot"])`     | |
+| gd        | `r params_nile_tilapia_raw["gd"]`        | `r bold_if_diff(params_nile_tilapia_raw["gd"], params_nile_tilapia_calib["gd"])`               | |
+| k         | `r params_nile_tilapia_raw["k"]`         | `r bold_if_diff(params_nile_tilapia_raw["k"], params_nile_tilapia_calib["k"])`                 | |
+| k0        | `r params_nile_tilapia_raw["k0"]`        | `r bold_if_diff(params_nile_tilapia_raw["k0"], params_nile_tilapia_calib["k0"])`               | |
+| m         | `r params_nile_tilapia_raw["m"]`         | `r bold_if_diff(params_nile_tilapia_raw["m"], params_nile_tilapia_calib["m"])`                 | |
+| meanImax  | `r params_nile_tilapia_raw["meanImax"]`  | `r bold_if_diff(params_nile_tilapia_raw["meanImax"], params_nile_tilapia_calib["meanImax"])`   | |
+| meanW     | `r params_nile_tilapia_raw["meanW"]`     | `r bold_if_diff(params_nile_tilapia_raw["meanW"], params_nile_tilapia_calib["meanW"])`         | |
+| mortmyt   | `r params_nile_tilapia_raw["mortmyt"]`   | `r bold_if_diff(params_nile_tilapia_raw["mortmyt"], params_nile_tilapia_calib["mortmyt"])`     | |
+| n         | `r params_nile_tilapia_raw["n"]`         | `r bold_if_diff(params_nile_tilapia_raw["n"], params_nile_tilapia_calib["n"])`                 | |
+| omega     | `r params_nile_tilapia_raw["omega"]`     | `r bold_if_diff(params_nile_tilapia_raw["omega"], params_nile_tilapia_calib["omega"])`         | |
+| pk        | `r params_nile_tilapia_raw["pk"]`        | `r bold_if_diff(params_nile_tilapia_raw["pk"], params_nile_tilapia_calib["pk"])`               | |
+| Taa       | `r params_nile_tilapia_raw["Taa"]`       | `r bold_if_diff(params_nile_tilapia_raw["Taa"], params_nile_tilapia_calib["Taa"])`             | |
+| Tma       | `r params_nile_tilapia_raw["Tma"]`       | `r bold_if_diff(params_nile_tilapia_raw["Tma"], params_nile_tilapia_calib["Tma"])`             | |
+| Toa       | `r params_nile_tilapia_raw["Toa"]`       | `r bold_if_diff(params_nile_tilapia_raw["Toa"], params_nile_tilapia_calib["Toa"])`             | |
+
+: Raw and calibrated parameter values for the `nile_tilapia` model. **Bold** values indicate parameters that changed during calibration. {#tbl-nile_tilapia-params}
+
+```{r get-params-olive_flounder, eval = F}
+params <- read_excel(
+  file.path(rawdata_path, 'parameters_species.xlsx'),
+  sheet = "olive_flounder",
+  trim_ws = T, n_max = 26
+) %>%
+  clean_names() %>%
+  select(used_in_script, value)
+
+params_olive_flounder_raw <- params$value
+names(params_olive_flounder_raw) <- params$used_in_script
+
+params_olive_flounder_calib <- qd_read(
+  file.path(prepdata_path, "species_parameters", 'species_parameters_olive_flounder.qs')
+)
+
+rm(params)
+```
+
+| Parameter | Raw value | Calibrated value | Source |
+|:-----:|:-----:|:-----:|:---------------------------------------------------------------------------|
+| a         | `r params_olive_flounder_raw["a"]`         | `r bold_if_diff(params_olive_flounder_raw["a"], params_olive_flounder_calib["a"])`                 | |
+| alpha     | `r params_olive_flounder_raw["alpha"]`     | `r bold_if_diff(params_olive_flounder_raw["alpha"], params_olive_flounder_calib["alpha"])`         | |
+| betac     | `r params_olive_flounder_raw["betac"]`     | `r bold_if_diff(params_olive_flounder_raw["betac"], params_olive_flounder_calib["betac"])`         | |
+| CS        | `r params_olive_flounder_raw["CS"]`        | `r bold_if_diff(params_olive_flounder_raw["CS"], params_olive_flounder_calib["CS"])`               | |
+| deltaImax | `r params_olive_flounder_raw["deltaImax"]` | `r bold_if_diff(params_olive_flounder_raw["deltaImax"], params_olive_flounder_calib["deltaImax"])` | |
+| deltaW    | `r params_olive_flounder_raw["deltaW"]`    | `r bold_if_diff(params_olive_flounder_raw["deltaW"], params_olive_flounder_calib["deltaW"])`       | |
+| eff       | `r params_olive_flounder_raw["eff"]`       | `r bold_if_diff(params_olive_flounder_raw["eff"], params_olive_flounder_calib["eff"])`             | |
+| epscarb   | `r params_olive_flounder_raw["epscarb"]`   | `r bold_if_diff(params_olive_flounder_raw["epscarb"], params_olive_flounder_calib["epscarb"])`     | |
+| epslip    | `r params_olive_flounder_raw["epslip"]`    | `r bold_if_diff(params_olive_flounder_raw["epslip"], params_olive_flounder_calib["epslip"])`       | |
+| epsO2     | `r params_olive_flounder_raw["epsO2"]`     | `r bold_if_diff(params_olive_flounder_raw["epsO2"], params_olive_flounder_calib["epsO2"])`         | |
+| epsprot   | `r params_olive_flounder_raw["epsprot"]`   | `r bold_if_diff(params_olive_flounder_raw["epsprot"], params_olive_flounder_calib["epsprot"])`     | |
+| gd        | `r params_olive_flounder_raw["gd"]`        | `r bold_if_diff(params_olive_flounder_raw["gd"], params_olive_flounder_calib["gd"])`               | |
+| k         | `r params_olive_flounder_raw["k"]`         | `r bold_if_diff(params_olive_flounder_raw["k"], params_olive_flounder_calib["k"])`                 | |
+| k0        | `r params_olive_flounder_raw["k0"]`        | `r bold_if_diff(params_olive_flounder_raw["k0"], params_olive_flounder_calib["k0"])`               | |
+| m         | `r params_olive_flounder_raw["m"]`         | `r bold_if_diff(params_olive_flounder_raw["m"], params_olive_flounder_calib["m"])`                 | |
+| meanImax  | `r params_olive_flounder_raw["meanImax"]`  | `r bold_if_diff(params_olive_flounder_raw["meanImax"], params_olive_flounder_calib["meanImax"])`   | |
+| meanW     | `r params_olive_flounder_raw["meanW"]`     | `r bold_if_diff(params_olive_flounder_raw["meanW"], params_olive_flounder_calib["meanW"])`         | |
+| mortmyt   | `r params_olive_flounder_raw["mortmyt"]`   | `r bold_if_diff(params_olive_flounder_raw["mortmyt"], params_olive_flounder_calib["mortmyt"])`     | |
+| n         | `r params_olive_flounder_raw["n"]`         | `r bold_if_diff(params_olive_flounder_raw["n"], params_olive_flounder_calib["n"])`                 | |
+| omega     | `r params_olive_flounder_raw["omega"]`     | `r bold_if_diff(params_olive_flounder_raw["omega"], params_olive_flounder_calib["omega"])`         | |
+| pk        | `r params_olive_flounder_raw["pk"]`        | `r bold_if_diff(params_olive_flounder_raw["pk"], params_olive_flounder_calib["pk"])`               | |
+| Taa       | `r params_olive_flounder_raw["Taa"]`       | `r bold_if_diff(params_olive_flounder_raw["Taa"], params_olive_flounder_calib["Taa"])`             | |
+| Tma       | `r params_olive_flounder_raw["Tma"]`       | `r bold_if_diff(params_olive_flounder_raw["Tma"], params_olive_flounder_calib["Tma"])`             | |
+| Toa       | `r params_olive_flounder_raw["Toa"]`       | `r bold_if_diff(params_olive_flounder_raw["Toa"], params_olive_flounder_calib["Toa"])`             | |
+
+: Raw and calibrated parameter values for the `olive_flounder` model. **Bold** values indicate parameters that changed during calibration. {#tbl-olive_flounder-params}
+
+```{r get-params-tuna, eval = F}
+params <- read_excel(
+  file.path(rawdata_path, 'parameters_species.xlsx'),
+  sheet = "tuna",
+  trim_ws = T, n_max = 26
+) %>%
+  clean_names() %>%
+  select(used_in_script, value)
+
+params_tuna_raw <- params$value
+names(params_tuna_raw) <- params$used_in_script
+
+params_tuna_calib <- qd_read(
+  file.path(prepdata_path, "species_parameters", 'species_parameters_tuna.qs')
+)
+
+rm(params)
+```
+
+| Parameter | Raw value | Calibrated value | Source |
+|:-----:|:-----:|:-----:|:---------------------------------------------------------------------------|
+| a         | `r params_tuna_raw["a"]`         | `r bold_if_diff(params_tuna_raw["a"], params_tuna_calib["a"])`                 | |
+| alpha     | `r params_tuna_raw["alpha"]`     | `r bold_if_diff(params_tuna_raw["alpha"], params_tuna_calib["alpha"])`         | |
+| betac     | `r params_tuna_raw["betac"]`     | `r bold_if_diff(params_tuna_raw["betac"], params_tuna_calib["betac"])`         | |
+| CS        | `r params_tuna_raw["CS"]`        | `r bold_if_diff(params_tuna_raw["CS"], params_tuna_calib["CS"])`               | |
+| deltaImax | `r params_tuna_raw["deltaImax"]` | `r bold_if_diff(params_tuna_raw["deltaImax"], params_tuna_calib["deltaImax"])` | |
+| deltaW    | `r params_tuna_raw["deltaW"]`    | `r bold_if_diff(params_tuna_raw["deltaW"], params_tuna_calib["deltaW"])`       | |
+| eff       | `r params_tuna_raw["eff"]`       | `r bold_if_diff(params_tuna_raw["eff"], params_tuna_calib["eff"])`             | |
+| epscarb   | `r params_tuna_raw["epscarb"]`   | `r bold_if_diff(params_tuna_raw["epscarb"], params_tuna_calib["epscarb"])`     | |
+| epslip    | `r params_tuna_raw["epslip"]`    | `r bold_if_diff(params_tuna_raw["epslip"], params_tuna_calib["epslip"])`       | |
+| epsO2     | `r params_tuna_raw["epsO2"]`     | `r bold_if_diff(params_tuna_raw["epsO2"], params_tuna_calib["epsO2"])`         | |
+| epsprot   | `r params_tuna_raw["epsprot"]`   | `r bold_if_diff(params_tuna_raw["epsprot"], params_tuna_calib["epsprot"])`     | |
+| gd        | `r params_tuna_raw["gd"]`        | `r bold_if_diff(params_tuna_raw["gd"], params_tuna_calib["gd"])`               | |
+| k         | `r params_tuna_raw["k"]`         | `r bold_if_diff(params_tuna_raw["k"], params_tuna_calib["k"])`                 | |
+| k0        | `r params_tuna_raw["k0"]`        | `r bold_if_diff(params_tuna_raw["k0"], params_tuna_calib["k0"])`               | |
+| m         | `r params_tuna_raw["m"]`         | `r bold_if_diff(params_tuna_raw["m"], params_tuna_calib["m"])`                 | |
+| meanImax  | `r params_tuna_raw["meanImax"]`  | `r bold_if_diff(params_tuna_raw["meanImax"], params_tuna_calib["meanImax"])`   | |
+| meanW     | `r params_tuna_raw["meanW"]`     | `r bold_if_diff(params_tuna_raw["meanW"], params_tuna_calib["meanW"])`         | |
+| mortmyt   | `r params_tuna_raw["mortmyt"]`   | `r bold_if_diff(params_tuna_raw["mortmyt"], params_tuna_calib["mortmyt"])`     | |
+| n         | `r params_tuna_raw["n"]`         | `r bold_if_diff(params_tuna_raw["n"], params_tuna_calib["n"])`                 | |
+| omega     | `r params_tuna_raw["omega"]`     | `r bold_if_diff(params_tuna_raw["omega"], params_tuna_calib["omega"])`         | |
+| pk        | `r params_tuna_raw["pk"]`        | `r bold_if_diff(params_tuna_raw["pk"], params_tuna_calib["pk"])`               | |
+| Taa       | `r params_tuna_raw["Taa"]`       | `r bold_if_diff(params_tuna_raw["Taa"], params_tuna_calib["Taa"])`             | |
+| Tma       | `r params_tuna_raw["Tma"]`       | `r bold_if_diff(params_tuna_raw["Tma"], params_tuna_calib["Tma"])`             | |
+| Toa       | `r params_tuna_raw["Toa"]`       | `r bold_if_diff(params_tuna_raw["Toa"], params_tuna_calib["Toa"])`             | |
+
+: Raw and calibrated parameter values for the `tuna` model. **Bold** values indicate parameters that changed during calibration. {#tbl-tuna-params}
+
+```{r get-params-abalone, eval = F}
+params <- read_excel(
+  file.path(rawdata_path, 'parameters_species.xlsx'),
+  sheet = "abalone",
+  trim_ws = T, n_max = 26
+) %>%
+  clean_names() %>%
+  select(used_in_script, value)
+
+params_abalone_raw <- params$value
+names(params_abalone_raw) <- params$used_in_script
+
+params_abalone_calib <- qd_read(
+  file.path(prepdata_path, "species_parameters", 'species_parameters_abalone.qs')
+)
+
+rm(params)
+```
+
+| Parameter | Raw value | Calibrated value | Source |
+|:-----:|:-----:|:-----:|:---------------------------------------------------------------------------|
+| a         | `r params_abalone_raw["a"]`         | `r bold_if_diff(params_abalone_raw["a"], params_abalone_calib["a"])`                 | |
+| alpha     | `r params_abalone_raw["alpha"]`     | `r bold_if_diff(params_abalone_raw["alpha"], params_abalone_calib["alpha"])`         | |
+| betac     | `r params_abalone_raw["betac"]`     | `r bold_if_diff(params_abalone_raw["betac"], params_abalone_calib["betac"])`         | |
+| CS        | `r params_abalone_raw["CS"]`        | `r bold_if_diff(params_abalone_raw["CS"], params_abalone_calib["CS"])`               | |
+| deltaImax | `r params_abalone_raw["deltaImax"]` | `r bold_if_diff(params_abalone_raw["deltaImax"], params_abalone_calib["deltaImax"])` | |
+| deltaW    | `r params_abalone_raw["deltaW"]`    | `r bold_if_diff(params_abalone_raw["deltaW"], params_abalone_calib["deltaW"])`       | |
+| eff       | `r params_abalone_raw["eff"]`       | `r bold_if_diff(params_abalone_raw["eff"], params_abalone_calib["eff"])`             | |
+| epscarb   | `r params_abalone_raw["epscarb"]`   | `r bold_if_diff(params_abalone_raw["epscarb"], params_abalone_calib["epscarb"])`     | |
+| epslip    | `r params_abalone_raw["epslip"]`    | `r bold_if_diff(params_abalone_raw["epslip"], params_abalone_calib["epslip"])`       | |
+| epsO2     | `r params_abalone_raw["epsO2"]`     | `r bold_if_diff(params_abalone_raw["epsO2"], params_abalone_calib["epsO2"])`         | |
+| epsprot   | `r params_abalone_raw["epsprot"]`   | `r bold_if_diff(params_abalone_raw["epsprot"], params_abalone_calib["epsprot"])`     | |
+| gd        | `r params_abalone_raw["gd"]`        | `r bold_if_diff(params_abalone_raw["gd"], params_abalone_calib["gd"])`               | |
+| k         | `r params_abalone_raw["k"]`         | `r bold_if_diff(params_abalone_raw["k"], params_abalone_calib["k"])`                 | |
+| k0        | `r params_abalone_raw["k0"]`        | `r bold_if_diff(params_abalone_raw["k0"], params_abalone_calib["k0"])`               | |
+| m         | `r params_abalone_raw["m"]`         | `r bold_if_diff(params_abalone_raw["m"], params_abalone_calib["m"])`                 | |
+| meanImax  | `r params_abalone_raw["meanImax"]`  | `r bold_if_diff(params_abalone_raw["meanImax"], params_abalone_calib["meanImax"])`   | |
+| meanW     | `r params_abalone_raw["meanW"]`     | `r bold_if_diff(params_abalone_raw["meanW"], params_abalone_calib["meanW"])`         | |
+| mortmyt   | `r params_abalone_raw["mortmyt"]`   | `r bold_if_diff(params_abalone_raw["mortmyt"], params_abalone_calib["mortmyt"])`     | |
+| n         | `r params_abalone_raw["n"]`         | `r bold_if_diff(params_abalone_raw["n"], params_abalone_calib["n"])`                 | |
+| omega     | `r params_abalone_raw["omega"]`     | `r bold_if_diff(params_abalone_raw["omega"], params_abalone_calib["omega"])`         | |
+| pk        | `r params_abalone_raw["pk"]`        | `r bold_if_diff(params_abalone_raw["pk"], params_abalone_calib["pk"])`               | |
+| Taa       | `r params_abalone_raw["Taa"]`       | `r bold_if_diff(params_abalone_raw["Taa"], params_abalone_calib["Taa"])`             | |
+| Tma       | `r params_abalone_raw["Tma"]`       | `r bold_if_diff(params_abalone_raw["Tma"], params_abalone_calib["Tma"])`             | |
+| Toa       | `r params_abalone_raw["Toa"]`       | `r bold_if_diff(params_abalone_raw["Toa"], params_abalone_calib["Toa"])`             | |
+
+: Raw and calibrated parameter values for the `abalone` model. **Bold** values indicate parameters that changed during calibration. {#tbl-abalone-params}
+
+```{r get-params-mud_crab, eval = F}
+params <- read_excel(
+  file.path(rawdata_path, 'parameters_species.xlsx'),
+  sheet = "mud_crab",
+  trim_ws = T, n_max = 26
+) %>%
+  clean_names() %>%
+  select(used_in_script, value)
+
+params_mud_crab_raw <- params$value
+names(params_mud_crab_raw) <- params$used_in_script
+
+params_mud_crab_calib <- qd_read(
+  file.path(prepdata_path, "species_parameters", 'species_parameters_mud_crab.qs')
+)
+
+rm(params)
+```
+
+| Parameter | Raw value | Calibrated value | Source |
+|:-----:|:-----:|:-----:|:---------------------------------------------------------------------------|
+| a         | `r params_mud_crab_raw["a"]`         | `r bold_if_diff(params_mud_crab_raw["a"], params_mud_crab_calib["a"])`                 | |
+| alpha     | `r params_mud_crab_raw["alpha"]`     | `r bold_if_diff(params_mud_crab_raw["alpha"], params_mud_crab_calib["alpha"])`         | |
+| betac     | `r params_mud_crab_raw["betac"]`     | `r bold_if_diff(params_mud_crab_raw["betac"], params_mud_crab_calib["betac"])`         | |
+| CS        | `r params_mud_crab_raw["CS"]`        | `r bold_if_diff(params_mud_crab_raw["CS"], params_mud_crab_calib["CS"])`               | |
+| deltaImax | `r params_mud_crab_raw["deltaImax"]` | `r bold_if_diff(params_mud_crab_raw["deltaImax"], params_mud_crab_calib["deltaImax"])` | |
+| deltaW    | `r params_mud_crab_raw["deltaW"]`    | `r bold_if_diff(params_mud_crab_raw["deltaW"], params_mud_crab_calib["deltaW"])`       | |
+| eff       | `r params_mud_crab_raw["eff"]`       | `r bold_if_diff(params_mud_crab_raw["eff"], params_mud_crab_calib["eff"])`             | |
+| epscarb   | `r params_mud_crab_raw["epscarb"]`   | `r bold_if_diff(params_mud_crab_raw["epscarb"], params_mud_crab_calib["epscarb"])`     | |
+| epslip    | `r params_mud_crab_raw["epslip"]`    | `r bold_if_diff(params_mud_crab_raw["epslip"], params_mud_crab_calib["epslip"])`       | |
+| epsO2     | `r params_mud_crab_raw["epsO2"]`     | `r bold_if_diff(params_mud_crab_raw["epsO2"], params_mud_crab_calib["epsO2"])`         | |
+| epsprot   | `r params_mud_crab_raw["epsprot"]`   | `r bold_if_diff(params_mud_crab_raw["epsprot"], params_mud_crab_calib["epsprot"])`     | |
+| gd        | `r params_mud_crab_raw["gd"]`        | `r bold_if_diff(params_mud_crab_raw["gd"], params_mud_crab_calib["gd"])`               | |
+| k         | `r params_mud_crab_raw["k"]`         | `r bold_if_diff(params_mud_crab_raw["k"], params_mud_crab_calib["k"])`                 | |
+| k0        | `r params_mud_crab_raw["k0"]`        | `r bold_if_diff(params_mud_crab_raw["k0"], params_mud_crab_calib["k0"])`               | |
+| m         | `r params_mud_crab_raw["m"]`         | `r bold_if_diff(params_mud_crab_raw["m"], params_mud_crab_calib["m"])`                 | |
+| meanImax  | `r params_mud_crab_raw["meanImax"]`  | `r bold_if_diff(params_mud_crab_raw["meanImax"], params_mud_crab_calib["meanImax"])`   | |
+| meanW     | `r params_mud_crab_raw["meanW"]`     | `r bold_if_diff(params_mud_crab_raw["meanW"], params_mud_crab_calib["meanW"])`         | |
+| mortmyt   | `r params_mud_crab_raw["mortmyt"]`   | `r bold_if_diff(params_mud_crab_raw["mortmyt"], params_mud_crab_calib["mortmyt"])`     | |
+| n         | `r params_mud_crab_raw["n"]`         | `r bold_if_diff(params_mud_crab_raw["n"], params_mud_crab_calib["n"])`                 | |
+| omega     | `r params_mud_crab_raw["omega"]`     | `r bold_if_diff(params_mud_crab_raw["omega"], params_mud_crab_calib["omega"])`         | |
+| pk        | `r params_mud_crab_raw["pk"]`        | `r bold_if_diff(params_mud_crab_raw["pk"], params_mud_crab_calib["pk"])`               | |
+| Taa       | `r params_mud_crab_raw["Taa"]`       | `r bold_if_diff(params_mud_crab_raw["Taa"], params_mud_crab_calib["Taa"])`             | |
+| Tma       | `r params_mud_crab_raw["Tma"]`       | `r bold_if_diff(params_mud_crab_raw["Tma"], params_mud_crab_calib["Tma"])`             | |
+| Toa       | `r params_mud_crab_raw["Toa"]`       | `r bold_if_diff(params_mud_crab_raw["Toa"], params_mud_crab_calib["Toa"])`             | |
+
+: Raw and calibrated parameter values for the `mud_crab` model. **Bold** values indicate parameters that changed during calibration. {#tbl-mud_crab-params}
+
+```{r get-params-whiteleg_shrimp, eval = F}
+params <- read_excel(
+  file.path(rawdata_path, 'parameters_species.xlsx'),
+  sheet = "whiteleg_shrimp",
+  trim_ws = T, n_max = 26
+) %>%
+  clean_names() %>%
+  select(used_in_script, value)
+
+params_whiteleg_shrimp_raw <- params$value
+names(params_whiteleg_shrimp_raw) <- params$used_in_script
+
+params_whiteleg_shrimp_calib <- qd_read(
+  file.path(prepdata_path, "species_parameters", 'species_parameters_whiteleg_shrimp.qs')
+)
+
+rm(params)
+```
+
+| Parameter | Raw value | Calibrated value | Source |
+|:-----:|:-----:|:-----:|:---------------------------------------------------------------------------|
+| a         | `r params_whiteleg_shrimp_raw["a"]`         | `r bold_if_diff(params_whiteleg_shrimp_raw["a"], params_whiteleg_shrimp_calib["a"])`                 | |
+| alpha     | `r params_whiteleg_shrimp_raw["alpha"]`     | `r bold_if_diff(params_whiteleg_shrimp_raw["alpha"], params_whiteleg_shrimp_calib["alpha"])`         | |
+| betac     | `r params_whiteleg_shrimp_raw["betac"]`     | `r bold_if_diff(params_whiteleg_shrimp_raw["betac"], params_whiteleg_shrimp_calib["betac"])`         | |
+| CS        | `r params_whiteleg_shrimp_raw["CS"]`        | `r bold_if_diff(params_whiteleg_shrimp_raw["CS"], params_whiteleg_shrimp_calib["CS"])`               | |
+| deltaImax | `r params_whiteleg_shrimp_raw["deltaImax"]` | `r bold_if_diff(params_whiteleg_shrimp_raw["deltaImax"], params_whiteleg_shrimp_calib["deltaImax"])` | |
+| deltaW    | `r params_whiteleg_shrimp_raw["deltaW"]`    | `r bold_if_diff(params_whiteleg_shrimp_raw["deltaW"], params_whiteleg_shrimp_calib["deltaW"])`       | |
+| eff       | `r params_whiteleg_shrimp_raw["eff"]`       | `r bold_if_diff(params_whiteleg_shrimp_raw["eff"], params_whiteleg_shrimp_calib["eff"])`             | |
+| epscarb   | `r params_whiteleg_shrimp_raw["epscarb"]`   | `r bold_if_diff(params_whiteleg_shrimp_raw["epscarb"], params_whiteleg_shrimp_calib["epscarb"])`     | |
+| epslip    | `r params_whiteleg_shrimp_raw["epslip"]`    | `r bold_if_diff(params_whiteleg_shrimp_raw["epslip"], params_whiteleg_shrimp_calib["epslip"])`       | |
+| epsO2     | `r params_whiteleg_shrimp_raw["epsO2"]`     | `r bold_if_diff(params_whiteleg_shrimp_raw["epsO2"], params_whiteleg_shrimp_calib["epsO2"])`         | |
+| epsprot   | `r params_whiteleg_shrimp_raw["epsprot"]`   | `r bold_if_diff(params_whiteleg_shrimp_raw["epsprot"], params_whiteleg_shrimp_calib["epsprot"])`     | |
+| gd        | `r params_whiteleg_shrimp_raw["gd"]`        | `r bold_if_diff(params_whiteleg_shrimp_raw["gd"], params_whiteleg_shrimp_calib["gd"])`               | |
+| k         | `r params_whiteleg_shrimp_raw["k"]`         | `r bold_if_diff(params_whiteleg_shrimp_raw["k"], params_whiteleg_shrimp_calib["k"])`                 | |
+| k0        | `r params_whiteleg_shrimp_raw["k0"]`        | `r bold_if_diff(params_whiteleg_shrimp_raw["k0"], params_whiteleg_shrimp_calib["k0"])`               | |
+| m         | `r params_whiteleg_shrimp_raw["m"]`         | `r bold_if_diff(params_whiteleg_shrimp_raw["m"], params_whiteleg_shrimp_calib["m"])`                 | |
+| meanImax  | `r params_whiteleg_shrimp_raw["meanImax"]`  | `r bold_if_diff(params_whiteleg_shrimp_raw["meanImax"], params_whiteleg_shrimp_calib["meanImax"])`   | |
+| meanW     | `r params_whiteleg_shrimp_raw["meanW"]`     | `r bold_if_diff(params_whiteleg_shrimp_raw["meanW"], params_whiteleg_shrimp_calib["meanW"])`         | |
+| mortmyt   | `r params_whiteleg_shrimp_raw["mortmyt"]`   | `r bold_if_diff(params_whiteleg_shrimp_raw["mortmyt"], params_whiteleg_shrimp_calib["mortmyt"])`     | |
+| n         | `r params_whiteleg_shrimp_raw["n"]`         | `r bold_if_diff(params_whiteleg_shrimp_raw["n"], params_whiteleg_shrimp_calib["n"])`                 | |
+| omega     | `r params_whiteleg_shrimp_raw["omega"]`     | `r bold_if_diff(params_whiteleg_shrimp_raw["omega"], params_whiteleg_shrimp_calib["omega"])`         | |
+| pk        | `r params_whiteleg_shrimp_raw["pk"]`        | `r bold_if_diff(params_whiteleg_shrimp_raw["pk"], params_whiteleg_shrimp_calib["pk"])`               | |
+| Taa       | `r params_whiteleg_shrimp_raw["Taa"]`       | `r bold_if_diff(params_whiteleg_shrimp_raw["Taa"], params_whiteleg_shrimp_calib["Taa"])`             | |
+| Tma       | `r params_whiteleg_shrimp_raw["Tma"]`       | `r bold_if_diff(params_whiteleg_shrimp_raw["Tma"], params_whiteleg_shrimp_calib["Tma"])`             | |
+| Toa       | `r params_whiteleg_shrimp_raw["Toa"]`       | `r bold_if_diff(params_whiteleg_shrimp_raw["Toa"], params_whiteleg_shrimp_calib["Toa"])`             | |
+
+: Raw and calibrated parameter values for the `whiteleg_shrimp` model. **Bold** values indicate parameters that changed during calibration. {#tbl-whiteleg_shrimp-params}
+
+```{r get-params-tiger_prawn, eval = F}
+params <- read_excel(
+  file.path(rawdata_path, 'parameters_species.xlsx'),
+  sheet = "tiger_prawn",
+  trim_ws = T, n_max = 26
+) %>%
+  clean_names() %>%
+  select(used_in_script, value)
+
+params_tiger_prawn_raw <- params$value
+names(params_tiger_prawn_raw) <- params$used_in_script
+
+params_tiger_prawn_calib <- qd_read(
+  file.path(prepdata_path, "species_parameters", 'species_parameters_tiger_prawn.qs')
+)
+
+rm(params)
+```
+
+| Parameter | Raw value | Calibrated value | Source |
+|:-----:|:-----:|:-----:|:---------------------------------------------------------------------------|
+| a         | `r params_tiger_prawn_raw["a"]`         | `r bold_if_diff(params_tiger_prawn_raw["a"], params_tiger_prawn_calib["a"])`                 | |
+| alpha     | `r params_tiger_prawn_raw["alpha"]`     | `r bold_if_diff(params_tiger_prawn_raw["alpha"], params_tiger_prawn_calib["alpha"])`         | |
+| betac     | `r params_tiger_prawn_raw["betac"]`     | `r bold_if_diff(params_tiger_prawn_raw["betac"], params_tiger_prawn_calib["betac"])`         | |
+| CS        | `r params_tiger_prawn_raw["CS"]`        | `r bold_if_diff(params_tiger_prawn_raw["CS"], params_tiger_prawn_calib["CS"])`               | |
+| deltaImax | `r params_tiger_prawn_raw["deltaImax"]` | `r bold_if_diff(params_tiger_prawn_raw["deltaImax"], params_tiger_prawn_calib["deltaImax"])` | |
+| deltaW    | `r params_tiger_prawn_raw["deltaW"]`    | `r bold_if_diff(params_tiger_prawn_raw["deltaW"], params_tiger_prawn_calib["deltaW"])`       | |
+| eff       | `r params_tiger_prawn_raw["eff"]`       | `r bold_if_diff(params_tiger_prawn_raw["eff"], params_tiger_prawn_calib["eff"])`             | |
+| epscarb   | `r params_tiger_prawn_raw["epscarb"]`   | `r bold_if_diff(params_tiger_prawn_raw["epscarb"], params_tiger_prawn_calib["epscarb"])`     | |
+| epslip    | `r params_tiger_prawn_raw["epslip"]`    | `r bold_if_diff(params_tiger_prawn_raw["epslip"], params_tiger_prawn_calib["epslip"])`       | |
+| epsO2     | `r params_tiger_prawn_raw["epsO2"]`     | `r bold_if_diff(params_tiger_prawn_raw["epsO2"], params_tiger_prawn_calib["epsO2"])`         | |
+| epsprot   | `r params_tiger_prawn_raw["epsprot"]`   | `r bold_if_diff(params_tiger_prawn_raw["epsprot"], params_tiger_prawn_calib["epsprot"])`     | |
+| gd        | `r params_tiger_prawn_raw["gd"]`        | `r bold_if_diff(params_tiger_prawn_raw["gd"], params_tiger_prawn_calib["gd"])`               | |
+| k         | `r params_tiger_prawn_raw["k"]`         | `r bold_if_diff(params_tiger_prawn_raw["k"], params_tiger_prawn_calib["k"])`                 | |
+| k0        | `r params_tiger_prawn_raw["k0"]`        | `r bold_if_diff(params_tiger_prawn_raw["k0"], params_tiger_prawn_calib["k0"])`               | |
+| m         | `r params_tiger_prawn_raw["m"]`         | `r bold_if_diff(params_tiger_prawn_raw["m"], params_tiger_prawn_calib["m"])`                 | |
+| meanImax  | `r params_tiger_prawn_raw["meanImax"]`  | `r bold_if_diff(params_tiger_prawn_raw["meanImax"], params_tiger_prawn_calib["meanImax"])`   | |
+| meanW     | `r params_tiger_prawn_raw["meanW"]`     | `r bold_if_diff(params_tiger_prawn_raw["meanW"], params_tiger_prawn_calib["meanW"])`         | |
+| mortmyt   | `r params_tiger_prawn_raw["mortmyt"]`   | `r bold_if_diff(params_tiger_prawn_raw["mortmyt"], params_tiger_prawn_calib["mortmyt"])`     | |
+| n         | `r params_tiger_prawn_raw["n"]`         | `r bold_if_diff(params_tiger_prawn_raw["n"], params_tiger_prawn_calib["n"])`                 | |
+| omega     | `r params_tiger_prawn_raw["omega"]`     | `r bold_if_diff(params_tiger_prawn_raw["omega"], params_tiger_prawn_calib["omega"])`         | |
+| pk        | `r params_tiger_prawn_raw["pk"]`        | `r bold_if_diff(params_tiger_prawn_raw["pk"], params_tiger_prawn_calib["pk"])`               | |
+| Taa       | `r params_tiger_prawn_raw["Taa"]`       | `r bold_if_diff(params_tiger_prawn_raw["Taa"], params_tiger_prawn_calib["Taa"])`             | |
+| Tma       | `r params_tiger_prawn_raw["Tma"]`       | `r bold_if_diff(params_tiger_prawn_raw["Tma"], params_tiger_prawn_calib["Tma"])`             | |
+| Toa       | `r params_tiger_prawn_raw["Toa"]`       | `r bold_if_diff(params_tiger_prawn_raw["Toa"], params_tiger_prawn_calib["Toa"])`             | |
+
+: Raw and calibrated parameter values for the `tiger_prawn` model. **Bold** values indicate parameters that changed during calibration. {#tbl-tiger_prawn-params}
+
+::: {style="display: flex; justify-content: space-between;"}
+[← Previous: Choosing species](01_choosing_species.qmd)
+
+[Next: Species temperature responses →](03_02_species_temperature_responses.qmd)
+:::

@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Tormey Reimer">
-<meta name="dcterms.date" content="2026-04-01">
+<meta name="dcterms.date" content="2026-06-30">
 
-<title>Title page</title>
+<title>3.17: Summarising all species parameters</title>
 <style>
 
 code{white-space: pre-wrap;}
@@ -21,6 +21,41 @@ ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
 width: 0.8em;
 margin: 0 0.8em 0.2em -1em;  vertical-align: middle;
+}
+
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+}
+pre.numberSource { margin-left: 3em; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 
 div.csl-bib-body { }
@@ -2194,8 +2229,8 @@ vertical-align: -.125em;
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#data-extraction-and-prep" id="toc-data-extraction-and-prep" class="nav-link active" data-scroll-target="#data-extraction-and-prep">Data extraction and prep</a></li>
-  <li><a href="#analysis" id="toc-analysis" class="nav-link" data-scroll-target="#analysis">Analysis</a></li>
+  <li><a href="#sec-overview" id="toc-sec-overview" class="nav-link active" data-scroll-target="#sec-overview">Overview</a></li>
+  <li><a href="#get-all-parameters" id="toc-get-all-parameters" class="nav-link" data-scroll-target="#get-all-parameters">Get all parameters</a></li>
   </ul>
 </nav>
 </div>
@@ -2205,7 +2240,8 @@ vertical-align: -.125em;
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Title page</h1>
+<h1 class="title">3.17: Summarising all species parameters</h1>
+<p class="subtitle lead">FAO Climate Change Risks to Fed Mariculture</p>
 </div>
 
 
@@ -2222,7 +2258,7 @@ vertical-align: -.125em;
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">1 April 2026</p>
+      <p class="date">30 June 2026</p>
     </div>
   </div>
   
@@ -2234,81 +2270,3305 @@ vertical-align: -.125em;
 </header>
 
 
-<p>This page serves as an overall table of contents for all the project documentation.</p>
-<section id="data-extraction-and-prep" class="level1">
-<h1>Data extraction and prep</h1>
-<p>These scripts extract and tidy raw data for use further down the line. Where possible, the data is extract from its rawest possible form</p>
-<p>These scripts take available data (<code>data\raw_data</code>) and prepare it for use in this analysis (<code>data\prepped_data</code>). Where possible, the incoming data is in its raw, publicly available form (i.e. downloaded straight from the source). These scripts were run prior to completing the analysis below and do not need to be re-run when replicating the analysis - the data produced from the following scripts is available on request.</p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Script</th>
-<th style="text-align: left;">Dataset</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;"><a href="data-prep-scripts/historical-sst.R">historical-sst.R</a></td>
-<td style="text-align: left;">GHRSST, 0.25 degree resolution, MUR L4 analysis <span class="citation" data-cites="nasajpl_ghrsst_2015 nasajpl_ghrsst_2019">(<a href="#ref-nasajpl_ghrsst_2015" role="doc-biblioref">NASA/JPL 2015</a>, <a href="#ref-nasajpl_ghrsst_2019" role="doc-biblioref">2019</a>)</span></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><a href="data-prep-scripts\aquaculture-production-data.R">aquaculture-production-data.R</a></td>
-<td style="text-align: left;">FAO aquaculture production data <span class="citation" data-cites="fao_fishstat_2026">(<a href="#ref-fao_fishstat_2026" role="doc-biblioref">FAO 2026</a>)</span></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><a href="data-prep-scripts\mariculture-locations.R">mariculture-locations.R</a></td>
-<td style="text-align: left;">Aquaculture siting maps <span class="citation" data-cites="clawson_mapping_2022 clawson_mapping_2022_data">(<a href="#ref-clawson_mapping_2022" role="doc-biblioref">Clawson et al. 2022</a>; <a href="#ref-clawson_mapping_2022_data" role="doc-biblioref">Clawson 2022</a>)</span></td>
-</tr>
-</tbody>
-</table>
+<div style="display: flex; justify-content: space-between;">
+<p><a href="01_choosing_species.qmd">← Previous: Choosing species</a></p>
+<p><a href="03_02_species_temperature_responses.qmd">Next: Species temperature responses →</a></p>
+</div>
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>default <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="cn">NA</span>, <span class="dv">28</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(default) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;a&quot;</span>, <span class="st">&quot;alpha&quot;</span>, <span class="st">&quot;betac&quot;</span>, <span class="st">&quot;CS&quot;</span>, <span class="st">&quot;deltaImax&quot;</span>, <span class="st">&quot;deltaW&quot;</span>, <span class="st">&quot;doy&quot;</span>, <span class="st">&quot;eff&quot;</span>, <span class="st">&quot;epscarb&quot;</span>, <span class="st">&quot;epslip&quot;</span>, <span class="st">&quot;epsO2&quot;</span>, <span class="st">&quot;epsprot&quot;</span>, <span class="st">&quot;FCR&quot;</span>, <span class="st">&quot;gd&quot;</span>, <span class="st">&quot;k&quot;</span>, <span class="st">&quot;k0&quot;</span>, <span class="st">&quot;m&quot;</span>, <span class="st">&quot;meanImax&quot;</span>, <span class="st">&quot;meanW&quot;</span>, <span class="st">&quot;mortmyt&quot;</span>, <span class="st">&quot;n&quot;</span>, <span class="st">&quot;omega&quot;</span>, <span class="st">&quot;pk&quot;</span>, <span class="st">&quot;Taa&quot;</span>, <span class="st">&quot;Tma&quot;</span>, <span class="st">&quot;Toa&quot;</span>, <span class="st">&quot;overFmean&quot;</span>, <span class="st">&quot;overFdelta&quot;</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>params_seabream_raw <span class="ot">&lt;-</span> params_european_seabass_raw <span class="ot">&lt;-</span> params_golden_pompano_raw <span class="ot">&lt;-</span> params_atlantic_salmon_raw <span class="ot">&lt;-</span> params_rainbow_trout_raw <span class="ot">&lt;-</span> params_drum_croaker_raw <span class="ot">&lt;-</span> params_golden_pompano_raw <span class="ot">&lt;-</span> params_grouper_raw <span class="ot">&lt;-</span> params_japanese_amberjack_raw <span class="ot">&lt;-</span> params_japanese_seabass_raw <span class="ot">&lt;-</span> params_milkfish_raw <span class="ot">&lt;-</span> params_nile_tilapia_raw <span class="ot">&lt;-</span> params_olive_flounder_raw <span class="ot">&lt;-</span> params_tuna_raw <span class="ot">&lt;-</span> params_abalone_raw <span class="ot">&lt;-</span> params_mud_crab_raw <span class="ot">&lt;-</span> params_whiteleg_shrimp_raw <span class="ot">&lt;-</span> params_tiger_prawn_raw <span class="ot">&lt;-</span> params_seabream_calib <span class="ot">&lt;-</span> params_european_seabass_calib <span class="ot">&lt;-</span> params_golden_pompano_calib <span class="ot">&lt;-</span> params_atlantic_salmon_calib <span class="ot">&lt;-</span> params_rainbow_trout_calib <span class="ot">&lt;-</span> params_drum_croaker_calib <span class="ot">&lt;-</span> params_golden_pompano_calib <span class="ot">&lt;-</span> params_grouper_calib <span class="ot">&lt;-</span> params_japanese_amberjack_calib <span class="ot">&lt;-</span> params_japanese_seabass_calib <span class="ot">&lt;-</span> params_milkfish_calib <span class="ot">&lt;-</span> params_nile_tilapia_calib <span class="ot">&lt;-</span> params_olive_flounder_calib <span class="ot">&lt;-</span> params_tuna_calib <span class="ot">&lt;-</span> params_abalone_calib <span class="ot">&lt;-</span> params_mud_crab_calib <span class="ot">&lt;-</span> params_whiteleg_shrimp_calib <span class="ot">&lt;-</span> params_tiger_prawn_calib <span class="ot">&lt;-</span> default</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<section id="sec-overview" class="level1">
+<h1>Overview</h1>
+<p>The calibration process for the growth parameters in this study had two aims:</p>
+<ol type="1">
+<li>To have each species reach close to their specified commercial size within the correct time (growout days) under a realistic temperature regime (global average of their farms).</li>
+<li>To have the most relevant ingestion parameters (total ingestion, FCR/FE) from the model give reasonable values.</li>
+</ol>
+<p>The below tables specify the raw and final calibrated values for each species, with sources and justifications for each.</p>
 </section>
-<section id="analysis" class="level1">
-<h1>Analysis</h1>
-<p>These scripts run the actual processes and analysis for the project, using the data prepared by the script above. These markdowns must be run in order as they rely on data generated by previous scripts and markdowns.</p>
+<section id="get-all-parameters" class="level1">
+<h1>Get all parameters</h1>
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>params <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">file.path</span>(rawdata_path, <span class="st">&#39;parameters_species.xlsx&#39;</span>),</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">sheet =</span> <span class="st">&quot;seabream&quot;</span>,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">trim_ws =</span> T, <span class="at">n_max =</span> <span class="dv">26</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clean_names</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(used_in_script, value)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>params_seabream_raw <span class="ot">&lt;-</span> params<span class="sc">$</span>value</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(params_seabream_raw) <span class="ot">&lt;-</span> params<span class="sc">$</span>used_in_script</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>params_seabream_calib <span class="ot">&lt;-</span> <span class="fu">qd_read</span>(</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">file.path</span>(prepdata_path, <span class="st">&quot;species_parameters&quot;</span>, <span class="st">&#39;species_parameters_seabream.qs&#39;</span>)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(params)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>Seabream was one of the species originally modelled in <span class="citation" data-cites="baldan_r_2018">Baldan et al. (<a href="#ref-baldan_r_2018" role="doc-biblioref">2018</a>)</span>, so the “raw” values in <a href="#tbl-seabream-params" class="quarto-xref">Table 1</a> are taken directly from that study.</p>
+<div id="tbl-seabream-params" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-seabream-params-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table 1: Raw and calibrated parameter values for the <code>seabream</code> model. <strong>Bold</strong> values indicate parameters that changed during calibration.
+</figcaption>
+<div aria-describedby="tbl-seabream-params-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <table class="caption-top table">
+<colgroup>
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 78%">
+</colgroup>
 <thead>
 <tr class="header">
-<th style="text-align: left;">Script</th>
-<th style="text-align: left;">Description</th>
+<th style="text-align: center;">Parameter</th>
+<th style="text-align: center;">Raw value</th>
+<th style="text-align: center;">Calibrated value</th>
+<th style="text-align: left;">Source</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;"><a href="documentation-qmds/00_model_function_demonstration.html">00_model_function_demonstration.qmd</a></td>
-<td style="text-align: left;">A demonstration of the basic bioenergetic model functions, outputs, and some useful wrappers.</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"><a href="documentation-qmds/01_choosing_species.html">01_choosing_species.qmd</a></td>
-<td style="text-align: left;">Identifies the top 25 most-produced fed marine and brackishwater aquaculture species using FAO data from 2011 onwards, ranked by cumulative production volume. Includes production trends over time and an assessment of how much of global aquaculture production the top 25 species collectively represent.</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;"><a href="02_01_check_species_european_seabass.html">02_01_check_species_european_seabass.qmd</a></td>
+<td style="text-align: center;">a</td>
+<td style="text-align: center;">4660</td>
+<td style="text-align: center;"><strong>4747.44573792934</strong></td>
 <td style="text-align: left;"></td>
 </tr>
 <tr class="even">
-<td style="text-align: left;"><a href="documentation-qmds/04_assigning_locations.html">04_assigning_locations.qmd</a></td>
-<td style="text-align: left;">Assigns farm locations to each model name according to previously-mapped locations, or habitat suitability if mapped locations are missing.</td>
+<td style="text-align: center;">alpha</td>
+<td style="text-align: center;">0.3</td>
+<td style="text-align: center;"><strong>0.308560114803592</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">betac</td>
+<td style="text-align: center;">0.2</td>
+<td style="text-align: center;"><strong>0.211287962563457</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">CS</td>
+<td style="text-align: center;">400</td>
+<td style="text-align: center;">400</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">deltaImax</td>
+<td style="text-align: center;">0.009</td>
+<td style="text-align: center;">0.009</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">deltaW</td>
+<td style="text-align: center;">0.35</td>
+<td style="text-align: center;">0.35</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">eff</td>
+<td style="text-align: center;">0.7</td>
+<td style="text-align: center;">0.7</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">epscarb</td>
+<td style="text-align: center;">1.72^{4}</td>
+<td style="text-align: center;"><strong>18665.7560351135</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">epslip</td>
+<td style="text-align: center;">3.62^{4}</td>
+<td style="text-align: center;"><strong>36647.847567314</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">epsO2</td>
+<td style="text-align: center;">1.36^{4}</td>
+<td style="text-align: center;">13600</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">epsprot</td>
+<td style="text-align: center;">2.36^{4}</td>
+<td style="text-align: center;"><strong>23135.1158433737</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">gd</td>
+<td style="text-align: center;">375</td>
+<td style="text-align: center;">375</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">k</td>
+<td style="text-align: center;">0.139</td>
+<td style="text-align: center;"><strong>0.136250475071576</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">k0</td>
+<td style="text-align: center;">7.2^{-4}</td>
+<td style="text-align: center;"><strong>0.000749661354719776</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">m</td>
+<td style="text-align: center;">0.598</td>
+<td style="text-align: center;">0.598</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">meanImax</td>
+<td style="text-align: center;">0.09</td>
+<td style="text-align: center;"><strong>0.0883569782223609</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">meanW</td>
+<td style="text-align: center;">3.5</td>
+<td style="text-align: center;">3.5</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">mortmyt</td>
+<td style="text-align: center;">4.1^{-4}</td>
+<td style="text-align: center;">0.00041</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">n</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">omega</td>
+<td style="text-align: center;">0.6</td>
+<td style="text-align: center;"><strong>0.642795396700992</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">pk</td>
+<td style="text-align: center;">0.06</td>
+<td style="text-align: center;"><strong>0.0618629301655114</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Taa</td>
+<td style="text-align: center;">12</td>
+<td style="text-align: center;">12</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Tma</td>
+<td style="text-align: center;">34</td>
+<td style="text-align: center;">34</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Toa</td>
+<td style="text-align: center;">25</td>
+<td style="text-align: center;">25</td>
+<td style="text-align: left;"></td>
 </tr>
 </tbody>
 </table>
+</div>
+</figure>
+</div>
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>params <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">file.path</span>(rawdata_path, <span class="st">&#39;parameters_species.xlsx&#39;</span>),</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">sheet =</span> <span class="st">&quot;european_seabass&quot;</span>,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">trim_ws =</span> T, <span class="at">n_max =</span> <span class="dv">26</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clean_names</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(used_in_script, value)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>params_european_seabass_raw <span class="ot">&lt;-</span> params<span class="sc">$</span>value</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(params_european_seabass_raw) <span class="ot">&lt;-</span> params<span class="sc">$</span>used_in_script</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>params_european_seabass_calib <span class="ot">&lt;-</span> <span class="fu">qd_read</span>(</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">file.path</span>(prepdata_path, <span class="st">&quot;species_parameters&quot;</span>, <span class="st">&#39;species_parameters_european_seabass.qs&#39;</span>)</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(params)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div id="tbl-european_seabass-params" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-european_seabass-params-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table 2: Raw and calibrated parameter values for the <code>european_seabass</code> model. <strong>Bold</strong> values indicate parameters that changed during calibration.
+</figcaption>
+<div aria-describedby="tbl-european_seabass-params-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 78%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Parameter</th>
+<th style="text-align: center;">Raw value</th>
+<th style="text-align: center;">Calibrated value</th>
+<th style="text-align: left;">Source</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">a</td>
+<td style="text-align: center;">5170</td>
+<td style="text-align: center;"><strong>5122.85627592507</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">alpha</td>
+<td style="text-align: center;">0.3</td>
+<td style="text-align: center;"><strong>0.306372961945876</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">betac</td>
+<td style="text-align: center;">0.23</td>
+<td style="text-align: center;"><strong>0.251260005307442</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">CS</td>
+<td style="text-align: center;">450</td>
+<td style="text-align: center;">450</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">deltaImax</td>
+<td style="text-align: center;">0.004</td>
+<td style="text-align: center;">0.004</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">deltaW</td>
+<td style="text-align: center;">0.15</td>
+<td style="text-align: center;">0.15</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">eff</td>
+<td style="text-align: center;">0.95</td>
+<td style="text-align: center;">0.95</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">epscarb</td>
+<td style="text-align: center;">1.72^{4}</td>
+<td style="text-align: center;"><strong>18681.9600891773</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">epslip</td>
+<td style="text-align: center;">3.62^{4}</td>
+<td style="text-align: center;"><strong>34953.6922151595</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">epsO2</td>
+<td style="text-align: center;">1.34^{4}</td>
+<td style="text-align: center;">13400</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">epsprot</td>
+<td style="text-align: center;">2.36^{4}</td>
+<td style="text-align: center;"><strong>22957.3832986065</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">gd</td>
+<td style="text-align: center;">637</td>
+<td style="text-align: center;">637</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">k</td>
+<td style="text-align: center;">0.107</td>
+<td style="text-align: center;"><strong>0.105975155618904</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">k0</td>
+<td style="text-align: center;">6.9^{-4}</td>
+<td style="text-align: center;"><strong>0.000723222622580089</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">m</td>
+<td style="text-align: center;">0.6</td>
+<td style="text-align: center;">0.6</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">meanImax</td>
+<td style="text-align: center;">0.04</td>
+<td style="text-align: center;"><strong>0.0403526854716132</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">meanW</td>
+<td style="text-align: center;">1.5</td>
+<td style="text-align: center;">1.5</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">mortmyt</td>
+<td style="text-align: center;">4.1^{-4}</td>
+<td style="text-align: center;">0.00041</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">n</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;"><strong>1.00552312949668</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">omega</td>
+<td style="text-align: center;">0.6542</td>
+<td style="text-align: center;"><strong>0.671672918318451</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">pk</td>
+<td style="text-align: center;">0.05</td>
+<td style="text-align: center;"><strong>0.0515245595672228</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Taa</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Tma</td>
+<td style="text-align: center;">32</td>
+<td style="text-align: center;">32</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Toa</td>
+<td style="text-align: center;">22</td>
+<td style="text-align: center;">22</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>params <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">file.path</span>(rawdata_path, <span class="st">&#39;parameters_species.xlsx&#39;</span>),</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">sheet =</span> <span class="st">&quot;atlantic_salmon&quot;</span>,</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">trim_ws =</span> T, <span class="at">n_max =</span> <span class="dv">26</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clean_names</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(used_in_script, value)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>params_atlantic_salmon_raw <span class="ot">&lt;-</span> params<span class="sc">$</span>value</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(params_atlantic_salmon_raw) <span class="ot">&lt;-</span> params<span class="sc">$</span>used_in_script</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>params_atlantic_salmon_calib <span class="ot">&lt;-</span> <span class="fu">qd_read</span>(</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">file.path</span>(prepdata_path, <span class="st">&quot;species_parameters&quot;</span>, <span class="st">&#39;species_parameters_atlantic_salmon.qs&#39;</span>)</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(params)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div id="tbl-atlantic_salmon-params" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-atlantic_salmon-params-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table 3: Raw and calibrated parameter values for the <code>atlantic_salmon</code> model. <strong>Bold</strong> values indicate parameters that changed during calibration.
+</figcaption>
+<div aria-describedby="tbl-atlantic_salmon-params-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 78%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Parameter</th>
+<th style="text-align: center;">Raw value</th>
+<th style="text-align: center;">Calibrated value</th>
+<th style="text-align: left;">Source</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">a</td>
+<td style="text-align: center;">2669</td>
+<td style="text-align: center;"><strong>2687.33246888502</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">alpha</td>
+<td style="text-align: center;">0.04</td>
+<td style="text-align: center;"><strong>0.0388718715048567</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">betac</td>
+<td style="text-align: center;">0.3234</td>
+<td style="text-align: center;"><strong>0.321284631428293</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">CS</td>
+<td style="text-align: center;">4000</td>
+<td style="text-align: center;">4000</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">deltaImax</td>
+<td style="text-align: center;">0.0035</td>
+<td style="text-align: center;">0.0035</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">deltaW</td>
+<td style="text-align: center;">10</td>
+<td style="text-align: center;">10</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">eff</td>
+<td style="text-align: center;">0.97</td>
+<td style="text-align: center;">0.97</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">epscarb</td>
+<td style="text-align: center;">1.72^{4}</td>
+<td style="text-align: center;">17200</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">epslip</td>
+<td style="text-align: center;">3.62^{4}</td>
+<td style="text-align: center;">36200</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">epsO2</td>
+<td style="text-align: center;">1.34^{4}</td>
+<td style="text-align: center;"><strong>13490.1232463634</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">epsprot</td>
+<td style="text-align: center;">2.36^{4}</td>
+<td style="text-align: center;">23600</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">gd</td>
+<td style="text-align: center;">550</td>
+<td style="text-align: center;">550</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">k</td>
+<td style="text-align: center;">0.1715</td>
+<td style="text-align: center;">0.1715</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">k0</td>
+<td style="text-align: center;">0.003</td>
+<td style="text-align: center;">0.003</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">m</td>
+<td style="text-align: center;">0.75</td>
+<td style="text-align: center;">0.75</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">meanImax</td>
+<td style="text-align: center;">0.035</td>
+<td style="text-align: center;">0.035</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">meanW</td>
+<td style="text-align: center;">125</td>
+<td style="text-align: center;">125</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">mortmyt</td>
+<td style="text-align: center;">4.1^{-4}</td>
+<td style="text-align: center;">0.00041</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">n</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;"><strong>0.994934636980568</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">omega</td>
+<td style="text-align: center;">0.6542</td>
+<td style="text-align: center;"><strong>0.649910615548267</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">pk</td>
+<td style="text-align: center;">0.05</td>
+<td style="text-align: center;"><strong>0.0492896433288468</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Taa</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Tma</td>
+<td style="text-align: center;">26</td>
+<td style="text-align: center;">26</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Toa</td>
+<td style="text-align: center;">16</td>
+<td style="text-align: center;">16</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>params <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">file.path</span>(rawdata_path, <span class="st">&#39;parameters_species.xlsx&#39;</span>),</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">sheet =</span> <span class="st">&quot;rainbow_trout&quot;</span>,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">trim_ws =</span> T, <span class="at">n_max =</span> <span class="dv">26</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clean_names</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(used_in_script, value)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>params_rainbow_trout_raw <span class="ot">&lt;-</span> params<span class="sc">$</span>value</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(params_rainbow_trout_raw) <span class="ot">&lt;-</span> params<span class="sc">$</span>used_in_script</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>params_rainbow_trout_calib <span class="ot">&lt;-</span> <span class="fu">qd_read</span>(</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">file.path</span>(prepdata_path, <span class="st">&quot;species_parameters&quot;</span>, <span class="st">&#39;species_parameters_rainbow_trout.qs&#39;</span>)</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(params)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div id="tbl-rainbow_trout-params" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-rainbow_trout-params-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table 4: Raw and calibrated parameter values for the <code>rainbow_trout</code> model. <strong>Bold</strong> values indicate parameters that changed during calibration.
+</figcaption>
+<div aria-describedby="tbl-rainbow_trout-params-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 78%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Parameter</th>
+<th style="text-align: center;">Raw value</th>
+<th style="text-align: center;">Calibrated value</th>
+<th style="text-align: left;">Source</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">a</td>
+<td style="text-align: center;">2669</td>
+<td style="text-align: center;"><strong>2702.15064133699</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">alpha</td>
+<td style="text-align: center;">0.04</td>
+<td style="text-align: center;"><strong>0.0387271398653306</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">betac</td>
+<td style="text-align: center;">0.25</td>
+<td style="text-align: center;">0.25</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">CS</td>
+<td style="text-align: center;">450</td>
+<td style="text-align: center;">450</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">deltaImax</td>
+<td style="text-align: center;">0.002</td>
+<td style="text-align: center;">0.002</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">deltaW</td>
+<td style="text-align: center;">0.5</td>
+<td style="text-align: center;">0.5</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">eff</td>
+<td style="text-align: center;">0.97</td>
+<td style="text-align: center;">0.97</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">epscarb</td>
+<td style="text-align: center;">1.72^{4}</td>
+<td style="text-align: center;"><strong>17316.2363036673</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">epslip</td>
+<td style="text-align: center;">3.62^{4}</td>
+<td style="text-align: center;"><strong>35937.739661571</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">epsO2</td>
+<td style="text-align: center;">1.34^{4}</td>
+<td style="text-align: center;">13400</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">epsprot</td>
+<td style="text-align: center;">2.36^{4}</td>
+<td style="text-align: center;"><strong>23373.9205138447</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">gd</td>
+<td style="text-align: center;">300</td>
+<td style="text-align: center;">300</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">k</td>
+<td style="text-align: center;">0.1715</td>
+<td style="text-align: center;"><strong>0.176055672538251</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">k0</td>
+<td style="text-align: center;">0.003</td>
+<td style="text-align: center;"><strong>0.00307584783163316</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">m</td>
+<td style="text-align: center;">0.7</td>
+<td style="text-align: center;">0.7</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">meanImax</td>
+<td style="text-align: center;">0.035</td>
+<td style="text-align: center;">0.035</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">meanW</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">mortmyt</td>
+<td style="text-align: center;">4.1^{-4}</td>
+<td style="text-align: center;">0.00041</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">n</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;"><strong>1.00620197480851</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">omega</td>
+<td style="text-align: center;">0.6542</td>
+<td style="text-align: center;"><strong>0.666437412447579</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">pk</td>
+<td style="text-align: center;">0.06</td>
+<td style="text-align: center;"><strong>0.0595891648029546</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Taa</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Tma</td>
+<td style="text-align: center;">25</td>
+<td style="text-align: center;">25</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Toa</td>
+<td style="text-align: center;">16</td>
+<td style="text-align: center;">16</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>params <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">file.path</span>(rawdata_path, <span class="st">&#39;parameters_species.xlsx&#39;</span>),</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">sheet =</span> <span class="st">&quot;drum_croaker&quot;</span>,</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">trim_ws =</span> T, <span class="at">n_max =</span> <span class="dv">26</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clean_names</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(used_in_script, value)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>params_drum_croaker_raw <span class="ot">&lt;-</span> params<span class="sc">$</span>value</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(params_drum_croaker_raw) <span class="ot">&lt;-</span> params<span class="sc">$</span>used_in_script</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>params_drum_croaker_calib <span class="ot">&lt;-</span> <span class="fu">qd_read</span>(</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">file.path</span>(prepdata_path, <span class="st">&quot;species_parameters&quot;</span>, <span class="st">&#39;species_parameters_drum_croaker.qs&#39;</span>)</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(params)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div id="tbl-drum_croaker-params" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-drum_croaker-params-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table 5: Raw and calibrated parameter values for the <code>drum_croaker</code> model. <strong>Bold</strong> values indicate parameters that changed during calibration.
+</figcaption>
+<div aria-describedby="tbl-drum_croaker-params-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 78%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Parameter</th>
+<th style="text-align: center;">Raw value</th>
+<th style="text-align: center;">Calibrated value</th>
+<th style="text-align: left;">Source</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">a</td>
+<td style="text-align: center;">4660</td>
+<td style="text-align: center;">4660</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">alpha</td>
+<td style="text-align: center;">0.3</td>
+<td style="text-align: center;"><strong>0.302921931181769</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">betac</td>
+<td style="text-align: center;">0.2</td>
+<td style="text-align: center;"><strong>0.201739979112264</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">CS</td>
+<td style="text-align: center;">550</td>
+<td style="text-align: center;">550</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">deltaImax</td>
+<td style="text-align: center;">0.002</td>
+<td style="text-align: center;">0.002</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">deltaW</td>
+<td style="text-align: center;">0.55</td>
+<td style="text-align: center;">0.55</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">eff</td>
+<td style="text-align: center;">0.7</td>
+<td style="text-align: center;">0.7</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">epscarb</td>
+<td style="text-align: center;">1.72^{4}</td>
+<td style="text-align: center;"><strong>16825.330288693</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">epslip</td>
+<td style="text-align: center;">3.62^{4}</td>
+<td style="text-align: center;">36200</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">epsO2</td>
+<td style="text-align: center;">1.36^{4}</td>
+<td style="text-align: center;">13600</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">epsprot</td>
+<td style="text-align: center;">2.36^{4}</td>
+<td style="text-align: center;"><strong>23453.4871179964</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">gd</td>
+<td style="text-align: center;">500</td>
+<td style="text-align: center;">500</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">k</td>
+<td style="text-align: center;">0.139</td>
+<td style="text-align: center;"><strong>0.145024569853073</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">k0</td>
+<td style="text-align: center;">7.2^{-4}</td>
+<td style="text-align: center;"><strong>0.000740754985851363</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">m</td>
+<td style="text-align: center;">0.598</td>
+<td style="text-align: center;">0.598</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">meanImax</td>
+<td style="text-align: center;">0.09</td>
+<td style="text-align: center;"><strong>0.0894892284694949</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">meanW</td>
+<td style="text-align: center;">5.5</td>
+<td style="text-align: center;">5.5</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">mortmyt</td>
+<td style="text-align: center;">0.001</td>
+<td style="text-align: center;">0.001</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">n</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;"><strong>1.00752059227533</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">omega</td>
+<td style="text-align: center;">0.6</td>
+<td style="text-align: center;"><strong>0.645427622695417</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">pk</td>
+<td style="text-align: center;">0.06</td>
+<td style="text-align: center;"><strong>0.0614346415651967</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Taa</td>
+<td style="text-align: center;">12</td>
+<td style="text-align: center;">12</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Tma</td>
+<td style="text-align: center;">32</td>
+<td style="text-align: center;">32</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Toa</td>
+<td style="text-align: center;">26</td>
+<td style="text-align: center;">26</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>params <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">file.path</span>(rawdata_path, <span class="st">&#39;parameters_species.xlsx&#39;</span>),</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">sheet =</span> <span class="st">&quot;golden_pompano&quot;</span>,</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">trim_ws =</span> T, <span class="at">n_max =</span> <span class="dv">26</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clean_names</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(used_in_script, value)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>params_golden_pompano_raw <span class="ot">&lt;-</span> params<span class="sc">$</span>value</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(params_golden_pompano_raw) <span class="ot">&lt;-</span> params<span class="sc">$</span>used_in_script</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>params_golden_pompano_calib <span class="ot">&lt;-</span> <span class="fu">qd_read</span>(</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">file.path</span>(prepdata_path, <span class="st">&quot;species_parameters&quot;</span>, <span class="st">&#39;species_parameters_golden_pompano.qs&#39;</span>)</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(params)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div id="tbl-golden_pompano-params" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-golden_pompano-params-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table 6: Raw and calibrated parameter values for the <code>golden_pompano</code> model. <strong>Bold</strong> values indicate parameters that changed during calibration.
+</figcaption>
+<div aria-describedby="tbl-golden_pompano-params-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 78%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Parameter</th>
+<th style="text-align: center;">Raw value</th>
+<th style="text-align: center;">Calibrated value</th>
+<th style="text-align: left;">Source</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">a</td>
+<td style="text-align: center;">5927</td>
+<td style="text-align: center;"><strong>5959.54989321798</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">alpha</td>
+<td style="text-align: center;">0.3</td>
+<td style="text-align: center;"><strong>0.308296687384553</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">betac</td>
+<td style="text-align: center;">0.2</td>
+<td style="text-align: center;"><strong>0.212384703256462</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">CS</td>
+<td style="text-align: center;">360</td>
+<td style="text-align: center;">360</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">deltaImax</td>
+<td style="text-align: center;">0.009</td>
+<td style="text-align: center;">0.009</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">deltaW</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">eff</td>
+<td style="text-align: center;">0.7</td>
+<td style="text-align: center;">0.7</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">epscarb</td>
+<td style="text-align: center;">1.72^{4}</td>
+<td style="text-align: center;"><strong>17014.6016010429</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">epslip</td>
+<td style="text-align: center;">3.62^{4}</td>
+<td style="text-align: center;">36200</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">epsO2</td>
+<td style="text-align: center;">1.36^{4}</td>
+<td style="text-align: center;"><strong>13462.0161007045</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">epsprot</td>
+<td style="text-align: center;">2.36^{4}</td>
+<td style="text-align: center;">23600</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">gd</td>
+<td style="text-align: center;">200</td>
+<td style="text-align: center;">200</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">k</td>
+<td style="text-align: center;">0.142</td>
+<td style="text-align: center;"><strong>0.143208895117937</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">k0</td>
+<td style="text-align: center;">7.2^{-4}</td>
+<td style="text-align: center;"><strong>0.000702264822862011</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">m</td>
+<td style="text-align: center;">0.65</td>
+<td style="text-align: center;">0.65</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">meanImax</td>
+<td style="text-align: center;">0.105</td>
+<td style="text-align: center;">0.105</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">meanW</td>
+<td style="text-align: center;">30</td>
+<td style="text-align: center;">30</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">mortmyt</td>
+<td style="text-align: center;">8.4615385^{-4}</td>
+<td style="text-align: center;">0.000846153846153846</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">n</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;"><strong>1.00984814101808</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">omega</td>
+<td style="text-align: center;">0.6542</td>
+<td style="text-align: center;"><strong>0.707473539622698</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">pk</td>
+<td style="text-align: center;">0.05</td>
+<td style="text-align: center;"><strong>0.0533342123681706</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Taa</td>
+<td style="text-align: center;">16</td>
+<td style="text-align: center;">16</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Tma</td>
+<td style="text-align: center;">35</td>
+<td style="text-align: center;">35</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Toa</td>
+<td style="text-align: center;">28</td>
+<td style="text-align: center;">28</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>params <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">file.path</span>(rawdata_path, <span class="st">&#39;parameters_species.xlsx&#39;</span>),</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">sheet =</span> <span class="st">&quot;grouper&quot;</span>,</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">trim_ws =</span> T, <span class="at">n_max =</span> <span class="dv">26</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clean_names</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(used_in_script, value)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>params_grouper_raw <span class="ot">&lt;-</span> params<span class="sc">$</span>value</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(params_grouper_raw) <span class="ot">&lt;-</span> params<span class="sc">$</span>used_in_script</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>params_grouper_calib <span class="ot">&lt;-</span> <span class="fu">qd_read</span>(</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">file.path</span>(prepdata_path, <span class="st">&quot;species_parameters&quot;</span>, <span class="st">&#39;species_parameters_grouper.qs&#39;</span>)</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(params)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div id="tbl-grouper-params" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-grouper-params-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table 7: Raw and calibrated parameter values for the <code>grouper</code> model. <strong>Bold</strong> values indicate parameters that changed during calibration.
+</figcaption>
+<div aria-describedby="tbl-grouper-params-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 78%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Parameter</th>
+<th style="text-align: center;">Raw value</th>
+<th style="text-align: center;">Calibrated value</th>
+<th style="text-align: left;">Source</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">a</td>
+<td style="text-align: center;">5440</td>
+<td style="text-align: center;"><strong>5471.4533357475</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">alpha</td>
+<td style="text-align: center;">0.304</td>
+<td style="text-align: center;"><strong>0.307990311975343</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">betac</td>
+<td style="text-align: center;">0.2124</td>
+<td style="text-align: center;"><strong>0.213716565887163</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">CS</td>
+<td style="text-align: center;">750</td>
+<td style="text-align: center;">750</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">deltaImax</td>
+<td style="text-align: center;">0.009</td>
+<td style="text-align: center;">0.009</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">deltaW</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">eff</td>
+<td style="text-align: center;">0.7</td>
+<td style="text-align: center;">0.7</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">epscarb</td>
+<td style="text-align: center;">1.72^{4}</td>
+<td style="text-align: center;"><strong>16810.9744270443</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">epslip</td>
+<td style="text-align: center;">3.62^{4}</td>
+<td style="text-align: center;">36200</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">epsO2</td>
+<td style="text-align: center;">1.36^{4}</td>
+<td style="text-align: center;"><strong>13807.934970158</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">epsprot</td>
+<td style="text-align: center;">2.36^{4}</td>
+<td style="text-align: center;">23600</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">gd</td>
+<td style="text-align: center;">480</td>
+<td style="text-align: center;">480</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">k</td>
+<td style="text-align: center;">0.139</td>
+<td style="text-align: center;"><strong>0.140570096730168</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">k0</td>
+<td style="text-align: center;">6.9^{-4}</td>
+<td style="text-align: center;"><strong>0.000715449216607681</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">m</td>
+<td style="text-align: center;">0.625</td>
+<td style="text-align: center;">0.625</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">meanImax</td>
+<td style="text-align: center;">0.08</td>
+<td style="text-align: center;">0.08</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">meanW</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">mortmyt</td>
+<td style="text-align: center;">5.4794521^{-4}</td>
+<td style="text-align: center;">0.000547945205479452</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">n</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;"><strong>0.991191046570945</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">omega</td>
+<td style="text-align: center;">0.6367</td>
+<td style="text-align: center;"><strong>0.643464466150607</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">pk</td>
+<td style="text-align: center;">0.025</td>
+<td style="text-align: center;"><strong>0.0273916806053231</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Taa</td>
+<td style="text-align: center;">13</td>
+<td style="text-align: center;">13</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Tma</td>
+<td style="text-align: center;">36</td>
+<td style="text-align: center;">36</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Toa</td>
+<td style="text-align: center;">26.5</td>
+<td style="text-align: center;">26.5</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>params <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">file.path</span>(rawdata_path, <span class="st">&#39;parameters_species.xlsx&#39;</span>),</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">sheet =</span> <span class="st">&quot;japanese_amberjack&quot;</span>,</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">trim_ws =</span> T, <span class="at">n_max =</span> <span class="dv">26</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clean_names</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(used_in_script, value)</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>params_japanese_amberjack_raw <span class="ot">&lt;-</span> params<span class="sc">$</span>value</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(params_japanese_amberjack_raw) <span class="ot">&lt;-</span> params<span class="sc">$</span>used_in_script</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>params_japanese_amberjack_calib <span class="ot">&lt;-</span> <span class="fu">qd_read</span>(</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">file.path</span>(prepdata_path, <span class="st">&quot;species_parameters&quot;</span>, <span class="st">&#39;species_parameters_japanese_amberjack.qs&#39;</span>)</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(params)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div id="tbl-japanese_amberjack-params" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-japanese_amberjack-params-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table 8: Raw and calibrated parameter values for the <code>japanese_amberjack</code> model. <strong>Bold</strong> values indicate parameters that changed during calibration.
+</figcaption>
+<div aria-describedby="tbl-japanese_amberjack-params-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 78%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Parameter</th>
+<th style="text-align: center;">Raw value</th>
+<th style="text-align: center;">Calibrated value</th>
+<th style="text-align: left;">Source</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">a</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">alpha</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">betac</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">CS</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">deltaImax</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">deltaW</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">eff</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">epscarb</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">epslip</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">epsO2</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">epsprot</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">gd</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">k</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">k0</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">m</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">meanImax</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">meanW</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">mortmyt</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">n</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">omega</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">pk</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Taa</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Tma</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Toa</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>params <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">file.path</span>(rawdata_path, <span class="st">&#39;parameters_species.xlsx&#39;</span>),</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">sheet =</span> <span class="st">&quot;japanese_seabass&quot;</span>,</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">trim_ws =</span> T, <span class="at">n_max =</span> <span class="dv">26</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clean_names</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(used_in_script, value)</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>params_japanese_seabass_raw <span class="ot">&lt;-</span> params<span class="sc">$</span>value</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(params_japanese_seabass_raw) <span class="ot">&lt;-</span> params<span class="sc">$</span>used_in_script</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>params_japanese_seabass_calib <span class="ot">&lt;-</span> <span class="fu">qd_read</span>(</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">file.path</span>(prepdata_path, <span class="st">&quot;species_parameters&quot;</span>, <span class="st">&#39;species_parameters_japanese_seabass.qs&#39;</span>)</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(params)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div id="tbl-japanese_seabass-params" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-japanese_seabass-params-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table 9: Raw and calibrated parameter values for the <code>japanese_seabass</code> model. <strong>Bold</strong> values indicate parameters that changed during calibration.
+</figcaption>
+<div aria-describedby="tbl-japanese_seabass-params-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 78%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Parameter</th>
+<th style="text-align: center;">Raw value</th>
+<th style="text-align: center;">Calibrated value</th>
+<th style="text-align: left;">Source</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">a</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">alpha</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">betac</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">CS</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">deltaImax</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">deltaW</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">eff</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">epscarb</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">epslip</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">epsO2</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">epsprot</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">gd</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">k</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">k0</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">m</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">meanImax</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">meanW</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">mortmyt</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">n</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">omega</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">pk</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Taa</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Tma</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Toa</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>params <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">file.path</span>(rawdata_path, <span class="st">&#39;parameters_species.xlsx&#39;</span>),</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">sheet =</span> <span class="st">&quot;milkfish&quot;</span>,</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">trim_ws =</span> T, <span class="at">n_max =</span> <span class="dv">26</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clean_names</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(used_in_script, value)</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>params_milkfish_raw <span class="ot">&lt;-</span> params<span class="sc">$</span>value</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(params_milkfish_raw) <span class="ot">&lt;-</span> params<span class="sc">$</span>used_in_script</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>params_milkfish_calib <span class="ot">&lt;-</span> <span class="fu">qd_read</span>(</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">file.path</span>(prepdata_path, <span class="st">&quot;species_parameters&quot;</span>, <span class="st">&#39;species_parameters_milkfish.qs&#39;</span>)</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(params)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div id="tbl-milkfish-params" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-milkfish-params-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table 10: Raw and calibrated parameter values for the <code>milkfish</code> model. <strong>Bold</strong> values indicate parameters that changed during calibration.
+</figcaption>
+<div aria-describedby="tbl-milkfish-params-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 78%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Parameter</th>
+<th style="text-align: center;">Raw value</th>
+<th style="text-align: center;">Calibrated value</th>
+<th style="text-align: left;">Source</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">a</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">alpha</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">betac</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">CS</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">deltaImax</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">deltaW</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">eff</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">epscarb</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">epslip</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">epsO2</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">epsprot</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">gd</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">k</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">k0</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">m</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">meanImax</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">meanW</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">mortmyt</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">n</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">omega</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">pk</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Taa</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Tma</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Toa</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>params <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">file.path</span>(rawdata_path, <span class="st">&#39;parameters_species.xlsx&#39;</span>),</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">sheet =</span> <span class="st">&quot;nile_tilapia&quot;</span>,</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">trim_ws =</span> T, <span class="at">n_max =</span> <span class="dv">26</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clean_names</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(used_in_script, value)</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>params_nile_tilapia_raw <span class="ot">&lt;-</span> params<span class="sc">$</span>value</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(params_nile_tilapia_raw) <span class="ot">&lt;-</span> params<span class="sc">$</span>used_in_script</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>params_nile_tilapia_calib <span class="ot">&lt;-</span> <span class="fu">qd_read</span>(</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">file.path</span>(prepdata_path, <span class="st">&quot;species_parameters&quot;</span>, <span class="st">&#39;species_parameters_nile_tilapia.qs&#39;</span>)</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(params)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div id="tbl-nile_tilapia-params" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-nile_tilapia-params-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table 11: Raw and calibrated parameter values for the <code>nile_tilapia</code> model. <strong>Bold</strong> values indicate parameters that changed during calibration.
+</figcaption>
+<div aria-describedby="tbl-nile_tilapia-params-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 78%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Parameter</th>
+<th style="text-align: center;">Raw value</th>
+<th style="text-align: center;">Calibrated value</th>
+<th style="text-align: left;">Source</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">a</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">alpha</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">betac</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">CS</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">deltaImax</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">deltaW</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">eff</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">epscarb</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">epslip</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">epsO2</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">epsprot</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">gd</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">k</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">k0</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">m</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">meanImax</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">meanW</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">mortmyt</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">n</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">omega</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">pk</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Taa</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Tma</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Toa</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>params <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">file.path</span>(rawdata_path, <span class="st">&#39;parameters_species.xlsx&#39;</span>),</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">sheet =</span> <span class="st">&quot;olive_flounder&quot;</span>,</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">trim_ws =</span> T, <span class="at">n_max =</span> <span class="dv">26</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clean_names</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(used_in_script, value)</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>params_olive_flounder_raw <span class="ot">&lt;-</span> params<span class="sc">$</span>value</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(params_olive_flounder_raw) <span class="ot">&lt;-</span> params<span class="sc">$</span>used_in_script</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>params_olive_flounder_calib <span class="ot">&lt;-</span> <span class="fu">qd_read</span>(</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">file.path</span>(prepdata_path, <span class="st">&quot;species_parameters&quot;</span>, <span class="st">&#39;species_parameters_olive_flounder.qs&#39;</span>)</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(params)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div id="tbl-olive_flounder-params" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-olive_flounder-params-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table 12: Raw and calibrated parameter values for the <code>olive_flounder</code> model. <strong>Bold</strong> values indicate parameters that changed during calibration.
+</figcaption>
+<div aria-describedby="tbl-olive_flounder-params-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 78%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Parameter</th>
+<th style="text-align: center;">Raw value</th>
+<th style="text-align: center;">Calibrated value</th>
+<th style="text-align: left;">Source</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">a</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">alpha</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">betac</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">CS</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">deltaImax</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">deltaW</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">eff</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">epscarb</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">epslip</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">epsO2</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">epsprot</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">gd</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">k</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">k0</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">m</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">meanImax</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">meanW</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">mortmyt</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">n</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">omega</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">pk</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Taa</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Tma</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Toa</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>params <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">file.path</span>(rawdata_path, <span class="st">&#39;parameters_species.xlsx&#39;</span>),</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">sheet =</span> <span class="st">&quot;tuna&quot;</span>,</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">trim_ws =</span> T, <span class="at">n_max =</span> <span class="dv">26</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clean_names</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(used_in_script, value)</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>params_tuna_raw <span class="ot">&lt;-</span> params<span class="sc">$</span>value</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(params_tuna_raw) <span class="ot">&lt;-</span> params<span class="sc">$</span>used_in_script</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>params_tuna_calib <span class="ot">&lt;-</span> <span class="fu">qd_read</span>(</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">file.path</span>(prepdata_path, <span class="st">&quot;species_parameters&quot;</span>, <span class="st">&#39;species_parameters_tuna.qs&#39;</span>)</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(params)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div id="tbl-tuna-params" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-tuna-params-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table 13: Raw and calibrated parameter values for the <code>tuna</code> model. <strong>Bold</strong> values indicate parameters that changed during calibration.
+</figcaption>
+<div aria-describedby="tbl-tuna-params-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 78%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Parameter</th>
+<th style="text-align: center;">Raw value</th>
+<th style="text-align: center;">Calibrated value</th>
+<th style="text-align: left;">Source</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">a</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">alpha</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">betac</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">CS</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">deltaImax</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">deltaW</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">eff</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">epscarb</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">epslip</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">epsO2</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">epsprot</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">gd</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">k</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">k0</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">m</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">meanImax</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">meanW</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">mortmyt</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">n</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">omega</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">pk</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Taa</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Tma</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Toa</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>params <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">file.path</span>(rawdata_path, <span class="st">&#39;parameters_species.xlsx&#39;</span>),</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">sheet =</span> <span class="st">&quot;abalone&quot;</span>,</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">trim_ws =</span> T, <span class="at">n_max =</span> <span class="dv">26</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clean_names</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(used_in_script, value)</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>params_abalone_raw <span class="ot">&lt;-</span> params<span class="sc">$</span>value</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(params_abalone_raw) <span class="ot">&lt;-</span> params<span class="sc">$</span>used_in_script</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>params_abalone_calib <span class="ot">&lt;-</span> <span class="fu">qd_read</span>(</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">file.path</span>(prepdata_path, <span class="st">&quot;species_parameters&quot;</span>, <span class="st">&#39;species_parameters_abalone.qs&#39;</span>)</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(params)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div id="tbl-abalone-params" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-abalone-params-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table 14: Raw and calibrated parameter values for the <code>abalone</code> model. <strong>Bold</strong> values indicate parameters that changed during calibration.
+</figcaption>
+<div aria-describedby="tbl-abalone-params-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 78%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Parameter</th>
+<th style="text-align: center;">Raw value</th>
+<th style="text-align: center;">Calibrated value</th>
+<th style="text-align: left;">Source</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">a</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">alpha</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">betac</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">CS</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">deltaImax</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">deltaW</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">eff</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">epscarb</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">epslip</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">epsO2</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">epsprot</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">gd</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">k</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">k0</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">m</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">meanImax</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">meanW</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">mortmyt</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">n</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">omega</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">pk</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Taa</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Tma</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Toa</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>params <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">file.path</span>(rawdata_path, <span class="st">&#39;parameters_species.xlsx&#39;</span>),</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">sheet =</span> <span class="st">&quot;mud_crab&quot;</span>,</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">trim_ws =</span> T, <span class="at">n_max =</span> <span class="dv">26</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clean_names</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(used_in_script, value)</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>params_mud_crab_raw <span class="ot">&lt;-</span> params<span class="sc">$</span>value</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(params_mud_crab_raw) <span class="ot">&lt;-</span> params<span class="sc">$</span>used_in_script</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>params_mud_crab_calib <span class="ot">&lt;-</span> <span class="fu">qd_read</span>(</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">file.path</span>(prepdata_path, <span class="st">&quot;species_parameters&quot;</span>, <span class="st">&#39;species_parameters_mud_crab.qs&#39;</span>)</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(params)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div id="tbl-mud_crab-params" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-mud_crab-params-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table 15: Raw and calibrated parameter values for the <code>mud_crab</code> model. <strong>Bold</strong> values indicate parameters that changed during calibration.
+</figcaption>
+<div aria-describedby="tbl-mud_crab-params-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 78%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Parameter</th>
+<th style="text-align: center;">Raw value</th>
+<th style="text-align: center;">Calibrated value</th>
+<th style="text-align: left;">Source</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">a</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">alpha</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">betac</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">CS</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">deltaImax</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">deltaW</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">eff</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">epscarb</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">epslip</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">epsO2</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">epsprot</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">gd</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">k</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">k0</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">m</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">meanImax</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">meanW</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">mortmyt</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">n</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">omega</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">pk</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Taa</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Tma</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Toa</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>params <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">file.path</span>(rawdata_path, <span class="st">&#39;parameters_species.xlsx&#39;</span>),</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">sheet =</span> <span class="st">&quot;whiteleg_shrimp&quot;</span>,</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">trim_ws =</span> T, <span class="at">n_max =</span> <span class="dv">26</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clean_names</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(used_in_script, value)</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>params_whiteleg_shrimp_raw <span class="ot">&lt;-</span> params<span class="sc">$</span>value</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(params_whiteleg_shrimp_raw) <span class="ot">&lt;-</span> params<span class="sc">$</span>used_in_script</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>params_whiteleg_shrimp_calib <span class="ot">&lt;-</span> <span class="fu">qd_read</span>(</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">file.path</span>(prepdata_path, <span class="st">&quot;species_parameters&quot;</span>, <span class="st">&#39;species_parameters_whiteleg_shrimp.qs&#39;</span>)</span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(params)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div id="tbl-whiteleg_shrimp-params" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-whiteleg_shrimp-params-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table 16: Raw and calibrated parameter values for the <code>whiteleg_shrimp</code> model. <strong>Bold</strong> values indicate parameters that changed during calibration.
+</figcaption>
+<div aria-describedby="tbl-whiteleg_shrimp-params-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 78%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Parameter</th>
+<th style="text-align: center;">Raw value</th>
+<th style="text-align: center;">Calibrated value</th>
+<th style="text-align: left;">Source</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">a</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">alpha</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">betac</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">CS</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">deltaImax</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">deltaW</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">eff</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">epscarb</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">epslip</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">epsO2</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">epsprot</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">gd</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">k</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">k0</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">m</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">meanImax</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">meanW</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">mortmyt</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">n</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">omega</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">pk</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Taa</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Tma</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Toa</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>params <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">file.path</span>(rawdata_path, <span class="st">&#39;parameters_species.xlsx&#39;</span>),</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">sheet =</span> <span class="st">&quot;tiger_prawn&quot;</span>,</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">trim_ws =</span> T, <span class="at">n_max =</span> <span class="dv">26</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clean_names</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(used_in_script, value)</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>params_tiger_prawn_raw <span class="ot">&lt;-</span> params<span class="sc">$</span>value</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(params_tiger_prawn_raw) <span class="ot">&lt;-</span> params<span class="sc">$</span>used_in_script</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>params_tiger_prawn_calib <span class="ot">&lt;-</span> <span class="fu">qd_read</span>(</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">file.path</span>(prepdata_path, <span class="st">&quot;species_parameters&quot;</span>, <span class="st">&#39;species_parameters_tiger_prawn.qs&#39;</span>)</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(params)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div id="tbl-tiger_prawn-params" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-tiger_prawn-params-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table 17: Raw and calibrated parameter values for the <code>tiger_prawn</code> model. <strong>Bold</strong> values indicate parameters that changed during calibration.
+</figcaption>
+<div aria-describedby="tbl-tiger_prawn-params-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 78%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Parameter</th>
+<th style="text-align: center;">Raw value</th>
+<th style="text-align: center;">Calibrated value</th>
+<th style="text-align: left;">Source</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">a</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">alpha</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">betac</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">CS</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">deltaImax</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">deltaW</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">eff</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">epscarb</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">epslip</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">epsO2</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">epsprot</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">gd</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">k</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">k0</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">m</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">meanImax</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">meanW</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">mortmyt</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">n</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">omega</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">pk</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Taa</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Tma</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Toa</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;"><strong>NA</strong></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<div style="display: flex; justify-content: space-between;">
+<p><a href="01_choosing_species.qmd">← Previous: Choosing species</a></p>
+<p><a href="03_02_species_temperature_responses.qmd">Next: Species temperature responses →</a></p>
+</div>
 
 </section>
 
 <div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="list">
-<div id="ref-clawson_mapping_2022_data" class="csl-entry" role="listitem">
-Clawson, Gage. 2022. <em>Mapping the Spatial Distribution of Global Mariculture Production</em>. Knowledge Network for Biocomplexity. <a href="https://knb.ecoinformatics.org/view/urn%3Auuid%3Ac5dbba3b-48db-40aa-a464-643617829685">https://knb.ecoinformatics.org/view/urn%3Auuid%3Ac5dbba3b-48db-40aa-a464-643617829685</a>.
-</div>
-<div id="ref-clawson_mapping_2022" class="csl-entry" role="listitem">
-Clawson, Gage, Caitlin D. Kuempel, Melanie Frazier, et al. 2022. <span>‘Mapping the Spatial Distribution of Global Mariculture Production’</span>. <em>Aquaculture</em> 553 (May): 738066. <a href="https://doi.org/10.1016/j.aquaculture.2022.738066">https://doi.org/10.1016/j.aquaculture.2022.738066</a>.
-</div>
-<div id="ref-fao_fishstat_2026" class="csl-entry" role="listitem">
-FAO. 2026. <em><span>FishStat</span> Data</em>. Fisheries; Aquaculture Division. <a href="https://www.fao.org/fishery/en/fishstat">https://www.fao.org/fishery/en/fishstat</a>.
-</div>
-<div id="ref-nasajpl_ghrsst_2015" class="csl-entry" role="listitem">
-NASA/JPL. 2015. <em><span>GHRSST</span> <span>Level</span> 4 <span>MUR</span> <span>Global</span> <span>Foundation</span> <span>Sea</span> <span>Surface</span> <span>Temperature</span> <span>Analysis</span> (V4.1)</em>. NASA Physical Oceanography Distributed Active Archive Center. <a href="https://doi.org/10.5067/GHGMR-4FJ04">https://doi.org/10.5067/GHGMR-4FJ04</a>.
-</div>
-<div id="ref-nasajpl_ghrsst_2019" class="csl-entry" role="listitem">
-NASA/JPL. 2019. <em><span>GHRSST</span> <span>Level</span> 4 <span>MUR</span> 0.25deg <span>Global</span> <span>Foundation</span> <span>Sea</span> <span>Surface</span> <span>Temperature</span> <span>Analysis</span> (V4.2)</em>. NASA Physical Oceanography Distributed Active Archive Center. <a href="https://doi.org/10.5067/GHM25-4FJ42">https://doi.org/10.5067/GHM25-4FJ42</a>.
+<div id="ref-baldan_r_2018" class="csl-entry" role="listitem">
+Baldan, Damiano, Erika M. D. Porporato, Roberto Pastres, and Daniele Brigolin. 2018. <span>‘An <span>R</span> Package for Simulating Growth and Organic Wastage in Aquaculture Farms in Response to Environmental Conditions and Husbandry Practices’</span>. <em>PLOS ONE</em> 13 (5): e0195732. <a href="https://doi.org/10.1371/journal.pone.0195732">https://doi.org/10.1371/journal.pone.0195732</a>.
 </div>
 </div></section></div></main>
 <!-- /main column -->

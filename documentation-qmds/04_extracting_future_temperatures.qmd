@@ -1,0 +1,460 @@
+---
+title: "4: Extracting future farm temperatures"
+subtitle: "FAO Climate Change Risks to Fed Mariculture"
+author: 
+  - "Tormey Reimer"
+date: last-modified
+---
+
+::: {style="display: flex; justify-content: space-between;"}
+[← Previous: Assigning locations](02_assigning_locations.qmd)
+
+[Next: Test production →](05_00_test_production.qmd)
+:::
+
+# Overview {#sec-overview}
+
+```{r setup}
+#| cache: false
+#| echo: false
+#| warning: false
+#| message: false
+#| output: false
+#| code-summary: "Load packages"
+
+library(tidyverse)
+library(sf)
+library(here)
+library(qs2)
+library(RColorBrewer)
+library(purrr)
+library(gt)
+library(lpSolve)
+library(readxl)
+library(janitor)
+library(countrycode)
+library(tidyterra)
+```
+
+```{r source-scripts}
+#| cache: false
+#| echo: false
+#| warning: false
+#| message: false
+#| output: false
+#| code-summary: "Source R scripts in use"
+
+here("src", "dirs.R") %>% source()
+here("src", "functions.R") %>% source()
+here("src", "display_globals.R") %>% source()
+here("src", "mapping_vars.R") %>% source()
+```
+
+Once farm locations are assigned, temperatures need to be extracted into the future.
+
+## Correcting temperatures
+
+Bias correction uses the decadal mean from 2015–2024 for both datasets (`data-prep-scripts/correcting-temperatures.R`). The change in temperature per grid cell from the CMIP projections is used as a delta applied on top of the contemporary NASA SST data (i.e. `corrected = CMIP_future − CMIP_meanyear + NASA_meanyear`). February 29 dates in leap years are handled by interpolating the adjacent meanyear layers (DOY 059 and DOY 060) with equal weights. The corrected rasters are saved to `bigdata_path/ESGF/EC-Earth3P-HR/projected_adjusted/`.
+
+```{r projected-adjusted-files}
+#| code-summary: List the projected_adjusted files to check we're getting them from the correct place
+
+tos_rast_fnms <- file.path(bigdata_path, "ESGF", "EC-Earth3P-HR", "projected_adjusted") %>% 
+  list.files(full.names = T) %>% 
+  sort()
+
+# Use just one raster for cell assignment
+tos_rast <- rast(tos_rast_fnms[1])
+```
+
+# Get farm locations {#sec-get-data}
+
+```{r load-assigned-farm-data}
+#| code-summary: Load saved data for summarising
+
+assigned_farms <- file.path(prepdata_path, "assigned_farms.qs") %>% 
+  qs_read()
+```
+
+## Get farm locations in temperature rasters
+
+Once we have a representative corrected global temperature raster, we can extract the locations we actually want - the farms that have been assigned for use in this analysis. The first step is to assign each farm location a cell number (or several cell numbers) within the temperature raster stack.
+
+```{r farm-cell-extraction}
+#| code-summary: Assign cell(s) to each farm and create a lookup table for future temperature extraction
+
+farm_points <- assigned_farms %>% 
+  vect()
+
+# Attempt to extract the cell numbers dirrectly underneath assigned farms
+farm_cells <- terra::extract(tos_rast, farm_points, cells = T, ID = F) %>% 
+  rename(focal_cell = cell)
+farm_cells$farm_ID <- farm_points$farm_ID
+
+simple_assigned <- farm_cells %>% 
+  filter(!is.na(focal_mean))
+
+message(sprintf("%i of %i farm IDs have a simple cell extracted (%0.1f%%).", 
+  nrow(simple_assigned), 
+  nrow(farm_cells), 
+  100*nrow(simple_assigned)/nrow(farm_cells)
+))
+
+# Look at the 4 surrounding cells of each missing cell to try and find a viable temperature
+still_missing_1 <- farm_cells %>% 
+  filter(is.na(focal_mean))
+
+neighbours_4 <- terra::adjacent(tos_rast, cells = still_missing_1$focal_cell, directions = 4)
+neighbours_4 <- split(neighbours_4, row(neighbours_4)) |> unname()
+
+still_missing_1 <- still_missing_1 %>% 
+  mutate(neighbours_4 = neighbours_4, new_cells = NA)
+
+still_missing_1 <- still_missing_1 %>%
+  mutate(
+    new_cells = lapply(neighbours_4, function(nb) {
+      cells <- unlist(nb)
+      temps <- terra::extract(tos_rast, cells)
+      if (any(!is.na(temps$focal_mean))) cells else NA
+    })
+  )
+
+assigned_4 <- still_missing_1 %>% 
+  filter(!is.na(new_cells))
+
+message(sprintf("%i of %i remaining farm IDs have cells from the 4 cardinal directions around extracted (%0.1f%%).", 
+  nrow(assigned_4), 
+  nrow(still_missing_1), 
+  100*nrow(assigned_4)/nrow(still_missing_1))
+)
+
+# Look at the 8 surrounding cells of each missing cell to try and find a viable temperature
+still_missing_2 <- still_missing_1 %>% 
+  filter(is.na(new_cells))
+
+neighbours_8 <- terra::adjacent(tos_rast, cells = still_missing_2$focal_cell, directions = 8)
+neighbours_8 <- split(neighbours_8, row(neighbours_8)) |> unname()
+
+still_missing_2 <- still_missing_2 %>% 
+  mutate(neighbours_8 = neighbours_8)
+
+still_missing_2 <- still_missing_2 %>%
+  mutate(
+    new_cells = lapply(neighbours_8, function(nb) {
+      cells <- unlist(nb)
+      temps <- terra::extract(tos_rast, cells)
+      if (any(!is.na(temps$focal_mean))) cells else NA
+    })
+  )
+
+assigned_8 <- still_missing_2 %>% 
+  filter(!is.na(new_cells))
+
+message(sprintf("%i of %i remaining farm IDs have cells from the 8 directions around extracted (%0.1f%%).", 
+  nrow(assigned_8), 
+  nrow(still_missing_2), 
+  100*nrow(assigned_8)/nrow(still_missing_2)
+))
+
+# Let's expand the search
+still_missing_3 <- still_missing_2 %>% 
+  filter(is.na(new_cells))
+
+still_missing_3 <- still_missing_3 %>% 
+  mutate(
+    new_cells = lapply(neighbours_4, function(nb) {
+      nb_all <- terra::adjacent(tos_rast, cells = nb, directions = 8) %>% as.vector() %>% unique()
+      nb_all <- terra::adjacent(tos_rast, cells = nb_all, directions = 4) %>% as.vector() %>% unique()
+      temps <- terra::extract(tos_rast, nb_all)
+      if (any(!is.na(temps$focal_mean))) nb_all else NA
+    })
+  )
+
+assigned_exp <- still_missing_3 %>% 
+  filter(!is.na(new_cells)) 
+
+message(sprintf("%i of %i remaining farm IDs have cells from the expanded cell radius around extracted (%0.1f%%).", 
+  nrow(assigned_exp), 
+  nrow(still_missing_3), 
+  100*nrow(assigned_exp)/nrow(still_missing_3))
+)
+
+message(sprintf("There are %i farm_IDs still remaining.", still_missing_3 %>% filter(is.na(new_cells)) %>% nrow()))
+```
+
+After 4 rounds of searching progressively wider areas, there are still 137 farms missing temperatures. Where are they?
+
+```{r fig-where-are-the-missing-farms}
+#| code-summary: Show the missing farms and their nearest neighbour
+
+missing_farms <- still_missing_3 %>% 
+  filter(is.na(new_cells)) %>% 
+  pull(farm_ID)
+
+farm_points_missing <- assigned_farms %>% # includes a geometry column
+  mutate(is_missing = case_when(farm_ID %in% missing_farms ~ T, T ~ F)) %>% 
+  select(farm_ID, is_missing) %>% 
+  mutate(type = "missing")
+
+missing <- farm_points_missing %>% filter(is_missing)
+non_missing <- farm_points_missing %>% filter(!is_missing)
+
+nearest_idx <- sf::st_nearest_feature(missing, non_missing)
+nearst_non_missing <- non_missing[nearest_idx, ] %>% 
+  mutate(type = "nonmissing")
+
+paired <- rbind(missing, nearst_non_missing)
+duplicated <- cbind(
+  st_drop_geometry(missing), 
+  nearst_non_missing %>% st_drop_geometry() %>% rename(dup_farm_ID = farm_ID) %>% select(dup_farm_ID)
+) %>% 
+  select(farm_ID, dup_farm_ID)
+
+ggplot() +
+  geom_spatraster(data = tos_rast) +
+  geom_sf(data = paired, aes(geometry = geometry, colour = as.factor(type))) +
+  scale_fill_viridis_c(na.value = NA) +
+  scale_color_manual(values = c("missing" = "black", "nonmissing" = "red")) +
+  prettyplot() + coord_sf()
+```
+
+The missing farms are mostly in Chile, with a few in Norway. They're generally a little bit inland of the coast (up estuaries, etc) so they're not being well-captured by SST changes. However, they're extremely close to non-missing points of data, so we'll be copying those temperatures for those features.
+
+```{r combine-all-assigned-cells-together}
+#| code-summary: Combine cell assignments
+
+# The simple assignments
+assigned_farms_cells <- assigned_farms %>% 
+  left_join(
+    simple_assigned %>% 
+      mutate(focal_cells = as.list(focal_cell)) %>% 
+      select(focal_cells, farm_ID),
+    by = "farm_ID"
+  )
+
+# The 4-way assignments
+geometry <- sf::st_geometry(assigned_farms_cells) # so annoying
+assigned_farms_cells <- assigned_farms_cells %>%
+  sf::st_drop_geometry() %>% 
+  rows_update(
+    assigned_4 %>% 
+      select(farm_ID, new_cells) %>% 
+      rename(focal_cells = new_cells),
+    by = "farm_ID"
+  ) %>%
+  sf::st_set_geometry(geometry)
+
+# The 8-way assignments
+geometry <- sf::st_geometry(assigned_farms_cells) # so annoying
+assigned_farms_cells <- assigned_farms_cells %>%
+  sf::st_drop_geometry() %>% 
+  rows_update(
+    assigned_8 %>% 
+      select(farm_ID, new_cells) %>% 
+      rename(focal_cells = new_cells),
+    by = "farm_ID"
+  ) %>%
+  sf::st_set_geometry(geometry)
+
+# The expanded assignments
+geometry <- sf::st_geometry(assigned_farms_cells) # so annoying
+assigned_farms_cells <- assigned_farms_cells %>%
+  sf::st_drop_geometry() %>% 
+  rows_update(
+    assigned_exp %>% 
+      select(farm_ID, new_cells) %>% 
+      rename(focal_cells = new_cells),
+    by = "farm_ID"
+  ) %>%
+  sf::st_set_geometry(geometry)
+
+# The ones copying from neighbours
+geometry <- sf::st_geometry(assigned_farms_cells) # so annoying
+assigned_farms_cells <- assigned_farms_cells %>% 
+  sf::st_drop_geometry() %>% 
+  rows_update(
+    duplicated %>% mutate(focal_cells = as.list(as.numeric(dup_farm_ID))) %>% select(farm_ID, focal_cells),
+    by = "farm_ID"
+  ) %>%
+  sf::st_set_geometry(geometry)
+
+# Finally check for any missing - should be none!
+assigned_farms_cells %>% 
+  filter(length(focal_cells) == 0)
+
+qs_save(assigned_farms_cells, file.path(prepdata_path, "assigned_farms_focal_cells.qs"))
+```
+
+# Extract future temperatures
+
+```{r extractions-prep}
+#| code-summary: Prep for temperature extraction
+
+# quick cleanup
+rm(geometry, still_missing_2, still_missing_3, assigned_4, assigned_8, assigned_exp, simple_assigned, farm_points_missing, non_missing, missing, paired, duplicated, still_missing_1, nearst_non_missing)
+gc()
+
+# Where to save the final temperature files?
+farm_temp_outputs <- file.path(prepdata_path, "assigned_farms_alltemps")
+dir.create(farm_temp_outputs, showWarnings = F)
+
+# Group the projected-adjusted temperature raster files by year
+tos_rast_fnms_ls <- tibble(
+  path = tos_rast_fnms,
+  date = as.Date(str_extract(basename(tos_rast_fnms), "\\d{4}-\\d{2}-\\d{2}")),
+  year = year(date)
+)
+tos_rast_fnms_ls <- split(tos_rast_fnms_ls, tos_rast_fnms_ls$year)
+```
+
+```{r extract-temps-lookup-cells}
+#| code-summary: Extract all farm focal cells for each year, accumulating results into some lookup files
+#| eval: false
+
+# Get all focal cells we need to extract for all farms
+all_cells <- unique(unlist(assigned_farms_cells$focal_cells))
+
+# yr_fnms <- tos_rast_fnms_ls[[1]]
+walk(
+  tos_rast_fnms_ls,
+  function(yr_fnms) {
+    tos_stack <- rast(yr_fnms$path)
+    names(tos_stack) <- yr_fnms$date
+    
+    # Extract ALL cells needed across all farms in one call
+    extracted <- terra::extract(tos_stack, all_cells)
+    
+    # Label rows with cell number and save as a lookup table
+    extracted$cell <- all_cells
+    qs2::qs_save(
+      extracted, 
+      file.path(data_path, "intermediates", "farm_focal_lookup_files", paste0("extracted_", unique(yr_fnms$year), ".qs"))
+    )
+  },
+  .progress = T
+)
+```
+
+```{r per-farm-projected-temperatures}
+#| code-summary: Assemble per-farm files from the extracted temperatures in the lookup tables
+#| eval: false
+
+assigned_farms_cells <- file.path(prepdata_path, "assigned_farms_focal_cells.qs") %>% qs_read()
+subset_farms <- assigned_farms_cells %>% 
+  # filter(source == "extracted") %>% 
+  pull(farm_ID) %>% unique()
+
+lookup_files <- file.path(data_path, "intermediates", "farm_focal_lookup_files") %>% 
+  list.files(pattern = "extracted_\\d{4}\\.qs", full.names = TRUE)
+
+overwrite <- T
+
+# id <- subset_farms[1]
+walk(
+  subset_farms,
+  function(id) {
+    out_file <- file.path(farm_temp_outputs, paste0("farm_", fix_int(id, digits = 8), ".qs"))
+    if (!file.exists(out_file) | overwrite) {
+      cells <- assigned_farms_cells$focal_cells[assigned_farms_cells$farm_ID == id][[1]]
+      
+      temps <- lookup_files %>% 
+        map_dfr(function(fnm) {
+          tmp <- qs_read(fnm) %>% 
+            filter(cell %in% cells) %>% 
+            select(-cell)
+          vals <- colMeans(as.matrix(tmp), na.rm = TRUE)
+          data.frame(
+            date = as.Date(names(tmp)),
+            sst = unname(vals)
+          )
+        }) %>% 
+          mutate(farm_ID = id)
+
+      if (any(is.na(temps$sst))) {
+        cli::cli_alert_warning(sprintf("Warning! Cell %s has missing temperatures!", id))
+      }
+
+      qs2::qs_save(temps, out_file)
+    }
+  },
+  .progress = T
+)
+
+# ! Warning! Cell 87416 has missing temperatures!   
+# ! Warning! Cell 87479 has missing temperatures!   
+# ! Warning! Cell 87520 has missing temperatures!   
+# ! Warning! Cell 87521 has missing temperatures!   
+# ! Warning! Cell 87525 has missing temperatures!   
+```
+
+```{r farm-temperatures-by-model}
+#| code-summary: Save farm temperatures by model names - this will make it easier to load for production model loading
+
+model_names <- unique(assigned_farms$model_name)
+
+# mn <- model_names[11]
+walk(
+  model_names,
+  function (mn) {
+    model_farms <- assigned_farms %>% 
+      filter(model_name == mn)
+
+    temps <- file.path(farm_temp_outputs) %>% 
+      list.files(full.names = T) %>% 
+      str_subset(paste0(fix_int(model_farms$farm_ID, 8), collapse = "|")) %>% 
+      map_dfr(qs_read)
+
+    model_farms <- model_farms %>% 
+      left_join(temps, by = join_by(farm_ID)) %>% 
+      mutate(year = year(date) %>% as.factor())
+
+    qs2::qs_save(model_farms, file.path(prepdata_path, "farm_temps_bymodel", paste0("farm_temps_", mn, ".qs")))
+  },
+  .progress = T
+)
+```
+
+```{r farm-temperatures-per-country}
+#| code-summary: Plot farm temperatures by country - mostly just to show how it changes over time
+
+ISO_Codes <- unique(assigned_farms$ISO3_Code)
+
+# iso <- ISO_Codes[11]
+walk(
+  ISO_Codes,
+  function (iso) {
+    country_farms <- assigned_farms %>% 
+      filter(ISO3_Code == iso)
+
+    temps <- file.path(farm_temp_outputs) %>% 
+      list.files(full.names = T) %>% 
+      str_subset(paste0(fix_int(country_farms$farm_ID, 8), collapse = "|")) %>% 
+      map_dfr(qs_read)
+
+    country_farms <- country_farms %>% 
+      left_join(temps, by = join_by(farm_ID)) %>% 
+      mutate(year = year(date) %>% as.factor())
+
+    p <- ggplot(country_farms, aes(x = year, y = sst, fill = model_name)) +
+      geom_boxplot() +
+      theme_classic() +
+      facet_wrap(~model_name, ncol = 1) +
+      theme(axis.text.x = element_text(angle = 90))
+
+    ggsave(
+      plot = p,
+      filename = file.path(outs_path, "plots", "farm_temperatures", paste0("farm_temps_", iso, ".png")),
+      dpi = 300,
+      width = 10,
+      height = 2.5 * max(ggplot_build(p)$layout$layout$ROW) + 1
+    )
+  },
+  .progress = T
+)
+```
+
+::: {style="display: flex; justify-content: space-between;"}
+[← Previous: Assigning locations](02_assigning_locations.qmd)
+
+[Next: Test production →](05_00_test_production.qmd)
+:::

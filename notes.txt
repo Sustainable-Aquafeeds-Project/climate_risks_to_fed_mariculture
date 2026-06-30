@@ -1,0 +1,18 @@
+## Data preparation steps
+
+
+4. ISIMIP SST data in selected SSPs
+5. ISIMIP crop yield biomass in selected SSPs
+6. FishMIP catch biomass in selected SSPs
+7. Source data for habitat suitability: Froehlich et al. (2018), Gentry et al. (2017), and Oyinlola et al. (2020)
+
+1. Select key fed mariculture species/groups based on ranked global production and existing maps of mariculture locations [1,2]. 
+	- Allocate farms to species of interest using SST suitability (rough estimate per species, list of potential species)
+
+2. Create standardised feeds for each species/group and determine major crops/fish for raw material demand. The range of raw material proportions will further provide a scope of possible feed compositions for the later risk assessment.
+
+3. Select socio-economic pathways (SSPs) of interest, and standardise data for:
+	3a. Crop yields and fished biomass through time for raw material demand
+	3b. Sea surface temperature for production
+	3c. Habitat suitability for mariculture adaptability
+

@@ -1,0 +1,310 @@
+---
+title: "5.1: Run future production"
+subtitle: "FAO Climate Change Risks to Fed Mariculture"
+author: 
+  - "Tormey Reimer"
+date: last-modified
+---
+
+::: {style="display: flex; justify-content: space-between;"}
+[← Previous: Testing production](05_00_test_production.qmd)
+
+[Next: Home →](../index.qmd)
+:::
+
+# Overview {#sec-overview}
+
+```{r setup}
+#| cache: false
+#| echo: false
+#| warning: false
+#| message: false
+#| output: false
+
+library(tidyverse)
+library(here)
+library(readxl)
+library(janitor)
+library(lhs)
+library(scales)
+library(gt)
+library(qs2)
+library(slider)
+library(units)
+```
+
+```{r source-scripts}
+#| cache: false
+#| echo: false
+#| warning: false
+#| message: false
+#| output: false
+#| code-summary: "Source R scripts in use"
+
+here("src", "dirs.R") %>% source()
+here("src", "functions.R") %>% source()
+here("src", "model_functions.R") %>% source()
+here("src", "display_globals.R") %>% source()
+```
+
+This document runs the future production for all models across all farms for the years 2025-2099.
+
+# Species and feed parameters {#sec-species-params}
+
+```{r species-parameters}
+#| code-summary: Load species parameters for seabream
+
+species_params <- file.path(prepdata_path, "species_parameters") %>% 
+  list.files(full.names = T)
+
+model_names <- species_params %>% 
+  basename() %>% 
+  str_remove_all(".qs|species_parameters_")
+
+species_params <- map(species_params, qd_read) %>% 
+  setNames(model_names)
+```
+
+```{r feed-params}
+#| code-summary: Load feed parameters
+
+feed_params <- file.path(prepdata_path, "feed_parameters") %>% 
+  list.files(full.names = T)
+
+model_names <- feed_params %>% 
+  basename() %>% 
+  str_remove_all(".qs|feed_parameters_")
+
+feed_params <- map(feed_params, qs_read) %>% 
+  setNames(model_names)
+```
+
+# Farm temperatures {#sec-farm-temperatures}
+
+The "assigned farms" table acts as a guide for the production run. It specifies which temperature timeseries is to be used (via farm_ID) and which species is to be grown there.
+
+```{r get-assigned-farms}
+
+assigned_farms <- file.path(prepdata_path, "assigned_farms.qs") %>% 
+  qs_read() %>% 
+  sf::st_drop_geometry()
+
+farm_temp_files <- file.path(prepdata_path, "assigned_farms_alltemps") %>% 
+  list.files(full.names = T)
+farm_temp_file_IDs <- farm_temp_files %>% 
+  basename() %>% 
+  str_remove_all(".qs|farm_") %>% 
+  as.integer()
+
+farm_temp_files <- data.frame(
+  farm_ID = farm_temp_file_IDs,
+  filename = farm_temp_files
+)
+
+assigned_farms <- assigned_farms %>% 
+  left_join(farm_temp_files, by = "farm_ID")
+
+# Any missing?
+assigned_farms %>% filter(is.na(filename))
+
+# TEMPORARY - filter out those species we don't have parameters for yet
+assigned_farms <- assigned_farms %>% 
+  filter(model_name %in% model_names) %>% 
+  slice_sample(n = 1000)
+
+assigned_farms <- split(assigned_farms, assigned_farms$farm_ID)
+```
+
+Before running production, we need to establish the following per-farm parameters:
+
+* Grow times (day of start/harvest) - these will be based on 2025 temeprature timeseries
+* Farm population (scaling factor) - based on 2025 temperatures and harvest sizes, and per-farm production
+
+```{r helper-functions}
+
+# Get the best "growing window" for this species
+get_growing_window <- function(temperatures, grow_days, species_params) {
+  temperatures$fr <- sapply(
+    X = temperatures$sst, 
+    FUN = feeding_rate, 
+    species_params = species_params
+  )
+  temperatures$fr[is.na(temperatures$fr)] <- 0
+
+  temperatures %>% 
+    mutate(roll_fr = slide_dbl(fr, sum, .before = 0, .after = grow_days - 1)) %>%
+    slice_max(roll_fr, n = 1) %>%
+    mutate(end_doy = doy + grow_days - 1) %>% 
+    select(start = doy, end = end_doy)
+}
+```
+
+```{r set-per-farm-parameters}
+#| code-summary: Set the grow-times and get the representative harvest size for each farm
+
+# af <- assigned_farms[[12]]
+assigned_farms <- map(
+  assigned_farms,
+  function(af) {
+    species <- af$model_name
+    sp <- species_params[[species]]
+    fp <- feed_params[[species]]
+    gd <- sp[["gd"]] %>% as.integer()
+
+    # Get the base temperatures for this farm
+    temp_2025 <- af$filename %>% 
+      qs_read() %>% 
+      filter(year(date) == 2025) %>% 
+      mutate(doy = as.integer(format(date, "%j")))
+
+    # Repeat the base year (2025) to set growing conditions
+    temp_2025 <- rbind(
+      temp_2025,
+      temp_2025 %>% mutate(doy = doy + 365),
+      temp_2025 %>% mutate(doy = doy + 730)
+    )
+
+    doys <- get_growing_window(
+      temperatures = temp_2025,
+      grow_days = gd,
+      species_params = sp
+      ) %>% 
+      slice_head(n = 1)
+
+    # Narrow down the temperature timeseries to only the growing days
+    temp_base <- temp_2025 %>% 
+      filter(doy >= doys$start & doy <= doys$end) %>% 
+      pull(sst)
+
+    # Grow a representative individual fish with this timeseries
+    rep_ind <- fish_growth(
+      species_params = sp, 
+      water_temp = temp_base, 
+      feed_params = fp, 
+      times = c(t_start = doys$start, t_end = doys$end, dt = 1L), 
+      init_weight = sp[["meanW"]], 
+      ingmax = sp[["meanImax"]], 
+      output_vars = c("weight")
+    )
+    rep_ind <- unname(rep_ind[nrow(rep_ind), 2]) # get harvest weight (g)
+
+    # Get scaling factor from harvest weight (g) and per-farm production (t)
+    pop <- (af$prod_perfarm * 10^6)/rep_ind
+
+    # At the end, give the start and end days, the individual harvest size, and the final population (scaling factor)
+    af %>% 
+      mutate(
+        start_doy = doys$start,
+        end_doy = doys$end,
+        harvest_size = rep_ind,
+        final_pop = pop
+      )
+  },
+  .progress = T
+)
+```
+
+# Run production
+
+There are several important metrics to get out of this process. At each farm and in each year, we need to show:
+
+1. The total biomass produced (we're not adjusting the farm scaling factor/population for now)
+2. The total feed provided/consumed by the fish
+
+```{r run-production}
+#| code-summary: Run the main production and save the outputs at each farm
+
+# Folder for results
+prod_path <- file.path(outs_path, "data", "farm_production")
+dir.create(prod_path, showWarnings = F)
+
+harvest_years <- 2025:2099
+MC_pop <- 10
+
+# af <- assigned_farms[[1]]
+walk(
+  assigned_farms,
+  function(af) {
+    species <- af$model_name
+    sp <- species_params[[species]]
+    fp <- feed_params[[species]]
+    gd <- sp[["gd"]] %>% as.integer()
+
+    # Get all temperatures at this farm
+    temps_all <- af$filename %>% 
+      qs_read() %>% 
+      mutate(
+        doy = as.integer(format(date, "%j")),
+        year = year(date)
+      ) %>% 
+      select(-date)
+
+    # Fill in 2024 and 2100 to reconcile multi-year growing periods
+    temps_all <- rbind(
+      temps_all %>% filter(year == 2025) %>% mutate(year = 2024),
+      temps_all,
+      temps_all %>% filter(year == 2099) %>% mutate(year = 2100)
+    ) %>% 
+      arrange(year, doy)
+
+    # Get correct species growtimes
+    end_gd <- if (af$end_doy > 365) {af$end_doy - 365} else {af$end_doy} # this should be in the harvest year
+    grow_times <- c(
+      t_start = af$start_doy,
+      t_end = af$end_doy,
+      dt = 1L
+    )
+
+    # Filter to actual growing window for each harvest year
+    # yr <- 2025
+    temps_all <- map(
+      harvest_years,
+      function(yr) {
+        temp <- temps_all %>% 
+          filter(year %in% c(yr, yr-1, yr+1))
+        temp$doy <- 1:nrow(temp)
+        temp %>% 
+          filter(doy >= grow_times[["t_start"]] & doy <= grow_times[["t_end"]]) %>% 
+          mutate(year  = yr)
+      }
+    ) %>% 
+      setNames(harvest_years)
+
+    # Generate the population (scaling factor)
+    pop <- generate_pop(harvest_n = af$final_pop, mort = sp[["mortmyt"]], times = grow_times)
+
+    # Run the full production
+    # temps <- temps_all[[1]]
+    fg <- map2(
+      temps_all,
+      harvest_years,
+      function(temps, yr) {
+        farm_growth(
+          species_params = sp, 
+          feed_params = fp, 
+          water_temp = temps$sst, 
+          times = grow_times,
+          N_pop = pop, 
+          use_MC_population = T, 
+          MC_pop = MC_pop,
+          output_vars = c("weight", "dw", "T_response", "rel_feeding", "ing_act", "anab", "catab", "total_excr", "metab"),
+          scaled_vars = c("weight", "dw", "ing_act", "total_excr")
+        )
+      }, .progress = T
+    )
+
+    qs_save(
+      fg,
+      file.path(prod_path, paste0("production_results_farmID_", fix_int(af$farm_ID, 8), "_MC", MC_pop, ".qs"))
+    )
+
+  },
+  .progress = T
+)
+```
+
+::: {style="display: flex; justify-content: space-between;"}
+[← Previous: Testing production](05_00_test_production.qmd)
+
+[Next: Home →](../index.qmd)
+:::
