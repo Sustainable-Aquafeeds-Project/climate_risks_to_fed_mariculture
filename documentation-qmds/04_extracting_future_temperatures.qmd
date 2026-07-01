@@ -34,6 +34,7 @@ library(readxl)
 library(janitor)
 library(countrycode)
 library(tidyterra)
+library(magrittr)
 ```
 
 ```{r source-scripts}
@@ -347,9 +348,9 @@ subset_farms <- assigned_farms_cells %>%
 lookup_files <- file.path(data_path, "intermediates", "farm_focal_lookup_files") %>% 
   list.files(pattern = "extracted_\\d{4}\\.qs", full.names = TRUE)
 
-overwrite <- T
+overwrite <- F
 
-# id <- subset_farms[1]
+# id <- subset_farms[10000]
 walk(
   subset_farms,
   function(id) {
