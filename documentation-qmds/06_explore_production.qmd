@@ -1,0 +1,397 @@
+---
+title: "6: Explore production"
+subtitle: "FAO Climate Change Risks to Fed Mariculture"
+author: 
+  - "Tormey Reimer"
+date: last-modified
+---
+
+::: {style="display: flex; justify-content: space-between;"}
+[← Previous: Run production](05_01_run_production_seabream.qmd)
+
+[Next: Home →](../index.qmd)
+:::
+
+# Overview {#sec-overview}
+
+```{r setup}
+#| cache: false
+#| echo: false
+#| warning: false
+#| message: false
+#| output: false
+
+library(tidyverse)
+library(here)
+library(janitor)
+library(scales)
+library(gt)
+library(qs2)
+library(units)
+```
+
+```{r source-scripts}
+#| cache: false
+#| echo: false
+#| warning: false
+#| message: false
+#| output: false
+#| code-summary: Source R scripts in use
+
+here("src", "dirs.R") %>% source()
+here("src", "functions.R") %>% source()
+here("src", "model_functions.R") %>% source()
+here("src", "display_globals.R") %>% source()
+```
+
+# Farm location data {#sec-farm-location-data}
+
+```{r load-farm-locations}
+#| code-summary: Load farm location data and land polygons
+
+library(sf)
+library(rnaturalearth)
+
+assigned_farms <- file.path(prepdata_path, "assigned_farms.qs") %>%
+  qs_read() %>%
+  filter(ISO3_Code == "NOR" & model_name == "rainbow_trout")
+
+farm_IDs <- assigned_farms %>% pull(farm_ID)
+
+land <- ne_countries(scale = "large", returnclass = "sf")
+```
+
+```{r fig-farm-location-map}
+#| code-summary: Plot farm locations on a map of Norway
+#| fig-cap: "Farm locations coloured by farm_ID (matching the production line plot)"
+
+# Build a shared colour scale so both plots use identical farm_ID colours
+farm_factor_levels <- assigned_farms %>% 
+  mutate(latitude = st_coordinates(geometry)[2]) %>% 
+  arrange(latitude) %>% 
+  pull(farm_ID)
+farm_colours <- viridis::viridis(length(farm_factor_levels), option = "turbo")
+names(farm_colours) <- as.character(farm_factor_levels)
+
+# Bounding box around Norway for cropping
+norway_bbox <- st_bbox(c(xmin = 4, xmax = 31, ymin = 57, ymax = 72),
+                       crs = st_crs(4326))
+
+ggplot() +
+  geom_sf(data = land %>% st_make_valid() %>% st_crop(norway_bbox), fill = "grey90", colour = "grey50") +
+  geom_sf(
+    data = assigned_farms %>% mutate(farm_ID = as.factor(farm_ID)),
+    aes(colour = farm_ID),
+    size = 3
+  ) +
+  scale_colour_manual(values = farm_colours) +
+  theme_void() +
+  labs(colour = "Farm ID")
+```
+
+# Production data {#sec-get-data}
+
+```{r load-production-files}
+#| code-summary: Load production file names and extract farm IDs
+
+prod_fnms <- file.path(outs_path, "data", "farm_production") %>%
+  list.files(full.names = T) %>%
+  str_subset("MC100.qs")
+
+all_farm_IDs <- prod_fnms %>%
+  basename() %>%
+  str_extract("(?<=farmID_)\\d+") %>%
+  as.integer()
+
+prod_fnms <- prod_fnms[which(all_farm_IDs %in% farm_IDs)]
+```
+
+# Exploring data {#sec-exploring-data}
+
+```{r helper-function}
+#| code-summary: Define helper function to tidy production statistics
+
+tidy_stat <- function(prod_data, stat_name) {
+  imap_dfr(prod_data, function(year_data, year_name) {
+    tibble(
+      year = as.integer(year_name),
+      day  = year_data$days,
+      mean = year_data$stats[[stat_name]][, 1],
+      sd   = year_data$stats[[stat_name]][, 2]
+    ) %>% 
+      mutate(prod_day = day - min(day) + 1)
+  })
+}
+
+qs_read(prod_fnms[1])[[1]] %>% str()
+```
+
+## Farm biomass {#sec-farm-biomass}
+
+```{r process-farm-biomass}
+#| code-summary: Process farm biomass statistics across all farms
+
+biomass_stats <- map2_dfr(
+  prod_fnms,
+  farm_IDs,
+  function(fnm, ID) {
+    tidy_stat(qs_read(fnm), "weight_scaled") %>% 
+      mutate(farm_ID = ID)
+  },
+  .progress = T
+)
+```
+
+```{r fig-farm-biomass-over-time}
+#| code-summary: Plot farm biomass over time by farm ID
+#| fig-cap: "Farm biomass harvest in each year of production, coloured by farm ID."
+
+biomass_stats %>%
+  group_by(farm_ID, year) %>%
+  slice_tail(n = 1) %>%
+  ungroup() %>% 
+  ggplot(aes(x = year, y = mean/1000000, colour = as.factor(farm_ID))) +
+  geom_line(linewidth = 0.75) +
+  scale_colour_manual(values = farm_colours) +
+  prettyplot() +
+  labs(colour = "Farm ID", x = "Year", y = "Farm biomass (t)")
+```
+
+## Feed ingested (provided) {#sec-feed-ingested}
+
+```{r process-feed-ingested}
+#| code-summary: Process feed ingested statistics across all farms
+
+feed_stats <- map2_dfr(
+  prod_fnms,
+  farm_IDs,
+  function(fnm, ID) {
+    tidy_stat(qs_read(fnm), "ing_act_scaled") %>% 
+      mutate(farm_ID = ID)
+  },
+  .progress = T
+)
+```
+
+```{r fig-total-feed-provided}
+#| code-summary: Plot total feed provided per farm over time
+#| fig-cap: "Total feed provided to each farm over its whole production cycle in each harvest year. All farms are here assumed to provide ~7% more feed than actually required (feeding efficiency = 95%, overfeeding = 1.5%)"
+
+feed_stats %>%
+  group_by(farm_ID, year) %>%
+  reframe(mean = sum(mean, na.rm = T)) %>%
+  ungroup() %>% 
+  ggplot(aes(x = year, y = 1.069519 * mean/1000000, colour = as.factor(farm_ID))) +
+  geom_line(linewidth = 0.75) +
+  scale_colour_manual(values = farm_colours) +
+  prettyplot() +
+  labs(colour = "Farm ID", x = "Year", y = "Feed provided (t)")
+```
+
+## Feed provided per biomass {#sec-feed-per-biomass}
+
+```{r calculate-feed-per-biomass}
+#| code-summary: Calculate feed provided per harvested biomass
+
+feed_biomass_stats <- left_join(
+  biomass_stats %>% 
+    select(-sd) %>% 
+    group_by(farm_ID, year) %>%
+    slice_tail(n = 1) %>%
+    ungroup(), 
+  feed_stats %>%
+    group_by(farm_ID, year) %>%
+    reframe(mean = sum(mean, na.rm = T)) %>%
+    ungroup(),
+  by = join_by(farm_ID, year)
+) %>% 
+  mutate(mean = 1.069519 * mean.y/mean.x) %>% 
+  select(-c(mean.y, mean.x))
+```
+
+```{r fig-feed-per-biomass}
+#| code-summary: Plot feed provided per harvested biomass over time
+#| fig-cap: "Total feed provided to each farm over its whole production cycle per harvested biomass. All farms are assumed to provide ~7% more feed than actually required (fish feeding efficiency = 95%, overfeeding = 1.5%)."
+
+feed_biomass_stats %>%
+  ggplot(aes(x = year, y = mean, colour = as.factor(farm_ID))) +
+  geom_line(linewidth = 0.75) +
+  scale_colour_manual(values = farm_colours) +
+  prettyplot() +
+  labs(colour = "Farm ID", x = "Year", y = "Feed provided/harvested biomass")
+```
+
+```{r feed-ingredients}
+
+rms_df <- read_excel(here("data", "raw_data", "feed_profiles_and_composition.xlsx"), sheet = "all_feeds") %>%
+  select(feed, ingredient, proportion) %>% 
+  filter(feed == "Rainbow trout 1") %>% 
+  mutate(raw_material = case_when(
+    ingredient %in% c("canola-oil") ~ "canola",
+    ingredient %in% c("coconut-oil") ~ "coconut",
+    ingredient %in% c("faba-beans") ~ "faba",
+    ingredient %in% c("fishmeal-forage", "fish-oil-forage") ~ "fish (forage)",
+    ingredient %in% c("fishmeal-trimmings", "fish-oil-trimmings") ~ "fish (trimmings)",
+    ingredient %in% c("guar-meal") ~ "guar",
+    ingredient %in% c("linseed-oil") ~ "linseed",
+    ingredient %in% c("pea-flour", "pea-protein-concentrate") ~ "pea",
+    ingredient %in% c("soy-protein-concentrate", "soybean-oil") ~ "soy",
+    ingredient %in% c("sunflower-meal") ~ "sunflower",
+    ingredient %in% c("wheat", "wheat-gluten") ~ "wheat"
+  )) %>% 
+    group_by(raw_material) %>% 
+    reframe(proportion = sum(proportion))
+```
+
+```{r}
+#| fig-cap: "Total raw material requirement in each year of production."
+
+feed_stats %>%
+  group_by(year) %>%
+  reframe(mean = sum(1.069519*mean, na.rm = T)) %>%
+  ungroup() %>% 
+  cross_join(rms_df) %>% 
+  mutate(mean_rm = mean * proportion) %>% 
+  ggplot(aes(x = year, y = mean_rm/1000000, colour = as.factor(raw_material))) +
+  geom_line(linewidth = 0.75) +
+  prettyplot() + theme(legend.position = "right") +
+  labs(colour = "Farm ID", x = "Year", y = "Raw material required (t)")
+```
+
+# Deciding on MC simulation sizes
+
+How many MC runs per farm is necessary?
+
+```{r get-mc-files}
+
+prod_fnms <- file.path(outs_path, "data", "farm_production") %>% 
+  list.files(recursive = T, full.names = T)
+
+all_farm_IDs <- prod_fnms %>%
+  basename() %>%
+  str_extract("(?<=farmID_)\\d+") %>%
+  as.integer()
+
+prod_fnms <- prod_fnms[which(all_farm_IDs %in% farm_IDs)]
+
+prod_fnms <- list(
+  prod_fnms %>% str_subset("MC10.qs"),
+  prod_fnms %>% str_subset("MC100.qs"),
+  prod_fnms %>% str_subset("MC1000.qs"),
+  prod_fnms %>% str_subset("MC2500.qs"),
+  prod_fnms %>% str_subset("MC5000.qs")
+)
+```
+
+```{r load-mc-data}
+prod_mc <- map_dfr(
+  prod_fnms,
+  function(fnms) {
+    map_dfr(fnms, function (fnm) {
+      rbind(
+        tidy_stat(qs_read(fnm), "weight_scaled") %>% 
+          group_by(year) %>% 
+          slice_tail(n = 1) %>% 
+          ungroup() %>% 
+          select(-day, -prod_day) %>% 
+          mutate(stat = as.factor("weight_scaled")),
+        tidy_stat(qs_read(fnm), "ing_act_scaled") %>% 
+          group_by(year) %>% 
+          reframe(mean = sum(mean, na.rm = T),
+                  sd = sqrt(sum(sd^2, na.rm = T))) %>% 
+          mutate(stat = as.factor("ing_act_scaled"))
+        ) %>% 
+        mutate(
+          farm_ID = fnm %>% basename() %>% str_extract("(?<=farmID_)\\d+") %>%  as.integer(),
+          MC = fnm %>% basename() %>% str_extract("(?<=MC)\\d+") %>% as.factor()
+        )
+    })
+  },
+  .progress = T
+)
+
+# Take difference from the 5000 MC run
+mc_levels <- unique(prod_mc$MC)
+ref <- "5000"
+
+prod_mc <- map_dfr(
+  split(prod_mc, prod_mc$farm_ID), 
+  function(df) {
+    df %>%
+      pivot_wider(
+        names_from = MC,
+        values_from = c(mean, sd)
+      ) %>%
+      mutate(
+        across(
+          all_of(paste0("sd_", mc_levels)),
+          ~ sqrt((.x / get(paste0("mean_", cur_column() %>% str_extract("\\d+")))) ^2 +
+                (get(paste0("sd_", ref)) / get(paste0("mean_", ref)))^2),
+          .names = "{.col}"
+        ),
+        across(
+          all_of(paste0("mean_", mc_levels)),
+          ~ get(paste0("mean_", ref)) - .x
+        )
+      ) %>%
+      mutate(
+        across(
+          all_of(paste0("sd_", mc_levels)),
+          ~ .x * get(paste0("mean_", cur_column() %>% str_extract("\\d+")))
+        ),
+        !!paste0("mean_", ref) := 0,
+        !!paste0("sd_", ref) := NA
+      ) %>%
+      pivot_longer(
+        cols = matches("^(mean|sd)_"),
+        names_to = c(".value", "MC"),
+        names_sep = "_"
+      )
+  }
+)
+```
+
+At first pass, the MC-10 run is obviously giving wildly different results than the others (@fig-MC-pass-1).
+
+```{r fig-MC-pass-1}
+#| fig-cap: Difference between the 5000-individual run (MC-5000) and a selection of runs with smaller MC sample sizes on harvested final biomass (left) and ingested feed (right). A selection of 6 farms is shown here.
+
+prod_mc %>% 
+  filter(farm_ID %in% sample(farm_IDs, 6)) %>% 
+  ggplot(aes(x = year, y = mean, ymin = mean-sd, ymax = mean+sd, colour = MC, fill = MC)) +
+  geom_line(linewidth = 0.75) +
+  geom_ribbon(alpha = 0.25) +
+  scale_colour_brewer(palette = "Set1") +
+  scale_fill_brewer(palette = "Set1") +
+  prettyplot() +
+  theme(legend.position = "bottom") +
+  facet_grid(rows = vars(farm_ID), cols = vars(stat))
+```
+
+```{r fig-MC-pass-2}
+#| fig-cap: Difference between the 5000-individual run (MC-5000) and a selection of runs with smaller MC sample sizes on harvested final biomass (left) and ingested feed (right). A selection of 6 farms is shown here, and the MC-10 sample run has been removed.
+
+prod_mc %>% 
+  filter(farm_ID %in% sample(farm_IDs, 6) & MC != c("10")) %>% 
+  ggplot(aes(x = year, y = (mean), ymin = (mean-sd), ymax = (mean+sd), colour = MC, fill = MC)) +
+  geom_line(linewidth = 0.75) +
+  geom_ribbon(alpha = 0.25) +
+  scale_colour_brewer(palette = "Set1") +
+  scale_fill_brewer(palette = "Set1") +
+  prettyplot() +
+  theme(legend.position = "bottom") +
+  facet_grid(rows = vars(farm_ID), cols = vars(stat))
+```
+
+```{r average-diff}
+prod_mc %>% 
+  group_by(stat, MC) %>% 
+  reframe(mean_diff = mean(abs(mean), na.rm = T) %>% set_units("g") %>% set_units("t")) %>% 
+  gt()
+```
+
+::: {style="display: flex; justify-content: space-between;"}
+[← Previous: Run production](05_01_run_production_seabream.qmd)
+
+[Next: Home →](../index.qmd)
+:::
