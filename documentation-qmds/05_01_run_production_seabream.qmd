@@ -21,18 +21,17 @@ date: last-modified
 #| message: false
 #| output: false
 
+library(furrr)
+library(future)
 library(tidyverse)
 library(here)
 library(readxl)
 library(janitor)
 library(lhs)
-library(scales)
-library(gt)
+# library(scales)
 library(qs2)
 library(slider)
 library(units)
-library(future)
-library(furrr)
 ```
 
 ```{r source-scripts}
@@ -110,7 +109,7 @@ assigned_farms %>% filter(is.na(filename))
 
 # TEMPORARY - filter out those species we don't have parameters for yet
 assigned_farms <- assigned_farms %>% 
-  filter(model_name == "rainbow_trout" & ISO3_Code == "NOR")
+  filter(model_name %in% c("rainbow_trout", "atlantic_salmon"))
 
 assigned_farms <- split(assigned_farms, assigned_farms$farm_ID)
 ```
@@ -220,16 +219,17 @@ prod_path <- file.path(outs_path, "data", "farm_production")
 dir.create(prod_path, showWarnings = F, recursive = T)
 
 harvest_years <- 2025:2099
-MC_pop <- 100
+MC_pop <- 2500
 
-farm_IDs <- map(assigned_farms, function(af) {af$farm_ID})
+farm_IDs <- map(assigned_farms, function(af) {af$farm_ID}) |> unlist() |> unname()
 prod_files <- file.path(prod_path, paste0("production_results_farmID_", fix_int(farm_IDs, 8), "_MC", MC_pop, ".qs"))
 files_to_do <- which(!file.exists(prod_files))
 
-plan(multisession, workers = 2)
+work_cores <- parallelly::availableCores() - 2
+plan(multisession, workers = work_cores)
 
 # af <- assigned_farms[[1]]
-future_walk(
+future_walk2(
   assigned_farms[files_to_do],
   prod_files[files_to_do],
   function(af, fnm) {
@@ -298,14 +298,14 @@ future_walk(
           output_vars = c("weight", "dw", "T_response", "rel_feeding", "ing_act", "anab", "catab", "total_excr", "metab"),
           scaled_vars = c("weight", "dw", "ing_act", "total_excr")
         )
-      }, .progress = T
+      }
     )
 
     qs2::qs_save(fg, fnm)
 
   },
-  .progress = T,
-  .options = furrr_options(seed = TRUE)
+  .options = furrr_options(seed = TRUE),
+  .progress = T
 )
 
 plan(sequential)
