@@ -19,7 +19,7 @@ project:
     - documentation-qmds/03_18_species_temperature_responses.qmd
     - documentation-qmds/04_extracting_future_temperatures.qmd
     - documentation-qmds/05_00_test_production.qmd
-    - documentation-qmds/05_01_run_production_seabream.qmd
+    - documentation-qmds/05_01_run_production.qmd
     - documentation-qmds/06_explore_production.qmd
 
 format:

@@ -208,18 +208,24 @@ assigned_farms <- map(
 There are several important metrics to get out of this process. At each farm and in each year, we need to show:
 
 1. The total biomass produced (we're not adjusting the farm scaling factor/population for now)
-2. The total feed provided/consumed by the fish
+2. The total feed provided/consumed by the fish - we chose to go with the actual ingestion (`ing_act`) instead of the provided feed (`feed_prov`). This is because provided feed is calculated based on actual ingestion $\times$ a scaling (efficiency) factor for wastage. These values are very easy to apply post-hoc to calculate feed provided and uneaten feed if necessary.
 3. Possibly metabolic parameters - these aren't completely necessary but are more of an explanatory variable for the previous two.
 
 ```{r run-production}
 #| code-summary: Run the main production and save the outputs at each farm
+#| eval: false
+
+# These are the variables that will be reported from the growth model at the fish level (mean across the farm +- SD)
+output_vars <- c("weight", "dw", "T_response", "rel_feeding", "ing_act", "anab", "catab", "total_excr", "metab")
+# These are the variables that will be scaled up to give farm-level responses
+scaled_vars <- c("weight", "dw", "ing_act", "total_excr")
 
 # Folder for results
 prod_path <- file.path(outs_path, "data", "farm_production")
 dir.create(prod_path, showWarnings = F, recursive = T)
 
 harvest_years <- 2025:2099
-MC_pop <- 2500
+MC_pop <- 5000
 
 farm_IDs <- map(assigned_farms, function(af) {af$farm_ID}) |> unlist() |> unname()
 prod_files <- file.path(prod_path, paste0("production_results_farmID_", fix_int(farm_IDs, 8), "_MC", MC_pop, ".qs"))
@@ -295,7 +301,7 @@ future_walk2(
           N_pop = pop, 
           use_MC_population = T, 
           MC_pop = MC_pop,
-          output_vars = c("weight", "dw", "T_response", "rel_feeding", "ing_act", "anab", "catab", "total_excr", "metab"),
+          output_vars = output_vars,
           scaled_vars = c("weight", "dw", "ing_act", "total_excr")
         )
       }
