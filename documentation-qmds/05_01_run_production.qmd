@@ -109,7 +109,7 @@ assigned_farms %>% filter(is.na(filename))
 
 # TEMPORARY - filter out those species we don't have parameters for yet
 assigned_farms <- assigned_farms %>% 
-  filter(model_name %in% c("rainbow_trout", "atlantic_salmon"))
+  filter(country == "Italy" & model_name %in% model_names)
 
 assigned_farms <- split(assigned_farms, assigned_farms$farm_ID)
 ```
@@ -230,6 +230,7 @@ MC_pop <- 5000
 farm_IDs <- map(assigned_farms, function(af) {af$farm_ID}) |> unlist() |> unname()
 prod_files <- file.path(prod_path, paste0("production_results_farmID_", fix_int(farm_IDs, 8), "_MC", MC_pop, ".qs"))
 files_to_do <- which(!file.exists(prod_files))
+# files_to_do <- sample(files_to_do, 100, replace = F)
 
 work_cores <- parallelly::availableCores() - 2
 plan(multisession, workers = work_cores)
