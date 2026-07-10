@@ -196,6 +196,18 @@ apportion_feed <- function(provided, ingested, ingred_proportion, ingred_macro, 
   )
 }
 
+apportion_feed_v <- function(provided, ingested, ingred_proportion, ingred_macro, digestibility) {
+  # ingredient-level constants (collapsed over ingredients within this macro)
+  k_mass  <- sum(ingred_proportion * ingred_macro, na.rm = TRUE)                  # g macro per unit feed
+  k_assim <- sum(ingred_proportion * ingred_macro * digestibility, na.rm = TRUE) # g assimilated per unit feed
+
+  list(
+    uneaten     = (provided - ingested) * k_mass,   # 0 here since provided == ingested
+    assimilated = ingested * k_assim,
+    excreted    = ingested * (k_mass - k_assim)
+  )
+}
+
 
 # ---------------------------------------------------------------------------
 # Input validation for fish_growth()

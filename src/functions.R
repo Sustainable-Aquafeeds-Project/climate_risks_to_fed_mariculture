@@ -138,3 +138,67 @@ extract_point_location_temperature <- function(
     }
   }
 }
+
+# For the thermal niche suitability
+get_species_responses <- function(water_temp, species_params, feed_params, ref_weight) {
+  fr             <- sapply(water_temp, feeding_rate, species_params = species_params)
+  T_response     <- exp(species_params['pk'] * water_temp)
+  feed_ingested  <- unname(species_params['meanImax'] * (ref_weight^species_params['m']) * fr)
+
+  assim <- vapply(
+    names(feed_params),
+    function(nm) {
+      fp <- feed_params[[nm]]
+      apportion_feed_v(feed_ingested, feed_ingested, fp$proportion, fp$macro, fp$digestibility)[['assimilated']]
+    },
+    numeric(length(feed_ingested))
+  )
+  protein       <- assim[, "protein"] * species_params['epsprot']
+  lipid         <- assim[, "lipid"]   * species_params['epslip']
+  carb          <- assim[, "carb"]    * species_params['epscarb']
+  E_assim_total <- as.numeric(protein + lipid + carb)
+  
+  anab      <- E_assim_total * (1 - species_params['alpha'])
+  catab     <- species_params['epsO2'] * species_params['k0'] * T_response * (ref_weight^species_params['n']) * species_params['omega'] # catabolic response
+  E_somat   <- rep(species_params['a'] * ref_weight^species_params['k'], length(water_temp))       # energy content of somatic tissue at half harvest weight
+  dw        <- (anab - catab) / E_somat
+  
+  data.frame(
+    water_temp = water_temp,
+    feeding_response = fr,
+    feed_ingested = feed_ingested/ref_weight,
+    E_assim = E_assim_total, # total energy assimilated
+    anabolism = anab, # energy gained from feeding (minus the energy it took to process the feed)
+    catabolism = catab,
+    metab = anab - catab,
+    somatic_energy = E_somat, # energy content of somatic tissue at half harvest weight
+    weight_change = dw/ref_weight # weight change at this temperature when at half harvest weight and feed to satiety
+  )
+}
+
+# Wrapper to use the above function on a raster stack of temperatures instead of a single vector
+get_species_responses_r <- function(
+  temp_stack, species_params, feed_params, ref_weight, 
+  out_cols = c("feeding_response", "feed_ingested", "E_assim", "anabolism", "catabolism", "metab", "somatic_energy", "weight_change")
+) {
+  ncell <- terra::ncell(temp_stack)
+  nlyr  <- terra::nlyr(temp_stack)
+  temp_vec <- as.vector(terra::values(temp_stack))
+
+  # Only run the model on real temperatures; cells masked outside the EEZ/land are NA
+  ok   <- is.finite(temp_vec)
+  resp <- get_species_responses(temp_vec[ok], species_params, feed_params, ref_weight)
+
+  result <- lapply(out_cols, function(col) {
+    full <- rep(NA_real_, length(temp_vec))      # scatter results back to full length
+    full[ok] <- resp[[col]]
+    r <- terra::setValues(temp_stack,            # reuse the stack purely as a geometry template
+                          matrix(full, nrow = ncell, ncol = nlyr))
+    names(r) <- names(temp_stack)                # keep the layer names
+    r
+  })
+  names(result) <- out_cols
+  result
+}
+
+
