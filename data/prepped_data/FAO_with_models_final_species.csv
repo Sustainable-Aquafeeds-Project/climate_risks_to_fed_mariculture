@@ -1,5 +1,4 @@
 environment,model_name,Scientific_Name,most_common_species
-Brackishwater,abalone,Haliotis midae; Haliotis rufescens; Haliotis spp,Haliotis midae
 Brackishwater,atlantic_salmon,Salmo trutta,Salmo trutta
 Brackishwater,drum_croaker,Argyrosomus japonicus; Argyrosomus regius; Cilus gilberti; Micropogonias furnieri; Sciaenops ocellatus,Argyrosomus regius
 Brackishwater,european_seabass,Dicentrarchus labrax; Dicentrarchus punctatus; Dicentrarchus spp,Dicentrarchus labrax
@@ -14,14 +13,12 @@ Brackishwater,rainbow_trout,Oncorhynchus mykiss; Salvelinus alpinus,Salvelinus a
 Brackishwater,seabream,Acanthopagrus schlegelii; Diplodus puntazzo; Diplodus sargus; Pagrus major; Sparidae; Sparus aurata,Sparus aurata
 Brackishwater,tiger_prawn,Penaeus monodon,Penaeus monodon
 Brackishwater,whiteleg_shrimp,Metapenaeopsis novaeguineae; Metapenaeus ensis; Metapenaeus monoceros; Metapenaeus spp; Natantia; Penaeus aztecus; Penaeus chinensis; Penaeus indicus; Penaeus japonicus; Penaeus kerathurus; Penaeus merguiensis; Penaeus penicillatus; Penaeus schmitti; Penaeus semisulcatus; Penaeus setiferus; Penaeus spp; Penaeus stylirostris; Penaeus subtilis; Penaeus vannamei,Penaeus vannamei
-Marine,abalone,Haliotis discus; Haliotis iris; Haliotis midae; Haliotis rufescens; Haliotis spp; Haliotis tuberculata,Haliotis spp
 Marine,atlantic_salmon,Salmo salar; Salmo spp; Salmo trutta; Salmonidae; Salmoniformes (=Salmonoidei),Salmo salar
 Marine,drum_croaker,Argyrosomus japonicus; Argyrosomus regius; Larimichthys crocea; Miichthys miiuy; Sciaena spp; Sciaenidae; Sciaenops ocellatus; Umbrina cirrosa; Umbrina spp,Larimichthys crocea
 Marine,european_seabass,Dicentrarchus labrax; Dicentrarchus punctatus; Dicentrarchus spp; Morone chrysops x M. saxatilis; Morone saxatilis,Dicentrarchus labrax
 Marine,golden_pompano,Trachinotus blochii; Trachinotus carolinus; Trachinotus ovatus,Trachinotus ovatus
 Marine,grouper,Chromileptes altivelis; Epinephelus akaara; Epinephelus areolatus; Epinephelus bleekeri; Epinephelus coioides; Epinephelus fasciatus; Epinephelus fuscoguttatus; Epinephelus fuscoguttatus x E. lanceolatus; Epinephelus lanceolatus; Epinephelus longispinis; Epinephelus malabaricus; Epinephelus spp; Epinephelus tauvina; Epinephelus tukula; Hyporthodus septemfasciatus; Mycteroperca bonaci; Plectropomus laevis; Plectropomus leopardus; Plectropomus maculatus; Plectropomus oligacanthus; Serranidae,Epinephelus spp
 Marine,japanese_amberjack,Seriola dumerili; Seriola lalandi; Seriola quinqueradiata; Seriola rivoliana; Seriola spp,Seriola quinqueradiata
-Marine,japanese_sea_cucumber,Apostichopus japonicus,Apostichopus japonicus
 Marine,japanese_seabass,Lateolabrax japonicus,Lateolabrax japonicus
 Marine,milkfish,Chanos chanos,Chanos chanos
 Marine,mud_crab,Scylla olivacea; Scylla serrata,Scylla serrata

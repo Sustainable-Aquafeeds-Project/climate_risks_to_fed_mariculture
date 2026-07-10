@@ -1,0 +1,294 @@
+Sci_Name_Match,species_name,group_name
+Acanthopagrus,porgies,other_fish
+Acetes ,shrimp,invertebrates
+Acipenser ,sturgeon,other_fish
+Acipenseridae,sturgeon,other_fish
+Actinopterygii,general_fish,other_fish
+Actinopyga,sea_cucumber,invertebrates
+Aequipecten ,scallops,invertebrates
+Alaria ,general_seaweed,seaweed_plants
+Albula ,bonefishes,other_fish
+Algae,general_seaweed,seaweed_plants
+Aliger,conch,invertebrates
+Alitta ,general_invertebrates,invertebrates
+Ameiurus ,catfish,other_fish
+Anadara ,clams,invertebrates
+Anarhichas ,wolffish,other_fish
+Anguilla ,eels,other_fish
+Apostichopus,sea_cucumber,invertebrates
+Arenicola ,general_invertebrates,invertebrates
+Argopecten ,scallops,invertebrates
+Argyrosomus,meagres,other_fish
+Ariidae,catfish,other_fish
+Artemia ,shrimp,invertebrates
+Asaphis ,clams,invertebrates
+Ascidiacea,sea_squirts,invertebrates
+Asparagopsis ,general_seaweed,seaweed_plants
+Astacidae,crayfish,invertebrates
+Atherina ,silversides,other_fish
+Atherinidae,silversides,other_fish
+Atrina ,general_bivalves,invertebrates
+Atropus ,trevally,other_fish
+Aulacomya,mussels,invertebrates
+Bagridae,catfish,other_fish
+Barbonymus ,barbs,other_fish
+Bivalvia,general_bivalves,invertebrates
+Bolbometopon,parrotfish,other_fish
+Boleophthalmus ,mudskipper,other_fish
+Bolinus ,snails,invertebrates
+Bothidae,flatfish,other_fish
+Brachyura,crabs,invertebrates
+Callinectes ,crabs,invertebrates
+Cambaridae,crayfish,invertebrates
+Cantherhines ,filefish,other_fish
+Capsosiphon ,general_seaweed,seaweed_plants
+Carangidae,jack_pompano,other_fish
+Caranx,trevally,other_fish
+Carcinus,crabs,invertebrates
+Cardiidae,cockles,invertebrates
+Carpilius ,crabs,invertebrates
+Caulerpa,general_seaweed,seaweed_plants
+Centropomus ,snooks,other_fish
+Centropristis ,bass,other_fish
+Cephalopholis ,grouper,other_fish
+Cerastoderma ,cockles,invertebrates
+Chaetodipterus ,spadefishes,other_fish
+Chamelea ,clams,invertebrates
+Channa ,snakeheads,other_fish
+Chanos,milkfish,other_fish
+Characidae,tetras,other_fish
+Chelon ,mullets,other_fish
+Chelonia,turtle,reptiles
+Chlorophyceae,general_seaweed,seaweed_plants
+Chondracanthus ,general_seaweed,seaweed_plants
+Choromytilus ,mussels,invertebrates
+Chromileptes,grouper,other_fish
+Chrysichthys ,catfish,other_fish
+Chrysophrys,snappers,other_fish
+Cilus ,drums,other_fish
+Cladosiphon,general_seaweed,seaweed_plants
+Clarias ,catfish,other_fish
+Codium ,general_seaweed,seaweed_plants
+Concholepas ,abalone,invertebrates
+Coregonus ,whitefish,salmonids
+Coryphaenoides ,grenadiers,other_fish
+Crassostrea,oysters,invertebrates
+Crenimugil ,mullets,other_fish
+Crustacea,general_crustaceans,invertebrates
+Ctenopharyngodon ,carp,other_fish
+Cyclina ,clams,invertebrates
+Cyprinidae,minnows,other_fish
+Cyprinus ,carp,other_fish
+Dentex ,breams,other_fish
+Dicentrarchus,bass,other_fish
+Diplodus,breams,other_fish
+Donax ,clams,invertebrates
+Dunaliella,microalgae,seaweed_plants
+Eleotridae,sleepers,other_fish
+Eleutheronema,threadfins,other_fish
+Ellochelon ,mullets,other_fish
+Elops ,ladyfishes,other_fish
+Ensis ,clams,invertebrates
+Epinephelus,grouper,other_fish
+Eremichthys,desert_dace,other_fish
+Etelis ,snappers,other_fish
+Eucheuma,general_seaweed,seaweed_plants
+Evynnis ,porgies,other_fish
+Gadus,cod,other_fish
+Gastropoda,general_gastropods,invertebrates
+Gelidium ,general_seaweed,seaweed_plants
+Genypterus ,eels,other_fish
+Gerreidae,mojarras,other_fish
+Gerres ,mojarras,other_fish
+Gigartina,general_seaweed,seaweed_plants
+Gnathanodon ,trevally,other_fish
+Gobiidae,gobies,other_fish
+Gracila ,grouper,other_fish
+Gracilaria,general_seaweed,seaweed_plants
+Gracilariopsis ,general_seaweed,seaweed_plants
+Haliotis,abalone,invertebrates
+Halocynthia,sea_squirts,invertebrates
+Hiatula ,clams,invertebrates
+Hippoglossus,halibut,other_fish
+Hippopus,clams,invertebrates
+Holothuria,sea_cucumber,invertebrates
+Holothuroidea,sea_cucumber,invertebrates
+Hoplosternum ,catfish,other_fish
+Huso ,sturgeon,other_fish
+Hypophthalmichthys ,carp,other_fish
+Hyporthodus ,grouper,other_fish
+Invertebrata,general_invertebrates,invertebrates
+Kappaphycus,general_seaweed,seaweed_plants
+Konosirus ,shads,other_fish
+Kyphosus,chubs,other_fish
+Laminaria,general_seaweed,seaweed_plants
+Laminariaceae,general_seaweed,seaweed_plants
+Larimichthys ,croaker,other_fish
+Larkinia ,clams,invertebrates
+Lateolabrax,bass,other_fish
+Lates,barramundi,other_fish
+Lepomis ,sunfish,other_fish
+Lethrinus ,emperors,other_fish
+Leukoma ,clams,invertebrates
+Limnospira ,microalgae,seaweed_plants
+Littorina ,general_gastropods,invertebrates
+Lutjanidae,snappers,other_fish
+Lutjanus ,snappers,other_fish
+Macrobrachium ,prawns,invertebrates
+Macrocystis,general_seaweed,seaweed_plants
+Mactra ,clams,invertebrates
+Magallana,oysters,invertebrates
+Maja ,crabs,invertebrates
+Megalops ,tarpons,other_fish
+Megokris ,lobsters,invertebrates
+Melanogrammus,haddock,other_fish
+Mercenaria ,clams,invertebrates
+Meretrix,clams,invertebrates
+Meristotheca,general_seaweed,seaweed_plants
+Metapenaeopsis ,shrimp,invertebrates
+Metapenaeus,shrimp,invertebrates
+Micropogonias ,croaker,other_fish
+Micropterus ,bass,other_fish
+Miichthys,croaker,other_fish
+Mimachlamys ,scallops,invertebrates
+Miyakella,shrimp,invertebrates
+Mizuhopecten,scallops,invertebrates
+Modiolus ,mussels,invertebrates
+Mollusca,general_molluscs,invertebrates
+Monacanthidae,filefish,other_fish
+Monostroma ,general_seaweed,seaweed_plants
+Morone ,bass,other_fish
+Mugil ,mullets,other_fish
+Mugilidae,mullets,other_fish
+Muraenesox ,eels,other_fish
+Mya,clams,invertebrates
+Mycteroperca,grouper,other_fish
+Mystus ,catfish,other_fish
+Mytilidae,mussels,invertebrates
+Mytilus,mussels,invertebrates
+Natantia,shrimp,invertebrates
+Nodipecten,scallops,invertebrates
+Octopodidae,cephalopods,invertebrates
+Octopus,cephalopods,invertebrates
+Oncorhynchus,trout,salmonids
+Oplegnathus ,knifejaws,other_fish
+Oreochromis,tilapia,other_fish
+Osteichthyes,general_fish,other_fish
+Ostrea ,oysters,invertebrates
+Ostreidae,oysters,invertebrates
+Oxyeleotris ,gobies,other_fish
+Pagellus,breams,other_fish
+Pagrus ,porgies,other_fish
+Palaemon ,prawns,invertebrates
+Palaemonidae,shrimp,invertebrates
+Palinuridae,lobsters,invertebrates
+Palinurus ,lobsters,invertebrates
+Palmaria ,general_seaweed,seaweed_plants
+Pangasius ,catfish,other_fish
+Panopea ,clams,invertebrates
+Panulirus ,lobsters,invertebrates
+Paracentrotus ,urchins,invertebrates
+Paralichthys,flounder,other_fish
+Paralithodes,crabs,invertebrates
+Parastromateus ,pomfrets,other_fish
+Pecten ,scallops,invertebrates
+Pectinidae,scallops,invertebrates
+Penaeus,shrimp,invertebrates
+Perciformes,perch,other_fish
+Perna ,mussels,invertebrates
+Phaeophyceae,general_seaweed,seaweed_plants
+Pinctada,oysters,invertebrates
+Planiliza,mudskipper,other_fish
+Plantae aquaticae,general_plants,seaweed_plants
+Platax,batfish,other_fish
+Platichthys ,flounder,other_fish
+Platycaranx ,trevally,other_fish
+Plectorhinchus,sweetlips,other_fish
+Plectropomus ,grouper,other_fish
+Pleurogrammus ,mackerels,other_fish
+Pleuronectidae,flatfish,other_fish
+Pleuronectiformes,flatfish,other_fish
+Polititapes ,clams,invertebrates
+Pollachius ,pollock,other_fish
+Polydactylus ,threadfins,other_fish
+Polymesoda ,clams,invertebrates
+Pomadasys,grunts,other_fish
+Pomatomus ,bluefish,other_fish
+Porphyra,general_seaweed,seaweed_plants
+Portunidae,crabs,invertebrates
+Portunus ,crabs,invertebrates
+Procambarus ,crayfish,invertebrates
+Protapes ,clams,invertebrates
+Psammoperca ,bass,other_fish
+Pseudocaranx ,trevally,other_fish
+Pteria ,general_bivalves,invertebrates
+Pyropia,general_seaweed,seaweed_plants
+Pyura ,sea_squirts,invertebrates
+Rachycentron,cobia_ling,other_fish
+Rapana ,general_gastropods,invertebrates
+Rhabdosargus ,breams,other_fish
+Rhodophyta,general_seaweed,seaweed_plants
+Rhopilema ,jellyfish,invertebrates
+Rochia,general_gastropods,invertebrates
+Ruditapes ,clams,invertebrates
+Saccharina,general_seaweed,seaweed_plants
+Saccostrea ,oysters,invertebrates
+Salmo ,general_salmonid,salmonids
+Salmo salar,atlantic_salmon,salmonids
+Salmonidae,general_salmonid,salmonids
+Salmoniformes,general_salmonid,salmonids
+Salvelinus ,arctic_char,salmonids
+Sarcothalia ,general_seaweed,seaweed_plants
+Sargassum,general_seaweed,seaweed_plants
+Sarotherodon ,tilapia,other_fish
+Saxidomus ,clams,invertebrates
+Scatophagus,scats,other_fish
+Sciaena ,croaker,other_fish
+Sciaenidae,drums,other_fish
+Sciaenops ,drums,other_fish
+Scomber,mackerels,other_fish
+Scombridae,mackerels,other_fish
+Scophthalmus ,flatfish,other_fish
+Scorpaenidae,rockfish,other_fish
+Scortum ,perch,other_fish
+Scrobicularia ,clams,invertebrates
+Scylla,crabs,invertebrates
+Sebastes ,rockfishes,other_fish
+Sepia ,cephalopods,invertebrates
+Seriola ,yellowtails,other_fish
+Seriolina,trevally,other_fish
+Serranidae,grouper,other_fish
+Siganus,rabbitfish,other_fish
+Siluriformes,catfish,other_fish
+Sinonovacula ,clams,invertebrates
+Solea ,soles,other_fish
+Soleidae,soles,other_fish
+Solen,clams,invertebrates
+Sparidae,breams,other_fish
+Sparidentex ,porgies,other_fish
+Sparus,porgies,other_fish
+Spirulina,microalgae,seaweed_plants
+Squillidae,shrimp,invertebrates
+Stolephorus ,anchovy,other_fish
+Strombus ,conch,invertebrates
+Strongylocentrotus,urchins,invertebrates
+Takifugu,pufferfish,other_fish
+Tegillarca ,general_bivalves,invertebrates
+Terapon,grunts,other_fish
+Thenus ,lobsters,invertebrates
+Thunnus,tuna,other_fish
+Trachinotus ,jack_pompano,other_fish
+Trachurus ,mackerels,other_fish
+Tresus ,clams,invertebrates
+Tridacna,clams,invertebrates
+Trochita ,general_gastropods,invertebrates
+Turbo,snails,invertebrates
+Turrum ,trevally,other_fish
+Ulva,general_seaweed,seaweed_plants
+Umbrina ,drums,other_fish
+Undaria,general_seaweed,seaweed_plants
+Unionidae,mussels,invertebrates
+Variola ,grouper,other_fish
+Veneridae,clams,invertebrates
+Venerupis ,clams,invertebrates
+Venus ,clams,invertebrates

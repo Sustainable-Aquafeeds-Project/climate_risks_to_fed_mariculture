@@ -78,13 +78,6 @@ period,value,environment,species_name,country,ISO3_Code,fao_fishing_area,model_n
 2019,164.272,Brackishwater,shrimp,Australia,AUS,"Pacific, Southwest",whiteleg_shrimp
 2021,724,Brackishwater,shrimp,Australia,AUS,"Pacific, Southwest",whiteleg_shrimp
 2023,212,Brackishwater,shrimp,Australia,AUS,"Pacific, Southwest",whiteleg_shrimp
-2011,490.7,Marine,abalone,Australia,AUS,"Indian Ocean, Eastern",abalone
-2013,723.95,Marine,abalone,Australia,AUS,"Indian Ocean, Eastern",abalone
-2015,849.89,Marine,abalone,Australia,AUS,"Indian Ocean, Eastern",abalone
-2017,2294,Marine,abalone,Australia,AUS,"Indian Ocean, Eastern",abalone
-2019,424.13,Marine,abalone,Australia,AUS,"Indian Ocean, Eastern",abalone
-2021,750.238,Marine,abalone,Australia,AUS,"Indian Ocean, Eastern",abalone
-2023,627.466,Marine,abalone,Australia,AUS,"Indian Ocean, Eastern",abalone
 2011,0,Marine,drums,Bahamas,BHS,"Atlantic, Western Central",drum_croaker
 2013,0,Marine,drums,Bahamas,BHS,"Atlantic, Western Central",drum_croaker
 2017,0,Marine,drums,Bahamas,BHS,"Atlantic, Western Central",drum_croaker
@@ -294,22 +287,6 @@ period,value,environment,species_name,country,ISO3_Code,fao_fishing_area,model_n
 2019,13,Brackishwater,drums,Chile,CHL,"Pacific, Southeast",drum_croaker
 2021,3,Brackishwater,drums,Chile,CHL,"Pacific, Southeast",drum_croaker
 2023,1,Brackishwater,drums,Chile,CHL,"Pacific, Southeast",drum_croaker
-2011,6,Marine,abalone,Chile,CHL,"Pacific, Southeast",abalone
-2013,23,Marine,abalone,Chile,CHL,"Pacific, Southeast",abalone
-2015,12,Marine,abalone,Chile,CHL,"Pacific, Southeast",abalone
-2017,16.03,Marine,abalone,Chile,CHL,"Pacific, Southeast",abalone
-2019,11,Marine,abalone,Chile,CHL,"Pacific, Southeast",abalone
-2021,2,Marine,abalone,Chile,CHL,"Pacific, Southeast",abalone
-2023,17,Marine,abalone,Chile,CHL,"Pacific, Southeast",abalone
-2019,1567,Brackishwater,abalone,Chile,CHL,"Pacific, Southeast",abalone
-2021,562,Brackishwater,abalone,Chile,CHL,"Pacific, Southeast",abalone
-2023,370,Brackishwater,abalone,Chile,CHL,"Pacific, Southeast",abalone
-2012,828,Marine,abalone,Chile,CHL,"Pacific, Southeast",abalone
-2014,1130,Marine,abalone,Chile,CHL,"Pacific, Southeast",abalone
-2016,1274,Marine,abalone,Chile,CHL,"Pacific, Southeast",abalone
-2018,1038.39,Marine,abalone,Chile,CHL,"Pacific, Southeast",abalone
-2020,417,Marine,abalone,Chile,CHL,"Pacific, Southeast",abalone
-2022,567,Marine,abalone,Chile,CHL,"Pacific, Southeast",abalone
 2011,42365,Brackishwater,flatfish,China,CHN,"Pacific, Northwest",olive_flounder
 2013,44342,Brackishwater,flatfish,China,CHN,"Pacific, Northwest",olive_flounder
 2015,67279,Brackishwater,flatfish,China,CHN,"Pacific, Northwest",olive_flounder
@@ -407,20 +384,6 @@ period,value,environment,species_name,country,ISO3_Code,fao_fishing_area,model_n
 2019,1144370,Brackishwater,shrimp,China,CHN,"Pacific, Northwest",whiteleg_shrimp
 2021,1273632,Brackishwater,shrimp,China,CHN,"Pacific, Northwest",whiteleg_shrimp
 2023,1429832,Brackishwater,shrimp,China,CHN,"Pacific, Northwest",whiteleg_shrimp
-2011,73192,Marine,abalone,China,CHN,"Pacific, Northwest",abalone
-2013,105646,Marine,abalone,China,CHN,"Pacific, Northwest",abalone
-2015,122573,Marine,abalone,China,CHN,"Pacific, Northwest",abalone
-2017,148539,Marine,abalone,China,CHN,"Pacific, Northwest",abalone
-2019,180267,Marine,abalone,China,CHN,"Pacific, Northwest",abalone
-2021,217831,Marine,abalone,China,CHN,"Pacific, Northwest",abalone
-2023,244991,Marine,abalone,China,CHN,"Pacific, Northwest",abalone
-2011,131306,Marine,sea_cucumber,China,CHN,"Pacific, Northwest",japanese_sea_cucumber
-2013,185397,Marine,sea_cucumber,China,CHN,"Pacific, Northwest",japanese_sea_cucumber
-2015,197116,Marine,sea_cucumber,China,CHN,"Pacific, Northwest",japanese_sea_cucumber
-2017,219907,Marine,sea_cucumber,China,CHN,"Pacific, Northwest",japanese_sea_cucumber
-2019,171700,Marine,sea_cucumber,China,CHN,"Pacific, Northwest",japanese_sea_cucumber
-2021,222707,Marine,sea_cucumber,China,CHN,"Pacific, Northwest",japanese_sea_cucumber
-2023,292045,Marine,sea_cucumber,China,CHN,"Pacific, Northwest",japanese_sea_cucumber
 2011,0,Marine,grouper,"China, Hong Kong SAR",HKG,"Pacific, Northwest",grouper
 2013,0,Marine,grouper,"China, Hong Kong SAR",HKG,"Pacific, Northwest",grouper
 2012,35,Marine,grouper,"China, Hong Kong SAR",HKG,"Pacific, Northwest",grouper
@@ -555,18 +518,6 @@ period,value,environment,species_name,country,ISO3_Code,fao_fishing_area,model_n
 2018,4257.546,Brackishwater,shrimp,Taiwan Province of China,TWN,"Pacific, Northwest",whiteleg_shrimp
 2020,4467.502,Brackishwater,shrimp,Taiwan Province of China,TWN,"Pacific, Northwest",whiteleg_shrimp
 2022,5458.821,Brackishwater,shrimp,Taiwan Province of China,TWN,"Pacific, Northwest",whiteleg_shrimp
-2012,63,Brackishwater,abalone,Taiwan Province of China,TWN,"Pacific, Northwest",abalone
-2014,61.149,Brackishwater,abalone,Taiwan Province of China,TWN,"Pacific, Northwest",abalone
-2016,31.474,Brackishwater,abalone,Taiwan Province of China,TWN,"Pacific, Northwest",abalone
-2018,11.91,Brackishwater,abalone,Taiwan Province of China,TWN,"Pacific, Northwest",abalone
-2020,24.695,Brackishwater,abalone,Taiwan Province of China,TWN,"Pacific, Northwest",abalone
-2022,65.171,Brackishwater,abalone,Taiwan Province of China,TWN,"Pacific, Northwest",abalone
-2012,16,Marine,abalone,Taiwan Province of China,TWN,"Pacific, Northwest",abalone
-2014,152.2,Marine,abalone,Taiwan Province of China,TWN,"Pacific, Northwest",abalone
-2016,267,Marine,abalone,Taiwan Province of China,TWN,"Pacific, Northwest",abalone
-2018,232,Marine,abalone,Taiwan Province of China,TWN,"Pacific, Northwest",abalone
-2020,185,Marine,abalone,Taiwan Province of China,TWN,"Pacific, Northwest",abalone
-2022,150.72,Marine,abalone,Taiwan Province of China,TWN,"Pacific, Northwest",abalone
 2012,8900,Brackishwater,shrimp,Colombia,COL,"Atlantic, Western Central",whiteleg_shrimp
 2014,2862,Brackishwater,shrimp,Colombia,COL,"Atlantic, Western Central",whiteleg_shrimp
 2016,2700,Brackishwater,shrimp,Colombia,COL,"Atlantic, Western Central",whiteleg_shrimp
@@ -851,13 +802,6 @@ period,value,environment,species_name,country,ISO3_Code,fao_fishing_area,model_n
 2018,7.07,Brackishwater,shrimp,France,FRA,Mediterranean and Black Sea,whiteleg_shrimp
 2020,11.186,Brackishwater,shrimp,France,FRA,Mediterranean and Black Sea,whiteleg_shrimp
 2022,2.08,Brackishwater,shrimp,France,FRA,Mediterranean and Black Sea,whiteleg_shrimp
-2011,5,Marine,abalone,France,FRA,"Atlantic, Northeast",abalone
-2013,6,Marine,abalone,France,FRA,"Atlantic, Northeast",abalone
-2015,6,Marine,abalone,France,FRA,"Atlantic, Northeast",abalone
-2017,7,Marine,abalone,France,FRA,"Atlantic, Northeast",abalone
-2019,7,Marine,abalone,France,FRA,"Atlantic, Northeast",abalone
-2021,7,Marine,abalone,France,FRA,"Atlantic, Northeast",abalone
-2023,5,Marine,abalone,France,FRA,"Atlantic, Northeast",abalone
 2011,54.3,Brackishwater,shrimp,French Polynesia,PYF,"Pacific, Eastern Central",whiteleg_shrimp
 2013,77.2,Brackishwater,shrimp,French Polynesia,PYF,"Pacific, Eastern Central",whiteleg_shrimp
 2015,90.6,Brackishwater,shrimp,French Polynesia,PYF,"Pacific, Eastern Central",whiteleg_shrimp
@@ -1029,8 +973,6 @@ period,value,environment,species_name,country,ISO3_Code,fao_fishing_area,model_n
 2011,0,Marine,bass,Iceland,ISL,"Atlantic, Northeast",european_seabass
 2013,0,Marine,bass,Iceland,ISL,"Atlantic, Northeast",european_seabass
 2015,0,Marine,bass,Iceland,ISL,"Atlantic, Northeast",european_seabass
-2011,0,Marine,abalone,Iceland,ISL,"Atlantic, Northeast",abalone
-2013,0,Marine,abalone,Iceland,ISL,"Atlantic, Northeast",abalone
 2012,3000,Brackishwater,crabs,India,IND,"Indian Ocean, Eastern",mud_crab
 2014,5000,Brackishwater,crabs,India,IND,"Indian Ocean, Eastern",mud_crab
 2016,6500,Brackishwater,crabs,India,IND,"Indian Ocean, Eastern",mud_crab
@@ -1169,8 +1111,6 @@ period,value,environment,species_name,country,ISO3_Code,fao_fishing_area,model_n
 2020,12870,Marine,atlantic_salmon,Ireland,IRL,"Atlantic, Northeast",atlantic_salmon
 2022,11916,Marine,general_salmonid,Ireland,IRL,"Atlantic, Northeast",atlantic_salmon
 2022,11916,Marine,atlantic_salmon,Ireland,IRL,"Atlantic, Northeast",atlantic_salmon
-2011,0.53,Marine,abalone,Ireland,IRL,"Atlantic, Northeast",abalone
-2013,1.7,Marine,abalone,Ireland,IRL,"Atlantic, Northeast",abalone
 2011,0,Marine,tilapia,Israel,ISR,Mediterranean and Black Sea,nile_tilapia
 2013,0,Marine,tilapia,Israel,ISR,Mediterranean and Black Sea,nile_tilapia
 2011,0,Marine,bass,Israel,ISR,Mediterranean and Black Sea,european_seabass
@@ -1314,8 +1254,6 @@ period,value,environment,species_name,country,ISO3_Code,fao_fishing_area,model_n
 2019,1458,Brackishwater,shrimp,Japan,JPN,"Pacific, Northwest",whiteleg_shrimp
 2021,1253,Brackishwater,shrimp,Japan,JPN,"Pacific, Northwest",whiteleg_shrimp
 2023,1300,Brackishwater,shrimp,Japan,JPN,"Pacific, Northwest",whiteleg_shrimp
-2011,0.1,Marine,abalone,Jersey,JEY,"Atlantic, Northeast",abalone
-2013,0.13,Marine,abalone,Jersey,JEY,"Atlantic, Northeast",abalone
 2014,2,Brackishwater,milkfish,Kenya,KEN,"Indian Ocean, Western",milkfish
 2016,4,Brackishwater,milkfish,Kenya,KEN,"Indian Ocean, Western",milkfish
 2018,5,Brackishwater,milkfish,Kenya,KEN,"Indian Ocean, Western",milkfish
@@ -1346,12 +1284,6 @@ period,value,environment,species_name,country,ISO3_Code,fao_fishing_area,model_n
 2021,60,Marine,atlantic_salmon,Democratic People's Republic of Korea,PRK,"Pacific, Northwest",atlantic_salmon
 2023,60,Marine,general_salmonid,Democratic People's Republic of Korea,PRK,"Pacific, Northwest",atlantic_salmon
 2023,60,Marine,atlantic_salmon,Democratic People's Republic of Korea,PRK,"Pacific, Northwest",atlantic_salmon
-2012,100,Marine,sea_cucumber,Democratic People's Republic of Korea,PRK,"Pacific, Northwest",japanese_sea_cucumber
-2014,100,Marine,sea_cucumber,Democratic People's Republic of Korea,PRK,"Pacific, Northwest",japanese_sea_cucumber
-2016,100,Marine,sea_cucumber,Democratic People's Republic of Korea,PRK,"Pacific, Northwest",japanese_sea_cucumber
-2018,100,Marine,sea_cucumber,Democratic People's Republic of Korea,PRK,"Pacific, Northwest",japanese_sea_cucumber
-2020,100,Marine,sea_cucumber,Democratic People's Republic of Korea,PRK,"Pacific, Northwest",japanese_sea_cucumber
-2022,100,Marine,sea_cucumber,Democratic People's Republic of Korea,PRK,"Pacific, Northwest",japanese_sea_cucumber
 2017,81,Marine,trout,Republic of Korea,KOR,"Pacific, Northwest",rainbow_trout
 2019,161,Marine,trout,Republic of Korea,KOR,"Pacific, Northwest",rainbow_trout
 2021,90.912,Marine,trout,Republic of Korea,KOR,"Pacific, Northwest",rainbow_trout
@@ -1423,15 +1355,6 @@ period,value,environment,species_name,country,ISO3_Code,fao_fishing_area,model_n
 2019,7542,Brackishwater,shrimp,Republic of Korea,KOR,"Pacific, Northwest",whiteleg_shrimp
 2021,9545.43,Brackishwater,shrimp,Republic of Korea,KOR,"Pacific, Northwest",whiteleg_shrimp
 2023,6995.949,Brackishwater,shrimp,Republic of Korea,KOR,"Pacific, Northwest",whiteleg_shrimp
-2012,6564,Marine,abalone,Republic of Korea,KOR,"Pacific, Northwest",abalone
-2014,8977,Marine,abalone,Republic of Korea,KOR,"Pacific, Northwest",abalone
-2016,12343,Marine,abalone,Republic of Korea,KOR,"Pacific, Northwest",abalone
-2018,20050,Marine,abalone,Republic of Korea,KOR,"Pacific, Northwest",abalone
-2020,20059,Marine,abalone,Republic of Korea,KOR,"Pacific, Northwest",abalone
-2022,22078.337,Marine,abalone,Republic of Korea,KOR,"Pacific, Northwest",abalone
-2018,15,Marine,sea_cucumber,Republic of Korea,KOR,"Pacific, Northwest",japanese_sea_cucumber
-2020,50,Marine,sea_cucumber,Republic of Korea,KOR,"Pacific, Northwest",japanese_sea_cucumber
-2022,1.619,Marine,sea_cucumber,Republic of Korea,KOR,"Pacific, Northwest",japanese_sea_cucumber
 2011,0,Marine,grouper,Kuwait,KWT,"Indian Ocean, Western",grouper
 2013,0,Marine,grouper,Kuwait,KWT,"Indian Ocean, Western",grouper
 2015,0,Marine,grouper,Kuwait,KWT,"Indian Ocean, Western",grouper
@@ -1582,8 +1505,6 @@ period,value,environment,species_name,country,ISO3_Code,fao_fishing_area,model_n
 2018,27706.04,Brackishwater,shrimp,Malaysia,MYS,"Pacific, Western Central",whiteleg_shrimp
 2020,27223.337,Brackishwater,shrimp,Malaysia,MYS,"Pacific, Western Central",whiteleg_shrimp
 2022,25498.59,Brackishwater,shrimp,Malaysia,MYS,"Pacific, Western Central",whiteleg_shrimp
-2021,24.74,Marine,abalone,Malaysia,MYS,"Pacific, Western Central",abalone
-2023,26.41,Marine,abalone,Malaysia,MYS,"Pacific, Western Central",abalone
 2015,2,Marine,grouper,Maldives,MDV,"Indian Ocean, Western",grouper
 2017,2,Marine,grouper,Maldives,MDV,"Indian Ocean, Western",grouper
 2019,2,Marine,grouper,Maldives,MDV,"Indian Ocean, Western",grouper
@@ -1711,17 +1632,6 @@ period,value,environment,species_name,country,ISO3_Code,fao_fishing_area,model_n
 2019,167745.65,Brackishwater,shrimp,Mexico,MEX,"Pacific, Eastern Central",whiteleg_shrimp
 2021,181808.824,Brackishwater,shrimp,Mexico,MEX,"Pacific, Eastern Central",whiteleg_shrimp
 2023,192558.071,Brackishwater,shrimp,Mexico,MEX,"Pacific, Eastern Central",whiteleg_shrimp
-2014,0.453,Marine,abalone,Mexico,MEX,"Pacific, Eastern Central",abalone
-2016,9.175,Marine,abalone,Mexico,MEX,"Pacific, Eastern Central",abalone
-2018,2.269,Marine,abalone,Mexico,MEX,"Pacific, Eastern Central",abalone
-2020,2.088,Marine,abalone,Mexico,MEX,"Pacific, Eastern Central",abalone
-2022,8.677,Marine,abalone,Mexico,MEX,"Pacific, Eastern Central",abalone
-2012,64,Marine,abalone,Mexico,MEX,"Pacific, Eastern Central",abalone
-2014,22,Marine,abalone,Mexico,MEX,"Pacific, Eastern Central",abalone
-2016,12.301,Marine,abalone,Mexico,MEX,"Pacific, Eastern Central",abalone
-2018,19.293,Marine,abalone,Mexico,MEX,"Pacific, Eastern Central",abalone
-2020,50.212,Marine,abalone,Mexico,MEX,"Pacific, Eastern Central",abalone
-2022,31.642,Marine,abalone,Mexico,MEX,"Pacific, Eastern Central",abalone
 2011,0,Brackishwater,milkfish,Micronesia (Federated States of),FSM,"Pacific, Western Central",milkfish
 2013,0,Brackishwater,milkfish,Micronesia (Federated States of),FSM,"Pacific, Western Central",milkfish
 2015,0,Brackishwater,milkfish,Micronesia (Federated States of),FSM,"Pacific, Western Central",milkfish
@@ -1786,12 +1696,6 @@ period,value,environment,species_name,country,ISO3_Code,fao_fishing_area,model_n
 2021,46569.6,Brackishwater,shrimp,Myanmar,MMR,"Indian Ocean, Eastern",tiger_prawn
 2023,43700,Brackishwater,shrimp,Myanmar,MMR,"Indian Ocean, Eastern",tiger_prawn
 2022,8407.53,Brackishwater,shrimp,Myanmar,MMR,"Indian Ocean, Eastern",whiteleg_shrimp
-2012,15,Marine,abalone,Namibia,NAM,"Atlantic, Southeast",abalone
-2014,3,Marine,abalone,Namibia,NAM,"Atlantic, Southeast",abalone
-2016,0,Marine,abalone,Namibia,NAM,"Atlantic, Southeast",abalone
-2018,5,Marine,abalone,Namibia,NAM,"Atlantic, Southeast",abalone
-2021,0,Marine,abalone,Namibia,NAM,"Atlantic, Southeast",abalone
-2023,0,Marine,abalone,Namibia,NAM,"Atlantic, Southeast",abalone
 2012,1,Brackishwater,milkfish,Nauru,NRU,"Pacific, Western Central",milkfish
 2014,0.3,Brackishwater,milkfish,Nauru,NRU,"Pacific, Western Central",milkfish
 2016,0.3,Brackishwater,milkfish,Nauru,NRU,"Pacific, Western Central",milkfish
@@ -1811,12 +1715,6 @@ period,value,environment,species_name,country,ISO3_Code,fao_fishing_area,model_n
 2019,12717,Marine,trout,New Zealand,NZL,"Pacific, Southwest",rainbow_trout
 2021,14666,Marine,trout,New Zealand,NZL,"Pacific, Southwest",rainbow_trout
 2023,12898,Marine,trout,New Zealand,NZL,"Pacific, Southwest",rainbow_trout
-2012,101,Marine,abalone,New Zealand,NZL,"Pacific, Southwest",abalone
-2014,86.85,Marine,abalone,New Zealand,NZL,"Pacific, Southwest",abalone
-2016,90.2,Marine,abalone,New Zealand,NZL,"Pacific, Southwest",abalone
-2018,90,Marine,abalone,New Zealand,NZL,"Pacific, Southwest",abalone
-2020,50,Marine,abalone,New Zealand,NZL,"Pacific, Southwest",abalone
-2022,45,Marine,abalone,New Zealand,NZL,"Pacific, Southwest",abalone
 2011,0,Brackishwater,shrimp,Nicaragua,NIC,"Pacific, Eastern Central",whiteleg_shrimp
 2013,0,Brackishwater,shrimp,Nicaragua,NIC,"Pacific, Eastern Central",whiteleg_shrimp
 2012,24344,Brackishwater,shrimp,Nicaragua,NIC,"Pacific, Eastern Central",whiteleg_shrimp
@@ -1865,7 +1763,6 @@ period,value,environment,species_name,country,ISO3_Code,fao_fishing_area,model_n
 2014,277,Brackishwater,shrimp,Oman,OMN,"Indian Ocean, Western",whiteleg_shrimp
 2016,70,Brackishwater,shrimp,Oman,OMN,"Indian Ocean, Western",whiteleg_shrimp
 2023,2917,Brackishwater,shrimp,Oman,OMN,"Indian Ocean, Western",whiteleg_shrimp
-2023,3,Brackishwater,abalone,Oman,OMN,"Indian Ocean, Western",abalone
 2011,105,Brackishwater,shrimp,Pakistan,PAK,"Indian Ocean, Western",whiteleg_shrimp
 2013,112,Brackishwater,shrimp,Pakistan,PAK,"Indian Ocean, Western",whiteleg_shrimp
 2015,119,Brackishwater,shrimp,Pakistan,PAK,"Indian Ocean, Western",whiteleg_shrimp
@@ -2134,13 +2031,6 @@ period,value,environment,species_name,country,ISO3_Code,fao_fishing_area,model_n
 2015,0,Marine,flatfish,Russian Federation,RUS,Mediterranean and Black Sea,olive_flounder
 2017,0,Marine,flatfish,Russian Federation,RUS,Mediterranean and Black Sea,olive_flounder
 2019,0,Marine,flatfish,Russian Federation,RUS,Mediterranean and Black Sea,olive_flounder
-2011,112,Marine,sea_cucumber,Russian Federation,RUS,"Pacific, Northwest",japanese_sea_cucumber
-2013,136,Marine,sea_cucumber,Russian Federation,RUS,"Pacific, Northwest",japanese_sea_cucumber
-2015,805,Marine,sea_cucumber,Russian Federation,RUS,"Pacific, Northwest",japanese_sea_cucumber
-2017,1965,Marine,sea_cucumber,Russian Federation,RUS,"Pacific, Northwest",japanese_sea_cucumber
-2019,3654,Marine,sea_cucumber,Russian Federation,RUS,"Pacific, Northwest",japanese_sea_cucumber
-2021,5990,Marine,sea_cucumber,Russian Federation,RUS,"Pacific, Northwest",japanese_sea_cucumber
-2023,6700,Marine,sea_cucumber,Russian Federation,RUS,"Pacific, Northwest",japanese_sea_cucumber
 2012,1,Brackishwater,tilapia,Saint Kitts and Nevis,KNA,"Atlantic, Western Central",nile_tilapia
 2014,1,Brackishwater,tilapia,Saint Kitts and Nevis,KNA,"Atlantic, Western Central",nile_tilapia
 2016,1,Brackishwater,tilapia,Saint Kitts and Nevis,KNA,"Atlantic, Western Central",nile_tilapia
@@ -2404,12 +2294,6 @@ period,value,environment,species_name,country,ISO3_Code,fao_fishing_area,model_n
 2013,0,Brackishwater,shrimp,South Africa,ZAF,"Atlantic, Southeast",whiteleg_shrimp
 2011,0,Brackishwater,shrimp,South Africa,ZAF,"Atlantic, Southeast",tiger_prawn
 2013,0,Brackishwater,shrimp,South Africa,ZAF,"Atlantic, Southeast",tiger_prawn
-2016,1400,Brackishwater,abalone,South Africa,ZAF,"Atlantic, Southeast",abalone
-2018,1522.22,Brackishwater,abalone,South Africa,ZAF,"Atlantic, Southeast",abalone
-2020,1976.56,Brackishwater,abalone,South Africa,ZAF,"Atlantic, Southeast",abalone
-2022,2254.72,Brackishwater,abalone,South Africa,ZAF,"Atlantic, Southeast",abalone
-2011,1036,Marine,abalone,South Africa,ZAF,"Atlantic, Southeast",abalone
-2013,1470,Marine,abalone,South Africa,ZAF,"Atlantic, Southeast",abalone
 2012,0,Marine,bass,Spain,ESP,Mediterranean and Black Sea,european_seabass
 2014,0,Marine,bass,Spain,ESP,Mediterranean and Black Sea,european_seabass
 2016,0,Marine,bass,Spain,ESP,Mediterranean and Black Sea,european_seabass
@@ -2553,11 +2437,6 @@ period,value,environment,species_name,country,ISO3_Code,fao_fishing_area,model_n
 2014,0,Brackishwater,shrimp,Spain,ESP,"Atlantic, Eastern Central",whiteleg_shrimp
 2016,2,Brackishwater,shrimp,Spain,ESP,"Atlantic, Eastern Central",whiteleg_shrimp
 2018,7.5,Brackishwater,shrimp,Spain,ESP,"Atlantic, Eastern Central",whiteleg_shrimp
-2011,0,Marine,abalone,Spain,ESP,"Atlantic, Northeast",abalone
-2013,0,Marine,abalone,Spain,ESP,"Atlantic, Northeast",abalone
-2015,0,Marine,abalone,Spain,ESP,"Atlantic, Northeast",abalone
-2017,0.843,Marine,abalone,Spain,ESP,"Atlantic, Northeast",abalone
-2019,1.762,Marine,abalone,Spain,ESP,"Atlantic, Northeast",abalone
 2018,37.27,Brackishwater,tilapia,Sri Lanka,LKA,"Indian Ocean, Eastern",nile_tilapia
 2020,305.8,Brackishwater,tilapia,Sri Lanka,LKA,"Indian Ocean, Eastern",nile_tilapia
 2022,196,Brackishwater,tilapia,Sri Lanka,LKA,"Indian Ocean, Eastern",nile_tilapia
@@ -2697,12 +2576,6 @@ period,value,environment,species_name,country,ISO3_Code,fao_fishing_area,model_n
 2019,318050,Brackishwater,shrimp,Thailand,THA,"Pacific, Western Central",whiteleg_shrimp
 2021,310275,Brackishwater,shrimp,Thailand,THA,"Pacific, Western Central",whiteleg_shrimp
 2023,314585,Brackishwater,shrimp,Thailand,THA,"Pacific, Western Central",whiteleg_shrimp
-2012,5,Brackishwater,abalone,Thailand,THA,"Pacific, Western Central",abalone
-2014,2,Brackishwater,abalone,Thailand,THA,"Pacific, Western Central",abalone
-2016,2,Brackishwater,abalone,Thailand,THA,"Pacific, Western Central",abalone
-2018,2,Brackishwater,abalone,Thailand,THA,"Pacific, Western Central",abalone
-2020,2,Brackishwater,abalone,Thailand,THA,"Pacific, Western Central",abalone
-2022,2,Brackishwater,abalone,Thailand,THA,"Pacific, Western Central",abalone
 2011,5,Brackishwater,milkfish,Timor-Leste,TLS,"Indian Ocean, Eastern",milkfish
 2013,5,Brackishwater,milkfish,Timor-Leste,TLS,"Indian Ocean, Eastern",milkfish
 2015,5,Brackishwater,milkfish,Timor-Leste,TLS,"Indian Ocean, Eastern",milkfish
@@ -2942,13 +2815,6 @@ period,value,environment,species_name,country,ISO3_Code,fao_fishing_area,model_n
 2019,2035,Brackishwater,shrimp,United States of America,USA,"Atlantic, Western Central",whiteleg_shrimp
 2021,2035,Brackishwater,shrimp,United States of America,USA,"Atlantic, Western Central",whiteleg_shrimp
 2023,1263,Brackishwater,shrimp,United States of America,USA,"Atlantic, Western Central",whiteleg_shrimp
-2011,250,Brackishwater,abalone,United States of America,USA,"Pacific, Northeast",abalone
-2013,201,Brackishwater,abalone,United States of America,USA,"Pacific, Northeast",abalone
-2015,341,Brackishwater,abalone,United States of America,USA,"Pacific, Northeast",abalone
-2017,341,Brackishwater,abalone,United States of America,USA,"Pacific, Northeast",abalone
-2019,154,Brackishwater,abalone,United States of America,USA,"Pacific, Northeast",abalone
-2021,154,Brackishwater,abalone,United States of America,USA,"Pacific, Northeast",abalone
-2023,150,Brackishwater,abalone,United States of America,USA,"Pacific, Northeast",abalone
 2011,0,Brackishwater,shrimp,Uruguay,URY,"Atlantic, Southwest",whiteleg_shrimp
 2013,0,Brackishwater,shrimp,Uruguay,URY,"Atlantic, Southwest",whiteleg_shrimp
 2013,12,Brackishwater,shrimp,Vanuatu,VUT,"Pacific, Western Central",whiteleg_shrimp
