@@ -1188,6 +1188,25 @@ walk(
 
 # Summarise and visualise {#sec-summarise}
 
+```{r fig-assigned-farm-map}
+#| code-summary: Plot all the extracted farm locations
+#| fig-height: 6
+#| fig-width: 10
+#| fig-cap: "Map of all assigned farms, coloured by model name."
+
+assigned_farms <- file.path(prepdata_path, "assigned_farms.qs") %>% 
+  qs_read() %>% 
+  st_transform(crs = crs_robin) %>%
+  st_make_valid()
+
+p_bigmap_robinson +
+  geom_sf(data = assigned_farms, aes(colour = model_name), size = 2) +
+  scale_colour_viridis_d(name = "Model name", option = "turbo") +
+  coord_sf() +
+  prettyplot() + rm_x_axis() + rm_y_axis() +
+  theme(legend.position = "right", legend.title = element_text(), legend.title.position = "top")
+```
+
 ```{r save-plots-per-country}
 #| code-summary: Plot the extracted farm locations by country
 #| eval: false

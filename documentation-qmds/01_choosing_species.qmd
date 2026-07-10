@@ -151,6 +151,8 @@ species_totals_ranked <- rbind(
 all_ready <- c(
   "atlantic_salmon",
   "general_salmonid", 
+  "seabream",
+  "drum_croaker",
   "rainbow_trout", # Duplicate of "general_salmonid"
   "bass", # European Seabass & Japanese Seabass
   "european_seabass", # Duplicate of "bass"
@@ -822,8 +824,8 @@ choosing_ranks_manual <- FAO_with_models %>%
       "tiger_prawn", 
       "gilthead_seabream", "red_seabream", 
       "european_seabass", 
-      "japanese_sea_cucumber", 
-      "abalone", 
+      # "japanese_sea_cucumber", 
+      # "abalone", 
       "golden_pompano", 
       "grouper", 
       "large_yellow_croaker", "whitemouth_croaker", "meagre", "drum", 
@@ -847,8 +849,8 @@ choosing_ranks_manual <- FAO_with_models %>%
 ```
 
 ```{r fig-coverage-manual}
-#| fig-height: 6.5
-#| fig-width: 8.5
+#| fig-height: 5
+#| fig-width: 6
 #| fig-cap: "Cumulative production coverage under the manually curated model ranking. Blue line = marine coverage; red line = combined marine + brackishwater coverage. **Bold** names indicate models that are already parameterised. Dotted lines show the % of global fed marine production (blue) and marine + brackishwater production (red) that is covered by the full set of 17 chosen models."
 #| code-summary: "Plot cumulative coverage under the manually curated model ranking"
 
@@ -857,7 +859,7 @@ model_production <- FAO_with_models %>%
     model_name %in% c("drum", "large_yellow_croaker", "whitemouth_croaker", "meagre") ~ "drum_croaker", 
     model_name %in% c("red_seabream", "gilthead_seabream") ~ "seabream", 
     TRUE ~ model_name)
-    ) %>% 
+  ) %>% 
   group_by(model_name) %>%
   reframe(
     prod_marine = drop_units(sum(value[environment == "Marine"], na.rm = TRUE)),
@@ -911,14 +913,14 @@ coverage_manual_rank %>%
   scale_x_discrete(labels = bold_labels) +
   scale_y_continuous(
     labels = scales::label_percent(scale = 1),
-    limits = c(0, 100),
+    limits = c(30, 100),
     breaks = seq(0, 100, by = 10)
   ) +
   scale_colour_manual(
     values = c("Marine only" = "#2c7bb6", "Marine + brackishwater" = "#d7191c")
   ) +
   labs(
-    title    = "Coverage under manual model ranking",
+    title    = "Coverage of global production (tonnage) under manual model ranking",
     subtitle = paste0("FAO data, (2011– ", max(FAO_aqua$period), ", fed species only)"),
     x        = NULL,
     y        = "Cumulative production coverage (%)",
