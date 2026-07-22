@@ -324,6 +324,15 @@ message(sprintf("%i files done", length(files_to_do)))
 tictoc::toc()
 ```
 
+Check the production files directory to make sure they rand and saved correctly.
+
+```{r check-production}
+prod_path <- file.path(outs_path, "data", "farm_production")
+production_files <- list.files(prod_path, full.names = TRUE, pattern = "MC5000\\.qs$")
+
+here("src", "check_production_files.R") %>% source(echo = T)
+```
+
 ::: {style="display: flex; justify-content: space-between;"}
 [← Previous: Testing production](05_00_test_production.qmd)
 
