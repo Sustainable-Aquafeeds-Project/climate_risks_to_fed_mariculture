@@ -78,9 +78,9 @@ species_params[["overFdelta"]] <- 0.0025
 ```{r feed-params}
 #| code-summary: Load feed and ingredient data and calculate feed composition parameters
 
-feeds_df <- read_excel(here("data", "raw_data", "feed_profiles_and_composition.xlsx"), sheet = "all_feeds") %>%
+feeds_df <- read_excel(here("data", "raw_data", "feed_profiles_and_composition.xlsx"), sheet = "feed_formulations") %>%
   select(feed, ingredient, proportion) %>% 
-  filter(feed == "Atlantic salmon 1")
+  filter(feed == "atlantic_salmon-norway")
 
 ingredients_df <- read_excel(here("data", "raw_data", "all_ingredients.xlsx"), sheet = "all_ingredients") %>% 
   select(ingredient, protein, lipid, carb)

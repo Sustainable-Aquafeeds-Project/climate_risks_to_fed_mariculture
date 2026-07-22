@@ -65,18 +65,52 @@ species_params <- map(species_params, qd_read) %>%
   setNames(model_names)
 ```
 
+Load the feeds still stored in the raw data and store them as feed objects.
+
 ```{r feed-params}
-#| code-summary: Load feed parameters
+#| code-summary: Load feed parameters and save one per model_name/feed assignment
+
+# Get raw data
+raw_feed_data <- file.path(rawdata_path, "feed_profiles_and_composition.xlsx") %>% 
+  read_excel(sheet = "feed_formulations") %>% 
+  select(feed, ingredient, proportion)
+
+ingredients_df <- file.path(rawdata_path, "all_ingredients.xlsx") %>% 
+  read_excel(sheet = "all_ingredients") %>% 
+  select(ingredient, protein, lipid, carb)
+
+digestibility_df <- file.path(rawdata_path, "all_ingredients.xlsx") %>% 
+  read_excel(sheet = "all_ingredients") %>% 
+  clean_names() %>% 
+  rename(
+    protein_digestibility = mean_protein_digestibility, 
+    lipid_digestibility = mean_lipid_digestibility, 
+    carb_digestibility = mean_carb_digestibility
+  ) %>% 
+  select(ingredient, protein_digestibility, lipid_digestibility, carb_digestibility)
+
+# Combine feed and ingredient data and save as feed objects
+feeds_for_now <- c("atlantic_salmon-norway", "atlantic_salmon-chile",  "atlantic_salmon-canada", "atlantic_salmon-uk")
+for (f in feeds_for_now) {
+  feed_data <- sum_feeds(
+    format_feeds(raw_feed_data %>% filter(feed == f), ingredients_df, digestibility_df)
+    )[[1]]
+  qs_save(feed_data, file.path(prepdata_path, "feed_parameters", paste0(f, ".qs")))
+}
+```
+
+```{r load-feeds}
+#| code-summary: Load the feeds in with their model_name-country names
 
 feed_params <- file.path(prepdata_path, "feed_parameters") %>% 
   list.files(full.names = T)
 
-model_names <- feed_params %>% 
+feed_names <- feed_params %>% 
   basename() %>% 
-  str_remove_all(".qs|feed_parameters_")
+  str_remove_all(".qs")
 
 feed_params <- map(feed_params, qs_read) %>% 
-  setNames(model_names)
+  setNames(feed_names)
 ```
 
 # Farm temperatures {#sec-farm-temperatures}
@@ -106,10 +140,27 @@ assigned_farms <- assigned_farms %>%
 
 # Any missing?
 assigned_farms %>% filter(is.na(filename))
+# Nope!
+```
 
-# TEMPORARY - filter out those species we don't have parameters for yet
+# CHOOSE SUBSET for this run
+
+```{r choose-subset}
+#| code-summary: Choose the current subset of farms we're working with
+
+# Pair assigned farms with feed assignment data
+feed_assignments <- file.path(rawdata_path, "feed_profiles_and_composition.xlsx") %>% 
+  read_excel(sheet = "feed_assignments") %>% 
+  select(model_name, country, feed_class)
+
 assigned_farms <- assigned_farms %>% 
-  filter(model_name == "atlantic_salmon" & country %in% c("Norway", "Finland", "Iceland"))
+  left_join(feed_assignments, by = join_by(model_name, country)) %>% 
+  filter(!is.na(feed_class)) %>% 
+  mutate(feed_name = paste(model_name, feed_class, sep = "-"))
+
+# Choose what subset you're going to run
+assigned_farms <- assigned_farms %>% 
+  filter(feed_name == "atlantic_salmon-norway")
 
 assigned_farms <- split(assigned_farms, assigned_farms$farm_ID)
 ```
@@ -238,14 +289,15 @@ plan(multisession, workers = work_cores)
 
 tictoc::tic()
 
-# af <- assigned_farms[[1]]
+# af <- assigned_farms[[files_to_do[1]]]
+# fnm <- prod_files[[files_to_do[1]]]
 future_walk2(
   assigned_farms[files_to_do],
   prod_files[files_to_do],
   function(af, fnm) {
     species <- af$model_name
     sp <- species_params[[species]]
-    fp <- feed_params[[species]]
+    fp <- feed_params[[af$feed_name]]
     gd <- sp[["gd"]] %>% as.integer()
 
     # Get all temperatures at this farm
@@ -293,6 +345,7 @@ future_walk2(
 
     # Run the full production
     # temps <- temps_all[[1]]
+    # yr <- harvest_years[1]
     fg <- map2(
       temps_all,
       harvest_years,
@@ -324,7 +377,7 @@ message(sprintf("%i files done", length(files_to_do)))
 tictoc::toc()
 ```
 
-Check the production files directory to make sure they rand and saved correctly.
+Check the production files directory to make sure they ran and saved correctly.
 
 ```{r check-production}
 prod_path <- file.path(outs_path, "data", "farm_production")
