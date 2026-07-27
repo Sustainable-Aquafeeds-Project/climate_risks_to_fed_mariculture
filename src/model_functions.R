@@ -1030,3 +1030,15 @@ sum_feeds <- function(feed_params) {
     })
   })
 }
+
+tidy_stat <- function(prod_data, stat_name) {
+  imap_dfr(prod_data, function(year_data, year_name) {
+    tibble(
+      year = as.integer(year_name),
+      day  = year_data$days,
+      mean = year_data$stats[[stat_name]][, 1],
+      sd   = year_data$stats[[stat_name]][, 2]
+    ) %>% 
+      mutate(prod_day = day - min(day) + 1)
+  })
+}

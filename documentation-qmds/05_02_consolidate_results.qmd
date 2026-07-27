@@ -1,0 +1,138 @@
+---
+title: "5.2: Consolidate results"
+subtitle: "FAO Climate Change Risks to Fed Mariculture"
+author: 
+  - "Tormey Reimer"
+date: last-modified
+---
+
+::: {style="display: flex; justify-content: space-between;"}
+[← Previous: Testing production](05_01_run_production.qmd)
+
+[Next: Home →](../index.qmd)
+:::
+
+# Overview {#sec-overview}
+
+```{r setup}
+#| cache: false
+#| echo: false
+#| warning: false
+#| message: false
+#| output: false
+
+library(tidyverse)
+library(here)
+library(janitor)
+library(qs2)
+library(units)
+```
+
+```{r source-scripts}
+#| cache: false
+#| echo: false
+#| warning: false
+#| message: false
+#| output: false
+#| code-summary: "Source R scripts in use"
+
+here("src", "dirs.R") %>% source()
+here("src", "functions.R") %>% source()
+here("src", "model_functions.R") %>% source()
+```
+
+This document checks that the future production runs are complete and consolidates them into more useable forms.
+
+# Check production files
+
+First check that all the files in the folder are complete.
+
+```{r check-production}
+#| code-summary: Check that the files in the production folder are complete and correct structure
+
+prod_path <- file.path(outs_path, "data", "farm_production")
+production_files <- list.files(prod_path, full.names = TRUE, pattern = "MC5000\\.qs$")
+
+here("src", "check_production_files.R") %>% source(echo = T)
+```
+
+And display how many farms are present/missing.
+
+```{r check-farm-production-missing}
+#| code-summary: Check what files have been done
+
+farms_done <- as.integer(str_extract(basename(production_files), "(?<=farmID_)\\d+"))
+
+assigned_farms <- file.path(prepdata_path, "assigned_farms.qs") %>% 
+  qs_read() %>% 
+  sf::st_drop_geometry() %>% 
+  mutate(done = case_when(farm_ID %in% farms_done ~ T, T ~ F))
+
+# Pair assigned farms with feed assignment data
+feed_assignments <- file.path(rawdata_path, "feed_profiles_and_composition.xlsx") %>% 
+  read_excel(sheet = "feed_assignments") %>% 
+  select(model_name, country, feed_class)
+
+assigned_farms <- assigned_farms %>% 
+  left_join(feed_assignments, by = join_by(model_name, country))
+
+assigned_farms %>% 
+  group_by(model_name, feed_class, done) %>% 
+  reframe(n = n())
+```
+
+# Group and save {#sec-group-save}
+
+```{r subset}
+#| code-summary: Subset results
+
+# Check what stats you have to work with
+qs_read(production_files[1])[[1]] %>% str()
+
+subset_farms <- assigned_farms %>% 
+  filter(model_name == "atlantic_salmon" & feed_class == "norway")
+
+subset_prod_files <- production_files[which(as.integer(str_extract(basename(production_files), "(?<=farmID_)\\d+")) %in% subset_farms$farm_ID)]
+
+cons_path <- file.path(outs_path, "data", "consolidated")
+dir.create(cons_path, showWarnings = F)
+```
+
+```{r feed-demand}
+#| code-summary: Save feed demand results per species/feed type
+
+ing_act_scaled <- map_dfr(
+  subset_prod_files,
+  function(fnm) {
+    tidy_stat(qs_read(fnm), "ing_act_scaled") %>% 
+      mutate(farm_ID = as.integer(str_extract(basename(fnm), "(?<=farmID_)\\d+"))) %>% 
+      group_by(farm_ID, year) %>% 
+      reframe(
+        farm_mean = sumna(mean),
+        farm_sd = sqrt(sumna(sd^2))
+      )
+  },
+  .progress = T
+)
+
+ing_act_scaled <- assigned_farms %>% 
+  right_join(ing_act_scaled, by = join_by(farm_ID)) %>% 
+  group_by(ISO3_Code, country, F_CODE, model_name, feed_class, year) %>% 
+  reframe(
+    prod_2025 = sum(prod_perfarm),
+    n_farms = n(),
+    mean = sum(farm_mean),
+    sd = sqrt(sumna(farm_sd^2))
+  )
+
+qs_save(
+  ing_act_scaled, 
+  file.path(cons_path, paste0("ing_act_scaled-", unique(ing_act_scaled$model_name), "-", unique(ing_act_scaled$feed_class), ".qs"))
+  )
+```
+
+::: {style="display: flex; justify-content: space-between;"}
+[← Previous: Testing production](05_00_test_production.qmd)
+
+[Next: Home →](../index.qmd)
+:::
