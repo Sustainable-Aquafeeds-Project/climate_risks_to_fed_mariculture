@@ -97,8 +97,6 @@ digestibility_df <- read_excel(here("data", "raw_data", "all_ingredients.xlsx"),
 feed_params <- sum_feeds(
   format_feeds(feeds_df, ingredients_df, digestibility_df)
   )[[1]]
-
-qs_save(feed_params, file.path(prepdata_path, "feed_parameters", "feed_parameters_atlantic_salmon.qs"))
 ```
 
 ```{r tbl-feed-nutrition}

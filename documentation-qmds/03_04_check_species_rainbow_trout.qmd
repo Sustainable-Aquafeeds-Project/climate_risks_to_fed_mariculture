@@ -50,8 +50,6 @@ This document runs the checking and calibration process on the `rainbow_trout` m
 
 # Species parameters {#sec-species-params}
 
-As we are only running a single representative individual, the Monte-Carlo parameters are not in use.
-
 ```{r load-parameters}
 #| code-summary: Load species parameters for rainbow_trout
 
@@ -78,9 +76,9 @@ species_params[["overFdelta"]] <- 0.0025
 ```{r feed-params}
 #| code-summary: Load feed and ingredient data and calculate feed composition parameters
 
-feeds_df <- read_excel(here("data", "raw_data", "feed_profiles_and_composition.xlsx"), sheet = "all_feeds") %>%
+feeds_df <- read_excel(here("data", "raw_data", "feed_profiles_and_composition.xlsx"), sheet = "feed_formulations") %>%
   select(feed, ingredient, proportion) %>% 
-  filter(feed == "Rainbow trout 1")
+  filter(feed == "rainbow_trout-chile")
 
 ingredients_df <- read_excel(here("data", "raw_data", "all_ingredients.xlsx"), sheet = "all_ingredients") %>% 
   select(ingredient, protein, lipid, carb)
@@ -97,8 +95,6 @@ digestibility_df <- read_excel(here("data", "raw_data", "all_ingredients.xlsx"),
 feed_params <- sum_feeds(
   format_feeds(feeds_df, ingredients_df, digestibility_df)
   )[[1]]
-
-qs_save(feed_params, file.path(prepdata_path, "feed_parameters", "feed_parameters_rainbow_trout.qs"))
 ```
 
 ```{r tbl-feed-nutrition}
@@ -158,9 +154,9 @@ times <- c(
 farm_temps <- farm_temps_all %>% 
   filter(doy >= times['t_start'] & doy <= times['t_end'])
 
-# ggplot(farm_temps, aes(x = doy, y = sst)) +
-#   geom_line() +
-#   theme_classic()
+ggplot(farm_temps, aes(x = doy, y = sst)) +
+  geom_line() +
+  theme_classic()
 ```
 
 # Run model with raw parameters {#sec-run-model-raw}
@@ -200,15 +196,15 @@ one_fish <- fish_growth(
 )
 
 cat(sprintf(
-  'Initial weight: %.1f g  |  Final weight: %.1f g (%.1f g)  |  Approx. FCR: %.2f |  Final SGR: %.1f \n',
+  'Initial weight: %.1f g  |  Final weight: %.1f g (%.1f g)  |  FCR (feed/gain): %.2f |  FCE (gain/feed): %.2f \n',
   one_fish[1, 'weight'],
   tail(one_fish[, 'weight'], 1), species_params['CS'],
   sum(one_fish[, 'food_prov'], na.rm = T) / (tail(one_fish[, 'weight'], 1) - one_fish[1, 'weight']),
-  tail(one_fish[, 'SGR'], 1)
+  (tail(one_fish[, 'weight'], 1) - one_fish[1, 'weight']) / sum(one_fish[, 'food_prov'], na.rm = T)
 ))
 ```
 
-The model outputs here are looking ok, but harvest size is being substantially overestimated (@fig-outputs). This is no unexpected, as many of the parameters were here taken from the `atlantic_salmon` model, which has a much larger harvest size.
+The model outputs here are looking ok. Harvest size is being underestimated (@fig-outputs), which is a little surprising as many of the parameters were here taken from the `atlantic_salmon` model, which has a much larger harvest size.
 
 ```{r fig-outputs}
 #| code-summary: Plot all fish_growth() outputs facetted by measure
