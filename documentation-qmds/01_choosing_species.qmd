@@ -1074,7 +1074,7 @@ p_bigmap_robinson +
 
 # Summary of chosen models {#sec-model-summary}
 
-The 17 manually chosen model names and a representative (typically most-commonly farmed) species for each are listed in @tbl-model-summary.
+The 17 manually chosen model names and a representative (typically most-commonly farmed) species for each are listed in @tbl-model-summary. Note that at this point I decided to change the name of `japanese_seabass` to `asian_seabass`, as I realised that the species was almost entirely represented by the Asian seabass (*Lateolabrax maculatus*) in the production data.
 
 ```{r tbl-model-summary}
 #| tbl-cap: "Manually chosen bioenergetic model names, the groups they are intended to represent, and a representative species for each. The representative species is typically the most commercially important farmed species in the group, or one that typifies the broader taxonomic category. The 'Params?' column indicates whether work has already been done to parameterise this model. Note that these choices do not take diets into account - some groups listed may be excluded in future because their diets are composed entirely of wild-sourced materials which will not be included in the climate change analysis (e.g. kelp for abalone)."
@@ -1096,7 +1096,7 @@ tribble(
     "golden_pompano",        "Golden pompano (*Trachinotus ovatus*)",            "*Trachinotus* spp", "Y", 
     "grouper",               "Orange-spotted grouper (*Epinephelus coioides*)",  "Serranidae, mostly *Epinephelus* spp but also including *Cephalopholis* spp, *Chromileptes* spp, *Gracila* spp, *Plectropomus* spp, *Hyporthodus* spp, and *Mycteroperca* spp", " ", 
     "japanese_amberjack",    "Japanese amberjack (*Seriola quinqueradiata*)",    "*Seriola* spp", "Y", 
-    "japanese_seabass",      "Japanese seabass (*Lateolabrax japonicus*)",       "*Lateolabrax* spp", "Y", 
+    "asian_seabass",         "Asian seabass (*Lateolabrax maculatus*)",          "*Lateolabrax* spp", "Y", 
     "nile_tilapia",          "Nile tilapia (*Oreochromis niloticus*)",           "*Oreochromis* spp, *Sarotherodon* spp", " ", 
     "olive_flounder",        "Olive flounder (*Paralichthys olivaceus*)",        "All Bothidae and Pleuronectiformes, mostly *Paralichthys* spp but also including *Platichthys* spp", " ",
     "tuna",                  "Atlantic bluefin tuna (*Thunnus thynnus*)",        "*Thunnus* spp", " " 
@@ -1124,6 +1124,7 @@ FAO_with_models_final <- FAO_with_models %>%
     model_name %in% c("banana_prawn") ~ "tiger_prawn",
     model_name %in% c("drum", "large_yellow_croaker", "whitemouth_croaker", "meagre") ~ "drum_croaker", 
     model_name %in% c("red_seabream", "gilthead_seabream", "blackhead_seabream") ~ "seabream", 
+    model_name %in% c("japanese_seabass") ~ "asian_seabass",
     TRUE ~ model_name
     )
   ) %>%

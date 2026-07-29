@@ -306,12 +306,6 @@ period,value,environment,species_name,country,ISO3_Code,fao_fishing_area,model_n
 2018,159579,Marine,grouper,China,CHN,"Pacific, Northwest",grouper
 2020,192045,Marine,grouper,China,CHN,"Pacific, Northwest",grouper
 2022,205816,Marine,grouper,China,CHN,"Pacific, Northwest",grouper
-2012,120584,Brackishwater,bass,China,CHN,"Pacific, Northwest",japanese_seabass
-2014,108765,Brackishwater,bass,China,CHN,"Pacific, Northwest",japanese_seabass
-2016,137901,Brackishwater,bass,China,CHN,"Pacific, Northwest",japanese_seabass
-2018,166581,Brackishwater,bass,China,CHN,"Pacific, Northwest",japanese_seabass
-2020,195246,Brackishwater,bass,China,CHN,"Pacific, Northwest",japanese_seabass
-2022,218053,Brackishwater,bass,China,CHN,"Pacific, Northwest",japanese_seabass
 2012,91148,Marine,croaker,China,CHN,"Pacific, Northwest",drum_croaker
 2014,122254,Marine,croaker,China,CHN,"Pacific, Northwest",drum_croaker
 2016,159529,Marine,croaker,China,CHN,"Pacific, Northwest",drum_croaker
@@ -438,12 +432,6 @@ period,value,environment,species_name,country,ISO3_Code,fao_fishing_area,model_n
 2018,677.992,Marine,grouper,Taiwan Province of China,TWN,"Pacific, Northwest",grouper
 2020,883.776,Marine,grouper,Taiwan Province of China,TWN,"Pacific, Northwest",grouper
 2022,491,Marine,grouper,Taiwan Province of China,TWN,"Pacific, Northwest",grouper
-2015,1435,Brackishwater,bass,Taiwan Province of China,TWN,"Pacific, Northwest",japanese_seabass
-2017,1118.6,Brackishwater,bass,Taiwan Province of China,TWN,"Pacific, Northwest",japanese_seabass
-2019,988.513,Brackishwater,bass,Taiwan Province of China,TWN,"Pacific, Northwest",japanese_seabass
-2021,743.194,Brackishwater,bass,Taiwan Province of China,TWN,"Pacific, Northwest",japanese_seabass
-2023,652.972,Brackishwater,bass,Taiwan Province of China,TWN,"Pacific, Northwest",japanese_seabass
-2023,88,Marine,bass,Taiwan Province of China,TWN,"Pacific, Northwest",japanese_seabass
 2011,0.5,Marine,croaker,Taiwan Province of China,TWN,"Pacific, Northwest",drum_croaker
 2012,486,Brackishwater,breams,Taiwan Province of China,TWN,"Pacific, Northwest",seabream
 2014,503.59,Brackishwater,breams,Taiwan Province of China,TWN,"Pacific, Northwest",seabream
@@ -1305,13 +1293,6 @@ period,value,environment,species_name,country,ISO3_Code,fao_fishing_area,model_n
 2018,300,Marine,grouper,Republic of Korea,KOR,"Pacific, Northwest",grouper
 2020,79,Marine,grouper,Republic of Korea,KOR,"Pacific, Northwest",grouper
 2022,220.147,Marine,grouper,Republic of Korea,KOR,"Pacific, Northwest",grouper
-2011,1835,Marine,bass,Republic of Korea,KOR,"Pacific, Northwest",japanese_seabass
-2013,1248,Marine,bass,Republic of Korea,KOR,"Pacific, Northwest",japanese_seabass
-2015,1780,Marine,bass,Republic of Korea,KOR,"Pacific, Northwest",japanese_seabass
-2017,2046,Marine,bass,Republic of Korea,KOR,"Pacific, Northwest",japanese_seabass
-2019,774,Marine,bass,Republic of Korea,KOR,"Pacific, Northwest",japanese_seabass
-2021,1211.827,Marine,bass,Republic of Korea,KOR,"Pacific, Northwest",japanese_seabass
-2023,576.312,Marine,bass,Republic of Korea,KOR,"Pacific, Northwest",japanese_seabass
 2011,34,Marine,croaker,Republic of Korea,KOR,"Pacific, Northwest",drum_croaker
 2013,145,Marine,croaker,Republic of Korea,KOR,"Pacific, Northwest",drum_croaker
 2015,629,Marine,croaker,Republic of Korea,KOR,"Pacific, Northwest",drum_croaker
@@ -2203,13 +2184,6 @@ period,value,environment,species_name,country,ISO3_Code,fao_fishing_area,model_n
 2019,16.295,Marine,grouper,Singapore,SGP,"Pacific, Western Central",grouper
 2021,2.44,Marine,grouper,Singapore,SGP,"Pacific, Western Central",grouper
 2023,1.5,Marine,grouper,Singapore,SGP,"Pacific, Western Central",grouper
-2011,0,Marine,bass,Singapore,SGP,"Pacific, Western Central",japanese_seabass
-2013,0,Marine,bass,Singapore,SGP,"Pacific, Western Central",japanese_seabass
-2015,0,Marine,bass,Singapore,SGP,"Pacific, Western Central",japanese_seabass
-2017,0.2,Marine,bass,Singapore,SGP,"Pacific, Western Central",japanese_seabass
-2019,0.892,Marine,bass,Singapore,SGP,"Pacific, Western Central",japanese_seabass
-2021,1.88,Marine,bass,Singapore,SGP,"Pacific, Western Central",japanese_seabass
-2023,0.08,Marine,bass,Singapore,SGP,"Pacific, Western Central",japanese_seabass
 2023,1.22,Brackishwater,drums,Singapore,SGP,"Pacific, Western Central",drum_croaker
 2021,2.91,Marine,porgies,Singapore,SGP,"Pacific, Western Central",seabream
 2011,0,Brackishwater,jack_pompano,Singapore,SGP,"Pacific, Western Central",golden_pompano

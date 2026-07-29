@@ -7,10 +7,11 @@ project:
     - documentation-qmds/00_model_function_demonstration.qmd
     - documentation-qmds/01_choosing_species.qmd
     - documentation-qmds/02_assigning_locations.qmd
-    - documentation-qmds/03_01_check_species_seabream.qmd
-    - documentation-qmds/03_02_check_species_european_seabass.qmd
-    - documentation-qmds/03_03_check_species_atlantic_salmon.qmd
-    - documentation-qmds/03_04_check_species_rainbow_trout.qmd
+    - documentation-qmds/03_01_check_species_atlantic_salmon.qmd
+    - documentation-qmds/03_02_check_species_rainbow_trout.qmd
+    - documentation-qmds/03_03_check_species_seabream.qmd
+    - documentation-qmds/03_04_check_species_european_seabass.qmd
+    - documentation-qmds/03_05_check_species_asian_seabass.qmd
     - documentation-qmds/03_05_check_species_drum_croaker.qmd
     - documentation-qmds/03_06_check_species_golden_pompano.qmd
     - documentation-qmds/03_07_check_species_grouper.qmd
