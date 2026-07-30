@@ -26,6 +26,14 @@ library(here)
 library(janitor)
 library(qs2)
 library(units)
+
+remove_unit("g_fish")
+remove_unit("kg_fish")
+remove_unit("t_fish")
+
+install_unit("g_fish")
+install_unit("kg_fish", "1000 g_fish")
+install_unit("t_fish", "1000 kg_fish")
 ```
 
 ```{r source-scripts}
@@ -53,7 +61,7 @@ First check that all the files in the folder are complete.
 prod_path <- file.path(outs_path, "data", "farm_production")
 production_files <- list.files(prod_path, full.names = TRUE, pattern = "MC5000\\.qs$")
 
-here("src", "check_production_files.R") %>% source(echo = T)
+# here("src", "check_production_files.R") %>% source(echo = T)
 ```
 
 And display how many farms are present/missing.
@@ -78,7 +86,123 @@ assigned_farms <- assigned_farms %>%
 
 assigned_farms %>% 
   group_by(model_name, feed_class, done) %>% 
-  reframe(n = n())
+  reframe(n = n()) %>% 
+  filter(model_name == "atlantic_salmon")
+```
+
+# Per-farm plots
+
+These plots aren't meant to show anything specifically - they're just so that I can quickly flick through the pictures and see if anything has gone awry with the production modelling. For that reason, there are only three plots saved for each farm:
+
+* Total farm production
+* Total feed ingested
+* Feed per biomass (essentially FCR)
+
+```{r save-plots-per-farm}
+#| code-summary: Save some diagnostic plots per farm
+
+fb_path <- file.path(outs_path, "plots", "farm_production_checks", "farm_biomass")
+fr_path <- file.path(outs_path, "plots", "farm_production_checks", "feed_required")
+frb_path <- file.path(outs_path, "plots", "farm_production_checks", "feed_required_per_biomass")
+
+# Choose a subset
+prod_files_subset <- production_files
+# prod_files_subset <- production_files[farms_done %in% assigned_farms$farm_ID[assigned_farms$model_name == "rainbow_trout" & assigned_farms$feed_class == "world"]]
+
+walk(prod_files_subset, function(fnm) {
+  prod_ls <- qs_read(fnm)
+  farm_ID <- str_extract(basename(fnm), "(?<=farmID_)\\d+")
+
+  fb_fnm <- file.path(fb_path, paste0("harvested_biomass_farmID_", farm_ID, ".png"))
+  fr_fnm <- file.path(fr_path, paste0("feed_required_farmID_", farm_ID, ".png"))
+  frb_fnm <- file.path(frb_path, paste0("feed_required_perbiomass_farmID_", farm_ID, ".png"))
+  
+  if(any(c(!file.exists(fb_fnm), !file.exists(fr_fnm), !file.exists(frb_fnm)))) {
+    fb <- tidy_stat(prod_ls, "weight_scaled") %>% 
+      slice_max(prod_day) %>% 
+      mutate(
+        mean = mean %>% set_units("g") %>% set_units("t"),
+        sd = sd %>% set_units("g") %>% set_units("t")
+      ) %>% 
+      select(-prod_day, -day)
+
+    fr <- tidy_stat(prod_ls, "ing_act_scaled") %>% 
+      group_by(year) %>% 
+      reframe(
+        mean = sumna(mean),
+        sd = sqrt(sumna(sd^2))
+      ) %>% 
+      mutate(
+        mean = mean %>% set_units("g") %>% set_units("t"),
+        sd = sd %>% set_units("g") %>% set_units("t")
+      )
+
+    p_fb <- fb %>% 
+      ggplot(aes(x = year, y = mean, ymin = mean - sd, ymax = mean + sd)) +
+      geom_line() +
+      geom_ribbon(fill = "salmon", alpha = 0.35) +
+      scale_x_continuous(breaks = seq(2030, 2100, 10)) +
+      theme_classic() +
+      labs(
+        title = paste0("Farm ", as.integer(farm_ID), ": harvested biomass"),
+        x = "Year",
+        y = "Biomass"
+      )
+    ggsave(
+      fb_fnm, 
+      plot = p_fb, 
+      height = 8,
+      width = 10
+    )
+
+    p_fr <- fr %>% 
+      ggplot(aes(x = year, y = mean, ymin = mean - sd, ymax = mean + sd)) +
+      geom_line() +
+      geom_ribbon(fill = "salmon", alpha = 0.35) +
+      scale_x_continuous(breaks = seq(2030, 2100, 10)) +
+      theme_classic() +
+      labs(
+        title = paste0("Farm ", as.integer(farm_ID), ": feed required"),
+        x = "Year",
+        y = "Feed"
+      )
+    ggsave(
+      fr_fnm, 
+      plot = p_fr, 
+      height = 8,
+      width = 10
+    )
+
+    frb <- left_join(fb, fr, by = join_by(year)) %>% 
+      mutate(
+        mean.y = set_units(mean.y, "kg"),
+        mean.x = mean.x %>% drop_units() %>% set_units("t_fish"),
+        mean = mean.y/mean.x,
+        sd = mean * sqrt((drop_units(sd.y)/drop_units(mean.y))^2 + (drop_units(sd.x)/drop_units(mean.x))^2),
+        FCR = mean %>% set_units("t t_fish-1") %>% drop_units()
+      )
+    p_frb <- frb %>% 
+      ggplot(aes(x = year, y = mean, ymin = mean - sd, ymax = mean + sd)) +
+      geom_line() +
+      geom_ribbon(fill = "salmon", alpha = 0.35) +
+      scale_x_continuous(breaks = seq(2030, 2100, 10)) +
+      theme_classic() +
+      labs(
+        title = paste0("Farm ", as.integer(farm_ID), ": feed required per biomass"),
+        x = "Year",
+        y = "Feed required"
+      )
+    ggsave(
+      frb_fnm, 
+      plot = p_frb, 
+      height = 8,
+      width = 10
+    )
+  }
+
+},
+.progress = T
+)
 ```
 
 # Group and save {#sec-group-save}
@@ -96,6 +220,45 @@ subset_prod_files <- production_files[which(as.integer(str_extract(basename(prod
 
 cons_path <- file.path(outs_path, "data", "consolidated")
 dir.create(cons_path, showWarnings = F)
+```
+
+```{r farm-biomass}
+#| code-summary: Save farm biomass results per species/feed type
+
+weight_scaled <- map_dfr(
+  subset_prod_files,
+  function(fnm) {
+    tidy_stat(qs_read(fnm), "weight_scaled") %>% 
+      mutate(farm_ID = as.integer(str_extract(basename(fnm), "(?<=farmID_)\\d+"))) %>% 
+      slice_max(prod_day) %>% 
+      rename(farm_mean = mean, farm_sd = sd) %>% 
+      select(-day, -prod_day)
+  },
+  .progress = T
+)
+
+weight_scaled <- assigned_farms %>% 
+  right_join(weight_scaled, by = join_by(farm_ID))
+
+weight_scaled_2025 <- weight_scaled %>% 
+  filter(year == 2025) %>% 
+  select(farm_ID, mean_2025 = farm_mean)
+# max(weight_scaled_2025$error)
+
+weight_scaled <- weight_scaled %>% 
+  right_join(weight_scaled_2025, by = join_by(farm_ID)) %>% 
+  group_by(ISO3_Code, country, F_CODE, model_name, feed_class, year) %>% 
+  reframe(
+    mean_2025 = sum(mean_2025),
+    n_farms = n(),
+    mean = sum(farm_mean),
+    sd = sqrt(sumna(farm_sd^2))
+  )
+
+qs_save(
+  weight_scaled, 
+  file.path(cons_path, paste0("weight_scaled-", unique(weight_scaled$model_name), "-", unique(weight_scaled$feed_class), ".qs"))
+  )
 ```
 
 ```{r feed-demand}
@@ -116,18 +279,48 @@ ing_act_scaled <- map_dfr(
 )
 
 ing_act_scaled <- assigned_farms %>% 
-  right_join(ing_act_scaled, by = join_by(farm_ID)) %>% 
+  right_join(ing_act_scaled, by = join_by(farm_ID)) 
+
+ing_act_scaled_2025 <- ing_act_scaled %>% 
+  filter(year == 2025) %>% 
+  select(farm_ID, mean_2025 = farm_mean)
+
+ing_act_scaled <- ing_act_scaled %>% 
+  right_join(ing_act_scaled_2025, by = join_by(farm_ID)) %>% 
   group_by(ISO3_Code, country, F_CODE, model_name, feed_class, year) %>% 
   reframe(
-    prod_2025 = sum(prod_perfarm),
+    mean_2025 = sumna(mean_2025),
     n_farms = n(),
-    mean = sum(farm_mean),
+    mean = sumna(farm_mean),
     sd = sqrt(sumna(farm_sd^2))
   )
 
 qs_save(
   ing_act_scaled, 
   file.path(cons_path, paste0("ing_act_scaled-", unique(ing_act_scaled$model_name), "-", unique(ing_act_scaled$feed_class), ".qs"))
+  )
+```
+
+```{r feed-demand-per-biomass}
+#| code-summary: Save feed demand per biomass results per species/feed type
+
+feed_biomass <- left_join(
+  ing_act_scaled %>% rename(ing_act_2025 = mean_2025, ing_act_mean = mean, ing_act_sd = sd), 
+  weight_scaled %>% rename(weight_2025 = mean_2025, weight_mean = mean, weight_sd = sd),
+  by = join_by(ISO3_Code, country, F_CODE, model_name, feed_class, year, n_farms)
+)
+
+feed_biomass <- feed_biomass %>% 
+  mutate(
+    feed_biomass_2025 = ing_act_2025/weight_2025,
+    feed_biomass_mean = ing_act_mean/weight_mean,
+    feed_biomass_sd = feed_biomass_mean * sqrt((ing_act_sd/ing_act_mean)^2 + (weight_sd/weight_mean)^2)
+  ) %>% 
+    select(-c(ing_act_2025, weight_2025, ing_act_mean, weight_mean, ing_act_sd, weight_sd))
+
+qs_save(
+  feed_biomass, 
+  file.path(cons_path, paste0("feed_biomass-", unique(feed_biomass$model_name), "-", unique(feed_biomass$feed_class), ".qs"))
   )
 ```
 
