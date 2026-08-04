@@ -4,11 +4,20 @@
 # Each file should be a list of 75 elements named "2025"-"2099".
 # Each element should contain:
 #   - $days: a numeric vector of length N
-#   - $stats: a list of 13 response matrices, each with N rows
+#   - $stats: a list of 15 response matrices, each with N rows
 #
-# The 13 expected response matrices:
+# The 15 expected response matrices:
 #   weight, dw, T_response, rel_feeding, ing_act, anab, catab,
-#   total_excr, metab, weight_scaled, dw_scaled, ing_act_scaled, total_excr_scaled
+#   total_excr, metab, weight_scaled, dw_scaled, ing_act_scaled, total_excr_scaled,
+#   food_prov, food_prov_scaled
+#
+# Additional data quality checks (Check 6):
+#   - Weight must increase at some point (not monotonically decreasing)
+#   - dw (weight change) must not be negative for the entire growth period
+#   - rel_feeding and ing_act must be mostly numeric (not predominantly NaN/NA)
+#   - anab, total_excr, food_prov, and food_prov_scaled must not be all zeros
+#   If feeding issues are detected, the issue is reported as FEEDING_FAILED;
+#   otherwise, growth-only issues are reported as NO_GROWTH.
 
 library(here)
 library(qs2)
@@ -19,8 +28,8 @@ source(here("src", "dirs.R"))
 expected_years <- as.character(2025:2099)
 expected_n_years <- length(expected_years) # 75
 
-expected_response_names <- c("weight", "dw", "T_response", "rel_feeding", "ing_act", "anab", "catab", "total_excr", "metab", "weight_scaled", "dw_scaled", "ing_act_scaled", "total_excr_scaled")
-expected_n_responses <- length(expected_response_names) # 13
+expected_response_names <- c("weight", "dw", "T_response", "rel_feeding", "ing_act", "anab", "catab", "total_excr", "metab", "weight_scaled", "dw_scaled", "ing_act_scaled", "total_excr_scaled", "food_prov", "food_prov_scaled")
+expected_n_responses <- length(expected_response_names) # 15
 
 # ---------- Find production files ----------
 if (length(production_files) == 0) {
@@ -139,6 +148,107 @@ for (i in seq_along(production_files)) {
                   sprintf("'%s' has %d columns, expected 2",
                           resp, n_cols))
       }
+    }
+    
+    # Check 6: Data quality — detect feeding failure and no-growth conditions
+    # Only run if the required matrices are present and valid
+    has_weight    <- "weight"      %in% stat_names && is.matrix(stats[["weight"]])
+    has_dw        <- "dw"          %in% stat_names && is.matrix(stats[["dw"]])
+    has_relfeed   <- "rel_feeding" %in% stat_names && is.matrix(stats[["rel_feeding"]])
+    has_ingact    <- "ing_act"     %in% stat_names && is.matrix(stats[["ing_act"]])
+    has_anab      <- "anab"        %in% stat_names && is.matrix(stats[["anab"]])
+    has_totalexcr <- "total_excr"  %in% stat_names && is.matrix(stats[["total_excr"]])
+    has_foodprov  <- "food_prov"   %in% stat_names && is.matrix(stats[["food_prov"]])
+    has_foodprovs <- "food_prov_scaled" %in% stat_names && is.matrix(stats[["food_prov_scaled"]])
+    
+    # Feeding checks (use column 1 = mean)
+    feeding_failed <- FALSE
+    feeding_details <- character(0)
+    
+    if (has_relfeed) {
+      rf_vals <- stats[["rel_feeding"]][, 1]
+      rf_na_frac <- count(!is.finite(rf_vals))
+      if (rf_na_frac > 100) {
+        feeding_failed <- TRUE
+        feeding_details <- c(feeding_details,
+          sprintf("there are %.0f NA rel_feeding values", rf_na_frac))
+      }
+    }
+    
+    if (has_ingact) {
+      ia_vals <- stats[["ing_act"]][, 1]
+      ia_na_frac <- count(!is.finite(ia_vals))
+      if (ia_na_frac > 1000) {
+        feeding_failed <- TRUE
+        feeding_details <- c(feeding_details,
+          sprintf("there are %.0f NA ing_act values", ia_na_frac))
+      }
+    }
+    
+    if (has_anab) {
+      anab_vals <- stats[["anab"]][, 1]
+      if (all(anab_vals == 0, na.rm = TRUE)) {
+        feeding_failed <- TRUE
+        feeding_details <- c(feeding_details, "anab is all zeros")
+      }
+    }
+    
+    if (has_totalexcr) {
+      te_vals <- stats[["total_excr"]][, 1]
+      if (all(te_vals == 0, na.rm = TRUE)) {
+        feeding_failed <- TRUE
+        feeding_details <- c(feeding_details, "total_excr is all zeros")
+      }
+    }
+    
+    if (has_foodprov) {
+      fp_vals <- stats[["food_prov"]][, 1]
+      if (all(fp_vals == 0, na.rm = TRUE)) {
+        feeding_failed <- TRUE
+        feeding_details <- c(feeding_details, "food_prov is all zeros")
+      }
+    }
+    
+    if (has_foodprovs) {
+      fps_vals <- stats[["food_prov_scaled"]][, 1]
+      if (all(fps_vals == 0, na.rm = TRUE)) {
+        feeding_failed <- TRUE
+        feeding_details <- c(feeding_details, "food_prov_scaled is all zeros")
+      }
+    }
+    
+    # Growth checks (use column 1 = mean)
+    no_growth <- FALSE
+    growth_details <- character(0)
+    
+    if (has_weight) {
+      wt_vals <- stats[["weight"]][, 1]
+      wt_finite <- wt_vals[is.finite(wt_vals)]
+      if (length(wt_finite) > 1 && all(diff(wt_finite) <= 0)) {
+        no_growth <- TRUE
+        growth_details <- c(growth_details, "weight never increases")
+      }
+    }
+    
+    if (has_dw) {
+      dw_vals <- stats[["dw"]][, 1]
+      dw_finite <- dw_vals[is.finite(dw_vals)]
+      if (length(dw_finite) > 0 && all(dw_finite < 0)) {
+        no_growth <- TRUE
+        growth_details <- c(growth_details, "dw is negative throughout")
+      }
+    }
+    
+    # Report: feeding failure supersedes generic no-growth
+    if (feeding_failed) {
+      all_details <- c(feeding_details, growth_details)
+      add_issue(fpath, yr, "FEEDING_FAILED",
+                paste("Feeding failed, fish not growing:",
+                      paste(all_details, collapse = "; ")))
+    } else if (no_growth) {
+      add_issue(fpath, yr, "NO_GROWTH",
+                paste("Fish are not growing:",
+                      paste(growth_details, collapse = "; ")))
     }
   }
   

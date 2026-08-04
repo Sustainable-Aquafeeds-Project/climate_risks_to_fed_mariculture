@@ -1,2 +1,3 @@
 archive/*
-/*.qmd
+outputs/data/*
+outputs/plots/farm_production_checks/*
