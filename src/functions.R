@@ -141,7 +141,7 @@ extract_point_location_temperature <- function(
 
 # For the thermal niche suitability
 get_species_responses <- function(water_temp, species_params, feed_params, ref_weight) {
-  fr             <- sapply(water_temp, feeding_rate, species_params = species_params)
+  fr             <- feeding_rate(water_temp, species_params)  # already vectorised
   T_response     <- exp(species_params['pk'] * water_temp)
   feed_ingested  <- unname(species_params['meanImax'] * (ref_weight^species_params['m']) * fr)
 

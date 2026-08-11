@@ -167,7 +167,7 @@ for (i in seq_along(production_files)) {
     
     if (has_relfeed) {
       rf_vals <- stats[["rel_feeding"]][, 1]
-      rf_na_frac <- count(!is.finite(rf_vals))
+      rf_na_frac <- sum(!is.finite(rf_vals))
       if (rf_na_frac > 100) {
         feeding_failed <- TRUE
         feeding_details <- c(feeding_details,
@@ -177,7 +177,7 @@ for (i in seq_along(production_files)) {
     
     if (has_ingact) {
       ia_vals <- stats[["ing_act"]][, 1]
-      ia_na_frac <- count(!is.finite(ia_vals))
+      ia_na_frac <- sum(!is.finite(ia_vals))
       if (ia_na_frac > 1000) {
         feeding_failed <- TRUE
         feeding_details <- c(feeding_details,
