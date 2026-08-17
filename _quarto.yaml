@@ -12,10 +12,14 @@ project:
     - documentation-qmds/03_03_check_species_seabream.qmd
     - documentation-qmds/03_04_check_species_european_seabass.qmd
     - documentation-qmds/03_05_check_species_asian_seabass.qmd
-    - documentation-qmds/03_05_check_species_drum_croaker.qmd
-    - documentation-qmds/03_06_check_species_golden_pompano.qmd
-    - documentation-qmds/03_07_check_species_grouper.qmd
-    - documentation-qmds/03_08_check_species_japanese_amberjack.qmd
+
+    - documentation-qmds/03_06_check_species_whiteleg_shrimp.qmd
+    - documentation-qmds/03_07_check_species_drum_croaker.qmd
+    - documentation-qmds/03_08_check_species_milkfish.qmd
+    - documentation-qmds/03_09_check_species_golden_pompano.qmd
+    - documentation-qmds/03_10_check_species_grouper.qmd
+    - documentation-qmds/03_11_check_species_japanese_amberjack.qmd
+
     - documentation-qmds/03_17_all_species_parameters.qmd
     - documentation-qmds/03_18_species_temperature_responses.qmd
     - documentation-qmds/04_extracting_future_temperatures.qmd
