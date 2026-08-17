@@ -577,7 +577,7 @@ fish_growth <- function(
     result[i, 'food_prov'] <- food_prov_rate(
       species_params = species_params,
       water_temp     = result[i, 'water_temp'],
-      ing_pot        = result[i, 'ing_pot'],
+      ing_pot        = result[i, 'ing_pot']/species_params['eff'],
       ing_pot_min    = ingmax * (result[i, 'weight']^species_params['m']) * feeding_rate(species_params['Taa'], species_params)
     )
     result[i, 'food_enc'] <- species_params['eff'] * result[i, 'food_prov']
@@ -1002,6 +1002,15 @@ format_feeds <- function(feeds_df, ingredients_df, digestibility_df) {
       by = "ingredient",
       relationship = "many-to-many"
     )
+  
+  # Make sure the ingredients sum to 1
+  feeds_df_full <- feeds_df_full %>% 
+    filter(!is.na(proportion)) %>% 
+    group_by(feed) %>% 
+    mutate(sum_proportion = sum(proportion)) %>% 
+    ungroup() %>% 
+    mutate(proportion = proportion/sum_proportion) %>% 
+    select(-sum_proportion)
 
     map(feed_names, function(fn) {
       df <- feeds_df_full %>% 

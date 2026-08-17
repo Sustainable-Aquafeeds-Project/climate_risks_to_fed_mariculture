@@ -1,5 +1,5 @@
 ---
-title: "3.2: Species parameterisation for `european_seabass`"
+title: "3.4: Species parameterisation for `european_seabass`"
 subtitle: "FAO Climate Change Risks to Fed Mariculture"
 author: 
   - "Tormey Reimer"
@@ -7,9 +7,9 @@ date: last-modified
 ---
 
 ::: {style="display: flex; justify-content: space-between;"}
-[← Previous: Parameterise species: `seabream`](03_01_check_species_seabream.qmd)
+[← Previous: Parameterise species: `seabream`](03_03_check_species_seabream.qmd)
 
-[Next: Parameterise species: `atlantic_salmon` →](03_03_check_species_atlantic_salmon.qmd)
+[Next: Parameterise species: `asian_seabass` →](03_05_check_species_asian_seabass.qmd)
 :::
 
 # Overview {#sec-overview}
@@ -78,9 +78,9 @@ species_params[["overFdelta"]] <- 0.0025
 ```{r feed-params}
 #| code-summary: Load feed and ingredient data and calculate feed composition parameters
 
-feeds_df <- read_excel(here("data", "raw_data", "feed_profiles_and_composition.xlsx"), sheet = "all_feeds") %>%
+feeds_df <- read_excel(here("data", "raw_data", "feed_profiles_and_composition.xlsx"), sheet = "feed_formulations") %>%
   select(feed, ingredient, proportion) %>% 
-  filter(feed == "European seabass 1")
+  filter(feed == "european_seabass-europe")
 
 ingredients_df <- read_excel(here("data", "raw_data", "all_ingredients.xlsx"), sheet = "all_ingredients") %>% 
   select(ingredient, protein, lipid, carb)
@@ -97,8 +97,6 @@ digestibility_df <- read_excel(here("data", "raw_data", "all_ingredients.xlsx"),
 feed_params <- sum_feeds(
   format_feeds(feeds_df, ingredients_df, digestibility_df)
   )[[1]]
-
-qs_save(feed_params, file.path(prepdata_path, "feed_parameters", "feed_parameters_european_seabass.qs"))
 ```
 
 ```{r tbl-feed-nutrition}
@@ -158,9 +156,9 @@ times <- c(
 farm_temps <- farm_temps_all %>% 
   filter(doy >= times['t_start'] & doy <= times['t_end'])
 
-# ggplot(farm_temps, aes(x = doy, y = sst)) +
-#   geom_line() +
-#   theme_classic()
+ggplot(farm_temps, aes(x = doy, y = sst)) +
+  geom_line() +
+  theme_classic()
 ```
 
 # Run model with raw parameters {#sec-run-model-raw}
@@ -200,11 +198,11 @@ one_fish <- fish_growth(
 )
 
 cat(sprintf(
-  'Initial weight: %.1f g  |  Final weight: %.1f g (%.1f g)  |  Approx. FCR: %.2f |  Final SGR: %.1f \n',
+  'Initial weight: %.1f g  |  Final weight: %.1f g (%.1f g)  |  FCR (feed/gain): %.2f |  FCE (gain/feed): %.2f \n',
   one_fish[1, 'weight'],
   tail(one_fish[, 'weight'], 1), species_params['CS'],
   sum(one_fish[, 'food_prov'], na.rm = T) / (tail(one_fish[, 'weight'], 1) - one_fish[1, 'weight']),
-  tail(one_fish[, 'SGR'], 1)
+  (tail(one_fish[, 'weight'], 1) - one_fish[1, 'weight']) / sum(one_fish[, 'food_prov'], na.rm = T)
 ))
 ```
 
@@ -302,6 +300,7 @@ sens_results <- sens_results %>%
 ```{r fig-sensitivity}
 #| code-summary: Plot parameter sensitivity as a barplot facetted by output variable
 #| fig-cap: "Sensitivity of final weight and SGR to ±10% perturbations of each model parameter. Values represent the proportional change in output per unit change in parameter."
+
 sens_results %>%
   ggplot(aes(x = param, y = sens, fill = output)) +
   geom_col(colour = "black") +
@@ -698,7 +697,7 @@ qd_save(
 ```
 
 ::: {style="display: flex; justify-content: space-between;"}
-[← Previous: Parameterise species: `seabream`](03_01_check_species_seabream.qmd)
+[← Previous: Parameterise species: `seabream`](03_03_check_species_seabream.qmd)
 
-[Next: Parameterise species: `atlantic_salmon` →](03_03_check_species_atlantic_salmon.qmd)
+[Next: Parameterise species: `asian_seabass` →](03_05_check_species_asian_seabass.qmd)
 :::

@@ -1,2 +1,5 @@
 # These files are too large for github
 data/farm_production/*
+
+# These files are small but there's way too many of them
+data/habitat_suitability/*/*/*
