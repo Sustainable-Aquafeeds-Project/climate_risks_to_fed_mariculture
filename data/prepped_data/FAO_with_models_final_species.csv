@@ -1,4 +1,5 @@
 environment,model_name,Scientific_Name,most_common_species
+Brackishwater,asian_seabass,Lateolabrax japonicus,Lateolabrax japonicus
 Brackishwater,atlantic_salmon,Salmo trutta,Salmo trutta
 Brackishwater,drum_croaker,Argyrosomus japonicus; Argyrosomus regius; Cilus gilberti; Micropogonias furnieri; Sciaenops ocellatus,Argyrosomus regius
 Brackishwater,european_seabass,Dicentrarchus labrax; Dicentrarchus punctatus; Dicentrarchus spp,Dicentrarchus labrax
@@ -12,6 +13,7 @@ Brackishwater,rainbow_trout,Oncorhynchus mykiss; Salvelinus alpinus,Salvelinus a
 Brackishwater,seabream,Acanthopagrus schlegelii; Diplodus puntazzo; Diplodus sargus; Pagrus major; Sparidae; Sparus aurata,Sparus aurata
 Brackishwater,tiger_prawn,Penaeus monodon,Penaeus monodon
 Brackishwater,whiteleg_shrimp,Metapenaeopsis novaeguineae; Metapenaeus ensis; Metapenaeus monoceros; Metapenaeus spp; Natantia; Penaeus aztecus; Penaeus chinensis; Penaeus indicus; Penaeus japonicus; Penaeus kerathurus; Penaeus merguiensis; Penaeus penicillatus; Penaeus schmitti; Penaeus semisulcatus; Penaeus setiferus; Penaeus spp; Penaeus stylirostris; Penaeus subtilis; Penaeus vannamei,Penaeus vannamei
+Marine,asian_seabass,Lateolabrax japonicus,Lateolabrax japonicus
 Marine,atlantic_salmon,Salmo salar; Salmo spp; Salmo trutta; Salmonidae; Salmoniformes (=Salmonoidei),Salmo salar
 Marine,drum_croaker,Argyrosomus japonicus; Argyrosomus regius; Larimichthys crocea; Miichthys miiuy; Sciaena spp; Sciaenidae; Sciaenops ocellatus; Umbrina cirrosa; Umbrina spp,Larimichthys crocea
 Marine,european_seabass,Dicentrarchus labrax; Dicentrarchus punctatus; Dicentrarchus spp; Morone chrysops x M. saxatilis; Morone saxatilis,Dicentrarchus labrax

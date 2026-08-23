@@ -152,11 +152,13 @@ all_ready <- c(
   "atlantic_salmon",
   "general_salmonid", 
   "seabream",
+  "gilthead_seabream",
+  "european_seabass",
   "drum_croaker",
   "rainbow_trout", # Duplicate of "general_salmonid"
   "bass", # European Seabass & Japanese Seabass
   "european_seabass", # Duplicate of "bass"
-  "japanese_seabass", # Duplicate of "bass"
+  "asian_seabass", # Duplicate of "bass"
   "croaker", # Large Yellow Croaker
   "grouper",
   "jack_pompano",
@@ -338,11 +340,14 @@ FAO_with_models %>%
   distinct(environment, Scientific_Name)
 ```
 
+Before ranking, I decided to strip out some species that may technically be "fed" but aren't fed formulated feeds or "trash fish".
+
 ```{r rank-model-names}
 #| code-summary: "Rank model names by total production in each environment"
 
 # Marine environment only
 choosing_ranks_marine <- FAO_with_models %>%
+  filter(!model_name %in% c("japanese_sea_cucumber", "abalone", "general_ascidians", "rapa_whelk")) %>% 
   filter(environment == "Marine") %>% 
   group_by(model_name) %>%
   reframe(value = sum(value)) %>%
@@ -353,6 +358,7 @@ choosing_ranks_marine <- FAO_with_models %>%
 
 # Both environments
 choosing_ranks_both <- FAO_with_models %>%
+  filter(!model_name %in% c("japanese_sea_cucumber", "abalone", "general_ascidians", "rapa_whelk")) %>% 
   group_by(model_name) %>%
   reframe(value = sum(value)) %>%
   arrange(-value) %>%
@@ -516,12 +522,9 @@ plot_coverage(
 
 ## A compromise list {#sec-compromise-list}
 
-Looking at @fig-coverage-marine and @fig-coverage-both above, it makes sense to use the marine + brackishwater as a starting point. However, we can make a few adjustments:
+Looking at @fig-coverage-marine and @fig-coverage-both above, it makes sense to use the marine + brackishwater as a starting point. However, we can make a minor adjustment: The "general_fish" model will be a parameterisation challenge, given it's entries are catch-alls for "bony fishes". Since we don't have more detailed data than that, it's probably safest to exclude "general_fish" altogether. Same goes for "general_invertebrate".
 
-- The "general_fish" model will be a parameterisation challenge, given it's entries are catch-alls for "bony fishes". Since we don't have more detailed data than that, it's probably safest to exclude "general_fish" altogether. Same goes for "general_invertebrate".
-- There are two species that have been parameterised but didn't make it into either list: namely "japanese_seabass" and "japanese_amberjack".
-
-@fig-coverage-compromise shows the live-weight coverage of a compromised list which excludes "general_fish" and "general_invertebrate" but includes "japanese_seabass" and "japanese_amberjack".
+@fig-coverage-compromise shows the live-weight coverage of a compromised list which excludes "general_fish" and "general_invertebrate".
 
 ```{r fig-coverage-compromise}
 #| fig-height: 6.5
@@ -530,7 +533,7 @@ Looking at @fig-coverage-marine and @fig-coverage-both above, it makes sense to 
 #| code-summary: "Plot cumulative coverage under the compromise ranking"
 
 choosing_ranks_compromise <- choosing_ranks_both %>% 
-  filter(model_name %in% choosing_ranks_both$model_name[choosing_ranks_both$rank <=15] | model_name %in% c("japanese_seabass", "japanese_amberjack")) %>% 
+  filter(model_name %in% choosing_ranks_both$model_name[choosing_ranks_both$rank <= 20] | model_name %in% c("asian_seabass", "japanese_amberjack")) %>% 
   filter(!model_name %in% c("general_fish", "general_invertebrate")) %>% 
   arrange(rank) %>% 
   mutate(rank = row_number())
@@ -797,7 +800,7 @@ A few adjustments can be made to the compromised list to account for these under
 - ~40% of live-weight production in Mozambique is tilapia, and ~33% is meagres (which is actually a kind of drum)
 - `general_fish` makes up a large portion of the live-weight production of Bangladesh and Hong Kong (@tbl-missed-countries-detail), but has already been excluded for vagueness. There's not much we can do about this.
 
-Additionally, while `rapa_whelk` covers a large amount of live weight production it is only used for a single country: China. It has therefore been excluded. The same logic could be applied to `large_yellow_croaker` and `japanese_seabass`, both of which also only apply to China. However, `japanese_seabass` has already been parameterised and so can be kept in with less effort, and combining `large_yellow_croaker` with `drums` (as they are similar groups) will help increase the relevance of that model. 
+Additionally, while `rapa_whelk` covers a large amount of live weight production it is only used for a single country: China. It has therefore been excluded. The same logic could be applied to `large_yellow_croaker` and `asian_seabass`, both of which also only apply to China. However, `asian_seabass` has already been parameterised and so can be kept in with less effort, and combining `large_yellow_croaker` with `drums` (as they are similar groups) will help increase the relevance of that model. 
 
 We have combined most of these adjustments into a new, manually-curated model list. The manual list is based on the compromise list, with the following changes:
 
@@ -830,7 +833,7 @@ choosing_ranks_manual <- FAO_with_models %>%
       "grouper", 
       "large_yellow_croaker", "whitemouth_croaker", "meagre", "drum", 
       "japanese_amberjack", 
-      "japanese_seabass", 
+      "asian_seabass", 
       "tuna", 
       "olive_flounder"
       )
@@ -1074,7 +1077,7 @@ p_bigmap_robinson +
 
 # Summary of chosen models {#sec-model-summary}
 
-The 17 manually chosen model names and a representative (typically most-commonly farmed) species for each are listed in @tbl-model-summary. Note that at this point I decided to change the name of `japanese_seabass` to `asian_seabass`, as I realised that the species was almost entirely represented by the Asian seabass (*Lateolabrax maculatus*) in the production data.
+The 17 manually chosen model names and a representative (typically most-commonly farmed) species for each are listed in @tbl-model-summary. 
 
 ```{r tbl-model-summary}
 #| tbl-cap: "Manually chosen bioenergetic model names, the groups they are intended to represent, and a representative species for each. The representative species is typically the most commercially important farmed species in the group, or one that typifies the broader taxonomic category. The 'Params?' column indicates whether work has already been done to parameterise this model. Note that these choices do not take diets into account - some groups listed may be excluded in future because their diets are composed entirely of wild-sourced materials which will not be included in the climate change analysis (e.g. kelp for abalone)."
@@ -1124,7 +1127,6 @@ FAO_with_models_final <- FAO_with_models %>%
     model_name %in% c("banana_prawn") ~ "tiger_prawn",
     model_name %in% c("drum", "large_yellow_croaker", "whitemouth_croaker", "meagre") ~ "drum_croaker", 
     model_name %in% c("red_seabream", "gilthead_seabream", "blackhead_seabream") ~ "seabream", 
-    model_name %in% c("japanese_seabass") ~ "asian_seabass",
     TRUE ~ model_name
     )
   ) %>%

@@ -61,7 +61,7 @@ This document imports data from @clawson_mapping_2022 on known and modelled mari
 
 This is the overall process followed when assigning farms:
 
-```{mermaid, cache=F}
+```{mermaid}
 %%{init: {'theme': 'base', 'themeVariables': {
   'primaryColor': '#ffffff',
   'primaryBorderColor': '#2c5f8a',
@@ -410,7 +410,6 @@ In some regions, there are more than enough farms to assign to all the `model_na
 
 ```{r temperature-extraction-function}
 #| code-summary: "Define a function that will extract a meanyear of temperatures from any location"
-#| eval: false
 
 farm_temp_path <- file.path(prepdata_path, "mapped_farms_meanyear")
 dir.create(farm_temp_path, recursive = T, showWarnings = F)
@@ -524,7 +523,6 @@ farms_required_2 <- rows_update(
 
 ```{r assign-models-function}
 #| code-summary: "Function to optimise location assignment based on the number of days spent within each model's ideal ranges"
-#| eval: false
 
 assign_models <- function(ideal_days_df, n_required) {  
   model_cols   <- names(n_required)
@@ -1164,7 +1162,7 @@ if (length(to_get) > 0) {
   )
 }
 
-# Re-do extracted farms - this is always necessary
+# Re-do extracted farms - this is always necessary, even if no changes have been made to assignments
 existing_files <- file.path(prepdata_path, "assigned_farms_meanyear") %>% 
   list.files(full.names = T) %>% 
   basename() %>% 
@@ -1209,7 +1207,6 @@ p_bigmap_robinson +
 
 ```{r save-plots-per-country}
 #| code-summary: Plot the extracted farm locations by country
-#| eval: false
 
 assigned_farms <- qs_read(file.path(prepdata_path, "assigned_farms.qs"))
 lands <- ne_countries(scale = "large", return = "sf")
