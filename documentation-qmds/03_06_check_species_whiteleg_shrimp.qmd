@@ -9,7 +9,7 @@ date: last-modified
 ::: {style="display: flex; justify-content: space-between;"}
 [← Previous: Parameterise species: `asian_seabass`](03_05_check_species_asian_seabass.qmd)
 
-[Next: Parameterise species: `drum_croaker` →](03_07_check_species_drum_croaker.qmd)
+[Next: Parameterise species: `milkfish` →](03_07_check_species_milkfish.qmd)
 :::
 
 # Overview {#sec-overview}
@@ -697,5 +697,5 @@ qd_save(
 ::: {style="display: flex; justify-content: space-between;"}
 [← Previous: Parameterise species: `asian_seabass`](03_05_check_species_asian_seabass.qmd)
 
-[Next: Parameterise species: `drum_croaker` →](03_07_check_species_drum_croaker.qmd)
+[Next: Parameterise species: `milkfish` →](03_07_check_species_milkfish.qmd)
 :::

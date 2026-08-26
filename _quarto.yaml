@@ -12,17 +12,23 @@ project:
     - documentation-qmds/03_03_check_species_seabream.qmd
     - documentation-qmds/03_04_check_species_european_seabass.qmd
     - documentation-qmds/03_05_check_species_asian_seabass.qmd
-
     - documentation-qmds/03_06_check_species_whiteleg_shrimp.qmd
-    - documentation-qmds/03_07_check_species_drum_croaker.qmd
-    - documentation-qmds/03_08_check_species_milkfish.qmd
-    - documentation-qmds/03_09_check_species_golden_pompano.qmd
-    - documentation-qmds/03_10_check_species_grouper.qmd
-    - documentation-qmds/03_11_check_species_japanese_amberjack.qmd
 
-    - documentation-qmds/03_17_all_species_parameters.qmd
-    - documentation-qmds/03_18_species_temperature_responses.qmd
+    - documentation-qmds/03_07_check_species_milkfish.qmd
+    - documentation-qmds/03_08_check_species_mud_crab.qmd
+    - documentation-qmds/03_09_check_species_golden_pompano.qmd
+    - documentation-qmds/03_11_check_species_grouper.qmd
+    - documentation-qmds/03_12_check_species_tuna.qmd
+    - documentation-qmds/03_13_check_species_olive_flounder.qmd
+    - documentation-qmds/03_14_check_species_japanese_amberjack.qmd
+    - documentation-qmds/03_15_check_species_nile_tilapia.qmd
+    - documentation-qmds/03_16_check_species_drum_croaker.qmd
+    - documentation-qmds/03_17_check_species_tiger_prawn.qmd
+
+    - documentation-qmds/03_18_all_species_parameters.qmd
+    - documentation-qmds/03_19_species_temperature_responses.qmd
     - documentation-qmds/04_extracting_future_temperatures.qmd
+
     - documentation-qmds/05_00_test_production.qmd
     - documentation-qmds/05_01_run_production.qmd
     - documentation-qmds/06_explore_production.qmd
