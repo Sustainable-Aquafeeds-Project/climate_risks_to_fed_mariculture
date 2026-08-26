@@ -7,7 +7,7 @@ date: last-modified
 ---
 
 ::: {style="display: flex; justify-content: space-between;"}
-[← Previous: Index](index.qmd)
+[← Previous: Index](../index.qmd)
 
 [Next: Assigning Locations →](02_assigning_locations.qmd)
 :::
@@ -1155,7 +1155,7 @@ write_csv(FAO_with_models_final_production, file.path(prepdata_path, "FAO_with_m
 ```
 
 ::: {style="display: flex; justify-content: space-between;"}
-[← Previous: Index](index.qmd)
+[← Previous: Index](../index.qmd)
 
 [Next: Assigning Locations →](02_assigning_locations.qmd)
 :::

@@ -7,7 +7,7 @@ date: last-modified
 ---
 
 ::: {style="display: flex; justify-content: space-between;"}
-[← Previous: Index](index.qmd)
+[← Previous: Index](../index.qmd)
 
 [Next: Choosing species →](01_choosing_species.qmd)
 :::
@@ -556,7 +556,7 @@ cat(
 ```
 
 ::: {style="display: flex; justify-content: space-between;"}
-[← Previous: Index](index.qmd)
+[← Previous: Index](../index.qmd)
 
 [Next: Choosing species →](01_choosing_species.qmd)
 :::

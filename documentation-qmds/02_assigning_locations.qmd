@@ -9,7 +9,7 @@ date: last-modified
 ::: {style="display: flex; justify-content: space-between;"}
 [← Previous: Choosing Species](01_choosing_species.qmd)
 
-[Next: Parameterise species: `seabream` →](03_01_check_species_seabream.qmd)
+[Next: Parameterise species: `atlantic_salmon` →](03_01_check_species_atlantic_salmon.qmd)
 :::
 
 # Overview {#sec-overview}
@@ -1128,7 +1128,7 @@ needed_files <- file.path(prepdata_path, "assigned_farms_meanyear", basename(map
 file.copy(
   from = mapped_farms_files,
   to = needed_files,
-  overwrite = F
+  overwrite = T
 ) %>% all()
 
 # Check if there are any files that aren't supposed to be there and delete them
@@ -1207,6 +1207,7 @@ p_bigmap_robinson +
 
 ```{r save-plots-per-country}
 #| code-summary: Plot the extracted farm locations by country
+#| eval: false
 
 assigned_farms <- qs_read(file.path(prepdata_path, "assigned_farms.qs"))
 lands <- ne_countries(scale = "large", return = "sf")
@@ -1355,6 +1356,8 @@ p_bigmap_robinson +
 #| code-summary: "Map of assigned farms coloured by model name"
 #| fig-cap: "Spatial distribution of assigned farms coloured by mean annual SST (°C). Black crosses indicate farms where temperature extraction returned NA."
 
+assigned_farms <- qs_read(file.path(prepdata_path, "assigned_farms.qs"))
+
 assigned_farms %>%
   ggplot(aes(x = model_name, y = prod_perfarm, fill = model_name)) +
   geom_boxplot(colour = "black") +
@@ -1371,6 +1374,6 @@ assigned_farms %>%
 ::: {style="display: flex; justify-content: space-between;"}
 [← Previous: Choosing Species](01_choosing_species.qmd)
 
-[Next: Parameterise species: `seabream` →](03_01_check_species_seabream.qmd)
+[Next: Parameterise species: `atlantic_salmon` →](03_01_check_species_atlantic_salmon.qmd)
 :::
 
