@@ -59,7 +59,7 @@ First check that all the files in the folder are complete.
 #| code-summary: Check that the files in the production folder are complete and correct structure
 
 prod_path <- file.path(outs_path, "data", "farm_production")
-production_files <- list.files(prod_path, full.names = TRUE, pattern = "MC5000\\.qs$")
+production_files <- list.files(prod_path, full.names = TRUE, recursive = T, pattern = "MC5000\\.qs$")
 
 # here("src", "check_production_files.R") %>% source(echo = T)
 ```
@@ -87,7 +87,9 @@ assigned_farms <- assigned_farms %>%
 assigned_farms %>% 
   group_by(model_name, feed_class, done) %>% 
   reframe(n = n()) %>% 
-  filter(model_name == "atlantic_salmon")
+  # filter(model_name %in% c("atlantic_salmon", "rainbow_trout", "seabream")) %>% 
+  filter(!is.na(feed_class)) %>% 
+  arrange(model_name, -done)
 ```
 
 # Per-farm plots
@@ -100,6 +102,7 @@ These plots aren't meant to show anything specifically - they're just so that I 
 
 ```{r save-plots-per-farm}
 #| code-summary: Save some diagnostic plots per farm
+#| eval: false
 
 fb_path <- file.path(outs_path, "plots", "farm_production_checks", "farm_biomass")
 fr_path <- file.path(outs_path, "plots", "farm_production_checks", "feed_required")
@@ -199,13 +202,32 @@ walk(prod_files_subset, function(fnm) {
       width = 10
     )
   }
-
 },
 .progress = T
 )
 ```
 
 # Group and save {#sec-group-save}
+
+| model_name         | feed_class  | production done | production waiting | consolidation done |
+|--------------------|-------------|-----------------|--------------------|--------------------|
+| asian_seabass      | china       | 235             | 0                  | Y                  |
+| atlantic_salmon    | chile       | 1495            | 0                  | Y                  |
+| atlantic_salmon    | norway      | 915             | 0                  | Y                  |
+| atlantic_salmon    | uk          | 278             | 0                  | Y                  |
+| atlantic_salmon    | canada      | 0               | 230                |                    |
+| european_seabass   | europe      | 50              | 421                |                    |
+| golden_pompano     | china       | 0               | 253                |                    |
+| milkfish           | philippines | 0               | 746                |                    |
+| rainbow_trout      | chile       | 335             | 0                  | Y                  |
+| rainbow_trout      | norway      | 342             | 0                  | Y                  |
+| rainbow_trout      | world       | 107             | 0                  | Y                  |
+| seabream           | china       | 239             | 0                  | Y                  |
+| seabream           | europe      | 252             | 0                  | Y                  |
+| whiteleg_shrimp    | china       | 0               | 1230               |                    |
+| whiteleg_shrimp    | ecuador     | 0               | 2147               |                    |
+| whiteleg_shrimp    | india       | 0               | 1226               |                    |
+| whiteleg_shrimp    | indonesia   | 0               | 1521               |                    |
 
 ```{r subset}
 #| code-summary: Subset results
@@ -214,7 +236,7 @@ walk(prod_files_subset, function(fnm) {
 qs_read(production_files[1])[[1]] %>% str()
 
 subset_farms <- assigned_farms %>% 
-  filter(model_name == "atlantic_salmon" & feed_class == "norway")
+  filter(model_name == "seabream" & feed_class == "europe")
 
 subset_prod_files <- production_files[which(as.integer(str_extract(basename(production_files), "(?<=farmID_)\\d+")) %in% subset_farms$farm_ID)]
 
@@ -301,27 +323,94 @@ qs_save(
   )
 ```
 
-```{r feed-demand-per-biomass}
-#| code-summary: Save feed demand per biomass results per species/feed type
+```{r feed-provided}
+#| code-summary: Save feed provided results per species/feed type
 
-feed_biomass <- left_join(
+food_prov_scaled <- map_dfr(
+  subset_prod_files,
+  function(fnm) {
+    tidy_stat(qs_read(fnm), "food_prov_scaled") %>% 
+      mutate(farm_ID = as.integer(str_extract(basename(fnm), "(?<=farmID_)\\d+"))) %>% 
+      group_by(farm_ID, year) %>% 
+      reframe(
+        farm_mean = sumna(mean),
+        farm_sd = sqrt(sumna(sd^2))
+      )
+  },
+  .progress = T
+)
+
+food_prov_scaled <- assigned_farms %>% 
+  right_join(food_prov_scaled, by = join_by(farm_ID)) 
+
+food_prov_scaled_2025 <- food_prov_scaled %>% 
+  filter(year == 2025) %>% 
+  select(farm_ID, mean_2025 = farm_mean)
+
+food_prov_scaled <- food_prov_scaled %>% 
+  right_join(food_prov_scaled_2025, by = join_by(farm_ID)) %>% 
+  group_by(ISO3_Code, country, F_CODE, model_name, feed_class, year) %>% 
+  reframe(
+    mean_2025 = sumna(mean_2025),
+    n_farms = n(),
+    mean = sumna(farm_mean),
+    sd = sqrt(sumna(farm_sd^2))
+  )
+
+qs_save(
+  food_prov_scaled, 
+  file.path(cons_path, paste0("food_prov_scaled-", unique(ing_act_scaled$model_name), "-", unique(ing_act_scaled$feed_class), ".qs"))
+  )
+```
+
+```{r ingestion-per-biomass}
+#| code-summary: Save feed ingested per biomass results per species/feed type
+
+ingest_biomass <- left_join(
   ing_act_scaled %>% rename(ing_act_2025 = mean_2025, ing_act_mean = mean, ing_act_sd = sd), 
   weight_scaled %>% rename(weight_2025 = mean_2025, weight_mean = mean, weight_sd = sd),
   by = join_by(ISO3_Code, country, F_CODE, model_name, feed_class, year, n_farms)
 )
 
-feed_biomass <- feed_biomass %>% 
+ingest_biomass <- ingest_biomass %>% 
   mutate(
-    feed_biomass_2025 = ing_act_2025/weight_2025,
-    feed_biomass_mean = ing_act_mean/weight_mean,
-    feed_biomass_sd = feed_biomass_mean * sqrt((ing_act_sd/ing_act_mean)^2 + (weight_sd/weight_mean)^2)
+    ingest_biomass_2025 = ing_act_2025/weight_2025,
+    ingest_biomass_mean = ing_act_mean/weight_mean,
+    ingest_biomass_sd = ingest_biomass_mean * sqrt((ing_act_sd/ing_act_mean)^2 + (weight_sd/weight_mean)^2)
   ) %>% 
     select(-c(ing_act_2025, weight_2025, ing_act_mean, weight_mean, ing_act_sd, weight_sd))
 
 qs_save(
-  feed_biomass, 
-  file.path(cons_path, paste0("feed_biomass-", unique(feed_biomass$model_name), "-", unique(feed_biomass$feed_class), ".qs"))
+  ingest_biomass, 
+  file.path(cons_path, paste0("ingest_biomass-", unique(ingest_biomass$model_name), "-", unique(ingest_biomass$feed_class), ".qs"))
   )
+```
+
+```{r feed-prov-per-biomass}
+#| code-summary: Save feed provided per biomass results per species/feed type
+
+feedprov_biomass <- left_join(
+  food_prov_scaled %>% rename(food_prov_2025 = mean_2025, food_prov_mean = mean, food_prov_sd = sd), 
+  weight_scaled %>% rename(weight_2025 = mean_2025, weight_mean = mean, weight_sd = sd),
+  by = join_by(ISO3_Code, country, F_CODE, model_name, feed_class, year, n_farms)
+)
+
+feedprov_biomass <- feedprov_biomass %>% 
+  mutate(
+    feedprov_biomass_2025 = food_prov_2025/weight_2025,
+    feedprov_biomass_mean = food_prov_mean/weight_mean,
+    feedprov_biomass_sd = feedprov_biomass_mean * sqrt((food_prov_sd/food_prov_mean)^2 + (weight_sd/weight_mean)^2)
+  ) %>% 
+    select(-c(food_prov_2025, weight_2025, food_prov_mean, weight_mean, food_prov_sd, weight_sd))
+
+qs_save(
+  feedprov_biomass, 
+  file.path(cons_path, paste0("feedprov_biomass-", unique(feedprov_biomass$model_name), "-", unique(feedprov_biomass$feed_class), ".qs"))
+  )
+```
+
+```{r}
+
 ```
 
 ::: {style="display: flex; justify-content: space-between;"}
