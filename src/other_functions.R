@@ -1,6 +1,5 @@
 library(tidyverse)
 library(tidyverse)
-library(terra)
 library(ozmaps)
 library(paletteer)
 library(patchwork)
@@ -337,7 +336,6 @@ plot_sim_results <- function(df, CS = NA) {
     (p_energy | p_env | p_food) /
     (p_o2_nh4 | p_excr | p_elem)
 }
-
 
 #' plot_sim_results(), trimmed for production-file troubleshooting
 #'
