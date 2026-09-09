@@ -242,9 +242,14 @@ apportion_feed_v <- function(provided, ingested, ingred_proportion, ingred_macro
 #' @param output_vars Character vector. Must contain only names from the 31
 #'   valid output variables (see \code{\link{fish_growth}} for the full list).
 #'   Defaults to all 31 variables and is not required to be supplied.
+#' @param .return_problems Logical. Internal switch used by wrapper checkers
+#'   (e.g. \code{\link{check_farm_growth_inputs}}). If \code{TRUE}, nothing is
+#'   printed and the character vector of problem messages is returned instead
+#'   (zero-length if all checks pass). Default \code{FALSE}.
 #'
 #' @return Invisibly returns \code{TRUE} if all checks pass, or \code{FALSE} if
 #'   any problems were found.  In both cases a summary is printed to the console.
+#'   If \code{.return_problems = TRUE}, returns the character vector of problems.
 check_fish_growth_inputs <- function(
   species_params,
   water_temp,
@@ -262,8 +267,9 @@ check_fish_growth_inputs <- function(
     "total_excr", "total_uneat", "metab",
     "nitrogen_excr", "nitrogen_uneat",
     "carbon_excr", "carbon_uneat",
-    "total_carbon", "total_nitrogen"
-  )
+    "total_carbon", "total_nitrogen", "SGR"
+  ),
+  .return_problems = FALSE
 ) {
 
   problems <- character(0)   # Accumulate all issues here
@@ -304,6 +310,21 @@ check_fish_growth_inputs <- function(
       na_sp <- present_sp[is.na(species_params[present_sp])]
       for (nm in na_sp) {
         add_problem("Parameter `", nm, "` in `species_params` is NA. Provide a valid numeric value.")
+      }
+
+      # Check the biologically required ordering of the thermal-response
+      # parameters (Taa <= Toa <= Tma), only when all three are present and
+      # non-NA (otherwise the missing/NA checks above already flag the issue).
+      thermal_params <- c("Taa", "Toa", "Tma")
+      if (all(thermal_params %in% present_sp) && !anyNA(species_params[thermal_params])) {
+        if (species_params["Toa"] > species_params["Tma"]) {
+          add_problem("`Toa` (", species_params["Toa"], ") must not exceed `Tma` (",
+                      species_params["Tma"], ") in `species_params`.")
+        }
+        if (species_params["Taa"] > species_params["Toa"]) {
+          add_problem("`Taa` (", species_params["Taa"], ") must not exceed `Toa` (",
+                      species_params["Toa"], ") in `species_params`.")
+        }
       }
     }
   }
@@ -463,7 +484,7 @@ check_fish_growth_inputs <- function(
     "total_excr", "total_uneat", "metab",
     "nitrogen_excr", "nitrogen_uneat",
     "carbon_excr", "carbon_uneat",
-    "total_carbon", "total_nitrogen"
+    "total_carbon", "total_nitrogen", "SGR"
   )
 
   if (!missing(output_vars)) {
@@ -482,6 +503,11 @@ check_fish_growth_inputs <- function(
   }
 
   # ---- Summary ---------------------------------------------------------------
+  # Wrapper checkers collect these problems and print their own summary
+  if (.return_problems) {
+    return(problems)
+  }
+
   if (length(problems) == 0) {
     message("All inputs look good — `fish_growth()` should run without errors.")
     return(invisible(TRUE))
@@ -722,6 +748,7 @@ farm_growth_full <- function(
   if (!use_MC_population) {
     species_params['deltaW']    <- 0
     species_params['deltaImax'] <- 0
+    species_params['deltaW'] <- 0
     MC_pop <- 1
   }
 
@@ -730,16 +757,21 @@ farm_growth_full <- function(
   ingmaxes     <- rnorm(MC_pop, mean = species_params['meanImax'], sd = species_params['deltaImax'])
 
   # Run parallel simulation for individuals
-  mc_results <- future_map2(init_weights, ingmaxes, function(init_w, ing_m) {
-    fish_growth(
-      species_params = species_params,
-      water_temp     = water_temp,
-      feed_params    = feed_params,
-      times          = times,
-      init_weight    = init_w,
-      ingmax         = ing_m,
-      output_vars    = output_vars
-    )
+  # init_w <- init_weights[1]
+  # ing_m <- ingmaxes[1]
+  mc_results <- future_map2(
+    init_weights, 
+    ingmaxes, 
+    function(init_w, ing_m) {
+      fish_growth(
+        species_params = species_params,
+        water_temp     = water_temp,
+        feed_params    = feed_params,
+        times          = times,
+        init_weight    = init_w,
+        ingmax         = ing_m,
+        output_vars    = output_vars
+      )
   },
   .options = furrr_options(seed = TRUE)
   )
@@ -850,6 +882,238 @@ scale_farm_population <- function(
   names(stats) <- paste0(names(stats), "_scaled")
 
   list(days = days, stats = stats)
+}
+
+
+# ---------------------------------------------------------------------------
+# Input validation for farm_growth()
+# ---------------------------------------------------------------------------
+
+#' Check that all inputs required by \code{farm_growth()} are present and valid
+#'
+#' Wrapper around \code{\link{check_fish_growth_inputs}}, mirroring the
+#' relationship between \code{fish_growth()} and \code{farm_growth()}. Checks on
+#' the shared arguments (\code{species_params}, \code{water_temp},
+#' \code{feed_params}, \code{times}, \code{output_vars}) are delegated to
+#' \code{check_fish_growth_inputs()}; this function adds the farm-level checks:
+#' \itemize{
+#'   \item \code{use_MC_population} is a single \code{TRUE}/\code{FALSE}.
+#'   \item \code{MC_pop} is a single positive whole number (only when
+#'     \code{use_MC_population = TRUE}).
+#'   \item The population-variability parameters \code{meanW}, \code{deltaW},
+#'     \code{meanImax}, \code{deltaImax} in \code{species_params} are present,
+#'     numeric, non-NA, with positive means and (when
+#'     \code{use_MC_population = TRUE}) non-negative SDs.
+#'   \item When \code{use_MC_population = TRUE}, 5000 test draws from the
+#'     \code{rnorm()} distributions used by \code{farm_growth_full()} for
+#'     initial weight and maximum ingestion rate produce no negative values and
+#'     no values below 10\% of the respective mean. 5000 draws are always used,
+#'     regardless of \code{MC_pop}. The session's RNG state is restored
+#'     afterwards, so calling this function does not alter subsequent random
+#'     draws.
+#'   \item \code{N_pop} is a non-NA, non-negative numeric vector the same length
+#'     as \code{water_temp}.
+#'   \item \code{scaled_vars} is a character vector whose elements are all
+#'     available in \code{output_vars} (or in the full set of model outputs when
+#'     \code{output_vars = NULL}).
+#' }
+#' As with \code{check_fish_growth_inputs()}, all problems are collected and
+#' printed together at the end.
+#'
+#' @inheritParams farm_growth
+#'
+#' @return Invisibly returns \code{TRUE} if all checks pass, or \code{FALSE} if
+#'   any problems were found. In both cases a summary is printed to the console.
+check_farm_growth_inputs <- function(
+  species_params,
+  feed_params,
+  water_temp,
+  times,
+  N_pop,
+  use_MC_population = TRUE,
+  MC_pop,
+  output_vars = NULL,
+  scaled_vars = c("weight", "dw", "P_excr", "L_excr", "C_excr", "P_uneat", "L_uneat", "C_uneat", "ing_act", "total_excr", "total_uneat", "O2", "NH4", "food_prov", "nitrogen_excr", "nitrogen_uneat", "carbon_excr", "carbon_uneat", "total_carbon", "total_nitrogen")
+) {
+
+  problems <- character(0)
+
+  add_problem <- function(...) {
+    problems <<- c(problems, paste0(...))
+  }
+
+  # ---- 1. Shared checks, delegated to check_fish_growth_inputs() -------------
+  # init_weight and ingmax are drawn from meanW / meanImax inside
+  # farm_growth_full(), so placeholders satisfy the scalar checks here; the
+  # distribution parameters themselves are checked in sections 4-5 below.
+  # Arguments are only forwarded when supplied so that missing() propagates.
+  fg_args <- list(init_weight = 1, ingmax = 1, .return_problems = TRUE)
+  if (!missing(species_params)) fg_args$species_params <- species_params
+  if (!missing(water_temp))     fg_args$water_temp     <- water_temp
+  if (!missing(feed_params))    fg_args$feed_params    <- feed_params
+  if (!missing(times))          fg_args$times          <- times
+  if (!is.null(output_vars))    fg_args$output_vars    <- output_vars
+
+  problems <- c(problems, do.call(check_fish_growth_inputs, fg_args))
+
+  # ---- 2. use_MC_population --------------------------------------------------
+  mc_flag_valid <- is.logical(use_MC_population) &&
+    length(use_MC_population) == 1 && !is.na(use_MC_population)
+
+  if (!mc_flag_valid) {
+    add_problem("Provided parameter `use_MC_population` must be a single TRUE or FALSE value, ",
+                "but is: <", paste(deparse(use_MC_population), collapse = ""), ">.")
+  }
+  use_MC <- mc_flag_valid && use_MC_population
+
+  # ---- 3. MC_pop (only required when use_MC_population = TRUE) ---------------
+  if (use_MC) {
+    if (missing(MC_pop)) {
+      add_problem("Parameter `MC_pop` is missing. Provide a single positive whole number giving the ",
+                  "number of Monte Carlo individuals to simulate (required when `use_MC_population = TRUE`).")
+    } else if (!is.numeric(MC_pop)) {
+      add_problem("Provided parameter `MC_pop` must be a whole number, but has class: <",
+                  paste(class(MC_pop), collapse = "/"), ">.")
+    } else if (length(MC_pop) != 1 || is.na(MC_pop)) {
+      add_problem("Provided parameter `MC_pop` must be a single non-NA whole number.")
+    } else if (MC_pop != round(MC_pop) || MC_pop < 1) {
+      add_problem("Provided parameter `MC_pop` must be a positive whole number (currently ", MC_pop, ").")
+    }
+  }
+
+  # ---- 4. Population-variability parameters ----------------------------------
+  # Presence, numeric class and NA status of these are already flagged by
+  # check_fish_growth_inputs(); here we check the values make sense as
+  # rnorm() mean / sd arguments.
+  pop_params <- c("meanW", "deltaW", "meanImax", "deltaImax")
+  pop_labels <- c(meanW = "initial weights", meanImax = "maximum ingestion rates")
+
+  sp_usable <- !missing(species_params) && is.numeric(species_params) &&
+    !is.null(names(species_params)) &&
+    all(pop_params %in% names(species_params)) &&
+    !anyNA(species_params[pop_params])
+
+  dist_ok <- FALSE
+  if (sp_usable) {
+    dist_ok <- TRUE
+    for (nm in c("meanW", "meanImax")) {
+      if (species_params[nm] <= 0) {
+        dist_ok <- FALSE
+        add_problem("`", nm, "` in `species_params` must be positive (currently ", species_params[nm],
+                    "); it is the mean of the distribution from which individual ",
+                    pop_labels[nm], " are drawn.")
+      }
+    }
+    if (use_MC) {
+      for (nm in c("deltaW", "deltaImax")) {
+        if (species_params[nm] < 0) {
+          dist_ok <- FALSE
+          add_problem("`", nm, "` in `species_params` must be non-negative (currently ",
+                      species_params[nm], "); it is a standard deviation.")
+        }
+      }
+    }
+  }
+
+  # ---- 5. Test draws of init_weight and ingmax -------------------------------
+  # farm_growth_full() draws from unbounded normals; flag parameterisations
+  # that would yield negative or implausibly small individuals.
+  if (use_MC && dist_ok) {
+    n_test_draws <- 5000
+
+    # Preserve the session RNG state so this check has no side effects
+    has_seed <- exists(".Random.seed", envir = globalenv(), inherits = FALSE)
+    if (has_seed) old_seed <- get(".Random.seed", envir = globalenv(), inherits = FALSE)
+
+    check_draws <- function(mean_nm, sd_nm, quantity, arg_nm) {
+      mu <- unname(species_params[mean_nm])
+      sd <- unname(species_params[sd_nm])
+      x  <- rnorm(n_test_draws, mean = mu, sd = sd)
+      n_neg <- sum(x < 0)
+      n_low <- sum(x < 0.1 * mu)
+      if (n_low > 0) {
+        add_problem(
+          "With `", mean_nm, "` = ", mu, " and `", sd_nm, "` = ", sd, ", ",
+          n_low, " of ", n_test_draws, " test draws (", round(100 * n_low / n_test_draws, 2), "%) of `",
+          arg_nm, "` fell below 10% of `", mean_nm, "` (", 0.1 * mu, "), of which ",
+          n_neg, " were negative. `farm_growth_full()` draws ", quantity,
+          " with rnorm(), so these would produce implausible individuals. ",
+          "Reduce `", sd_nm, "` (`", sd_nm, "`/`", mean_nm, "` is currently ", round(sd / mu, 3),
+          "; roughly <= 0.25 avoids this) or use a truncated distribution (e.g. msm::rtnorm())."
+        )
+      }
+    }
+
+    check_draws("meanW",    "deltaW",    "initial weights",         "init_weight")
+    check_draws("meanImax", "deltaImax", "maximum ingestion rates", "ingmax")
+
+    if (has_seed) assign(".Random.seed", old_seed, envir = globalenv())
+  }
+
+  # ---- 6. N_pop --------------------------------------------------------------
+  if (missing(N_pop)) {
+    add_problem("Parameter `N_pop` is missing. Provide a numeric vector of the number of individuals ",
+                "in the farm at each time-step (e.g. from `generate_pop()`), the same length as `water_temp`.")
+  } else if (!is.numeric(N_pop)) {
+    add_problem("Provided parameter `N_pop` must be a numeric vector, but has class: <",
+                paste(class(N_pop), collapse = "/"), ">.")
+  } else {
+    if (anyNA(N_pop)) {
+      add_problem("Provided parameter `N_pop` contains ", sum(is.na(N_pop)),
+                  " NA value(s). All population values must be non-missing.")
+    }
+    if (any(N_pop < 0, na.rm = TRUE)) {
+      add_problem("Provided parameter `N_pop` contains ", sum(N_pop < 0, na.rm = TRUE),
+                  " negative value(s). Population size cannot be negative.")
+    }
+    if (!missing(water_temp) && is.numeric(water_temp) && length(N_pop) != length(water_temp)) {
+      add_problem("Provided parameter `N_pop` has length ", length(N_pop), " but `water_temp` has length ",
+                  length(water_temp), ". Provide one population value per simulation day.")
+    }
+  }
+
+  # ---- 7. scaled_vars --------------------------------------------------------
+  all_model_vars <- c(
+    "weight", "dw", "water_temp", "T_response",
+    "P_excr", "L_excr", "C_excr",
+    "P_uneat", "L_uneat", "C_uneat",
+    "food_prov", "food_enc", "rel_feeding",
+    "ing_pot", "ing_act", "E_assim", "E_somat",
+    "anab", "catab", "O2", "NH4",
+    "total_excr", "total_uneat", "metab",
+    "nitrogen_excr", "nitrogen_uneat",
+    "carbon_excr", "carbon_uneat",
+    "total_carbon", "total_nitrogen", "SGR"
+  )
+
+  if (!is.character(scaled_vars)) {
+    add_problem("Provided parameter `scaled_vars` must be a character vector, but has class: <",
+                paste(class(scaled_vars), collapse = "/"), ">.")
+  } else {
+    # scale_farm_population() errors on any variable that was not simulated
+    available_vars <- if (is.character(output_vars)) output_vars else all_model_vars
+    unavailable <- setdiff(scaled_vars, available_vars)
+    if (length(unavailable) > 0) {
+      add_problem("Provided parameter `scaled_vars` contains variable(s) that will not be simulated: ",
+                  paste(paste0("\"", unavailable, "\""), collapse = ", "), ". ",
+                  "Either add them to `output_vars` or remove them from `scaled_vars`.")
+    }
+  }
+
+  # ---- Summary ---------------------------------------------------------------
+  if (length(problems) == 0) {
+    message("All inputs look good — `farm_growth()` should run without errors.")
+    return(invisible(TRUE))
+  } else {
+    message(sprintf(
+      "Found %d problem%s with the inputs to `farm_growth()`:\n",
+      length(problems), if (length(problems) == 1) "" else "s"
+    ))
+    for (i in seq_along(problems)) {
+      message(sprintf("  [%d] %s", i, problems[i]))
+    }
+    return(invisible(FALSE))
+  }
 }
 
 
@@ -968,6 +1232,29 @@ decomposed_to_tidy <- function(
     res <- reshape2::melt(subset_results[[col_idx]]) %>%
       mutate(measure = as.factor(selected_vars[col_idx]))
     colnames(res) <- c("fish", "prod_t", "value", "measure")
+    res
+  })
+}
+
+# Same as above but for MC farm results (without individual fish)
+decomposed_to_tidy_2 <- function(
+  full_results, 
+  output_vars = NULL
+) {
+
+  selected_vars <- if (is.null(output_vars)) {
+    names(full_results[["stats"]])[names(full_results[["stats"]]) != "days"]
+  } else {
+    output_vars
+  }
+
+  subset_results <- full_results[["stats"]][selected_vars]
+
+  map_dfr(1:length(subset_results), function(col_idx) {
+    res <- as.data.frame(subset_results[[col_idx]])
+    colnames(res) <- c("mean", "sd")
+    res$doy <- full_results[["days"]]
+    res$measure <- as.factor(selected_vars[col_idx])
     res
   })
 }

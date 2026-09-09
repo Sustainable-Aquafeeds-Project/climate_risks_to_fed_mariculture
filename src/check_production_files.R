@@ -18,6 +18,12 @@
 #   - anab, total_excr, food_prov, and food_prov_scaled must not be all zeros
 #   If feeding issues are detected, the issue is reported as FEEDING_FAILED;
 #   otherwise, growth-only issues are reported as NO_GROWTH.
+#
+# Additional data quality check (Check 7):
+#   - Harvest biomass (weight_scaled, last finite value of the year) must not
+#     increase by more than 250% from 2025 to 2099
+#     (flagged as BIOMASS_INCREASE_EXCESSIVE), nor decrease by more than 90%
+#     over the same period (flagged as BIOMASS_DECREASE_EXCESSIVE).
 
 library(here)
 library(qs2)
@@ -252,6 +258,41 @@ for (i in seq_along(production_files)) {
     }
   }
   
+  # --- Check 7: Harvest biomass (weight_scaled) must not change excessively from 2025 to 2099 ---
+  if (all(c("2025", "2099") %in% element_names)) {
+    stats_2025 <- dat[["2025"]][["stats"]]
+    stats_2099 <- dat[["2099"]][["stats"]]
+    
+    has_ws_2025 <- !is.null(stats_2025) && "weight_scaled" %in% names(stats_2025) && is.matrix(stats_2025[["weight_scaled"]])
+    has_ws_2099 <- !is.null(stats_2099) && "weight_scaled" %in% names(stats_2099) && is.matrix(stats_2099[["weight_scaled"]])
+    
+    if (has_ws_2025 && has_ws_2099) {
+      ws_2025_finite <- stats_2025[["weight_scaled"]][, 1]
+      ws_2025_finite <- ws_2025_finite[is.finite(ws_2025_finite)]
+      ws_2099_finite <- stats_2099[["weight_scaled"]][, 1]
+      ws_2099_finite <- ws_2099_finite[is.finite(ws_2099_finite)]
+      
+      if (length(ws_2025_finite) > 0 && length(ws_2099_finite) > 0) {
+        # Harvest biomass: the final (end-of-year) biomass value for each year
+        harvest_biomass_2025 <- ws_2025_finite[length(ws_2025_finite)]
+        harvest_biomass_2099 <- ws_2099_finite[length(ws_2099_finite)]
+        
+        if (is.finite(harvest_biomass_2025) && harvest_biomass_2025 > 0) {
+          pct_change <- (harvest_biomass_2099 - harvest_biomass_2025) / harvest_biomass_2025 * 100
+          if (pct_change > 250) {
+            add_issue(fpath, NA, "BIOMASS_INCREASE_EXCESSIVE",
+                      sprintf("Harvest biomass (weight_scaled) increased by %.1f%% from 2025 (%.4f) to 2099 (%.4f)",
+                              pct_change, harvest_biomass_2025, harvest_biomass_2099))
+          } else if (pct_change < -90) {
+            add_issue(fpath, NA, "BIOMASS_DECREASE_EXCESSIVE",
+                      sprintf("Harvest biomass (weight_scaled) decreased by %.1f%% from 2025 (%.4f) to 2099 (%.4f)",
+                              pct_change, harvest_biomass_2025, harvest_biomass_2099))
+          }
+        }
+      }
+    }
+  }
+  
   # --- Check 5: days vectors must be identical across all years ---
   if (length(days_vectors) > 1) {
     ref_days <- days_vectors[[1]]
@@ -315,4 +356,39 @@ if (length(issues) == 0) {
   issues_csv <- file.path(outs_path, "production_check_issues.csv")
   write.csv(issues_df, issues_csv, row.names = FALSE)
   cat(sprintf("Issues saved to: %s\n", issues_csv))
+  
+  # ---------- High-error-count report ----------
+  # File-level issues (year is NA) are more severe than year-level issues.
+  # A file qualifies as "high error" if it has ANY file-level issue,
+  # or more than 10 year-level issues.
+  year_level_threshold <- 10
+  
+  file_level_counts <- aggregate(
+    is.na(issues_df$year) ~ issues_df$file,
+    FUN = sum
+  )
+  names(file_level_counts) <- c("file", "n_file_level_issues")
+  
+  year_level_counts <- aggregate(
+    !is.na(issues_df$year) ~ issues_df$file,
+    FUN = sum
+  )
+  names(year_level_counts) <- c("file", "n_year_level_issues")
+  
+  file_issue_counts <- merge(file_level_counts, year_level_counts, by = "file", all = TRUE)
+  file_issue_counts[is.na(file_issue_counts)] <- 0
+  
+  high_error_files <- file_issue_counts[
+    file_issue_counts$n_file_level_issues >= 1 |
+      file_issue_counts$n_year_level_issues > year_level_threshold,
+  ]
+  high_error_files <- high_error_files[
+    order(-high_error_files$n_file_level_issues, -high_error_files$n_year_level_issues),
+  ]
+  
+  high_error_csv <- file.path(outs_path, "production_check_high_error_files.csv")
+  write.csv(high_error_files, high_error_csv, row.names = FALSE)
+  
+  cat(sprintf("\n%d files flagged as high-error (any file-level issue, or > %d year-level issues) saved to: %s\n",
+              nrow(high_error_files), year_level_threshold, high_error_csv))
 }
