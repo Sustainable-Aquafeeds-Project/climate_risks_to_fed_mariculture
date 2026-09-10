@@ -43,7 +43,7 @@ library(slider)
 
 here("src", "dirs.R") %>% source()
 here("src", "model_functions.R") %>% source()
-here("src", "display_globals.R") %>% source()
+here("src", "other_functions.R") %>% source()
 ```
 
 These documents run the model for each target species group, and refines the raw parameters of each. The process is:

@@ -48,8 +48,7 @@ library(ggnewscale)
 #| code-summary: "Source R scripts in use"
 
 here("src", "dirs.R") %>% source()
-here("src", "functions.R") %>% source()
-here("src", "display_globals.R") %>% source()
+here("src", "other_functions.R") %>% source()
 here("src", "mapping_vars.R") %>% source()
 ```
 
@@ -337,14 +336,18 @@ cat("\nRegions where both farm and cell temperatures are required for assignment
 After running the `05_extracting_future_temperatures.qmd` script, it turned out that 5 mapped Norwegian farms assigned to salmon were unable to get temperatures. Since there are 920 total Norwegian farms, I'm just going to exclude these farms, effectively distributing their prodution across the remaining 915 farms.
 
 ```{r blank-norway-farms}
+#| code-summary: "Remove blank norway farms"
+
+to_exclude_norway <- c("87416","87479","87520","87521","87525", "88018")
+
 aqua_locs <- aqua_locs %>% 
-  filter(!farm_ID %in% c("87416","87479","87520","87521","87525"))
+  filter(!farm_ID %in% to_exclude_norway)
 
 norway_blanks <- farms_required %>% 
   filter(ISO3_Code == "NOR") %>% 
   mutate(
-    n_farms = n_farms - 5,
-    total_farms_required = total_farms_required - 5
+    n_farms = n_farms - length(to_exclude_norway),
+    total_farms_required = total_farms_required - length(to_exclude_norway)
   ) %>% 
   select(ISO3_Code, n_farms, total_farms_required)
 
@@ -421,7 +424,7 @@ global_raster_files <- file.path(prepdata_path, "analysed-SST-MUR25-v4.2_meanyea
 global_raster_stack <- terra::rast(global_raster_files)
 names(global_raster_stack) <- paste0("DOY_", 1:length(global_raster_files))
 
-# The actual temperature extraction function extract_point_location_temperature() has been moved to functions.R
+# The actual temperature extraction function extract_point_location_temperature() has been moved to other_functions.R
 ```
 
 This next chunk gets the typical mean year of temperatures for each farm location from a "typical year" constructed from the years 2017 - 2023 (see [historical-sst.R](../data-prep-scripts/historical-sst.R) for details). The process for each farm is as follows:
@@ -1080,8 +1083,6 @@ qs_save(
 
 # Clean up data {#sec-clean-up}
 
-After assigning all farms, we save the relevant meanyear temperature data in a format that's easier to access than a bunch of individual files.
-
 ```{r finalise-assigned-farms}
 #| code-summary: Recombine with production data and save the final assigned farms dataframe
 #| eval: false
@@ -1105,6 +1106,8 @@ assigned_farms <- assigned_farms %>%
 
 qs_save(assigned_farms, file.path(prepdata_path, "assigned_farms.qs"))
 ```
+
+After assigning all farms, we save the relevant meanyear temperature data in a format that's easier to access than a bunch of individual files.
 
 ```{r meanyear-extracted-farms}
 #| code-summary: Save the meanyear temperatures for all assigned farms in the correct place

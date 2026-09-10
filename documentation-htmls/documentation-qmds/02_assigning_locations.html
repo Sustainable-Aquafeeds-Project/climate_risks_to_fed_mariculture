@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Tormey Reimer">
-<meta name="dcterms.date" content="2026-08-25">
+<meta name="dcterms.date" content="2026-09-10">
 
 <title>2: Assigning farm locations – FAO Climate Change Risks to Fed Mariculture</title>
 <style>
@@ -7370,7 +7370,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">25 August 2026</p>
+      <p class="date">10 September 2026</p>
     </div>
   </div>
   
@@ -7758,23 +7758,25 @@ Regions where both farm and cell temperatures are required for assignment:  18</
 <p>After running the <code>05_extracting_future_temperatures.qmd</code> script, it turned out that 5 mapped Norwegian farms assigned to salmon were unable to get temperatures. Since there are 920 total Norwegian farms, I’m just going to exclude these farms, effectively distributing their prodution across the remaining 915 farms.</p>
 <div class="cell" data-layout-align="center">
 <details class="code-fold">
-<summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>aqua_locs <span class="ot">&lt;-</span> aqua_locs <span class="sc">%&gt;%</span> </span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>farm_ID <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;87416&quot;</span>,<span class="st">&quot;87479&quot;</span>,<span class="st">&quot;87520&quot;</span>,<span class="st">&quot;87521&quot;</span>,<span class="st">&quot;87525&quot;</span>))</span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>norway_blanks <span class="ot">&lt;-</span> farms_required <span class="sc">%&gt;%</span> </span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(ISO3_Code <span class="sc">==</span> <span class="st">&quot;NOR&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_farms =</span> n_farms <span class="sc">-</span> <span class="dv">5</span>,</span>
-<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_farms_required =</span> total_farms_required <span class="sc">-</span> <span class="dv">5</span></span>
-<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
-<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(ISO3_Code, n_farms, total_farms_required)</span>
-<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>farms_required <span class="ot">&lt;-</span> <span class="fu">rows_update</span>(</span>
-<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>  farms_required, </span>
-<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>  norway_blanks, </span>
-<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;ISO3_Code&quot;</span>)</span>
-<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<summary>Remove blank norway farms</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>to_exclude_norway <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;87416&quot;</span>,<span class="st">&quot;87479&quot;</span>,<span class="st">&quot;87520&quot;</span>,<span class="st">&quot;87521&quot;</span>,<span class="st">&quot;87525&quot;</span>, <span class="st">&quot;88018&quot;</span>)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>aqua_locs <span class="ot">&lt;-</span> aqua_locs <span class="sc">%&gt;%</span> </span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>farm_ID <span class="sc">%in%</span> to_exclude_norway)</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>norway_blanks <span class="ot">&lt;-</span> farms_required <span class="sc">%&gt;%</span> </span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(ISO3_Code <span class="sc">==</span> <span class="st">&quot;NOR&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_farms =</span> n_farms <span class="sc">-</span> <span class="fu">length</span>(to_exclude_norway),</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_farms_required =</span> total_farms_required <span class="sc">-</span> <span class="fu">length</span>(to_exclude_norway)</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(ISO3_Code, n_farms, total_farms_required)</span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>farms_required <span class="ot">&lt;-</span> <span class="fu">rows_update</span>(</span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>  farms_required, </span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>  norway_blanks, </span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;ISO3_Code&quot;</span>)</span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <p>The <code>farms_required</code> dataframe is split into four groups up front so that the assignment method for every region is clear before any assignment begins. A single <code>assigned_farms</code> dataframe accumulates results across all four groups; each group checks this dataframe first and excludes any already-assigned mapped farms from its working copy of <code>aqua_locs</code>.</p>
@@ -7864,7 +7866,7 @@ Regions where both farm and cell temperatures are required for assignment:  18</
 <span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>global_raster_stack <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">rast</span>(global_raster_files)</span>
 <span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(global_raster_stack) <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">&quot;DOY_&quot;</span>, <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(global_raster_files))</span>
 <span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a><span class="co"># The actual temperature extraction function extract_point_location_temperature() has been moved to functions.R</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a><span class="co"># The actual temperature extraction function extract_point_location_temperature() has been moved to other_functions.R</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <p>This next chunk gets the typical mean year of temperatures for each farm location from a “typical year” constructed from the years 2017 - 2023 (see <a href="../data-prep-scripts/historical-sst.R">historical-sst.R</a> for details). The process for each farm is as follows:</p>
@@ -8516,7 +8518,6 @@ Regions where both farm and cell temperatures are required for assignment:  18</
 </section>
 <section id="sec-clean-up" class="level1">
 <h1>Clean up data</h1>
-<p>After assigning all farms, we save the relevant meanyear temperature data in a format that’s easier to access than a bunch of individual files.</p>
 <div class="cell" data-layout-align="center">
 <details class="code-fold">
 <summary>Recombine with production data and save the final assigned farms dataframe</summary>
@@ -8540,6 +8541,7 @@ Regions where both farm and cell temperatures are required for assignment:  18</
 <span id="cb42-18"><a href="#cb42-18" aria-hidden="true" tabindex="-1"></a><span class="fu">qs_save</span>(assigned_farms, <span class="fu">file.path</span>(prepdata_path, <span class="st">&quot;assigned_farms.qs&quot;</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
+<p>After assigning all farms, we save the relevant meanyear temperature data in a format that’s easier to access than a bunch of individual files.</p>
 <div class="cell" data-layout-align="center">
 <details class="code-fold">
 <summary>Save the meanyear temperatures for all assigned farms in the correct place</summary>
