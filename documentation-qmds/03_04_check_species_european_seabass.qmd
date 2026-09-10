@@ -43,7 +43,7 @@ library(slider)
 
 here("src", "dirs.R") %>% source()
 here("src", "model_functions.R") %>% source()
-here("src", "display_globals.R") %>% source()
+here("src", "other_functions.R") %>% source()
 ```
 
 This document runs the checking and calibration process on the `european_seabass` model. For a full description of the process, see [parameterise_species_seabream](03_01_check_species_seabream.qmd).
@@ -331,11 +331,11 @@ sens_combined <- sens_combined %>%
     raw_range = inv_sens * (1 / flexibility)
   )
 
-# Cap range changes at +-10%
+# Cap range changes at +-10%, set minimum to +-2%
 sens_combined <- sens_combined %>%
   mutate(
     param        = as.character(param),
-    sample_range = scales::rescale(raw_range, to = c(0.005, 0.10))
+    sample_range = scales::rescale(raw_range, to = c(0.02, 0.10))
   )
 ```
 
