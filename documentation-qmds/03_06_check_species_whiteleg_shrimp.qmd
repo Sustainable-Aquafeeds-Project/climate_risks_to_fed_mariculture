@@ -329,11 +329,11 @@ sens_combined <- sens_combined %>%
     raw_range = inv_sens * (1 / flexibility)
   )
 
-# Cap range changes at +-10%
+# Cap range changes at +-10%, set minimum to +-2%
 sens_combined <- sens_combined %>%
   mutate(
     param        = as.character(param),
-    sample_range = scales::rescale(raw_range, to = c(0.005, 0.10))
+    sample_range = scales::rescale(raw_range, to = c(0.02, 0.10))
   )
 ```
 

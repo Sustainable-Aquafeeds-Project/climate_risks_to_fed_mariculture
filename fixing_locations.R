@@ -3,7 +3,7 @@ library(tidyverse)
 library(here)
 
 here("src", "dirs.R") %>% source()
-here("src", "functions.R") %>% source()
+here("src", "other_functions.R") %>% source()
 here("src", "model_functions.R") %>% source()
 
 # The purpose of this script is to identify and fix any discrepancies between the farm production files that have already been run and any changes to farm numbers/model assignments when the location assignment protocol is run again. Here's why this might be needed.
@@ -12,10 +12,10 @@ here("src", "model_functions.R") %>% source()
 
 # If a species model's temperature response parameters change, this could change the model_names assigned to farm_IDs within any country where that species is grown. Additionally, if any changes are made to "extracted" farms assigned to that species, new farm_ID numbers will have been generated. 
 
-assigned_farms_old <- file.path(prepdata_path, "assigned_farms_old.qs") %>% qs_read() %>% 
-  mutate(model_name = case_when(model_name == "japanese_seabass" ~ "asian_seabass", T ~ model_name))
+assigned_farms_old <- file.path(prepdata_path, "assigned_farms_old.qs") %>% qs_read()
 assigned_farms_new <- file.path(prepdata_path, "assigned_farms.qs") %>% qs_read()
 
+# Get all existing production files - if you want to re-do production files for any reason other than assignment changes, make sure they're deleted (or moved) before this step.
 existing_prod_files <- file.path(outs_path, "data", "farm_production") %>% 
   list.files(recursive = T, full.names = T) %>% 
   str_subset("MC5000.qs")
