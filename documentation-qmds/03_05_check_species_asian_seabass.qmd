@@ -46,7 +46,7 @@ here("src", "model_functions.R") %>% source()
 here("src", "other_functions.R") %>% source()
 ```
 
-This document runs the checking and calibration process on the `asian_seabass` model. For a full description of the process, see [parameterise_species_seabream](03_01_check_species_seabream.qmd).
+This document runs the checking and calibration process on the `asian_seabass` model. For a full description of the process, see [parameterise_species_seabream](03_03_check_species_seabream.qmd).
 
 # Species parameters {#sec-species-params}
 

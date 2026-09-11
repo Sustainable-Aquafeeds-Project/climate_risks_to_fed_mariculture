@@ -69,6 +69,7 @@ Load the feeds still stored in the raw data and store them as feed objects.
 
 ```{r feed-params}
 #| code-summary: Load feed parameters and save one per model_name/feed assignment
+#| eval: false
 
 # Get raw data
 raw_feed_data <- file.path(rawdata_path, "feed_profiles_and_composition.xlsx") %>% 
@@ -143,12 +144,9 @@ assigned_farms <- assigned_farms %>%
 assigned_farms %>% filter(is.na(filename))
 ```
 
-# CHOOSE SUBSET for this run
+```{r pair-feed-assignments}
+#| code-summary: Pair assigned farms with feed assignment data
 
-```{r choose-subset}
-#| code-summary: Choose the current subset of farms we're working with
-
-# Pair assigned farms with feed assignment data
 feed_assignments <- file.path(rawdata_path, "feed_profiles_and_composition.xlsx") %>% 
   read_excel(sheet = "feed_assignments") %>% 
   select(model_name, country, feed_class)
@@ -157,12 +155,35 @@ assigned_farms <- assigned_farms %>%
   left_join(feed_assignments, by = join_by(model_name, country)) %>% 
   filter(!is.na(feed_class)) %>% 
   mutate(feed_name = paste(model_name, feed_class, sep = "-"))
+```
 
-# Choose what subset you're going to run
+# CHOOSE SUBSET for this run
+
+```{r choose-subset}
+#| code-summary: Choose the current subset of farms we're working with
+
+# # Choose what subset(s) you're going to run this time - REMOTE
+# assigned_farms <- assigned_farms %>% 
+#   filter(!is.na(filename)) %>% 
+#   filter(model_name %in% c("atlantic_salmon", "seabream", "european_seabass", "whiteleg_shrimp", "asian_seabass", "japanese_amberjack", "milkfish"))
+
+# Choose what subset(s) you're going to run this time - LOCAL
 assigned_farms <- assigned_farms %>% 
-  filter(feed_name %in% c("whiteleg_shrimp-ecuador"))
+  filter(!is.na(filename)) %>% 
+  filter(model_name %in% c("tiger_prawn"))
 
-assigned_farms <- split(assigned_farms, assigned_farms$farm_ID)
+# Set the path of any files that might exclude production runs
+existing_files <- list.files(file.path(outs_path, "data", "farm_production"), recursive = T, full.names = T) %>% 
+  str_subset("testing", negate = T) %>% 
+  basename()
+new_files <- paste0("production_results_farmID_", fix_int(assigned_farms$farm_ID, 8), "_MC5000.qs")
+
+files_to_do <- setdiff(new_files, existing_files)
+
+assigned_farms_todo <- assigned_farms %>% filter(farm_ID %in% as.integer(str_extract(files_to_do, "(?<=farmID_)\\d+")))
+assigned_farms_todo <- split(assigned_farms_todo, assigned_farms_todo$farm_ID)
+
+sprintf("Files to do: %d", length(files_to_do))
 ```
 
 Before running production, we need to establish the following per-farm parameters:
@@ -170,34 +191,14 @@ Before running production, we need to establish the following per-farm parameter
 * Grow times (day of start/harvest) - these will be based on 2025 temeprature timeseries
 * Farm population (scaling factor) - based on 2025 temperatures and harvest sizes, and per-farm production
 
-```{r helper-functions}
-
-# Get the best "growing window" for this species
-get_growing_window <- function(temperatures, grow_days, species_params) {
-  temperatures$fr <- sapply(
-    X = temperatures$sst, 
-    FUN = feeding_rate, 
-    species_params = species_params
-  )
-  temperatures$fr[is.na(temperatures$fr)] <- 0
-
-  temperatures %>% 
-    mutate(roll_fr = slide_dbl(fr, sum, .before = 0, .after = grow_days - 1)) %>%
-    slice_max(roll_fr, n = 1) %>%
-    mutate(end_doy = doy + grow_days - 1) %>% 
-    select(start = doy, end = end_doy)
-}
-```
-
 ```{r set-per-farm-parameters}
 #| code-summary: Set the grow-times and get the representative harvest size for each farm
 
-# af <- assigned_farms[[12]]
-assigned_farms <- map(
-  assigned_farms,
+# af <- assigned_farms_todo[[12]]
+assigned_farms_todo <- map(
+  assigned_farms_todo,
   function(af) {
-    species <- af$model_name
-    sp <- species_params[[species]]
+    sp <- species_params[[af$model_name]]
     fp <- feed_params[[af$feed_name]]
     gd <- sp[["gd"]] %>% as.integer()
 
@@ -255,9 +256,10 @@ assigned_farms <- map(
 ```
 
 ```{r check-2025}
-#| code-summary: Check that the 2025 (per-farm) parameters make sense
+#| code-summary: Check that the 2025 (per-farm) parameters make sense - for troubleshooting
+#| eval: false
 
-assigned_farms_df <- bind_rows(assigned_farms) %>% 
+assigned_farms_df <- bind_rows(assigned_farms_todo) %>% 
   filter(farm_ID != 00008994)
 
 ggplot(assigned_farms_df, aes(
@@ -314,32 +316,19 @@ output_vars <- c("weight", "dw", "T_response", "rel_feeding", "food_prov", "ing_
 # These are the variables that will be scaled up to give farm-level responses
 scaled_vars <- c("weight", "dw", "ing_act", "total_excr", "food_prov")
 
-# Folders for results
-prod_path_1 <- file.path(outs_path, "data", "farm_production")
-prod_path_2 <- file.path(outs_path, "data", "farm_production", "new_local")
-
 harvest_years <- 2025:2099      # Leave this - all harvest years are included in the same file per farms
-MC_pop <- 5000                  # Size of the Monte-Carlo-sampled population
 
-farm_IDs <- map(assigned_farms, function(af) {af$farm_ID}) |> unlist() |> unname()
-prod_files_1 <- file.path(prod_path_1, paste0("production_results_farmID_", fix_int(farm_IDs, 8), "_MC", MC_pop, ".qs"))
-prod_files_2 <- file.path(prod_path_2, paste0("production_results_farmID_", fix_int(farm_IDs, 8), "_MC", MC_pop, ".qs"))
-
-# Figure out which files you need to do
-files_to_do <- intersect(which(!file.exists(prod_files_1)), which(!file.exists(prod_files_2)))
-# files_to_do <- sample(files_to_do, 10)
-
-sprintf("%s: %d", assigned_farms[[files_to_do[1]]]$feed_name, length(files_to_do))
+farm_IDs <- map(assigned_farms_todo, function(af) {af$farm_ID}) |> unlist() |> unname()
+prod_files <- file.path(outs_path, "data", "farm_production", "new_local", paste0("production_results_farmID_", fix_int(farm_IDs, 8), "_MC5000.qs"))
 ```
 
 ```{r check-farm-growth}
 #| code-summary: Check that the parameters are suitable for the full farm growth (2025 only)
 #| eval: false
 
-af <- assigned_farms[[files_to_do[1]]]
+af <- assigned_farms_todo[[1]]
 
-species <- af$model_name
-sp <- species_params[[species]]
+sp <- species_params[[af$model_name]]
 fp <- feed_params[[af$feed_name]]
 gd <- sp[["gd"]] %>% as.integer()
 
@@ -354,11 +343,12 @@ temps_all <- af$filename %>%
 
 # Fill in 2024 to reconcile multi-year growing periods
 temps_all <- rbind(
+  temps_all %>% filter(year == 2025) %>% mutate(year = 2023),
   temps_all %>% filter(year == 2025) %>% mutate(year = 2024),
   temps_all
 )
 
-# Get correct species growtimes
+# Get correct growtimes
 grow_times <- c(
   t_start = af$start_doy,
   t_end = af$end_doy,
@@ -371,7 +361,10 @@ grow_times <- c(
 temps_all <- map(
   harvest_years,
   function(yr) {
-    if (grow_times[["t_end"]] > 365) {
+    if (grow_times[["t_end"]] > 730) {
+      temp <- temps_all %>% filter(year %in% c(yr, yr-1, yr-2))
+      temp$doy <- 1:nrow(temp)
+    } else if (grow_times[["t_end"]] > 365) {
       temp <- temps_all %>% filter(year %in% c(yr, yr-1))
       temp$doy <- 1:nrow(temp)
     } else {
@@ -394,105 +387,9 @@ check_farm_growth_inputs(
   times = grow_times,
   N_pop = pop, 
   use_MC_population = T, 
-  MC_pop = MC_pop,
+  MC_pop = 5000,
   output_vars = output_vars,
   scaled_vars = scaled_vars
-)
-```
-
-```{r estimate-runtime}
-#| code-summary: Estimate the total runtime for the missing files using 2% MC population
-#| eval: false
-
-af <- assigned_farms[[files_to_do[1]]]
-fnm <- prod_files_2[files_to_do[1]]
-species <- af$model_name
-sp <- species_params[[species]]
-fp <- feed_params[[af$feed_name]]
-gd <- sp[["gd"]] %>% as.integer()
-
-# Get all temperatures at this farm
-temps_all <- af$filename %>% 
-  qs_read() %>% 
-  mutate(
-    doy = as.integer(format(date, "%j")),
-    year = year(date)
-  ) %>% 
-  select(-date)
-
-# Fill in 2024 and 2100 to reconcile multi-year growing periods
-temps_all <- rbind(
-  temps_all %>% filter(year == 2025) %>% mutate(year = 2024),
-  temps_all,
-  temps_all %>% filter(year == 2099) %>% mutate(year = 2100)
-) %>% 
-  arrange(year, doy)
-
-# Get correct species growtimes
-end_gd <- if (af$end_doy > 365) {af$end_doy - 365} else {af$end_doy} # this should be in the harvest year
-grow_times <- c(
-  t_start = af$start_doy,
-  t_end = af$end_doy,
-  dt = 1L
-)
-
-# Filter to actual growing window for each harvest year
-# yr <- 2025
-temps_all <- map(
-  harvest_years,
-  function(yr) {
-    temp <- temps_all %>% 
-      filter(year %in% c(yr, yr-1, yr+1))
-    temp$doy <- 1:nrow(temp)
-    temp %>% 
-      filter(doy >= grow_times[["t_start"]] & doy <= grow_times[["t_end"]]) %>% 
-      mutate(year  = yr)
-  }
-) %>% 
-  setNames(harvest_years)
-
-# Generate the population (scaling factor)
-pop <- generate_pop(harvest_n = af$final_pop, mort = sp[["mortmyt"]], times = grow_times)
-
-start_time <- Sys.time()
-
-# Run the full production
-# temps <- temps_all[[1]]
-# yr <- harvest_years[1]
-fg <- map2(
-  temps_all,
-  harvest_years,
-  function(temps, yr) {
-    farm_growth(
-      species_params = sp, 
-      feed_params = fp, 
-      water_temp = temps$sst, 
-      times = grow_times,
-      N_pop = pop, 
-      use_MC_population = T, 
-      MC_pop = 100, # 2% of total
-      output_vars = output_vars,
-      scaled_vars = scaled_vars
-    )
-  },
-  .progress = T
-)
-
-end_time <- Sys.time()
-single_time <- (end_time - start_time)*50
-total_time <- single_time * length(files_to_do)
-cores <- 20
-
-# approx time to do one file
-sprintf("One file: %0.0f minutes, or %0.1f hours", single_time, single_time/60)
-
-# approx time to do all files, using 20 cores
-sprintf(
-  "All files, %d cores: %0.0f minutes, or %0.1f hours, or %0.1f days", 
-  cores,
-  as.numeric(total_time/cores), 
-  as.numeric(total_time/cores/60), 
-  as.numeric(total_time/cores/60/24)
 )
 ```
 
@@ -505,14 +402,13 @@ plan(multisession, workers = work_cores)
 
 tictoc::tic()
 
-# af <- assigned_farms[[files_to_do[1]]]
-# fnm <- prod_files_2[[files_to_do[1]]]
+# af <- assigned_farms_todo[[1]]
+# fnm <- prod_files[1]
 future_walk2(
-  assigned_farms[files_to_do],
-  prod_files_2[files_to_do],
+  assigned_farms_todo,
+  prod_files,
   function(af, fnm) {
-    species <- af$model_name
-    sp <- species_params[[species]]
+    sp <- species_params[[af$model_name]]
     fp <- feed_params[[af$feed_name]]
     gd <- sp[["gd"]] %>% as.integer()
 
@@ -525,13 +421,14 @@ future_walk2(
       ) %>% 
       select(-date)
 
-    # Fill in 2024 to reconcile multi-year growing periods
+    # Fill in 2024 and 2023 to reconcile multi-year growing periods
     temps_all <- rbind(
+      temps_all %>% filter(year == 2025) %>% mutate(year = 2023),
       temps_all %>% filter(year == 2025) %>% mutate(year = 2024),
       temps_all
     )
 
-    # Get correct species growtimes
+    # Get correct growtimes
     grow_times <- c(
       t_start = af$start_doy,
       t_end = af$end_doy,
@@ -544,7 +441,10 @@ future_walk2(
     temps_all <- map(
       harvest_years,
       function(yr) {
-        if (grow_times[["t_end"]] > 365) {
+        if (grow_times[["t_end"]] > 730) {
+          temp <- temps_all %>% filter(year %in% c(yr, yr-1, yr-2))
+          temp$doy <- 1:nrow(temp)
+        } else if (grow_times[["t_end"]] > 365) {
           temp <- temps_all %>% filter(year %in% c(yr, yr-1))
           temp$doy <- 1:nrow(temp)
         } else {
@@ -561,8 +461,8 @@ future_walk2(
     pop <- generate_pop(harvest_n = af$final_pop, mort = sp[["mortmyt"]], times = grow_times)
 
     # Run the full production
-    # temps <- temps_all[[2]]
-    # yr <- harvest_years[2]
+    # temps <- temps_all[[1]]
+    # yr <- harvest_years[1]
     fg <- map2(
       temps_all,
       harvest_years,
@@ -578,7 +478,8 @@ future_walk2(
           output_vars = output_vars,
           scaled_vars = scaled_vars
         )
-      }
+      },
+      .progress = T
     )
 
     qs2::qs_save(fg, fnm)
@@ -597,7 +498,7 @@ tictoc::toc()
 Check the production files directory to make sure they ran and saved correctly.
 
 ```{r check-production}
-prod_path <- file.path(outs_path, "data", "farm_production", "new_remote")
+prod_path <- file.path(outs_path, "data", "farm_production")
 production_files <- list.files(prod_path, full.names = TRUE, pattern = "MC5000\\.qs$")
 
 here("src", "check_production_files.R") %>% source(echo = T)

@@ -1,0 +1,895 @@
+---
+title: "3.18: Summarising all species parameters"
+subtitle: "FAO Climate Change Risks to Fed Mariculture"
+author: 
+  - "Tormey Reimer"
+date: last-modified
+---
+
+::: {style="display: flex; justify-content: space-between;"}
+[← Previous: Assigning locations](02_assigning_locations.qmd)
+
+[Next: Extract future temperatures →](04_extracting_future_temperatures.qmd)
+:::
+
+```{r setup}
+#| cache: false
+#| echo: false
+#| warning: false
+#| message: false
+#| output: false
+
+library(tidyverse)
+library(here)
+library(readxl)
+library(janitor)
+library(gt)
+library(qs2)
+library(janitor)
+```
+
+```{r source-scripts}
+#| cache: false
+#| echo: false
+#| warning: false
+#| message: false
+#| output: false
+#| code-summary: "Source R scripts in use"
+
+here("src", "dirs.R") %>% source()
+here("src", "model_functions.R") %>% source()
+here("src", "other_functions.R") %>% source()
+
+# Helper: plain notation for large numbers, scientific only for |x| < 0.1
+fmt_num <- function(x) {
+  if (!is.numeric(x) || is.na(x)) return(as.character(x))
+  if (x != 0 && abs(x) < 0.1) {
+    format(x, scientific = TRUE, digits = 3)
+  } else {
+    format(x, scientific = FALSE, digits = 7, drop0trailing = TRUE)
+  }
+}
+
+# Use fmt_num for all inline `r ...` numeric output
+knitr::knit_hooks$set(inline = function(x) {
+  if (is.numeric(x)) paste(sapply(x, fmt_num), collapse = ", ") else x
+})
+
+# Helper: bold the calibrated value if it differs from raw
+bold_if_diff <- function(raw, calib) {
+  if (isTRUE(raw == calib)) fmt_num(calib) else paste0("**", fmt_num(calib), "**")
+}
+```
+
+```{r set-defaults}
+#| code-summary: Set defaults (blanks) for unfinished parameter vectors
+
+default <- rep(NA, 26)
+names(default) <- c("a", "alpha", "betac", "CS", "deltaImax", "deltaW", "doy", "eff", "epscarb", "epslip", "epsO2", "epsprot", "FCR", "gd", "k", "k0", "m", "meanImax", "meanW", "mortmyt", "n", "omega", "pk", "Taa", "Tma", "Toa")
+```
+
+# Overview {#sec-overview}
+
+This document...
+
+# Asian seabass
+
+```{r get-params-asian_seabass}
+#| code-summary: Get all parameters for the 'asian_seabass' model
+
+this_species <- "asian_seabass"
+this_filename <- file.path(prepdata_path, "species_parameters", paste0("species_parameters_", this_species, ".qs"))
+
+params <- read_excel(
+  file.path(rawdata_path, 'parameters_species.xlsx'),
+  sheet = this_species,
+  trim_ws = T, n_max = 28
+) %>%
+  clean_names() %>% 
+  select(used_in_script, value)
+
+params_raw <- params$value
+names(params_raw) <- params$used_in_script
+
+params_calib <- if (file.exists(this_filename)) {qd_read(this_filename)} else {default}
+```
+
+| Parameter | Raw value | Calibrated value |
+|:-----:|:-----:|:-----:|
+| a         | `r params_raw["a"]`         | `r bold_if_diff(params_raw["a"], round(params_calib["a"], 0))`                 |
+| alpha     | `r params_raw["alpha"]`     | `r bold_if_diff(params_raw["alpha"], round(params_calib["alpha"], 3))`         |
+| betac     | `r params_raw["betac"]`     | `r bold_if_diff(params_raw["betac"], round(params_calib["betac"], 4))`         |
+| CS        | `r params_raw["CS"]`        | `r bold_if_diff(params_raw["CS"], params_calib["CS"])`               |
+| deltaImax | `r params_raw["deltaImax"]` | `r bold_if_diff(params_raw["deltaImax"], params_calib["deltaImax"])` |
+| deltaW    | `r params_raw["deltaW"]`    | `r bold_if_diff(params_raw["deltaW"], params_calib["deltaW"])`       |
+| eff       | `r params_raw["eff"]`       | `r bold_if_diff(params_raw["eff"], params_calib["eff"])`             |
+| epscarb   | `r params_raw["epscarb"]`   | `r bold_if_diff(params_raw["epscarb"], params_calib["epscarb"])`     |
+| epslip    | `r params_raw["epslip"]`    | `r bold_if_diff(params_raw["epslip"], params_calib["epslip"])`       |
+| epsO2     | `r params_raw["epsO2"]`     | `r bold_if_diff(params_raw["epsO2"], params_calib["epsO2"])`         |
+| epsprot   | `r params_raw["epsprot"]`   | `r bold_if_diff(params_raw["epsprot"], params_calib["epsprot"])`     |
+| gd        | `r params_raw["gd"]`        | `r bold_if_diff(params_raw["gd"], params_calib["gd"])`               |
+| k         | `r params_raw["k"]`         | `r bold_if_diff(params_raw["k"], round(params_calib["k"], 3))`                 |
+| k0        | `r params_raw["k0"]`        | `r bold_if_diff(params_raw["k0"], params_calib["k0"])`               |
+| m         | `r params_raw["m"]`         | `r bold_if_diff(params_raw["m"], round(params_calib["m"], 3))`                 |
+| meanImax  | `r params_raw["meanImax"]`  | `r bold_if_diff(params_raw["meanImax"], params_calib["meanImax"])`   |
+| meanW     | `r params_raw["meanW"]`     | `r bold_if_diff(params_raw["meanW"], params_calib["meanW"])`         |
+| mortmyt   | `r params_raw["mortmyt"]`   | `r bold_if_diff(params_raw["mortmyt"], params_calib["mortmyt"])`     |
+| n         | `r params_raw["n"]`         | `r bold_if_diff(params_raw["n"], round(params_calib["n"], 3))`                 |
+| omega     | `r params_raw["omega"]`     | `r bold_if_diff(params_raw["omega"], round(params_calib["omega"], 4))`         |
+| pk        | `r params_raw["pk"]`        | `r bold_if_diff(params_raw["pk"], params_calib["pk"])`               |
+| Taa       | `r params_raw["Taa"]`       | `r bold_if_diff(params_raw["Taa"], params_calib["Taa"])`             |
+| Tma       | `r params_raw["Tma"]`       | `r bold_if_diff(params_raw["Tma"], params_calib["Tma"])`             |
+| Toa       | `r params_raw["Toa"]`       | `r bold_if_diff(params_raw["Toa"], params_calib["Toa"])`             |
+
+: Raw and calibrated parameter values for the `asian_seabass` model. **Bold** values indicate parameters that changed during calibration. {#tbl-asian_seabass-params}
+
+# Atlantic salmon
+
+```{r get-params-atlantic_salmon}
+#| code-summary: Get all parameters for the 'atlantic_salmon' model
+
+this_species <- "atlantic_salmon"
+this_filename <- file.path(prepdata_path, "species_parameters", paste0("species_parameters_", this_species, ".qs"))
+
+params <- read_excel(
+  file.path(rawdata_path, 'parameters_species.xlsx'),
+  sheet = this_species,
+  trim_ws = T, n_max = 28
+) %>%
+  clean_names() %>% 
+  select(used_in_script, value)
+
+params_raw <- params$value
+names(params_raw) <- params$used_in_script
+
+params_calib <- if (file.exists(this_filename)) {qd_read(this_filename)} else {default}
+```
+
+| Parameter | Raw value | Calibrated value |
+|:-----:|:-----:|:-----:|
+| a         | `r params_raw["a"]`         | `r bold_if_diff(params_raw["a"], round(params_calib["a"], 0))`                 |
+| alpha     | `r params_raw["alpha"]`     | `r bold_if_diff(params_raw["alpha"], round(params_calib["alpha"], 3))`         |
+| betac     | `r params_raw["betac"]`     | `r bold_if_diff(params_raw["betac"], round(params_calib["betac"], 4))`         |
+| CS        | `r params_raw["CS"]`        | `r bold_if_diff(params_raw["CS"], params_calib["CS"])`               |
+| deltaImax | `r params_raw["deltaImax"]` | `r bold_if_diff(params_raw["deltaImax"], params_calib["deltaImax"])` |
+| deltaW    | `r params_raw["deltaW"]`    | `r bold_if_diff(params_raw["deltaW"], params_calib["deltaW"])`       |
+| eff       | `r params_raw["eff"]`       | `r bold_if_diff(params_raw["eff"], params_calib["eff"])`             |
+| epscarb   | `r params_raw["epscarb"]`   | `r bold_if_diff(params_raw["epscarb"], params_calib["epscarb"])`     |
+| epslip    | `r params_raw["epslip"]`    | `r bold_if_diff(params_raw["epslip"], params_calib["epslip"])`       |
+| epsO2     | `r params_raw["epsO2"]`     | `r bold_if_diff(params_raw["epsO2"], params_calib["epsO2"])`         |
+| epsprot   | `r params_raw["epsprot"]`   | `r bold_if_diff(params_raw["epsprot"], params_calib["epsprot"])`     |
+| gd        | `r params_raw["gd"]`        | `r bold_if_diff(params_raw["gd"], params_calib["gd"])`               |
+| k         | `r params_raw["k"]`         | `r bold_if_diff(params_raw["k"], round(params_calib["k"], 3))`                 |
+| k0        | `r params_raw["k0"]`        | `r bold_if_diff(params_raw["k0"], params_calib["k0"])`               |
+| m         | `r params_raw["m"]`         | `r bold_if_diff(params_raw["m"], round(params_calib["m"], 3))`                 |
+| meanImax  | `r params_raw["meanImax"]`  | `r bold_if_diff(params_raw["meanImax"], params_calib["meanImax"])`   |
+| meanW     | `r params_raw["meanW"]`     | `r bold_if_diff(params_raw["meanW"], params_calib["meanW"])`         |
+| mortmyt   | `r params_raw["mortmyt"]`   | `r bold_if_diff(params_raw["mortmyt"], params_calib["mortmyt"])`     |
+| n         | `r params_raw["n"]`         | `r bold_if_diff(params_raw["n"], round(params_calib["n"], 3))`                 |
+| omega     | `r params_raw["omega"]`     | `r bold_if_diff(params_raw["omega"], round(params_calib["omega"], 4))`         |
+| pk        | `r params_raw["pk"]`        | `r bold_if_diff(params_raw["pk"], params_calib["pk"])`               |
+| Taa       | `r params_raw["Taa"]`       | `r bold_if_diff(params_raw["Taa"], params_calib["Taa"])`             |
+| Tma       | `r params_raw["Tma"]`       | `r bold_if_diff(params_raw["Tma"], params_calib["Tma"])`             |
+| Toa       | `r params_raw["Toa"]`       | `r bold_if_diff(params_raw["Toa"], params_calib["Toa"])`             |
+
+: Raw and calibrated parameter values for the `atlantic_salmon` model. **Bold** values indicate parameters that changed during calibration. {#tbl-atlantic_salmon-params}
+
+# Drum/croaker
+
+```{r get-params-drum_croaker}
+#| code-summary: Get all parameters for the 'drum_croaker' model
+
+this_species <- "drum_croaker"
+this_filename <- file.path(prepdata_path, "species_parameters", paste0("species_parameters_", this_species, ".qs"))
+
+params <- read_excel(
+  file.path(rawdata_path, 'parameters_species.xlsx'),
+  sheet = this_species,
+  trim_ws = T, n_max = 28
+) %>%
+  clean_names() %>% 
+  select(used_in_script, value)
+
+params_raw <- params$value
+names(params_raw) <- params$used_in_script
+
+params_calib <- if (file.exists(this_filename)) {qd_read(this_filename)} else {default}
+```
+
+| Parameter | Raw value | Calibrated value |
+|:-----:|:-----:|:-----:|
+| a         | `r params_raw["a"]`         | `r bold_if_diff(params_raw["a"], round(params_calib["a"], 0))`                 |
+| alpha     | `r params_raw["alpha"]`     | `r bold_if_diff(params_raw["alpha"], round(params_calib["alpha"], 3))`         |
+| betac     | `r params_raw["betac"]`     | `r bold_if_diff(params_raw["betac"], round(params_calib["betac"], 4))`         |
+| CS        | `r params_raw["CS"]`        | `r bold_if_diff(params_raw["CS"], params_calib["CS"])`               |
+| deltaImax | `r params_raw["deltaImax"]` | `r bold_if_diff(params_raw["deltaImax"], params_calib["deltaImax"])` |
+| deltaW    | `r params_raw["deltaW"]`    | `r bold_if_diff(params_raw["deltaW"], params_calib["deltaW"])`       |
+| eff       | `r params_raw["eff"]`       | `r bold_if_diff(params_raw["eff"], params_calib["eff"])`             |
+| epscarb   | `r params_raw["epscarb"]`   | `r bold_if_diff(params_raw["epscarb"], params_calib["epscarb"])`     |
+| epslip    | `r params_raw["epslip"]`    | `r bold_if_diff(params_raw["epslip"], params_calib["epslip"])`       |
+| epsO2     | `r params_raw["epsO2"]`     | `r bold_if_diff(params_raw["epsO2"], params_calib["epsO2"])`         |
+| epsprot   | `r params_raw["epsprot"]`   | `r bold_if_diff(params_raw["epsprot"], params_calib["epsprot"])`     |
+| gd        | `r params_raw["gd"]`        | `r bold_if_diff(params_raw["gd"], params_calib["gd"])`               |
+| k         | `r params_raw["k"]`         | `r bold_if_diff(params_raw["k"], round(params_calib["k"], 3))`                 |
+| k0        | `r params_raw["k0"]`        | `r bold_if_diff(params_raw["k0"], params_calib["k0"])`               |
+| m         | `r params_raw["m"]`         | `r bold_if_diff(params_raw["m"], round(params_calib["m"], 3))`                 |
+| meanImax  | `r params_raw["meanImax"]`  | `r bold_if_diff(params_raw["meanImax"], params_calib["meanImax"])`   |
+| meanW     | `r params_raw["meanW"]`     | `r bold_if_diff(params_raw["meanW"], params_calib["meanW"])`         |
+| mortmyt   | `r params_raw["mortmyt"]`   | `r bold_if_diff(params_raw["mortmyt"], params_calib["mortmyt"])`     |
+| n         | `r params_raw["n"]`         | `r bold_if_diff(params_raw["n"], round(params_calib["n"], 3))`                 |
+| omega     | `r params_raw["omega"]`     | `r bold_if_diff(params_raw["omega"], round(params_calib["omega"], 4))`         |
+| pk        | `r params_raw["pk"]`        | `r bold_if_diff(params_raw["pk"], params_calib["pk"])`               |
+| Taa       | `r params_raw["Taa"]`       | `r bold_if_diff(params_raw["Taa"], params_calib["Taa"])`             |
+| Tma       | `r params_raw["Tma"]`       | `r bold_if_diff(params_raw["Tma"], params_calib["Tma"])`             |
+| Toa       | `r params_raw["Toa"]`       | `r bold_if_diff(params_raw["Toa"], params_calib["Toa"])`             |
+
+: Raw and calibrated parameter values for the `drum_croaker` model. **Bold** values indicate parameters that changed during calibration. {#tbl-drum_croaker-params}
+
+# European seabass
+
+```{r get-params-european_seabass}
+#| code-summary: Get all parameters for the 'european_seabass' model
+
+this_species <- "european_seabass"
+this_filename <- file.path(prepdata_path, "species_parameters", paste0("species_parameters_", this_species, ".qs"))
+
+params <- read_excel(
+  file.path(rawdata_path, 'parameters_species.xlsx'),
+  sheet = this_species,
+  trim_ws = T, n_max = 28
+) %>%
+  clean_names() %>% 
+  select(used_in_script, value)
+
+params_raw <- params$value
+names(params_raw) <- params$used_in_script
+
+params_calib <- if (file.exists(this_filename)) {qd_read(this_filename)} else {default}
+```
+
+| Parameter | Raw value | Calibrated value |
+|:-----:|:-----:|:-----:|
+| a         | `r params_raw["a"]`         | `r bold_if_diff(params_raw["a"], round(params_calib["a"], 0))`                 |
+| alpha     | `r params_raw["alpha"]`     | `r bold_if_diff(params_raw["alpha"], round(params_calib["alpha"], 3))`         |
+| betac     | `r params_raw["betac"]`     | `r bold_if_diff(params_raw["betac"], round(params_calib["betac"], 4))`         |
+| CS        | `r params_raw["CS"]`        | `r bold_if_diff(params_raw["CS"], params_calib["CS"])`               |
+| deltaImax | `r params_raw["deltaImax"]` | `r bold_if_diff(params_raw["deltaImax"], params_calib["deltaImax"])` |
+| deltaW    | `r params_raw["deltaW"]`    | `r bold_if_diff(params_raw["deltaW"], params_calib["deltaW"])`       |
+| eff       | `r params_raw["eff"]`       | `r bold_if_diff(params_raw["eff"], params_calib["eff"])`             |
+| epscarb   | `r params_raw["epscarb"]`   | `r bold_if_diff(params_raw["epscarb"], params_calib["epscarb"])`     |
+| epslip    | `r params_raw["epslip"]`    | `r bold_if_diff(params_raw["epslip"], params_calib["epslip"])`       |
+| epsO2     | `r params_raw["epsO2"]`     | `r bold_if_diff(params_raw["epsO2"], params_calib["epsO2"])`         |
+| epsprot   | `r params_raw["epsprot"]`   | `r bold_if_diff(params_raw["epsprot"], params_calib["epsprot"])`     |
+| gd        | `r params_raw["gd"]`        | `r bold_if_diff(params_raw["gd"], params_calib["gd"])`               |
+| k         | `r params_raw["k"]`         | `r bold_if_diff(params_raw["k"], round(params_calib["k"], 3))`                 |
+| k0        | `r params_raw["k0"]`        | `r bold_if_diff(params_raw["k0"], params_calib["k0"])`               |
+| m         | `r params_raw["m"]`         | `r bold_if_diff(params_raw["m"], round(params_calib["m"], 3))`                 |
+| meanImax  | `r params_raw["meanImax"]`  | `r bold_if_diff(params_raw["meanImax"], params_calib["meanImax"])`   |
+| meanW     | `r params_raw["meanW"]`     | `r bold_if_diff(params_raw["meanW"], params_calib["meanW"])`         |
+| mortmyt   | `r params_raw["mortmyt"]`   | `r bold_if_diff(params_raw["mortmyt"], params_calib["mortmyt"])`     |
+| n         | `r params_raw["n"]`         | `r bold_if_diff(params_raw["n"], round(params_calib["n"], 3))`                 |
+| omega     | `r params_raw["omega"]`     | `r bold_if_diff(params_raw["omega"], round(params_calib["omega"], 4))`         |
+| pk        | `r params_raw["pk"]`        | `r bold_if_diff(params_raw["pk"], params_calib["pk"])`               |
+| Taa       | `r params_raw["Taa"]`       | `r bold_if_diff(params_raw["Taa"], params_calib["Taa"])`             |
+| Tma       | `r params_raw["Tma"]`       | `r bold_if_diff(params_raw["Tma"], params_calib["Tma"])`             |
+| Toa       | `r params_raw["Toa"]`       | `r bold_if_diff(params_raw["Toa"], params_calib["Toa"])`             |
+
+: Raw and calibrated parameter values for the `european_seabass` model. **Bold** values indicate parameters that changed during calibration. {#tbl-european_seabass-params}
+
+# Golden pompano
+
+```{r get-params-golden_pompano}
+#| code-summary: Get all parameters for the 'golden_pompano' model
+
+this_species <- "golden_pompano"
+this_filename <- file.path(prepdata_path, "species_parameters", paste0("species_parameters_", this_species, ".qs"))
+
+params <- read_excel(
+  file.path(rawdata_path, 'parameters_species.xlsx'),
+  sheet = this_species,
+  trim_ws = T, n_max = 28
+) %>%
+  clean_names() %>% 
+  select(used_in_script, value)
+
+params_raw <- params$value
+names(params_raw) <- params$used_in_script
+
+params_calib <- if (file.exists(this_filename)) {qd_read(this_filename)} else {default}
+```
+
+| Parameter | Raw value | Calibrated value |
+|:-----:|:-----:|:-----:|
+| a         | `r params_raw["a"]`         | `r bold_if_diff(params_raw["a"], round(params_calib["a"], 0))`                 |
+| alpha     | `r params_raw["alpha"]`     | `r bold_if_diff(params_raw["alpha"], round(params_calib["alpha"], 3))`         |
+| betac     | `r params_raw["betac"]`     | `r bold_if_diff(params_raw["betac"], round(params_calib["betac"], 4))`         |
+| CS        | `r params_raw["CS"]`        | `r bold_if_diff(params_raw["CS"], params_calib["CS"])`               |
+| deltaImax | `r params_raw["deltaImax"]` | `r bold_if_diff(params_raw["deltaImax"], params_calib["deltaImax"])` |
+| deltaW    | `r params_raw["deltaW"]`    | `r bold_if_diff(params_raw["deltaW"], params_calib["deltaW"])`       |
+| eff       | `r params_raw["eff"]`       | `r bold_if_diff(params_raw["eff"], params_calib["eff"])`             |
+| epscarb   | `r params_raw["epscarb"]`   | `r bold_if_diff(params_raw["epscarb"], params_calib["epscarb"])`     |
+| epslip    | `r params_raw["epslip"]`    | `r bold_if_diff(params_raw["epslip"], params_calib["epslip"])`       |
+| epsO2     | `r params_raw["epsO2"]`     | `r bold_if_diff(params_raw["epsO2"], params_calib["epsO2"])`         |
+| epsprot   | `r params_raw["epsprot"]`   | `r bold_if_diff(params_raw["epsprot"], params_calib["epsprot"])`     |
+| gd        | `r params_raw["gd"]`        | `r bold_if_diff(params_raw["gd"], params_calib["gd"])`               |
+| k         | `r params_raw["k"]`         | `r bold_if_diff(params_raw["k"], round(params_calib["k"], 3))`                 |
+| k0        | `r params_raw["k0"]`        | `r bold_if_diff(params_raw["k0"], params_calib["k0"])`               |
+| m         | `r params_raw["m"]`         | `r bold_if_diff(params_raw["m"], round(params_calib["m"], 3))`                 |
+| meanImax  | `r params_raw["meanImax"]`  | `r bold_if_diff(params_raw["meanImax"], params_calib["meanImax"])`   |
+| meanW     | `r params_raw["meanW"]`     | `r bold_if_diff(params_raw["meanW"], params_calib["meanW"])`         |
+| mortmyt   | `r params_raw["mortmyt"]`   | `r bold_if_diff(params_raw["mortmyt"], params_calib["mortmyt"])`     |
+| n         | `r params_raw["n"]`         | `r bold_if_diff(params_raw["n"], round(params_calib["n"], 3))`                 |
+| omega     | `r params_raw["omega"]`     | `r bold_if_diff(params_raw["omega"], round(params_calib["omega"], 4))`         |
+| pk        | `r params_raw["pk"]`        | `r bold_if_diff(params_raw["pk"], params_calib["pk"])`               |
+| Taa       | `r params_raw["Taa"]`       | `r bold_if_diff(params_raw["Taa"], params_calib["Taa"])`             |
+| Tma       | `r params_raw["Tma"]`       | `r bold_if_diff(params_raw["Tma"], params_calib["Tma"])`             |
+| Toa       | `r params_raw["Toa"]`       | `r bold_if_diff(params_raw["Toa"], params_calib["Toa"])`             |
+
+: Raw and calibrated parameter values for the `golden_pompano` model. **Bold** values indicate parameters that changed during calibration. {#tbl-golden_pompano-params}
+
+# Grouper
+
+```{r get-params-grouper}
+#| code-summary: Get all parameters for the 'grouper' model
+
+this_species <- "grouper"
+this_filename <- file.path(prepdata_path, "species_parameters", paste0("species_parameters_", this_species, ".qs"))
+
+params <- read_excel(
+  file.path(rawdata_path, 'parameters_species.xlsx'),
+  sheet = this_species,
+  trim_ws = T, n_max = 28
+) %>%
+  clean_names() %>% 
+  select(used_in_script, value)
+
+params_raw <- params$value
+names(params_raw) <- params$used_in_script
+
+params_calib <- if (file.exists(this_filename)) {qd_read(this_filename)} else {default}
+```
+
+| Parameter | Raw value | Calibrated value |
+|:-----:|:-----:|:-----:|
+| a         | `r params_raw["a"]`         | `r bold_if_diff(params_raw["a"], round(params_calib["a"], 0))`                 |
+| alpha     | `r params_raw["alpha"]`     | `r bold_if_diff(params_raw["alpha"], round(params_calib["alpha"], 3))`         |
+| betac     | `r params_raw["betac"]`     | `r bold_if_diff(params_raw["betac"], round(params_calib["betac"], 4))`         |
+| CS        | `r params_raw["CS"]`        | `r bold_if_diff(params_raw["CS"], params_calib["CS"])`               |
+| deltaImax | `r params_raw["deltaImax"]` | `r bold_if_diff(params_raw["deltaImax"], params_calib["deltaImax"])` |
+| deltaW    | `r params_raw["deltaW"]`    | `r bold_if_diff(params_raw["deltaW"], params_calib["deltaW"])`       |
+| eff       | `r params_raw["eff"]`       | `r bold_if_diff(params_raw["eff"], params_calib["eff"])`             |
+| epscarb   | `r params_raw["epscarb"]`   | `r bold_if_diff(params_raw["epscarb"], params_calib["epscarb"])`     |
+| epslip    | `r params_raw["epslip"]`    | `r bold_if_diff(params_raw["epslip"], params_calib["epslip"])`       |
+| epsO2     | `r params_raw["epsO2"]`     | `r bold_if_diff(params_raw["epsO2"], params_calib["epsO2"])`         |
+| epsprot   | `r params_raw["epsprot"]`   | `r bold_if_diff(params_raw["epsprot"], params_calib["epsprot"])`     |
+| gd        | `r params_raw["gd"]`        | `r bold_if_diff(params_raw["gd"], params_calib["gd"])`               |
+| k         | `r params_raw["k"]`         | `r bold_if_diff(params_raw["k"], round(params_calib["k"], 3))`                 |
+| k0        | `r params_raw["k0"]`        | `r bold_if_diff(params_raw["k0"], params_calib["k0"])`               |
+| m         | `r params_raw["m"]`         | `r bold_if_diff(params_raw["m"], round(params_calib["m"], 3))`                 |
+| meanImax  | `r params_raw["meanImax"]`  | `r bold_if_diff(params_raw["meanImax"], params_calib["meanImax"])`   |
+| meanW     | `r params_raw["meanW"]`     | `r bold_if_diff(params_raw["meanW"], params_calib["meanW"])`         |
+| mortmyt   | `r params_raw["mortmyt"]`   | `r bold_if_diff(params_raw["mortmyt"], params_calib["mortmyt"])`     |
+| n         | `r params_raw["n"]`         | `r bold_if_diff(params_raw["n"], round(params_calib["n"], 3))`                 |
+| omega     | `r params_raw["omega"]`     | `r bold_if_diff(params_raw["omega"], round(params_calib["omega"], 4))`         |
+| pk        | `r params_raw["pk"]`        | `r bold_if_diff(params_raw["pk"], params_calib["pk"])`               |
+| Taa       | `r params_raw["Taa"]`       | `r bold_if_diff(params_raw["Taa"], params_calib["Taa"])`             |
+| Tma       | `r params_raw["Tma"]`       | `r bold_if_diff(params_raw["Tma"], params_calib["Tma"])`             |
+| Toa       | `r params_raw["Toa"]`       | `r bold_if_diff(params_raw["Toa"], params_calib["Toa"])`             |
+
+: Raw and calibrated parameter values for the `grouper` model. **Bold** values indicate parameters that changed during calibration. {#tbl-grouper-params}
+
+# Japanese amberjack
+
+```{r get-params-japanese_amberjack}
+#| code-summary: Get all parameters for the 'japanese_amberjack' model
+
+this_species <- "japanese_amberjack"
+this_filename <- file.path(prepdata_path, "species_parameters", paste0("species_parameters_", this_species, ".qs"))
+
+params <- read_excel(
+  file.path(rawdata_path, 'parameters_species.xlsx'),
+  sheet = this_species,
+  trim_ws = T, n_max = 28
+) %>%
+  clean_names() %>% 
+  select(used_in_script, value)
+
+params_raw <- params$value
+names(params_raw) <- params$used_in_script
+
+params_calib <- if (file.exists(this_filename)) {qd_read(this_filename)} else {default}
+```
+
+| Parameter | Raw value | Calibrated value |
+|:-----:|:-----:|:-----:|
+| a         | `r params_raw["a"]`         | `r bold_if_diff(params_raw["a"], round(params_calib["a"], 0))`                 |
+| alpha     | `r params_raw["alpha"]`     | `r bold_if_diff(params_raw["alpha"], round(params_calib["alpha"], 3))`         |
+| betac     | `r params_raw["betac"]`     | `r bold_if_diff(params_raw["betac"], round(params_calib["betac"], 4))`         |
+| CS        | `r params_raw["CS"]`        | `r bold_if_diff(params_raw["CS"], params_calib["CS"])`               |
+| deltaImax | `r params_raw["deltaImax"]` | `r bold_if_diff(params_raw["deltaImax"], params_calib["deltaImax"])` |
+| deltaW    | `r params_raw["deltaW"]`    | `r bold_if_diff(params_raw["deltaW"], params_calib["deltaW"])`       |
+| eff       | `r params_raw["eff"]`       | `r bold_if_diff(params_raw["eff"], params_calib["eff"])`             |
+| epscarb   | `r params_raw["epscarb"]`   | `r bold_if_diff(params_raw["epscarb"], params_calib["epscarb"])`     |
+| epslip    | `r params_raw["epslip"]`    | `r bold_if_diff(params_raw["epslip"], params_calib["epslip"])`       |
+| epsO2     | `r params_raw["epsO2"]`     | `r bold_if_diff(params_raw["epsO2"], params_calib["epsO2"])`         |
+| epsprot   | `r params_raw["epsprot"]`   | `r bold_if_diff(params_raw["epsprot"], params_calib["epsprot"])`     |
+| gd        | `r params_raw["gd"]`        | `r bold_if_diff(params_raw["gd"], params_calib["gd"])`               |
+| k         | `r params_raw["k"]`         | `r bold_if_diff(params_raw["k"], round(params_calib["k"], 3))`                 |
+| k0        | `r params_raw["k0"]`        | `r bold_if_diff(params_raw["k0"], params_calib["k0"])`               |
+| m         | `r params_raw["m"]`         | `r bold_if_diff(params_raw["m"], round(params_calib["m"], 3))`                 |
+| meanImax  | `r params_raw["meanImax"]`  | `r bold_if_diff(params_raw["meanImax"], params_calib["meanImax"])`   |
+| meanW     | `r params_raw["meanW"]`     | `r bold_if_diff(params_raw["meanW"], params_calib["meanW"])`         |
+| mortmyt   | `r params_raw["mortmyt"]`   | `r bold_if_diff(params_raw["mortmyt"], params_calib["mortmyt"])`     |
+| n         | `r params_raw["n"]`         | `r bold_if_diff(params_raw["n"], round(params_calib["n"], 3))`                 |
+| omega     | `r params_raw["omega"]`     | `r bold_if_diff(params_raw["omega"], round(params_calib["omega"], 4))`         |
+| pk        | `r params_raw["pk"]`        | `r bold_if_diff(params_raw["pk"], params_calib["pk"])`               |
+| Taa       | `r params_raw["Taa"]`       | `r bold_if_diff(params_raw["Taa"], params_calib["Taa"])`             |
+| Tma       | `r params_raw["Tma"]`       | `r bold_if_diff(params_raw["Tma"], params_calib["Tma"])`             |
+| Toa       | `r params_raw["Toa"]`       | `r bold_if_diff(params_raw["Toa"], params_calib["Toa"])`             |
+
+: Raw and calibrated parameter values for the `japanese_amberjack` model. **Bold** values indicate parameters that changed during calibration. {#tbl-japanese_amberjack-params}
+
+# Milkfish
+
+```{r get-params-milkfish}
+#| code-summary: Get all parameters for the 'milkfish' model
+
+this_species <- "milkfish"
+this_filename <- file.path(prepdata_path, "species_parameters", paste0("species_parameters_", this_species, ".qs"))
+
+params <- read_excel(
+  file.path(rawdata_path, 'parameters_species.xlsx'),
+  sheet = this_species,
+  trim_ws = T, n_max = 28
+) %>%
+  clean_names() %>% 
+  select(used_in_script, value)
+
+params_raw <- params$value
+names(params_raw) <- params$used_in_script
+
+params_calib <- if (file.exists(this_filename)) {qd_read(this_filename)} else {default}
+```
+
+| Parameter | Raw value | Calibrated value |
+|:-----:|:-----:|:-----:|
+| a         | `r params_raw["a"]`         | `r bold_if_diff(params_raw["a"], round(params_calib["a"], 0))`                 |
+| alpha     | `r params_raw["alpha"]`     | `r bold_if_diff(params_raw["alpha"], round(params_calib["alpha"], 3))`         |
+| betac     | `r params_raw["betac"]`     | `r bold_if_diff(params_raw["betac"], round(params_calib["betac"], 4))`         |
+| CS        | `r params_raw["CS"]`        | `r bold_if_diff(params_raw["CS"], params_calib["CS"])`               |
+| deltaImax | `r params_raw["deltaImax"]` | `r bold_if_diff(params_raw["deltaImax"], params_calib["deltaImax"])` |
+| deltaW    | `r params_raw["deltaW"]`    | `r bold_if_diff(params_raw["deltaW"], params_calib["deltaW"])`       |
+| eff       | `r params_raw["eff"]`       | `r bold_if_diff(params_raw["eff"], params_calib["eff"])`             |
+| epscarb   | `r params_raw["epscarb"]`   | `r bold_if_diff(params_raw["epscarb"], params_calib["epscarb"])`     |
+| epslip    | `r params_raw["epslip"]`    | `r bold_if_diff(params_raw["epslip"], params_calib["epslip"])`       |
+| epsO2     | `r params_raw["epsO2"]`     | `r bold_if_diff(params_raw["epsO2"], params_calib["epsO2"])`         |
+| epsprot   | `r params_raw["epsprot"]`   | `r bold_if_diff(params_raw["epsprot"], params_calib["epsprot"])`     |
+| gd        | `r params_raw["gd"]`        | `r bold_if_diff(params_raw["gd"], params_calib["gd"])`               |
+| k         | `r params_raw["k"]`         | `r bold_if_diff(params_raw["k"], round(params_calib["k"], 3))`                 |
+| k0        | `r params_raw["k0"]`        | `r bold_if_diff(params_raw["k0"], params_calib["k0"])`               |
+| m         | `r params_raw["m"]`         | `r bold_if_diff(params_raw["m"], round(params_calib["m"], 3))`                 |
+| meanImax  | `r params_raw["meanImax"]`  | `r bold_if_diff(params_raw["meanImax"], params_calib["meanImax"])`   |
+| meanW     | `r params_raw["meanW"]`     | `r bold_if_diff(params_raw["meanW"], params_calib["meanW"])`         |
+| mortmyt   | `r params_raw["mortmyt"]`   | `r bold_if_diff(params_raw["mortmyt"], params_calib["mortmyt"])`     |
+| n         | `r params_raw["n"]`         | `r bold_if_diff(params_raw["n"], round(params_calib["n"], 3))`                 |
+| omega     | `r params_raw["omega"]`     | `r bold_if_diff(params_raw["omega"], round(params_calib["omega"], 4))`         |
+| pk        | `r params_raw["pk"]`        | `r bold_if_diff(params_raw["pk"], params_calib["pk"])`               |
+| Taa       | `r params_raw["Taa"]`       | `r bold_if_diff(params_raw["Taa"], params_calib["Taa"])`             |
+| Tma       | `r params_raw["Tma"]`       | `r bold_if_diff(params_raw["Tma"], params_calib["Tma"])`             |
+| Toa       | `r params_raw["Toa"]`       | `r bold_if_diff(params_raw["Toa"], params_calib["Toa"])`             |
+
+: Raw and calibrated parameter values for the `milkfish` model. **Bold** values indicate parameters that changed during calibration. {#tbl-milkfish-params}
+
+# Mud crab
+
+```{r get-params-mud_crab}
+#| code-summary: Get all parameters for the 'mud_crab' model
+
+this_species <- "mud_crab"
+this_filename <- file.path(prepdata_path, "species_parameters", paste0("species_parameters_", this_species, ".qs"))
+
+params <- read_excel(
+  file.path(rawdata_path, 'parameters_species.xlsx'),
+  sheet = this_species,
+  trim_ws = T, n_max = 28
+) %>%
+  clean_names() %>% 
+  select(used_in_script, value)
+
+params_raw <- params$value
+names(params_raw) <- params$used_in_script
+
+params_calib <- if (file.exists(this_filename)) {qd_read(this_filename)} else {default}
+```
+
+| Parameter | Raw value | Calibrated value |
+|:-----:|:-----:|:-----:|
+| a         | `r params_raw["a"]`         | `r bold_if_diff(params_raw["a"], round(params_calib["a"], 0))`                 |
+| alpha     | `r params_raw["alpha"]`     | `r bold_if_diff(params_raw["alpha"], round(params_calib["alpha"], 3))`         |
+| betac     | `r params_raw["betac"]`     | `r bold_if_diff(params_raw["betac"], round(params_calib["betac"], 4))`         |
+| CS        | `r params_raw["CS"]`        | `r bold_if_diff(params_raw["CS"], params_calib["CS"])`               |
+| deltaImax | `r params_raw["deltaImax"]` | `r bold_if_diff(params_raw["deltaImax"], params_calib["deltaImax"])` |
+| deltaW    | `r params_raw["deltaW"]`    | `r bold_if_diff(params_raw["deltaW"], params_calib["deltaW"])`       |
+| eff       | `r params_raw["eff"]`       | `r bold_if_diff(params_raw["eff"], params_calib["eff"])`             |
+| epscarb   | `r params_raw["epscarb"]`   | `r bold_if_diff(params_raw["epscarb"], params_calib["epscarb"])`     |
+| epslip    | `r params_raw["epslip"]`    | `r bold_if_diff(params_raw["epslip"], params_calib["epslip"])`       |
+| epsO2     | `r params_raw["epsO2"]`     | `r bold_if_diff(params_raw["epsO2"], params_calib["epsO2"])`         |
+| epsprot   | `r params_raw["epsprot"]`   | `r bold_if_diff(params_raw["epsprot"], params_calib["epsprot"])`     |
+| gd        | `r params_raw["gd"]`        | `r bold_if_diff(params_raw["gd"], params_calib["gd"])`               |
+| k         | `r params_raw["k"]`         | `r bold_if_diff(params_raw["k"], round(params_calib["k"], 3))`                 |
+| k0        | `r params_raw["k0"]`        | `r bold_if_diff(params_raw["k0"], params_calib["k0"])`               |
+| m         | `r params_raw["m"]`         | `r bold_if_diff(params_raw["m"], round(params_calib["m"], 3))`                 |
+| meanImax  | `r params_raw["meanImax"]`  | `r bold_if_diff(params_raw["meanImax"], params_calib["meanImax"])`   |
+| meanW     | `r params_raw["meanW"]`     | `r bold_if_diff(params_raw["meanW"], params_calib["meanW"])`         |
+| mortmyt   | `r params_raw["mortmyt"]`   | `r bold_if_diff(params_raw["mortmyt"], params_calib["mortmyt"])`     |
+| n         | `r params_raw["n"]`         | `r bold_if_diff(params_raw["n"], round(params_calib["n"], 3))`                 |
+| omega     | `r params_raw["omega"]`     | `r bold_if_diff(params_raw["omega"], round(params_calib["omega"], 4))`         |
+| pk        | `r params_raw["pk"]`        | `r bold_if_diff(params_raw["pk"], params_calib["pk"])`               |
+| Taa       | `r params_raw["Taa"]`       | `r bold_if_diff(params_raw["Taa"], params_calib["Taa"])`             |
+| Tma       | `r params_raw["Tma"]`       | `r bold_if_diff(params_raw["Tma"], params_calib["Tma"])`             |
+| Toa       | `r params_raw["Toa"]`       | `r bold_if_diff(params_raw["Toa"], params_calib["Toa"])`             |
+
+: Raw and calibrated parameter values for the `mud_crab` model. **Bold** values indicate parameters that changed during calibration. {#tbl-mud_crab-params}
+
+# Nile tilapia
+
+```{r get-params-nile_tilapia}
+#| code-summary: Get all parameters for the 'nile_tilapia' model
+
+this_species <- "nile_tilapia"
+this_filename <- file.path(prepdata_path, "species_parameters", paste0("species_parameters_", this_species, ".qs"))
+
+params <- read_excel(
+  file.path(rawdata_path, 'parameters_species.xlsx'),
+  sheet = this_species,
+  trim_ws = T, n_max = 28
+) %>%
+  clean_names() %>% 
+  select(used_in_script, value)
+
+params_raw <- params$value
+names(params_raw) <- params$used_in_script
+
+params_calib <- if (file.exists(this_filename)) {qd_read(this_filename)} else {default}
+```
+
+| Parameter | Raw value | Calibrated value |
+|:-----:|:-----:|:-----:|
+| a         | `r params_raw["a"]`         | `r bold_if_diff(params_raw["a"], round(params_calib["a"], 0))`                 |
+| alpha     | `r params_raw["alpha"]`     | `r bold_if_diff(params_raw["alpha"], round(params_calib["alpha"], 3))`         |
+| betac     | `r params_raw["betac"]`     | `r bold_if_diff(params_raw["betac"], round(params_calib["betac"], 4))`         |
+| CS        | `r params_raw["CS"]`        | `r bold_if_diff(params_raw["CS"], params_calib["CS"])`               |
+| deltaImax | `r params_raw["deltaImax"]` | `r bold_if_diff(params_raw["deltaImax"], params_calib["deltaImax"])` |
+| deltaW    | `r params_raw["deltaW"]`    | `r bold_if_diff(params_raw["deltaW"], params_calib["deltaW"])`       |
+| eff       | `r params_raw["eff"]`       | `r bold_if_diff(params_raw["eff"], params_calib["eff"])`             |
+| epscarb   | `r params_raw["epscarb"]`   | `r bold_if_diff(params_raw["epscarb"], params_calib["epscarb"])`     |
+| epslip    | `r params_raw["epslip"]`    | `r bold_if_diff(params_raw["epslip"], params_calib["epslip"])`       |
+| epsO2     | `r params_raw["epsO2"]`     | `r bold_if_diff(params_raw["epsO2"], params_calib["epsO2"])`         |
+| epsprot   | `r params_raw["epsprot"]`   | `r bold_if_diff(params_raw["epsprot"], params_calib["epsprot"])`     |
+| gd        | `r params_raw["gd"]`        | `r bold_if_diff(params_raw["gd"], params_calib["gd"])`               |
+| k         | `r params_raw["k"]`         | `r bold_if_diff(params_raw["k"], round(params_calib["k"], 3))`                 |
+| k0        | `r params_raw["k0"]`        | `r bold_if_diff(params_raw["k0"], params_calib["k0"])`               |
+| m         | `r params_raw["m"]`         | `r bold_if_diff(params_raw["m"], round(params_calib["m"], 3))`                 |
+| meanImax  | `r params_raw["meanImax"]`  | `r bold_if_diff(params_raw["meanImax"], params_calib["meanImax"])`   |
+| meanW     | `r params_raw["meanW"]`     | `r bold_if_diff(params_raw["meanW"], params_calib["meanW"])`         |
+| mortmyt   | `r params_raw["mortmyt"]`   | `r bold_if_diff(params_raw["mortmyt"], params_calib["mortmyt"])`     |
+| n         | `r params_raw["n"]`         | `r bold_if_diff(params_raw["n"], round(params_calib["n"], 3))`                 |
+| omega     | `r params_raw["omega"]`     | `r bold_if_diff(params_raw["omega"], round(params_calib["omega"], 4))`         |
+| pk        | `r params_raw["pk"]`        | `r bold_if_diff(params_raw["pk"], params_calib["pk"])`               |
+| Taa       | `r params_raw["Taa"]`       | `r bold_if_diff(params_raw["Taa"], params_calib["Taa"])`             |
+| Tma       | `r params_raw["Tma"]`       | `r bold_if_diff(params_raw["Tma"], params_calib["Tma"])`             |
+| Toa       | `r params_raw["Toa"]`       | `r bold_if_diff(params_raw["Toa"], params_calib["Toa"])`             |
+
+: Raw and calibrated parameter values for the `nile_tilapia` model. **Bold** values indicate parameters that changed during calibration. {#tbl-nile_tilapia-params}
+
+# Olive flounder
+
+```{r get-params-olive_flounder}
+#| code-summary: Get all parameters for the 'olive_flounder' model
+
+this_species <- "olive_flounder"
+this_filename <- file.path(prepdata_path, "species_parameters", paste0("species_parameters_", this_species, ".qs"))
+
+params <- read_excel(
+  file.path(rawdata_path, 'parameters_species.xlsx'),
+  sheet = this_species,
+  trim_ws = T, n_max = 28
+) %>%
+  clean_names() %>% 
+  select(used_in_script, value)
+
+params_raw <- params$value
+names(params_raw) <- params$used_in_script
+
+params_calib <- if (file.exists(this_filename)) {qd_read(this_filename)} else {default}
+```
+
+| Parameter | Raw value | Calibrated value |
+|:-----:|:-----:|:-----:|
+| a         | `r params_raw["a"]`         | `r bold_if_diff(params_raw["a"], round(params_calib["a"], 0))`                 |
+| alpha     | `r params_raw["alpha"]`     | `r bold_if_diff(params_raw["alpha"], round(params_calib["alpha"], 3))`         |
+| betac     | `r params_raw["betac"]`     | `r bold_if_diff(params_raw["betac"], round(params_calib["betac"], 4))`         |
+| CS        | `r params_raw["CS"]`        | `r bold_if_diff(params_raw["CS"], params_calib["CS"])`               |
+| deltaImax | `r params_raw["deltaImax"]` | `r bold_if_diff(params_raw["deltaImax"], params_calib["deltaImax"])` |
+| deltaW    | `r params_raw["deltaW"]`    | `r bold_if_diff(params_raw["deltaW"], params_calib["deltaW"])`       |
+| eff       | `r params_raw["eff"]`       | `r bold_if_diff(params_raw["eff"], params_calib["eff"])`             |
+| epscarb   | `r params_raw["epscarb"]`   | `r bold_if_diff(params_raw["epscarb"], params_calib["epscarb"])`     |
+| epslip    | `r params_raw["epslip"]`    | `r bold_if_diff(params_raw["epslip"], params_calib["epslip"])`       |
+| epsO2     | `r params_raw["epsO2"]`     | `r bold_if_diff(params_raw["epsO2"], params_calib["epsO2"])`         |
+| epsprot   | `r params_raw["epsprot"]`   | `r bold_if_diff(params_raw["epsprot"], params_calib["epsprot"])`     |
+| gd        | `r params_raw["gd"]`        | `r bold_if_diff(params_raw["gd"], params_calib["gd"])`               |
+| k         | `r params_raw["k"]`         | `r bold_if_diff(params_raw["k"], round(params_calib["k"], 3))`                 |
+| k0        | `r params_raw["k0"]`        | `r bold_if_diff(params_raw["k0"], params_calib["k0"])`               |
+| m         | `r params_raw["m"]`         | `r bold_if_diff(params_raw["m"], round(params_calib["m"], 3))`                 |
+| meanImax  | `r params_raw["meanImax"]`  | `r bold_if_diff(params_raw["meanImax"], params_calib["meanImax"])`   |
+| meanW     | `r params_raw["meanW"]`     | `r bold_if_diff(params_raw["meanW"], params_calib["meanW"])`         |
+| mortmyt   | `r params_raw["mortmyt"]`   | `r bold_if_diff(params_raw["mortmyt"], params_calib["mortmyt"])`     |
+| n         | `r params_raw["n"]`         | `r bold_if_diff(params_raw["n"], round(params_calib["n"], 3))`                 |
+| omega     | `r params_raw["omega"]`     | `r bold_if_diff(params_raw["omega"], round(params_calib["omega"], 4))`         |
+| pk        | `r params_raw["pk"]`        | `r bold_if_diff(params_raw["pk"], params_calib["pk"])`               |
+| Taa       | `r params_raw["Taa"]`       | `r bold_if_diff(params_raw["Taa"], params_calib["Taa"])`             |
+| Tma       | `r params_raw["Tma"]`       | `r bold_if_diff(params_raw["Tma"], params_calib["Tma"])`             |
+| Toa       | `r params_raw["Toa"]`       | `r bold_if_diff(params_raw["Toa"], params_calib["Toa"])`             |
+
+: Raw and calibrated parameter values for the `olive_flounder` model. **Bold** values indicate parameters that changed during calibration. {#tbl-olive_flounder-params}
+
+# Rainbow trout
+
+```{r get-params-rainbow_trout}
+#| code-summary: Get all parameters for the 'rainbow_trout' model
+
+this_species <- "rainbow_trout"
+this_filename <- file.path(prepdata_path, "species_parameters", paste0("species_parameters_", this_species, ".qs"))
+
+params <- read_excel(
+  file.path(rawdata_path, 'parameters_species.xlsx'),
+  sheet = this_species,
+  trim_ws = T, n_max = 28
+) %>%
+  clean_names() %>% 
+  select(used_in_script, value)
+
+params_raw <- params$value
+names(params_raw) <- params$used_in_script
+
+params_calib <- if (file.exists(this_filename)) {qd_read(this_filename)} else {default}
+```
+
+| Parameter | Raw value | Calibrated value |
+|:-----:|:-----:|:-----:|
+| a         | `r params_raw["a"]`         | `r bold_if_diff(params_raw["a"], round(params_calib["a"], 0))`                 |
+| alpha     | `r params_raw["alpha"]`     | `r bold_if_diff(params_raw["alpha"], round(params_calib["alpha"], 3))`         |
+| betac     | `r params_raw["betac"]`     | `r bold_if_diff(params_raw["betac"], round(params_calib["betac"], 4))`         |
+| CS        | `r params_raw["CS"]`        | `r bold_if_diff(params_raw["CS"], params_calib["CS"])`               |
+| deltaImax | `r params_raw["deltaImax"]` | `r bold_if_diff(params_raw["deltaImax"], params_calib["deltaImax"])` |
+| deltaW    | `r params_raw["deltaW"]`    | `r bold_if_diff(params_raw["deltaW"], params_calib["deltaW"])`       |
+| eff       | `r params_raw["eff"]`       | `r bold_if_diff(params_raw["eff"], params_calib["eff"])`             |
+| epscarb   | `r params_raw["epscarb"]`   | `r bold_if_diff(params_raw["epscarb"], params_calib["epscarb"])`     |
+| epslip    | `r params_raw["epslip"]`    | `r bold_if_diff(params_raw["epslip"], params_calib["epslip"])`       |
+| epsO2     | `r params_raw["epsO2"]`     | `r bold_if_diff(params_raw["epsO2"], params_calib["epsO2"])`         |
+| epsprot   | `r params_raw["epsprot"]`   | `r bold_if_diff(params_raw["epsprot"], params_calib["epsprot"])`     |
+| gd        | `r params_raw["gd"]`        | `r bold_if_diff(params_raw["gd"], params_calib["gd"])`               |
+| k         | `r params_raw["k"]`         | `r bold_if_diff(params_raw["k"], round(params_calib["k"], 3))`                 |
+| k0        | `r params_raw["k0"]`        | `r bold_if_diff(params_raw["k0"], params_calib["k0"])`               |
+| m         | `r params_raw["m"]`         | `r bold_if_diff(params_raw["m"], round(params_calib["m"], 3))`                 |
+| meanImax  | `r params_raw["meanImax"]`  | `r bold_if_diff(params_raw["meanImax"], params_calib["meanImax"])`   |
+| meanW     | `r params_raw["meanW"]`     | `r bold_if_diff(params_raw["meanW"], params_calib["meanW"])`         |
+| mortmyt   | `r params_raw["mortmyt"]`   | `r bold_if_diff(params_raw["mortmyt"], params_calib["mortmyt"])`     |
+| n         | `r params_raw["n"]`         | `r bold_if_diff(params_raw["n"], round(params_calib["n"], 3))`                 |
+| omega     | `r params_raw["omega"]`     | `r bold_if_diff(params_raw["omega"], round(params_calib["omega"], 4))`         |
+| pk        | `r params_raw["pk"]`        | `r bold_if_diff(params_raw["pk"], params_calib["pk"])`               |
+| Taa       | `r params_raw["Taa"]`       | `r bold_if_diff(params_raw["Taa"], params_calib["Taa"])`             |
+| Tma       | `r params_raw["Tma"]`       | `r bold_if_diff(params_raw["Tma"], params_calib["Tma"])`             |
+| Toa       | `r params_raw["Toa"]`       | `r bold_if_diff(params_raw["Toa"], params_calib["Toa"])`             |
+
+: Raw and calibrated parameter values for the `rainbow_trout` model. **Bold** values indicate parameters that changed during calibration. {#tbl-rainbow_trout-params}
+
+# Seabream
+
+```{r get-params-seabream}
+#| code-summary: Get all parameters for the 'seabream' model
+
+this_species <- "seabream"
+this_filename <- file.path(prepdata_path, "species_parameters", paste0("species_parameters_", this_species, ".qs"))
+
+params <- read_excel(
+  file.path(rawdata_path, 'parameters_species.xlsx'),
+  sheet = this_species,
+  trim_ws = T, n_max = 28
+) %>%
+  clean_names() %>% 
+  select(used_in_script, value)
+
+params_raw <- params$value
+names(params_raw) <- params$used_in_script
+
+params_calib <- if (file.exists(this_filename)) {qd_read(this_filename)} else {default}
+```
+
+| Parameter | Raw value | Calibrated value |
+|:-----:|:-----:|:-----:|
+| a         | `r params_raw["a"]`         | `r bold_if_diff(params_raw["a"], round(params_calib["a"], 0))`                 |
+| alpha     | `r params_raw["alpha"]`     | `r bold_if_diff(params_raw["alpha"], round(params_calib["alpha"], 3))`         |
+| betac     | `r params_raw["betac"]`     | `r bold_if_diff(params_raw["betac"], round(params_calib["betac"], 4))`         |
+| CS        | `r params_raw["CS"]`        | `r bold_if_diff(params_raw["CS"], params_calib["CS"])`               |
+| deltaImax | `r params_raw["deltaImax"]` | `r bold_if_diff(params_raw["deltaImax"], params_calib["deltaImax"])` |
+| deltaW    | `r params_raw["deltaW"]`    | `r bold_if_diff(params_raw["deltaW"], params_calib["deltaW"])`       |
+| eff       | `r params_raw["eff"]`       | `r bold_if_diff(params_raw["eff"], params_calib["eff"])`             |
+| epscarb   | `r params_raw["epscarb"]`   | `r bold_if_diff(params_raw["epscarb"], params_calib["epscarb"])`     |
+| epslip    | `r params_raw["epslip"]`    | `r bold_if_diff(params_raw["epslip"], params_calib["epslip"])`       |
+| epsO2     | `r params_raw["epsO2"]`     | `r bold_if_diff(params_raw["epsO2"], params_calib["epsO2"])`         |
+| epsprot   | `r params_raw["epsprot"]`   | `r bold_if_diff(params_raw["epsprot"], params_calib["epsprot"])`     |
+| gd        | `r params_raw["gd"]`        | `r bold_if_diff(params_raw["gd"], params_calib["gd"])`               |
+| k         | `r params_raw["k"]`         | `r bold_if_diff(params_raw["k"], round(params_calib["k"], 3))`                 |
+| k0        | `r params_raw["k0"]`        | `r bold_if_diff(params_raw["k0"], params_calib["k0"])`               |
+| m         | `r params_raw["m"]`         | `r bold_if_diff(params_raw["m"], round(params_calib["m"], 3))`                 |
+| meanImax  | `r params_raw["meanImax"]`  | `r bold_if_diff(params_raw["meanImax"], params_calib["meanImax"])`   |
+| meanW     | `r params_raw["meanW"]`     | `r bold_if_diff(params_raw["meanW"], params_calib["meanW"])`         |
+| mortmyt   | `r params_raw["mortmyt"]`   | `r bold_if_diff(params_raw["mortmyt"], params_calib["mortmyt"])`     |
+| n         | `r params_raw["n"]`         | `r bold_if_diff(params_raw["n"], round(params_calib["n"], 3))`                 |
+| omega     | `r params_raw["omega"]`     | `r bold_if_diff(params_raw["omega"], round(params_calib["omega"], 4))`         |
+| pk        | `r params_raw["pk"]`        | `r bold_if_diff(params_raw["pk"], params_calib["pk"])`               |
+| Taa       | `r params_raw["Taa"]`       | `r bold_if_diff(params_raw["Taa"], params_calib["Taa"])`             |
+| Tma       | `r params_raw["Tma"]`       | `r bold_if_diff(params_raw["Tma"], params_calib["Tma"])`             |
+| Toa       | `r params_raw["Toa"]`       | `r bold_if_diff(params_raw["Toa"], params_calib["Toa"])`             |
+
+: Raw and calibrated parameter values for the `seabream` model. **Bold** values indicate parameters that changed during calibration. {#tbl-seabream-params}
+
+# Tiger prawn
+
+```{r get-params-tiger_prawn}
+#| code-summary: Get all parameters for the 'tiger_prawn' model
+
+this_species <- "tiger_prawn"
+this_filename <- file.path(prepdata_path, "species_parameters", paste0("species_parameters_", this_species, ".qs"))
+
+params <- read_excel(
+  file.path(rawdata_path, 'parameters_species.xlsx'),
+  sheet = this_species,
+  trim_ws = T, n_max = 28
+) %>%
+  clean_names() %>% 
+  select(used_in_script, value)
+
+params_raw <- params$value
+names(params_raw) <- params$used_in_script
+
+params_calib <- if (file.exists(this_filename)) {qd_read(this_filename)} else {default}
+```
+
+| Parameter | Raw value | Calibrated value |
+|:-----:|:-----:|:-----:|
+| a         | `r params_raw["a"]`         | `r bold_if_diff(params_raw["a"], round(params_calib["a"], 0))`                 |
+| alpha     | `r params_raw["alpha"]`     | `r bold_if_diff(params_raw["alpha"], round(params_calib["alpha"], 3))`         |
+| betac     | `r params_raw["betac"]`     | `r bold_if_diff(params_raw["betac"], round(params_calib["betac"], 4))`         |
+| CS        | `r params_raw["CS"]`        | `r bold_if_diff(params_raw["CS"], params_calib["CS"])`               |
+| deltaImax | `r params_raw["deltaImax"]` | `r bold_if_diff(params_raw["deltaImax"], params_calib["deltaImax"])` |
+| deltaW    | `r params_raw["deltaW"]`    | `r bold_if_diff(params_raw["deltaW"], params_calib["deltaW"])`       |
+| eff       | `r params_raw["eff"]`       | `r bold_if_diff(params_raw["eff"], params_calib["eff"])`             |
+| epscarb   | `r params_raw["epscarb"]`   | `r bold_if_diff(params_raw["epscarb"], params_calib["epscarb"])`     |
+| epslip    | `r params_raw["epslip"]`    | `r bold_if_diff(params_raw["epslip"], params_calib["epslip"])`       |
+| epsO2     | `r params_raw["epsO2"]`     | `r bold_if_diff(params_raw["epsO2"], params_calib["epsO2"])`         |
+| epsprot   | `r params_raw["epsprot"]`   | `r bold_if_diff(params_raw["epsprot"], params_calib["epsprot"])`     |
+| gd        | `r params_raw["gd"]`        | `r bold_if_diff(params_raw["gd"], params_calib["gd"])`               |
+| k         | `r params_raw["k"]`         | `r bold_if_diff(params_raw["k"], round(params_calib["k"], 3))`                 |
+| k0        | `r params_raw["k0"]`        | `r bold_if_diff(params_raw["k0"], params_calib["k0"])`               |
+| m         | `r params_raw["m"]`         | `r bold_if_diff(params_raw["m"], round(params_calib["m"], 3))`                 |
+| meanImax  | `r params_raw["meanImax"]`  | `r bold_if_diff(params_raw["meanImax"], params_calib["meanImax"])`   |
+| meanW     | `r params_raw["meanW"]`     | `r bold_if_diff(params_raw["meanW"], params_calib["meanW"])`         |
+| mortmyt   | `r params_raw["mortmyt"]`   | `r bold_if_diff(params_raw["mortmyt"], params_calib["mortmyt"])`     |
+| n         | `r params_raw["n"]`         | `r bold_if_diff(params_raw["n"], round(params_calib["n"], 3))`                 |
+| omega     | `r params_raw["omega"]`     | `r bold_if_diff(params_raw["omega"], round(params_calib["omega"], 4))`         |
+| pk        | `r params_raw["pk"]`        | `r bold_if_diff(params_raw["pk"], params_calib["pk"])`               |
+| Taa       | `r params_raw["Taa"]`       | `r bold_if_diff(params_raw["Taa"], params_calib["Taa"])`             |
+| Tma       | `r params_raw["Tma"]`       | `r bold_if_diff(params_raw["Tma"], params_calib["Tma"])`             |
+| Toa       | `r params_raw["Toa"]`       | `r bold_if_diff(params_raw["Toa"], params_calib["Toa"])`             |
+
+: Raw and calibrated parameter values for the `tiger_prawn` model. **Bold** values indicate parameters that changed during calibration. {#tbl-tiger_prawn-params}
+
+# Tuna
+
+```{r get-params-tuna}
+#| code-summary: Get all parameters for the 'tuna' model
+
+this_species <- "tuna"
+this_filename <- file.path(prepdata_path, "species_parameters", paste0("species_parameters_", this_species, ".qs"))
+
+params <- read_excel(
+  file.path(rawdata_path, 'parameters_species.xlsx'),
+  sheet = this_species,
+  trim_ws = T, n_max = 28
+) %>%
+  clean_names() %>% 
+  select(used_in_script, value)
+
+params_raw <- params$value
+names(params_raw) <- params$used_in_script
+
+params_calib <- if (file.exists(this_filename)) {qd_read(this_filename)} else {default}
+```
+
+| Parameter | Raw value | Calibrated value |
+|:-----:|:-----:|:-----:|
+| a         | `r params_raw["a"]`         | `r bold_if_diff(params_raw["a"], round(params_calib["a"], 0))`                 |
+| alpha     | `r params_raw["alpha"]`     | `r bold_if_diff(params_raw["alpha"], round(params_calib["alpha"], 3))`         |
+| betac     | `r params_raw["betac"]`     | `r bold_if_diff(params_raw["betac"], round(params_calib["betac"], 4))`         |
+| CS        | `r params_raw["CS"]`        | `r bold_if_diff(params_raw["CS"], params_calib["CS"])`               |
+| deltaImax | `r params_raw["deltaImax"]` | `r bold_if_diff(params_raw["deltaImax"], params_calib["deltaImax"])` |
+| deltaW    | `r params_raw["deltaW"]`    | `r bold_if_diff(params_raw["deltaW"], params_calib["deltaW"])`       |
+| eff       | `r params_raw["eff"]`       | `r bold_if_diff(params_raw["eff"], params_calib["eff"])`             |
+| epscarb   | `r params_raw["epscarb"]`   | `r bold_if_diff(params_raw["epscarb"], params_calib["epscarb"])`     |
+| epslip    | `r params_raw["epslip"]`    | `r bold_if_diff(params_raw["epslip"], params_calib["epslip"])`       |
+| epsO2     | `r params_raw["epsO2"]`     | `r bold_if_diff(params_raw["epsO2"], params_calib["epsO2"])`         |
+| epsprot   | `r params_raw["epsprot"]`   | `r bold_if_diff(params_raw["epsprot"], params_calib["epsprot"])`     |
+| gd        | `r params_raw["gd"]`        | `r bold_if_diff(params_raw["gd"], params_calib["gd"])`               |
+| k         | `r params_raw["k"]`         | `r bold_if_diff(params_raw["k"], round(params_calib["k"], 3))`                 |
+| k0        | `r params_raw["k0"]`        | `r bold_if_diff(params_raw["k0"], params_calib["k0"])`               |
+| m         | `r params_raw["m"]`         | `r bold_if_diff(params_raw["m"], round(params_calib["m"], 3))`                 |
+| meanImax  | `r params_raw["meanImax"]`  | `r bold_if_diff(params_raw["meanImax"], params_calib["meanImax"])`   |
+| meanW     | `r params_raw["meanW"]`     | `r bold_if_diff(params_raw["meanW"], params_calib["meanW"])`         |
+| mortmyt   | `r params_raw["mortmyt"]`   | `r bold_if_diff(params_raw["mortmyt"], params_calib["mortmyt"])`     |
+| n         | `r params_raw["n"]`         | `r bold_if_diff(params_raw["n"], round(params_calib["n"], 3))`                 |
+| omega     | `r params_raw["omega"]`     | `r bold_if_diff(params_raw["omega"], round(params_calib["omega"], 4))`         |
+| pk        | `r params_raw["pk"]`        | `r bold_if_diff(params_raw["pk"], params_calib["pk"])`               |
+| Taa       | `r params_raw["Taa"]`       | `r bold_if_diff(params_raw["Taa"], params_calib["Taa"])`             |
+| Tma       | `r params_raw["Tma"]`       | `r bold_if_diff(params_raw["Tma"], params_calib["Tma"])`             |
+| Toa       | `r params_raw["Toa"]`       | `r bold_if_diff(params_raw["Toa"], params_calib["Toa"])`             |
+
+: Raw and calibrated parameter values for the `tuna` model. **Bold** values indicate parameters that changed during calibration. {#tbl-tuna-params}
+
+# Whiteleg shrimp
+
+```{r get-params-whiteleg_shrimp}
+#| code-summary: Get all parameters for the 'whiteleg_shrimp' model
+
+this_species <- "whiteleg_shrimp"
+this_filename <- file.path(prepdata_path, "species_parameters", paste0("species_parameters_", this_species, ".qs"))
+
+params <- read_excel(
+  file.path(rawdata_path, 'parameters_species.xlsx'),
+  sheet = this_species,
+  trim_ws = T, n_max = 28
+) %>%
+  clean_names() %>% 
+  select(used_in_script, value)
+
+params_raw <- params$value
+names(params_raw) <- params$used_in_script
+
+params_calib <- if (file.exists(this_filename)) {qd_read(this_filename)} else {default}
+```
+
+| Parameter | Raw value | Calibrated value |
+|:-----:|:-----:|:-----:|
+| a         | `r params_raw["a"]`         | `r bold_if_diff(params_raw["a"], round(params_calib["a"], 0))`                 |
+| alpha     | `r params_raw["alpha"]`     | `r bold_if_diff(params_raw["alpha"], round(params_calib["alpha"], 3))`         |
+| betac     | `r params_raw["betac"]`     | `r bold_if_diff(params_raw["betac"], round(params_calib["betac"], 4))`         |
+| CS        | `r params_raw["CS"]`        | `r bold_if_diff(params_raw["CS"], params_calib["CS"])`               |
+| deltaImax | `r params_raw["deltaImax"]` | `r bold_if_diff(params_raw["deltaImax"], params_calib["deltaImax"])` |
+| deltaW    | `r params_raw["deltaW"]`    | `r bold_if_diff(params_raw["deltaW"], params_calib["deltaW"])`       |
+| eff       | `r params_raw["eff"]`       | `r bold_if_diff(params_raw["eff"], params_calib["eff"])`             |
+| epscarb   | `r params_raw["epscarb"]`   | `r bold_if_diff(params_raw["epscarb"], params_calib["epscarb"])`     |
+| epslip    | `r params_raw["epslip"]`    | `r bold_if_diff(params_raw["epslip"], params_calib["epslip"])`       |
+| epsO2     | `r params_raw["epsO2"]`     | `r bold_if_diff(params_raw["epsO2"], params_calib["epsO2"])`         |
+| epsprot   | `r params_raw["epsprot"]`   | `r bold_if_diff(params_raw["epsprot"], params_calib["epsprot"])`     |
+| gd        | `r params_raw["gd"]`        | `r bold_if_diff(params_raw["gd"], params_calib["gd"])`               |
+| k         | `r params_raw["k"]`         | `r bold_if_diff(params_raw["k"], round(params_calib["k"], 3))`                 |
+| k0        | `r params_raw["k0"]`        | `r bold_if_diff(params_raw["k0"], params_calib["k0"])`               |
+| m         | `r params_raw["m"]`         | `r bold_if_diff(params_raw["m"], round(params_calib["m"], 3))`                 |
+| meanImax  | `r params_raw["meanImax"]`  | `r bold_if_diff(params_raw["meanImax"], params_calib["meanImax"])`   |
+| meanW     | `r params_raw["meanW"]`     | `r bold_if_diff(params_raw["meanW"], params_calib["meanW"])`         |
+| mortmyt   | `r params_raw["mortmyt"]`   | `r bold_if_diff(params_raw["mortmyt"], params_calib["mortmyt"])`     |
+| n         | `r params_raw["n"]`         | `r bold_if_diff(params_raw["n"], round(params_calib["n"], 3))`                 |
+| omega     | `r params_raw["omega"]`     | `r bold_if_diff(params_raw["omega"], round(params_calib["omega"], 4))`         |
+| pk        | `r params_raw["pk"]`        | `r bold_if_diff(params_raw["pk"], params_calib["pk"])`               |
+| Taa       | `r params_raw["Taa"]`       | `r bold_if_diff(params_raw["Taa"], params_calib["Taa"])`             |
+| Tma       | `r params_raw["Tma"]`       | `r bold_if_diff(params_raw["Tma"], params_calib["Tma"])`             |
+| Toa       | `r params_raw["Toa"]`       | `r bold_if_diff(params_raw["Toa"], params_calib["Toa"])`             |
+
+: Raw and calibrated parameter values for the `whiteleg_shrimp` model. **Bold** values indicate parameters that changed during calibration. {#tbl-whiteleg_shrimp-params}
+
+::: {style="display: flex; justify-content: space-between;"}
+[← Previous: Assigning locations](02_assigning_locations.qmd)
+
+[Next: Extract future temperatures →](04_extracting_future_temperatures.qmd)
+:::

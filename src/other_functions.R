@@ -434,4 +434,17 @@ plot_sim_results_troubleshooting <- function(df, CS = NA) {
     (p_excr | p_elem)
 }
 
+get_growing_window <- function(temperatures, grow_days, species_params) {
+  temperatures$fr <- sapply(
+    X = temperatures$sst, 
+    FUN = feeding_rate, 
+    species_params = species_params
+  )
+  temperatures$fr[is.na(temperatures$fr)] <- 0
 
+  temperatures %>% 
+    mutate(roll_fr = slide_dbl(fr, sum, .before = 0, .after = grow_days - 1)) %>%
+    slice_max(roll_fr, n = 1) %>%
+    mutate(end_doy = doy + grow_days - 1) %>% 
+    select(start = doy, end = end_doy)
+}
