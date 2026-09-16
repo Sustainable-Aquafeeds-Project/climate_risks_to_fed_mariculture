@@ -78,6 +78,31 @@
       "Maintainer": "Kirill Müller <kirill@cynkra.com>",
       "Repository": "CRAN"
     },
+    "Formula": {
+      "Package": "Formula",
+      "Version": "1.2-6",
+      "Source": "Repository",
+      "Date": "2026-08-01",
+      "Title": "Extended Model Formulas",
+      "Description": "Infrastructure for extended formulas with multiple parts on the right-hand side and/or multiple responses on the left-hand side (see <doi:10.18637/jss.v034.i01>).",
+      "Authors@R": "c(person(given = \"Achim\", family = \"Zeileis\", role = c(\"aut\", \"cre\"), email = \"Achim.Zeileis@R-project.org\", comment = c(ORCID = \"0000-0003-0918-3766\")), person(given = \"Yves\", family = \"Croissant\", role = \"aut\", email = \"Yves.Croissant@univ-reunion.fr\", comment = c(ORCID = \"0000-0002-4857-7736\")))",
+      "Depends": [
+        "R (>= 2.0.0)",
+        "stats"
+      ],
+      "Suggests": [
+        "knitr",
+        "rmarkdown"
+      ],
+      "License": "GPL-2 | GPL-3",
+      "VignetteBuilder": "knitr",
+      "URL": "https://zeileis.codeberg.page/Formula/",
+      "BugReports": "https://codeberg.org/zeileis/Formula/issues",
+      "NeedsCompilation": "no",
+      "Author": "Achim Zeileis [aut, cre] (ORCID: <https://orcid.org/0000-0003-0918-3766>), Yves Croissant [aut] (ORCID: <https://orcid.org/0000-0002-4857-7736>)",
+      "Maintainer": "Achim Zeileis <Achim.Zeileis@R-project.org>",
+      "Repository": "CRAN"
+    },
     "KernSmooth": {
       "Package": "KernSmooth",
       "Version": "2.23-26",
@@ -941,6 +966,49 @@
       "Maintainer": "Jennifer Bryan <jenny@stat.ubc.ca>",
       "Repository": "https://packagemanager.posit.co/cran/latest",
       "Encoding": "UTF-8"
+    },
+    "checkmate": {
+      "Package": "checkmate",
+      "Version": "2.3.4",
+      "Source": "Repository",
+      "Type": "Package",
+      "Title": "Fast and Versatile Argument Checks",
+      "Description": "Tests and assertions to perform frequent argument checks. A substantial part of the package was written in C to minimize any worries about execution time overhead.",
+      "Authors@R": "c( person(\"Michel\", \"Lang\", NULL, \"michellang@gmail.com\", role = c(\"cre\", \"aut\"), comment = c(ORCID = \"0000-0001-9754-0393\")), person(\"Bernd\", \"Bischl\", NULL, \"bernd_bischl@gmx.net\", role = \"ctb\"), person(\"Dénes\", \"Tóth\", NULL, \"toth.denes@kogentum.hu\", role = \"ctb\", comment = c(ORCID = \"0000-0003-4262-3217\")) )",
+      "URL": "https://mllg.github.io/checkmate/, https://github.com/mllg/checkmate",
+      "URLNote": "https://github.com/mllg/checkmate",
+      "BugReports": "https://github.com/mllg/checkmate/issues",
+      "NeedsCompilation": "yes",
+      "ByteCompile": "yes",
+      "Encoding": "UTF-8",
+      "Depends": [
+        "R (>= 3.0.0)"
+      ],
+      "Imports": [
+        "backports (>= 1.1.0)",
+        "utils"
+      ],
+      "Suggests": [
+        "R6",
+        "fastmatch",
+        "data.table (>= 1.9.8)",
+        "devtools",
+        "ggplot2",
+        "knitr",
+        "magrittr",
+        "microbenchmark",
+        "rmarkdown",
+        "testthat (>= 3.0.4)",
+        "tinytest (>= 1.1.0)",
+        "tibble"
+      ],
+      "License": "BSD_3_clause + file LICENSE",
+      "VignetteBuilder": "knitr",
+      "RoxygenNote": "7.3.3",
+      "Collate": "'AssertCollection.R' 'allMissing.R' 'anyInfinite.R' 'anyMissing.R' 'anyNaN.R' 'asInteger.R' 'assert.R' 'helper.R' 'makeExpectation.R' 'makeTest.R' 'makeAssertion.R' 'checkAccess.R' 'checkArray.R' 'checkAtomic.R' 'checkAtomicVector.R' 'checkCharacter.R' 'checkChoice.R' 'checkClass.R' 'checkComplex.R' 'checkCount.R' 'checkDataFrame.R' 'checkDataTable.R' 'checkDate.R' 'checkDirectoryExists.R' 'checkDisjunct.R' 'checkDouble.R' 'checkEnvironment.R' 'checkFALSE.R' 'checkFactor.R' 'checkFileExists.R' 'checkFlag.R' 'checkFormula.R' 'checkFunction.R' 'checkInt.R' 'checkInteger.R' 'checkIntegerish.R' 'checkList.R' 'checkLogical.R' 'checkMatrix.R' 'checkMultiClass.R' 'checkNamed.R' 'checkNames.R' 'checkNull.R' 'checkNumber.R' 'checkNumeric.R' 'checkOS.R' 'checkPOSIXct.R' 'checkPathForOutput.R' 'checkPermutation.R' 'checkR6.R' 'checkRaw.R' 'checkScalar.R' 'checkScalarNA.R' 'checkSetEqual.R' 'checkString.R' 'checkSubset.R' 'checkTRUE.R' 'checkTibble.R' 'checkVector.R' 'coalesce.R' 'isIntegerish.R' 'matchArg.R' 'qassert.R' 'qassertr.R' 'vname.R' 'wfwl.R' 'zzz.R'",
+      "Author": "Michel Lang [cre, aut] (ORCID: <https://orcid.org/0000-0001-9754-0393>), Bernd Bischl [ctb], Dénes Tóth [ctb] (ORCID: <https://orcid.org/0000-0003-4262-3217>)",
+      "Maintainer": "Michel Lang <michellang@gmail.com>",
+      "Repository": "CRAN"
     },
     "class": {
       "Package": "class",
@@ -1885,6 +1953,40 @@
       "Author": "Hadley Wickham [aut, cre], Posit Software, PBC [cph, fnd] (ROR: <https://ror.org/03wc8by49>)",
       "Maintainer": "Hadley Wickham <hadley@posit.co>",
       "Repository": "CRAN"
+    },
+    "formula.tools": {
+      "Package": "formula.tools",
+      "Version": "1.7.1",
+      "Source": "Repository",
+      "Type": "Package",
+      "Title": "Programmatic Utilities for Manipulating Formulas, Expressions, Calls, Assignments and Other R Objects",
+      "Date": "2018-02-22",
+      "Authors@R": "c( person(\"Christopher\", \"Brown\", , \"chris.brown@decisionpatterns.com\", c(\"aut\", \"cre\") ), person(\"Decision Patterns\", role = \"cph\") )",
+      "Description": "These utilities facilitate the programmatic manipulations of formulas, expressions, calls, assignments and other R language objects.  These objects all share the same structure: a left-hand side, operator and  right-hand side. This packages provides methods for accessing and  modifying this structures as well as extracting and replacing names and  symbols from these objects.",
+      "Depends": [
+        "R (>= 3.0.0)"
+      ],
+      "Imports": [
+        "operator.tools(>= 1.4.0)",
+        "utils",
+        "methods"
+      ],
+      "Suggests": [
+        "magrittr",
+        "testthat"
+      ],
+      "License": "GPL-2 | file LICENSE",
+      "URL": "https://github.com/decisionpatterns/formula.tools",
+      "BugReports": "https://github.com/decisionpatterns/formula.tools/issues",
+      "LazyLoad": "yes",
+      "LazyData": "yes",
+      "Collate": "'as.character.formula.R' 'env.R' 'get.vars.R' 'invert.R' 'is.one.sided.R' 'is.two.sided.R' 'lhs.vars.R' 'op.type.R' 'parts.R' 'parts.lhs.get.R' 'parts.lhs.set.R' 'parts.op.get.R' 'parts.op.set.R' 'parts.rhs.get.R' 'parts.rhs.set.R' 'rhs.vars.R' 'split.terms.R' 'terms.R' 'toggle.sign.R' 'zzz.R'",
+      "RoxygenNote": "6.0.1.9000",
+      "Repository": "CRAN",
+      "Encoding": "UTF-8",
+      "NeedsCompilation": "no",
+      "Author": "Christopher Brown [aut, cre], Decision Patterns [cph]",
+      "Maintainer": "Christopher Brown <chris.brown@decisionpatterns.com>"
     },
     "fs": {
       "Package": "fs",
@@ -3641,6 +3743,67 @@
       "Maintainer": "Winston Chang <winston@rstudio.com>",
       "Repository": "https://packagemanager.posit.co/cran/latest"
     },
+    "metR": {
+      "Package": "metR",
+      "Version": "0.18.3",
+      "Source": "Repository",
+      "Title": "Tools for Easier Analysis of Meteorological Fields",
+      "Authors@R": "person(\"Elio\", \"Campitelli\", , \"eliocampitelli@gmail.com\", role = c(\"cre\", \"aut\"), comment = c(ORCID = \"0000-0002-7742-9230\"))",
+      "Description": "Many useful functions and extensions for dealing with meteorological data in the tidy data framework. Extends 'ggplot2' for better plotting of scalar and vector fields and provides commonly used analysis methods in the atmospheric sciences.",
+      "License": "GPL-3",
+      "URL": "https://eliocamp.github.io/metR/, https://github.com/eliocamp/metR",
+      "BugReports": "https://github.com/eliocamp/metR/issues",
+      "Depends": [
+        "R (>= 2.10)"
+      ],
+      "Imports": [
+        "checkmate",
+        "data.table",
+        "digest",
+        "Formula",
+        "formula.tools",
+        "ggplot2 (>= 3.5.0)",
+        "grid",
+        "gtable",
+        "isoband",
+        "lubridate",
+        "memoise",
+        "plyr",
+        "purrr",
+        "rlang",
+        "scales",
+        "sf",
+        "stringr"
+      ],
+      "Suggests": [
+        "CFtime",
+        "furrr",
+        "gsignal",
+        "irlba",
+        "knitr",
+        "kriging",
+        "maps",
+        "markdown",
+        "ncdf4",
+        "proj4",
+        "rcdo",
+        "reshape2",
+        "rnaturalearth",
+        "terra",
+        "testthat (>= 2.1.0)",
+        "vdiffr"
+      ],
+      "VignetteBuilder": "knitr",
+      "ByteCompile": "yes",
+      "Encoding": "UTF-8",
+      "Language": "en-GB",
+      "LazyData": "true",
+      "RoxygenNote": "7.3.3",
+      "NeedsCompilation": "no",
+      "Author": "Elio Campitelli [cre, aut] (ORCID: <https://orcid.org/0000-0002-7742-9230>)",
+      "Maintainer": "Elio Campitelli <eliocampitelli@gmail.com>",
+      "Repository": "CRAN"
+    },
     "mime": {
       "Package": "mime",
       "Version": "0.13",
@@ -3811,6 +3974,32 @@
       "Author": "Jeroen Ooms [aut, cre] (ORCID: <https://orcid.org/0000-0002-4035-0289>), Oliver Keyes [ctb]",
       "Maintainer": "Jeroen Ooms <jeroenooms@gmail.com>",
       "Repository": "CRAN"
+    },
+    "operator.tools": {
+      "Package": "operator.tools",
+      "Version": "1.6.3.1",
+      "Source": "Repository",
+      "Type": "Package",
+      "Title": "Utilities for Working with R's Operators",
+      "Date": "2017-02-28",
+      "Authors@R": "c( person(\"Christopher\", \"Brown\", , \"chris.brown@decisionpatterns.com\", c(\"aut\", \"cre\") ), person(\"Decision Patterns\", role = \"cph\") )",
+      "Imports": [
+        "utils (>= 3.3.2)"
+      ],
+      "Suggests": [
+        "operators (>= 0.1.8)",
+        "magrittr (>= 1.5)",
+        "testthat (>= 1.0.2)"
+      ],
+      "Description": "Provides a collection of utilities that allow programming with  R's operators. Routines allow classifying operators,  translating to and from an operator and its underlying function, and inverting  some operators (e.g. comparison operators), etc. All methods can be extended to custom infix operators.",
+      "License": "GPL-2 | file LICENSE",
+      "URL": "https://github.com/decisionpatterns/operator.tools",
+      "BugReports": "https://github.com/decisionpatterns/operator.tools/issues",
+      "RoxygenNote": "6.0.1.9000",
+      "Repository": "CRAN",
+      "NeedsCompilation": "no",
+      "Author": "Christopher Brown [aut, cre], Decision Patterns [cph]",
+      "Maintainer": "Christopher Brown <chris.brown@decisionpatterns.com>"
     },
     "oz": {
       "Package": "oz",
