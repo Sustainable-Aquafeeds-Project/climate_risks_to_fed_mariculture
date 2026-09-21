@@ -8,6 +8,7 @@ project:
     - documentation-qmds/01_choosing_species.qmd
     - documentation-qmds/02_assigning_locations.qmd
     
+    - documentation-qmds/03_00_all_species_parameters.qmd
     - documentation-qmds/03_01_check_species_atlantic_salmon.qmd
     - documentation-qmds/03_02_check_species_rainbow_trout.qmd
     - documentation-qmds/03_03_check_species_seabream.qmd
@@ -24,7 +25,6 @@ project:
     - documentation-qmds/03_14_check_species_nile_tilapia.qmd
     - documentation-qmds/03_15_check_species_drum_croaker.qmd
     - documentation-qmds/03_16_check_species_tiger_prawn.qmd
-    - documentation-qmds/03_17_all_species_parameters.qmd
 
     - documentation-qmds/04_extracting_future_temperatures.qmd
 
