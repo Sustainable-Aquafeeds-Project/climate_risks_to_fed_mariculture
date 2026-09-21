@@ -1,5 +1,5 @@
 ---
-title: "3.18: Summarising all species parameters"
+title: "3.0: Summarising all species parameters"
 subtitle: "FAO Climate Change Risks to Fed Mariculture"
 author: 
   - "Tormey Reimer"
@@ -74,6 +74,8 @@ This document...
 
 # Asian seabass
 
+See the full calibration in [03_05_check_species_asian_seabass](03_05_check_species_asian_seabass.qmd).
+
 ```{r get-params-asian_seabass}
 #| code-summary: Get all parameters for the 'asian_seabass' model
 
@@ -124,6 +126,8 @@ params_calib <- if (file.exists(this_filename)) {qd_read(this_filename)} else {d
 : Raw and calibrated parameter values for the `asian_seabass` model. **Bold** values indicate parameters that changed during calibration. {#tbl-asian_seabass-params}
 
 # Atlantic salmon
+
+See the full calibration in [03_01_check_species_atlantic_salmon](03_01_check_species_atlantic_salmon.qmd).
 
 ```{r get-params-atlantic_salmon}
 #| code-summary: Get all parameters for the 'atlantic_salmon' model
@@ -176,6 +180,8 @@ params_calib <- if (file.exists(this_filename)) {qd_read(this_filename)} else {d
 
 # Drum/croaker
 
+See the full calibration in [03_15_check_species_drum_croaker](03_15_check_species_drum_croaker.qmd).
+
 ```{r get-params-drum_croaker}
 #| code-summary: Get all parameters for the 'drum_croaker' model
 
@@ -226,6 +232,8 @@ params_calib <- if (file.exists(this_filename)) {qd_read(this_filename)} else {d
 : Raw and calibrated parameter values for the `drum_croaker` model. **Bold** values indicate parameters that changed during calibration. {#tbl-drum_croaker-params}
 
 # European seabass
+
+See the full calibration in [03_04_check_species_european_seabass](03_04_check_species_european_seabass.qmd).
 
 ```{r get-params-european_seabass}
 #| code-summary: Get all parameters for the 'european_seabass' model
@@ -278,6 +286,8 @@ params_calib <- if (file.exists(this_filename)) {qd_read(this_filename)} else {d
 
 # Golden pompano
 
+See the full calibration in [03_09_check_species_golden_pompano](03_09_check_species_golden_pompano.qmd).
+
 ```{r get-params-golden_pompano}
 #| code-summary: Get all parameters for the 'golden_pompano' model
 
@@ -328,6 +338,8 @@ params_calib <- if (file.exists(this_filename)) {qd_read(this_filename)} else {d
 : Raw and calibrated parameter values for the `golden_pompano` model. **Bold** values indicate parameters that changed during calibration. {#tbl-golden_pompano-params}
 
 # Grouper
+
+See the full calibration in [03_10_check_species_grouper](03_10_check_species_grouper.qmd).
 
 ```{r get-params-grouper}
 #| code-summary: Get all parameters for the 'grouper' model
@@ -380,6 +392,8 @@ params_calib <- if (file.exists(this_filename)) {qd_read(this_filename)} else {d
 
 # Japanese amberjack
 
+See the full calibration in [03_13_check_species_japanese_amberjack](03_13_check_species_japanese_amberjack.qmd).
+
 ```{r get-params-japanese_amberjack}
 #| code-summary: Get all parameters for the 'japanese_amberjack' model
 
@@ -430,6 +444,8 @@ params_calib <- if (file.exists(this_filename)) {qd_read(this_filename)} else {d
 : Raw and calibrated parameter values for the `japanese_amberjack` model. **Bold** values indicate parameters that changed during calibration. {#tbl-japanese_amberjack-params}
 
 # Milkfish
+
+See the full calibration in [03_07_check_species_milkfish](03_07_check_species_milkfish.qmd).
 
 ```{r get-params-milkfish}
 #| code-summary: Get all parameters for the 'milkfish' model
@@ -482,6 +498,8 @@ params_calib <- if (file.exists(this_filename)) {qd_read(this_filename)} else {d
 
 # Mud crab
 
+See the full calibration in [03_08_check_species_mud_crab](03_08_check_species_mud_crab.qmd).
+
 ```{r get-params-mud_crab}
 #| code-summary: Get all parameters for the 'mud_crab' model
 
@@ -532,6 +550,8 @@ params_calib <- if (file.exists(this_filename)) {qd_read(this_filename)} else {d
 : Raw and calibrated parameter values for the `mud_crab` model. **Bold** values indicate parameters that changed during calibration. {#tbl-mud_crab-params}
 
 # Nile tilapia
+
+See the full calibration in [03_14_check_species_nile_tilapia](03_14_check_species_nile_tilapia.qmd).
 
 ```{r get-params-nile_tilapia}
 #| code-summary: Get all parameters for the 'nile_tilapia' model
@@ -584,6 +604,8 @@ params_calib <- if (file.exists(this_filename)) {qd_read(this_filename)} else {d
 
 # Olive flounder
 
+See the full calibration in [03_12_check_species_olive_flounder](03_12_check_species_olive_flounder.qmd).
+
 ```{r get-params-olive_flounder}
 #| code-summary: Get all parameters for the 'olive_flounder' model
 
@@ -634,6 +656,8 @@ params_calib <- if (file.exists(this_filename)) {qd_read(this_filename)} else {d
 : Raw and calibrated parameter values for the `olive_flounder` model. **Bold** values indicate parameters that changed during calibration. {#tbl-olive_flounder-params}
 
 # Rainbow trout
+
+See the full calibration in [03_02_check_species_rainbow_trout](03_02_check_species_rainbow_trout.qmd).
 
 ```{r get-params-rainbow_trout}
 #| code-summary: Get all parameters for the 'rainbow_trout' model
@@ -686,6 +710,8 @@ params_calib <- if (file.exists(this_filename)) {qd_read(this_filename)} else {d
 
 # Seabream
 
+See the full calibration in [03_03_check_species_seabream](03_03_check_species_seabream.qmd).
+
 ```{r get-params-seabream}
 #| code-summary: Get all parameters for the 'seabream' model
 
@@ -736,6 +762,8 @@ params_calib <- if (file.exists(this_filename)) {qd_read(this_filename)} else {d
 : Raw and calibrated parameter values for the `seabream` model. **Bold** values indicate parameters that changed during calibration. {#tbl-seabream-params}
 
 # Tiger prawn
+
+See the full calibration in [03_16_check_species_tiger_prawn](03_16_check_species_tiger_prawn.qmd).
 
 ```{r get-params-tiger_prawn}
 #| code-summary: Get all parameters for the 'tiger_prawn' model
@@ -788,6 +816,8 @@ params_calib <- if (file.exists(this_filename)) {qd_read(this_filename)} else {d
 
 # Tuna
 
+See the full calibration in [03_11_check_species_tuna](03_11_check_species_tuna.qmd).
+
 ```{r get-params-tuna}
 #| code-summary: Get all parameters for the 'tuna' model
 
@@ -838,6 +868,8 @@ params_calib <- if (file.exists(this_filename)) {qd_read(this_filename)} else {d
 : Raw and calibrated parameter values for the `tuna` model. **Bold** values indicate parameters that changed during calibration. {#tbl-tuna-params}
 
 # Whiteleg shrimp
+
+See the full calibration in [03_06_check_species_whiteleg_shrimp](03_06_check_species_whiteleg_shrimp.qmd).
 
 ```{r get-params-whiteleg_shrimp}
 #| code-summary: Get all parameters for the 'whiteleg_shrimp' model

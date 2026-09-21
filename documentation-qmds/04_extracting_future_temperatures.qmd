@@ -46,8 +46,7 @@ library(magrittr)
 #| code-summary: "Source R scripts in use"
 
 here("src", "dirs.R") %>% source()
-here("src", "functions.R") %>% source()
-here("src", "display_globals.R") %>% source()
+here("src", "other_functions.R") %>% source()
 here("src", "mapping_vars.R") %>% source()
 ```
 
@@ -183,7 +182,7 @@ message(sprintf("%i of %i remaining farm IDs have cells from the expanded cell r
 message(sprintf("There are %i farm_IDs still remaining.", still_missing_3 %>% filter(is.na(new_cells)) %>% nrow()))
 ```
 
-After 4 rounds of searching progressively wider areas, there are still 137 farms missing temperatures. Where are they?
+After 4 rounds of searching progressively wider areas, there are still 132 farms missing temperatures. Where are they?
 
 ```{r fig-where-are-the-missing-farms}
 #| code-summary: Show the missing farms and their nearest neighbour
@@ -308,6 +307,8 @@ tos_rast_fnms_ls <- tibble(
 tos_rast_fnms_ls <- split(tos_rast_fnms_ls, tos_rast_fnms_ls$year)
 ```
 
+This next cell extracts all temperatures in each year for every focal cell. This avoids having to do multiple extracts of the surface temperature rasters.
+
 ```{r extract-temps-lookup-cells}
 #| code-summary: Extract all farm focal cells for each year, accumulating results into some lookup files
 #| eval: false
@@ -336,26 +337,30 @@ walk(
 )
 ```
 
+The focal cell temperatures are then combined according to the focal cell lookup table to form the farm temperatures.
+
 ```{r per-farm-projected-temperatures}
 #| code-summary: Assemble per-farm files from the extracted temperatures in the lookup tables
 #| eval: false
 
 assigned_farms_cells <- file.path(prepdata_path, "assigned_farms_focal_cells.qs") %>% qs_read()
+
 subset_farms <- assigned_farms_cells %>% 
-  # filter(source == "extracted") %>% 
-  pull(farm_ID) %>% unique()
+  mutate(
+    out_file = file.path(farm_temp_outputs, paste0("farm_", fix_int(farm_ID, digits = 8), ".qs")),
+    file_exists = file.exists(out_file)
+    ) %>% 
+  filter(!file_exists) %>% # comment out if overwriting
+  pull(farm_ID) %>% 
+  unique()
 
 lookup_files <- file.path(data_path, "intermediates", "farm_focal_lookup_files") %>% 
   list.files(pattern = "extracted_\\d{4}\\.qs", full.names = TRUE)
 
-overwrite <- F
-
-# id <- subset_farms[10000]
+# id <- subset_farms[1]
 walk(
   subset_farms,
   function(id) {
-    out_file <- file.path(farm_temp_outputs, paste0("farm_", fix_int(id, digits = 8), ".qs"))
-    if (!file.exists(out_file) | overwrite) {
       cells <- assigned_farms_cells$focal_cells[assigned_farms_cells$farm_ID == id][[1]]
       
       temps <- lookup_files %>% 
@@ -375,8 +380,7 @@ walk(
         cli::cli_alert_warning(sprintf("Warning! Cell %s has missing temperatures!", id))
       }
 
-      qs2::qs_save(temps, out_file)
-    }
+      qs2::qs_save(temps, file.path(farm_temp_outputs, paste0("farm_", fix_int(id, digits = 8), ".qs")))
   },
   .progress = T
 )
@@ -388,8 +392,11 @@ walk(
 # ! Warning! Cell 87525 has missing temperatures!   
 ```
 
+Saving temperatures by model_name is just a convenience measure for future analyses and visualisation.
+
 ```{r farm-temperatures-by-model}
-#| code-summary: Save farm temperatures by model names - this will make it easier to load for production model loading
+#| code-summary: Save farm temperatures by model names
+#| eval: false
 
 model_names <- unique(assigned_farms$model_name)
 
@@ -415,8 +422,11 @@ walk(
 )
 ```
 
+Plot temperatures by country to give an overview of how temperatures at the assigned farms change over time.
+
 ```{r farm-temperatures-per-country}
-#| code-summary: Plot farm temperatures by country - mostly just to show how it changes over time
+#| code-summary: Plot farm temperatures by country
+#| eval: false
 
 ISO_Codes <- unique(assigned_farms$ISO3_Code)
 
