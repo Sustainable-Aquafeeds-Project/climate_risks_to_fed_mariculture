@@ -1,11 +1,10 @@
 # Correcting temperatures
 # =======================
-# Uses the change in temperature per grid cell from CMIP data to inform
-# climate change impacts, starting from contemporary NASA SST data.
+# Uses the change in temperature per grid cell from CMIP data to inform climate change impacts, starting from contemporary NASA SST data.
 # Bias correction uses the decadal mean from 2015-2024 for both datasets.
 #
 # Outputs:
-#   - bigdata_path/ESGF/EC-Earth3P-HR/projected_adjusted/  (bias-corrected rasters)
+#   - bigdata_path/ESGF/EC-Earth3P-HR/projected_adjusted/   (bias-corrected rasters)
 #   - data_path/intermediates/comparing-corrected-temps.qs  (diagnostic comparison)
 #   - prepdata_path/global-temperature-changes.qs           (global mean temps)
 
@@ -15,7 +14,7 @@ library(qs2)
 library(here)
 
 here("src", "dirs.R") %>% source()
-here("src", "functions.R") %>% source()
+here("src", "other_functions.R") %>% source()
 
 # ---- Meanyear file listings ----
 
@@ -59,8 +58,8 @@ plot(rast(cmip_fnms[100]))
 #   corrected = CMIP_future - CMIP_meanyear + NASA_meanyear
 
 cmip_fnms <- file.path(bigdata_path, "ESGF", "EC-Earth3P-HR", "rasts") %>%
-  list.files(full.names = T) %>%
-  str_subset(paste0("_gn_", 2015:2024, collapse = "|"), negate = T)
+  list.files(full.names = T) # %>%
+  # str_subset(paste0("_gn_", 2015:2024, collapse = "|"), negate = T)
 
 # All future dates needing to be adjusted
 future_dates <- as.Date(
@@ -87,6 +86,7 @@ out_dir <- file.path(bigdata_path, "ESGF", "EC-Earth3P-HR", "projected_adjusted"
 dir.create(out_dir, showWarnings = F)
 
 # Process all dates sharing the same climatology layer together
+# grp <- date_ls[[100]]
 walk(
   date_ls,
   function(grp) {
@@ -101,15 +101,19 @@ walk(
         nasa_clim_lyr <- nasa_meanyear[[ lyr_name ]]
       }
 
-      # Stack all ~85 CMIP rasters for this DOY and apply delta in one operation
-      cmip_stack        <- rast(grp$fnm)
+      # Filter to the files that actually need to be created
+      cmip_fnames_todo <- cmip_fnames[!file.exists(cmip_fnames)]
+      grp_todo <- grp[!file.exists(cmip_fnames), ]
+
+      # Stack all CMIP rasters for this DOY and apply delta in one operation
+      cmip_stack        <- rast(grp_todo$fnm)
       projected         <- cmip_stack - cmip_clim_lyr + nasa_clim_lyr
-      names(cmip_stack) <- grp$date
+      names(cmip_stack) <- grp_todo$date
 
       # Write out individual files, preserving original filenames
       walk2(
         seq_len(nlyr(projected)),
-        cmip_fnames,
+        cmip_fnames_todo,
         function(j, fnm) {
           writeRaster(projected[[j]], fnm, overwrite = TRUE)
         })
@@ -119,12 +123,11 @@ walk(
 )
 
 # ---- Compare corrected vs. uncorrected global temperatures (diagnostic) ----
-
 corr_files <- out_dir %>%
   list.files(full.names = T)
 uncorr_files <- file.path(bigdata_path, "ESGF", "EC-Earth3P-HR", "rasts") %>%
-  list.files(full.names = T) %>%
-  str_subset(paste0(2015:2024, collapse = "|"), negate = T)
+  list.files(full.names = T) # %>%
+  # str_subset(paste0(2015:2024, collapse = "|"), negate = T)
 
 dates <- str_extract(uncorr_files, "\\d{4}-\\d{2}-\\d{2}")
 
