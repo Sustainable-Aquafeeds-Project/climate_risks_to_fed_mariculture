@@ -3,6 +3,5 @@ data/farm_production/*
 
 # These files are small but there's way too many of them
 data/habitat_suitability/*/*/*
-
-# Temporary - might delete later
-data/temp_hold/*
+data/habitat_suitability_decadal/*/*/*
+data/habitat_suitability_decadal_change/*/*/*
