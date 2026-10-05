@@ -41,8 +41,7 @@ library(ggtext)
 #| code-summary: "Source R scripts in use"
 
 here("src", "dirs.R") %>% source()
-here("src", "functions.R") %>% source()
-here("src", "display_globals.R") %>% source()
+here("src", "other_functions.R") %>% source()
 ```
 
 The goal of this document is to identify the most commercially important marine and brackishwater aquaculture species worldwide, based on FAO production data from 2011 to the most recent available year. We focus on post-2010 data to reflect modern production trends, and rank species by their total reported production volume (tonnes live weight) over this period.
@@ -338,6 +337,8 @@ FAO_with_models <- FAO_modern_fed %>%
 FAO_with_models %>% 
   filter(is.na(model_name)) %>% 
   distinct(environment, Scientific_Name)
+
+qs_save(FAO_with_models, file.path(prepdata_path, "FAO_with_models.qs"))
 ```
 
 Before ranking, I decided to strip out some species that may technically be "fed" but aren't fed formulated feeds or "trash fish".

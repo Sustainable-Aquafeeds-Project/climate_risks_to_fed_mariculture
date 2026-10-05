@@ -45,8 +45,8 @@ install_unit("t_fish", "1000 kg_fish")
 #| code-summary: "Source R scripts in use"
 
 here("src", "dirs.R") %>% source()
-here("src", "functions.R") %>% source()
 here("src", "model_functions.R") %>% source()
+here("src", "other_functions.R") %>% source()
 ```
 
 This document checks that the future production runs are complete and consolidates them into more useable forms.
@@ -59,7 +59,8 @@ First check that all the files in the folder are complete.
 #| code-summary: Check that the files in the production folder are complete and correct structure
 
 prod_path <- file.path(outs_path, "data", "farm_production")
-production_files <- list.files(prod_path, full.names = TRUE, recursive = T, pattern = "MC5000\\.qs$")
+production_files <- list.files(prod_path, full.names = TRUE, recursive = TRUE, pattern = "MC5000\\.qs$") %>% 
+  str_subset("testing", negate = T)
 
 # here("src", "check_production_files.R") %>% source(echo = T)
 ```
@@ -89,7 +90,10 @@ assigned_farms %>%
   reframe(n = n()) %>% 
   # filter(model_name %in% c("atlantic_salmon", "rainbow_trout", "seabream")) %>% 
   filter(!is.na(feed_class)) %>% 
-  arrange(model_name, -done)
+  mutate(done = factor(done, levels = c(TRUE, FALSE), labels = c("prod_done", "prod_waiting"))) %>% 
+  pivot_wider(names_from = done, values_from = n) %>% 
+  arrange(model_name) %>% 
+  print(n = 50)
 ```
 
 # Per-farm plots
@@ -103,6 +107,8 @@ These plots aren't meant to show anything specifically - they're just so that I 
 ```{r save-plots-per-farm}
 #| code-summary: Save some diagnostic plots per farm
 #| eval: false
+
+overwrite <- F
 
 fb_path <- file.path(outs_path, "plots", "farm_production_checks", "farm_biomass")
 fr_path <- file.path(outs_path, "plots", "farm_production_checks", "feed_required")
@@ -120,7 +126,7 @@ walk(prod_files_subset, function(fnm) {
   fr_fnm <- file.path(fr_path, paste0("feed_required_farmID_", farm_ID, ".png"))
   frb_fnm <- file.path(frb_path, paste0("feed_required_perbiomass_farmID_", farm_ID, ".png"))
   
-  if(any(c(!file.exists(fb_fnm), !file.exists(fr_fnm), !file.exists(frb_fnm)))) {
+  if(any(c(!file.exists(fb_fnm), !file.exists(fr_fnm), !file.exists(frb_fnm))) | overwrite) {
     fb <- tidy_stat(prod_ls, "weight_scaled") %>% 
       slice_max(prod_day) %>% 
       mutate(
@@ -209,25 +215,34 @@ walk(prod_files_subset, function(fnm) {
 
 # Group and save {#sec-group-save}
 
-| model_name         | feed_class  | production done | production waiting | consolidation done |
-|--------------------|-------------|-----------------|--------------------|--------------------|
-| asian_seabass      | china       | 235             | 0                  | Y                  |
-| atlantic_salmon    | chile       | 1495            | 0                  | Y                  |
-| atlantic_salmon    | norway      | 915             | 0                  | Y                  |
-| atlantic_salmon    | uk          | 278             | 0                  | Y                  |
-| atlantic_salmon    | canada      | 0               | 230                |                    |
-| european_seabass   | europe      | 50              | 421                |                    |
-| golden_pompano     | china       | 0               | 253                |                    |
-| milkfish           | philippines | 0               | 746                |                    |
-| rainbow_trout      | chile       | 335             | 0                  | Y                  |
-| rainbow_trout      | norway      | 342             | 0                  | Y                  |
-| rainbow_trout      | world       | 107             | 0                  | Y                  |
-| seabream           | china       | 239             | 0                  | Y                  |
-| seabream           | europe      | 252             | 0                  | Y                  |
-| whiteleg_shrimp    | china       | 0               | 1230               |                    |
-| whiteleg_shrimp    | ecuador     | 0               | 2147               |                    |
-| whiteleg_shrimp    | india       | 0               | 1226               |                    |
-| whiteleg_shrimp    | indonesia   | 0               | 1521               |                    |
+| model_name         | feed_class  | production waiting | production done |
+|--------------------|-------------|-----------------|--------------------|
+| asian_seabass      | china       |         235     |                 0  |
+| atlantic_salmon    | canada      |           0     |               230  |
+| atlantic_salmon    | chile       |           1     |              1494  |
+| atlantic_salmon    | norway      |          10     |               905  |
+| atlantic_salmon    | uk          |           2     |               276  |
+| drum_croaker       | china       |         227     |                 0  |
+| european_seabass   | europe      |         404     |                67  |
+| golden_pompano     | china       |         253     |                 0  |
+| grouper            | world       |          50     |               201  |
+| japanese_amberjack | japan       |          48     |               143  |
+| milkfish           | philippines |          29     |               717  |
+| mud_crab           | world       |         707     |                 0  |
+| nile_tilapia       | thailand    |          95     |                 0  |
+| olive_flounder     | korea       |         227     |                 0  |
+| rainbow_trout      | chile       |           1     |               334  |
+| rainbow_trout      | norway      |           0     |               342  |
+| rainbow_trout      | world       |          39     |                68  |
+| seabream           | china       |          61     |               178  |
+| seabream           | europe      |         212     |                40  |
+| tiger_prawn        | world       |          81     |              1881  |
+| tuna               | japan       |          92     |                 0  |
+| tuna               | ranch       |         141     |                 0  |
+| whiteleg_shrimp    | china       |           1     |              1229  |
+| whiteleg_shrimp    | ecuador     |          77     |              2070  |
+| whiteleg_shrimp    | india       |          40     |              1186  |
+| whiteleg_shrimp    | indonesia   |          17     |              1504  |
 
 ```{r subset}
 #| code-summary: Subset results
@@ -236,7 +251,12 @@ walk(prod_files_subset, function(fnm) {
 qs_read(production_files[1])[[1]] %>% str()
 
 subset_farms <- assigned_farms %>% 
-  filter(model_name == "seabream" & feed_class == "europe")
+  filter(model_name == "atlantic_salmon" & feed_class == "norway")
+
+# These farms have been excluded as production run failed (temperature too terrible)
+# exclude_farm_IDs <- c(88018)
+# subset_farms <- subset_farms %>% 
+#   filter(!farm_ID %in% exclude_farm_IDs)
 
 subset_prod_files <- production_files[which(as.integer(str_extract(basename(production_files), "(?<=farmID_)\\d+")) %in% subset_farms$farm_ID)]
 

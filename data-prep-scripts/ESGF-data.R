@@ -8,7 +8,7 @@ library(sf)
 library(here)
 
 here("src", "dirs.R") %>% source()
-here("src", "functions.R") %>% source()
+here("src", "other_functions.R") %>% source()
 
 # Extracting data -----------------------------------------------------------------------------------------------------
 # Takes raw NC files from Earth Consortium and saves one raster per date. Rasters are gapfilled to compensate for the gaps reated by comforming the curvilinear grid to a flat raster. This means that there are some "land" cells which have SST values, but as long as you don't try to extract an SST value from a location on land it'll be fine.

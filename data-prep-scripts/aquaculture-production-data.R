@@ -9,7 +9,7 @@ library(units)
 library(fuzzyjoin)
 
 here("src", "dirs.R") %>% source()
-here("src", "functions.R") %>% source()
+here("src", "other_functions.R") %>% source()
 
 # Get aquaculture quantity in tonnes live weight
 quantity <- file.path(bigdata_path, "Aquaculture_2025.1.0", "Aquaculture_Quantity.csv") %>% 
@@ -21,7 +21,7 @@ quantity <- file.path(bigdata_path, "Aquaculture_2025.1.0", "Aquaculture_Quantit
   ) %>% 
   select(-measure) # all values are quantity_liveweight
 
-# Apply environment codes and filter by "marine"
+# Apply environment codes and filter by "marine" and "brackishwater"
 environment_codes <- file.path(bigdata_path, "Aquaculture_2025.1.0", "CL_FI_PRODENVIRONMENT.csv") %>% 
   read.csv() %>% 
   distinct(Code, Name_En) %>% 
@@ -104,8 +104,7 @@ quantity <- quantity %>%
     country = as.factor(country),
     fao_fishing_area = as.factor(fao_fishing_area),
     ISO3_Code = as.factor(ISO3_Code)
-  ) %>% 
-  select(-c(country_un_code, species_alpha_3_code, area_code, environment_alpha_2_code))
+  )
 
 # Clean up countries that don't exist/have been renamed
 quantity <- quantity %>% 
@@ -122,8 +121,11 @@ quantity <- quantity %>%
 
 # Save two versions - one marine only, one marine + brackish
 quantity %>% 
+  select(-c(country_un_code, species_alpha_3_code, area_code, environment_alpha_2_code)) %>% 
   filter(environment != "Brackishwater") %>% 
   qd_save(file.path(prepdata_path, "FAO_aquaculture_quantity_MA.qs"))
 
 quantity %>% 
+  select(-c(country_un_code, species_alpha_3_code, area_code, environment_alpha_2_code)) %>% 
   qd_save(file.path(prepdata_path, "FAO_aquaculture_quantity_MA_BR.qs"))
+
