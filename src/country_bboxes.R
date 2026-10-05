@@ -100,7 +100,7 @@ bbox <- function(iso3,
     xmax = max(vapply(boxes, `[[`, numeric(1), "xmax")),
     ymax = max(vapply(boxes, `[[`, numeric(1), "ymax"))
   )
-  b <- pad_bbox(b, info$pad_km)
+  b <- pad_bbox(b, info[[1]][["pad_km"]])
 
   target <- sf::st_crs(crs)
   if (is.na(target) || target == sf::st_crs(4326)) {
@@ -190,11 +190,13 @@ load_country_bbox_data <- function(
 ) {
   bbox_parts <- c("xmin", "ymin", "xmax", "ymax")
   bbox_cols <- paste0("bbox_", bbox_parts)
+  bbox_land_cols <- paste0("bbox_land_", bbox_parts)
   bbox_full_cols <- paste0("bbox_full_", bbox_parts)
   label_cols <- c("label_lon", "label_lat")
+  numeric_cols <- c(bbox_cols, bbox_land_cols, bbox_full_cols, label_cols)
 
   required_cols <- c("iso3", "name", "iso2", bbox_cols, label_cols)
-  core_cols <- c(required_cols, bbox_full_cols)
+  core_cols <- c(required_cols, bbox_land_cols, bbox_full_cols)
 
   # na = "" so Namibia's ISO2 code "NA" is kept as a string
   df <- readr::read_csv(
@@ -205,8 +207,8 @@ load_country_bbox_data <- function(
       name = readr::col_character(),
       iso2 = readr::col_character(),
       !!!rlang::set_names(
-        rep(list(readr::col_double()), length(c(bbox_cols, bbox_full_cols, label_cols))),
-        c(bbox_cols, bbox_full_cols, label_cols)
+        rep(list(readr::col_double()), length(numeric_cols)),
+        numeric_cols
       ),
       .default = readr::col_guess()
     ),
@@ -221,6 +223,7 @@ load_country_bbox_data <- function(
     stop("Duplicate iso3 codes: ", paste(unique(df$iso3[duplicated(df$iso3)]), collapse = ", "))
   }
 
+  has_land_cols <- all(bbox_land_cols %in% names(df))
   has_full_cols <- all(bbox_full_cols %in% names(df))
   extra_cols <- setdiff(names(df), core_cols)
 
@@ -229,11 +232,26 @@ load_country_bbox_data <- function(
   }
 
   entries <- lapply(seq_len(nrow(df)), function(i) {
+    bbox <- get_vec(i, bbox_cols, bbox_parts)
+    bbox_land <- if (has_land_cols) get_vec(i, bbox_land_cols, bbox_parts) else NULL
+
+    # Hand-edited bbox_* columns take priority; if any coordinate is blank,
+    # use the whole bbox_land_* box instead of mixing the two
+    if (anyNA(bbox) && !is.null(bbox_land) && !anyNA(bbox_land)) {
+      bbox <- bbox_land
+    }
+    if (anyNA(bbox)) {
+      stop("Incomplete bbox for ", df$iso3[[i]],
+           ": bbox_* has missing values and no complete bbox_land_* fallback.",
+           call. = FALSE)
+    }
+
     entry <- list(
       name = df$name[[i]],
       iso2 = df$iso2[[i]],
-      bbox = get_vec(i, bbox_cols, bbox_parts)
+      bbox = bbox
     )
+    if (!is.null(bbox_land) && !all(is.na(bbox_land))) entry$bbox_land <- bbox_land
 
     if (has_full_cols) {
       bbox_full <- get_vec(i, bbox_full_cols, bbox_parts)
@@ -253,3 +271,23 @@ load_country_bbox_data <- function(
 }
 
 country_bbox_data <- load_country_bbox_data()
+
+save_map <- function(p, filename, panel_width = 5, dpi = 300, ...) {
+  # Ask coord_sf what aspect ratio it wants (handles the latitude correction)
+  b   <- ggplot_build(p)
+  asp <- b$layout$coord$aspect(b$layout$panel_params[[1]])
+
+  # Fix the panel to absolute dimensions
+  p2 <- p + ggh4x::force_panelsizes(
+    cols = unit(panel_width, "in"),
+    rows = unit(panel_width * asp, "in")
+  )
+
+  # Measure the full plot: panel + axes + titles + legend
+  g <- ggplotGrob(p2)
+  w <- grid::convertWidth(sum(g$widths), "in", valueOnly = TRUE)
+  h <- grid::convertHeight(sum(g$heights), "in", valueOnly = TRUE)
+
+  ggsave(filename, p2, width = w, height = h, dpi = dpi, ...)
+  invisible(c(width = w, height = h))
+}

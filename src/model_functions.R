@@ -1327,6 +1327,22 @@ sum_feeds <- function(feed_params) {
   })
 }
 
+# The names available in the production data are:
+# "weight"
+# "dw"
+# "T_response"
+# "rel_feeding"
+# "food_prov"
+# "ing_act"
+# "anab"
+# "catab"
+# "total_excr"
+# "metab"
+# "weight_scaled"
+# "dw_scaled"
+# "ing_act_scaled"
+# "total_excr_scaled"
+# "food_prov_scaled"
 tidy_stat <- function(prod_data, stat_name) {
   imap_dfr(prod_data, function(year_data, year_name) {
     tibble(

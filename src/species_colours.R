@@ -13,6 +13,7 @@ assigned_farms <- file.path(prepdata_path, "assigned_farms.qs") %>%
 af <- assigned_farms %>% 
   mutate(model_name = case_when(model_name == "japanese_seabass" ~ "asian_seabass",  T ~ model_name))
 all_models <- af %>% 
+  filter(!model_name %in% c("drum_croaker", "tuna", "mud_crab", "nile_tilapia", "olive_flounder")) %>% 
   pull(model_name) %>% unique()
 co <- af %>% distinct(country, model_name)
 n  <- length(all_models)
@@ -32,29 +33,28 @@ for (i in order(rowSums(adj), decreasing = TRUE)) {
 
 k <- max(color_id)
 base <- createPalette(k, c("#3B82F6", "#EF4444", "#10B981"))
-base <- desaturate(darken(base, amount = 0.1), amount = 0.2)
+# base <- desaturate(darken(base, amount = 0.1), amount = 0.2)
 models_pal <- setNames(base[color_id], all_models) # still a fixed named vector
 
 
-# Golden pompano not being gold is throwing me
-col1 <- models_pal["golden_pompano"]
-col2 <- models_pal["grouper"]
-models_pal["grouper"] <- col1
-models_pal["golden_pompano"] <- col2
-
+# # Golden pompano not being gold is throwing me
+# col1 <- models_pal["golden_pompano"]
+# col2 <- models_pal["tiger_prawn"]
+# models_pal["tiger_prawn"] <- col1
+# models_pal["golden_pompano"] <- col2
 
 # edge list: every within-country species pair
-edges <- co %>%
-  group_by(country) %>% 
-  filter(n() >= 2) %>% 
-  reframe(as.data.frame(t(combn(sort(unique(model_name)), 2)))) %>%
-  select(from = V1, to = V2) %>%
-  distinct()
+# edges <- co %>%
+#   group_by(country) %>% 
+#   filter(n() >= 2) %>% 
+#   reframe(as.data.frame(t(combn(sort(unique(model_name)), 2)))) %>%
+#   select(from = V1, to = V2) %>%
+#   distinct()
 
-g <- graph_from_data_frame(edges, directed = FALSE, vertices = data.frame(name = all_models))
+# g <- graph_from_data_frame(edges, directed = FALSE, vertices = data.frame(name = all_models))
 
-V(g)$color <- models_pal[V(g)$name]   # the exact colours your plots use
-V(g)$size  <- 18
+# V(g)$color <- models_pal[V(g)$name]   # the exact colours your plots use
+# V(g)$size  <- 18
 
 # plot(
 #   g,

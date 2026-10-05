@@ -5,3 +5,9 @@ data/farm_production/*
 data/habitat_suitability/*/*/*
 data/habitat_suitability_decadal/*/*/*
 data/habitat_suitability_decadal_change/*/*/*
+
+plots/farm_production_checks/*
+plots/farm_production_checks/*/*
+
+plots/habitat_suitability_decadal/*
+plots/habitat_suitability_decadal/*/*

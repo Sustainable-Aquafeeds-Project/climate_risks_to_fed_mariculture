@@ -205,6 +205,31 @@ get_species_responses_r <- function(
   result
 }
 
+# Feeding response with temperature raster only
+get_feeding_responses_r <- function(
+  temp_stack, species_params,
+  out_cols = c("feeding_response")
+) {
+  ncell <- terra::ncell(temp_stack)
+  nlyr  <- terra::nlyr(temp_stack)
+  temp_vec <- as.vector(terra::values(temp_stack))
+
+  # Only run the model on real temperatures; cells masked outside the EEZ/land are NA
+  ok   <- is.finite(temp_vec)
+  resp <- data.frame(feeding_response = feeding_rate(temp_vec[ok], species_params))
+
+  result <- lapply("feeding_response", function(col) {
+    full <- rep(NA_real_, length(temp_vec))      # scatter results back to full length
+    full[ok] <- resp[[col]]
+    r <- terra::setValues(temp_stack,            # reuse the stack purely as a geometry template
+                          matrix(full, nrow = ncell, ncol = nlyr))
+    names(r) <- names(temp_stack)                # keep the layer names
+    r
+  })
+  names(result) <- "feeding_response"
+  result
+}
+
 # Shortcut plotting functions
 prettyplot <- function() {
   theme_classic() +
