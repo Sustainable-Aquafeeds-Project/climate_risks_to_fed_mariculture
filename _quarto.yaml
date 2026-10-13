@@ -33,6 +33,7 @@ project:
     - documentation-qmds/05_02_consolidate_results.qmd
     - documentation-qmds/06_explore_production.qmd
     - documentation-qmds/07_habitat_suitability.qmd
+    - documentation-qmds/08_outputs_single_country.qmd
 
 format:
   html:

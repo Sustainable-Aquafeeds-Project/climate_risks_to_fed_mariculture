@@ -1,0 +1,529 @@
+---
+title: "8: Report outputs for a single country"
+subtitle: "FAO Climate Change Risks to Fed Mariculture"
+author:
+  - "Tormey Reimer"
+date: last-modified
+---
+
+::: {style="display: flex; justify-content: space-between;"}
+[← Previous: Habitat suitability](07_habitat_suitability.qmd)
+
+[Next: Home →](../index.qmd)
+:::
+
+# Overview {#sec-overview}
+
+```{r setup}
+#| cache: false
+#| echo: false
+#| warning: false
+#| message: false
+#| output: false
+#| code-summary: "Load packages and set display globals"
+
+# Builds `models_pal`. Sourced first because it attaches igraph/colorspace,
+# which mask terra/dplyr functions if loaded afterwards. It also creates a
+# global `assigned_farms` (all countries, no geometry) that is overwritten below.
+source(here::here("src", "species_colours.R"))
+
+library(tidyverse)
+library(patchwork)
+library(terra)
+library(qs2)
+library(terra)
+library(tidyterra)
+library(sf)
+library(rnaturalearth)
+library(lubridate)
+library(cmocean)
+library(here)
+```
+
+```{r source-scripts}
+#| cache: false
+#| echo: false
+#| warning: false
+#| message: false
+#| output: false
+#| code-summary: "Source R scripts in use"
+
+here("src", "dirs.R") %>% source()
+here("src", "other_functions.R") %>% source()
+here("src", "model_functions.R") %>% source()
+here("src", "country_bboxes.R") %>% source()
+```
+
+The purpose of this document is to generate all the required report outputs (plots, data) for a single country. Change `this_iso` in the chunk below and re-render to produce outputs for a different country.
+
+```{r choose-country}
+#| code-summary: "Choose the country we're looking at."
+
+this_iso <- "FIN"
+
+assigned_farms <- file.path(prepdata_path, "assigned_farms.qs") %>% 
+  qs_read() %>% 
+  filter(ISO3_Code == this_iso)
+
+farm_IDs <- unique(assigned_farms$farm_ID)
+
+production_files <- file.path(outs_path, "data", "farm_production") %>% 
+  list.files(recursive = F, full.names = T, pattern = "MC5000.qs") %>%
+  str_subset(paste0(fix_int(farm_IDs, 8), collapse = "|"))
+
+GLW_ls <- list(
+  "GLW_1.5" = 2018:2037,
+  "GLW_2.0" = 2032:2051,
+  "GLW_3.0" = 2055:2074,
+  "GLW_4.0" = 2075:2094
+)
+
+land <- ne_countries(scale = "large", returnclass = "sf")
+this_country <- unique(assigned_farms$country)
+
+# Models present in this country, with a colour for each. Models not in
+# `models_pal` (e.g. tuna) get a grey fallback.
+models_here <- sort(unique(assigned_farms$model_name))
+country_pal <- models_pal[models_here]
+names(country_pal) <- models_here
+country_pal[is.na(country_pal)] <- "grey50"
+
+# Readable labels for model names
+label_model <- function(x) str_replace_all(x, "_", " ") %>% str_to_sentence()
+
+GLW_labels <- c("GLW_1.5" = "1.5°C", "GLW_2.0" = "2°C", "GLW_3.0" = "3°C", "GLW_4.0" = "4°C")
+
+# prettyplot() removes the legend; add it back (with its title) for the report plots
+report_theme <- function(legend = "bottom") {
+  prettyplot() +
+    theme(legend.position = legend, legend.title = element_text())
+}
+
+year_breaks <- seq(2025, 2095, 10)
+```
+
+# Farms {#sec-farms}
+
+## Farm locations
+
+Every assigned farm in `r this_country`, coloured by the species model it is run with.
+
+```{r farm-map}
+#| code-summary: "Map of assigned farms"
+#| fig-width: 8.5
+#| fig-height: 6.5
+
+ggplot() +
+  geom_sf(data = land, fill = "grey85", colour = "grey55", linewidth = 0.2) +
+  geom_sf(data = assigned_farms, aes(colour = model_name), size = 2) +
+  scale_colour_manual(values = country_pal, labels = label_model, name = "Model") +
+  do.call(coord_sf, bbox_lims(this_iso)) +
+  labs(
+    title = paste0("Assigned farms: ", this_country, " (", this_iso, ")"),
+    x = NULL, y = NULL
+  ) +
+  report_theme()
+```
+
+## Farms per model
+
+The number of assigned farms per model, how many of those have completed production runs, and the production each model is assumed to represent.
+
+```{r farms-per-model}
+#| code-summary: "Summary table of farms per model"
+
+# Farm IDs that actually have a production file
+farm_IDs_done <- basename(production_files) %>% 
+  str_extract("(?<=farmID_)\\d+") %>% 
+  as.numeric()
+
+assigned_farms %>% 
+  st_drop_geometry() %>% 
+  group_by(model_name) %>% 
+  reframe(
+    n_farms = n(),
+    n_farms_with_production = sum(farm_ID %in% farm_IDs_done),
+    production_t = unique(value),
+    production_perfarm_t = unique(prod_perfarm)
+  ) %>% 
+  arrange(desc(production_t)) %>% 
+  knitr::kable(
+    digits = 0,
+    col.names = c("Model", "Farms", "Farms with production run", "Production (t)", "Production per farm (t)")
+  )
+```
+
+## Country production summary
+
+Output of `country_summary()`: FAO-reported production (2014–2023) by model and by species within each model.
+
+```{r country-summary}
+#| code-summary: "Run country_summary()"
+country_summary(this_iso)
+```
+
+# Farm production {#sec-production}
+
+Annual biomass harvested and feed required at each farm, relative to the 2025 baseline, from the farm production model runs. Only farms with a completed production file are shown (`r length(farm_IDs_done)` of `r length(farm_IDs)` farms).
+
+```{r get-production-data}
+#| code-summary: "Load farm production data"
+#| cache: true
+
+farm_data <- get_country_data(production_files, farm_IDs_done) %>% 
+  left_join(
+    assigned_farms %>% st_drop_geometry() %>% select(farm_ID, model_name),
+    by = join_by(farm_ID)
+  ) %>% 
+  mutate(
+    farm_ID = factor(farm_ID),
+    biomass_pct_change = 100 * biomass_change / biomass_2025,
+    food_prov_pct_change = 100 * food_prov_change / food_prov_2025,
+    food_prov_biom_pct_change = 100 * food_prov_biom_change / food_prov_biom_2025
+  )
+
+# Shared plotting function: one line per farm, coloured by model
+plot_farm_change <- function(df, y, ylab, title) {
+  ggplot(df, aes(x = year, y = {{ y }}, colour = model_name, group = farm_ID)) +
+    geom_hline(yintercept = 0, colour = "grey45", linewidth = 0.5) +
+    geom_line(alpha = 0.6) +
+    scale_colour_manual(values = country_pal, labels = label_model, name = "Model") +
+    scale_x_continuous(breaks = year_breaks) +
+    labs(title = title, x = "Year", y = ylab) +
+    report_theme()
+}
+```
+
+## Change in biomass
+
+```{r plot-biomass-change}
+#| code-summary: "Plot change in harvested biomass"
+#| fig-width: 8.5
+#| fig-height: 5.5
+
+plot_farm_change(
+  farm_data, biomass_change, 
+  ylab = "Change in biomass from 2025", 
+  title = paste0("Change in harvested biomass per farm: ", this_country)
+)
+
+plot_farm_change(
+  farm_data, biomass_pct_change, 
+  ylab = "Change in biomass from 2025 (%)", 
+  title = paste0("Relative change in harvested biomass per farm: ", this_country)
+)
+```
+
+## Change in feed required
+
+```{r plot-feed-change}
+#| code-summary: "Plot change in feed required"
+#| fig-width: 8.5
+#| fig-height: 5.5
+
+plot_farm_change(
+  farm_data, food_prov_change, 
+  ylab = "Change in feed required from 2025", 
+  title = paste0("Change in feed required per farm: ", this_country)
+)
+
+plot_farm_change(
+  farm_data, food_prov_pct_change, 
+  ylab = "Change in feed required from 2025 (%)", 
+  title = paste0("Relative change in feed required per farm: ", this_country)
+)
+```
+
+## Change in feed per unit biomass
+
+Feed required per unit of harvested biomass (a proxy for FCR). An increase means more feed is needed to produce the same amount of fish.
+
+```{r plot-feed-biomass-change}
+#| code-summary: "Plot change in feed per unit biomass"
+#| fig-width: 8.5
+#| fig-height: 5.5
+
+plot_farm_change(
+  farm_data, food_prov_biom_pct_change, 
+  ylab = "Change in feed per unit biomass from 2025 (%)", 
+  title = paste0("Relative change in feed per unit biomass per farm: ", this_country)
+)
+```
+
+## Summary by model
+
+Median (and interquartile range) relative change across farms within each model, for each global warming level.
+
+```{r production-GLW-summary}
+#| code-summary: "Summarise production change per model and GLW"
+
+farm_data_GLW <- map2_dfr(
+  GLW_ls, names(GLW_ls),
+  function(yrs, nm) {
+    farm_data %>% 
+      filter(year %in% yrs) %>% 
+      group_by(farm_ID, model_name) %>% 
+      reframe(
+        biomass_pct_change = mean(biomass_pct_change, na.rm = T),
+        food_prov_pct_change = mean(food_prov_pct_change, na.rm = T),
+        food_prov_biom_pct_change = mean(food_prov_biom_pct_change, na.rm = T)
+      ) %>% 
+      mutate(GLW = nm)
+  }
+) %>% 
+  mutate(GLW = factor(GLW, levels = names(GLW_labels), labels = GLW_labels))
+
+farm_data_GLW %>% 
+  group_by(model_name, GLW) %>% 
+  reframe(
+    n_farms = n(),
+    biomass_median = median(biomass_pct_change, na.rm = T),
+    biomass_q25 = quantile(biomass_pct_change, 0.25, na.rm = T),
+    biomass_q75 = quantile(biomass_pct_change, 0.75, na.rm = T),
+    feed_median = median(food_prov_pct_change, na.rm = T),
+    feed_q25 = quantile(food_prov_pct_change, 0.25, na.rm = T),
+    feed_q75 = quantile(food_prov_pct_change, 0.75, na.rm = T)
+  ) %>% 
+  knitr::kable(
+    digits = 1,
+    col.names = c("Model", "GLW", "Farms", "Biomass median (%)", "Q25", "Q75", "Feed median (%)", "Q25", "Q75")
+  )
+```
+
+```{r plot-production-GLW-summary}
+#| code-summary: "Plot production change per model and GLW"
+#| fig-width: 8.5
+#| fig-height: 5.5
+
+farm_data_GLW %>% 
+  ggplot(aes(x = GLW, y = biomass_pct_change, colour = model_name)) +
+  geom_hline(yintercept = 0, colour = "grey45", linewidth = 0.5) +
+  geom_boxplot(position = position_dodge(width = 0.7), width = 0.6) +
+  scale_colour_manual(values = country_pal, labels = label_model, name = "Model") +
+  labs(
+    title = paste0("Change in production at each global warming level: ", this_country),
+    x = "Global warming level", y = "Change from 2025 (%)"
+  ) +
+  report_theme()
+```
+
+```{r plot-feed-GLW-summary}
+#| code-summary: "Plot feed change per model and GLW"
+#| fig-width: 8.5
+#| fig-height: 5.5
+
+farm_data_GLW %>% 
+  ggplot(aes(x = GLW, y = food_prov_pct_change, colour = model_name)) +
+  geom_hline(yintercept = 0, colour = "grey45", linewidth = 0.5) +
+  geom_boxplot(position = position_dodge(width = 0.7), width = 0.6) +
+  scale_colour_manual(values = country_pal, labels = label_model, name = "Model") +
+  labs(
+    title = paste0("Change in feed required at each global warming level: ", this_country),
+    x = "Global warming level", y = "Change from 2025 (%)"
+  ) +
+  report_theme()
+```
+
+# Habitat suitability {#sec-habitat-suitability}
+
+Habitat suitability (HS) across the EEZ, averaged over each global warming level (GLW) window. HS is the proportion of the year that temperature is suitable for feeding, so it ranges from 0 to 1. Only species that are actually farmed in `r this_country` are shown.
+
+```{r load-HS}
+#| code-summary: "Load habitat suitability rasters"
+#| cache: true
+
+HS_path <- file.path(outs_path, "data", "habitat_suitability_decadal", this_iso)
+
+# Species farmed here that have an HS raster
+HS_models <- intersect(models_here, list.dirs(HS_path, full.names = F, recursive = F))
+
+# One SpatRaster per species: layers = ref + each GLW, scaled to 0-1
+HS_rasts <- map(
+  set_names(HS_models),
+  function(m) {
+    fnms <- file.path(HS_path, m, paste0(c("ref_2015_2024", names(GLW_ls)), ".tif"))
+    r <- rast(fnms) / 365
+    names(r) <- c("ref_2015_2024", names(GLW_ls))
+    r
+  }
+)
+```
+
+Models in this country without a habitat suitability raster: `r setdiff(models_here, HS_models) %>% label_model() %>% paste(collapse = ", ") %>% {if (. == "") "none" else .}`.
+
+## Per species
+
+```{r plot-HS-species}
+#| code-summary: "Plot habitat suitability for each species at each GLW"
+#| fig-width: 8.5
+#| fig-height: 6.5
+#| results: asis
+
+plot_HS <- function(r, m) {
+  ggplot() +
+    geom_spatraster(data = r[[names(GLW_ls)]]) +
+    geom_sf(data = land, fill = "grey85", colour = "grey55", linewidth = 0.2) +
+    geom_sf(data = filter(assigned_farms, model_name == m), shape = 4, size = 1) +
+    facet_wrap(~lyr, nrow = 1, labeller = as_labeller(GLW_labels)) +
+    scale_fill_viridis_c(
+      option = "viridis", limits = c(0, 1),
+      na.value = "transparent", name = "Habitat\nsuitability"
+    ) +
+    do.call(coord_sf, bbox_lims(this_iso)) +
+    labs(title = label_model(m), x = NULL, y = NULL) +
+    report_theme(legend = "right") +
+    theme(axis.text = element_text(size = 7))
+}
+
+for (m in HS_models) {
+  cat("\n\n### ", label_model(m), "\n\n")
+  print(plot_HS(HS_rasts[[m]], m))
+}
+```
+
+## Change per species
+
+Relative change in habitat suitability at each GLW compared to the 2015–2024 reference period.
+
+```{r plot-HS-species-change}
+#| code-summary: "Plot change in habitat suitability for each species at each GLW"
+#| fig-width: 8.5
+#| fig-height: 6.5
+#| results: asis
+
+HS_change <- map(HS_rasts, \(r) (r[[names(GLW_ls)]] - r[["ref_2015_2024"]]) / r[["ref_2015_2024"]])
+
+plot_HS_change <- function(r, m) {
+  lim <- max(abs(minmax(r)), na.rm = T)
+  ggplot() +
+    geom_spatraster(data = r) +
+    geom_sf(data = land, fill = "grey85", colour = "grey55", linewidth = 0.2) +
+    geom_sf(data = filter(assigned_farms, model_name == m), shape = 4, size = 1) +
+    facet_wrap(~lyr, nrow = 1, labeller = as_labeller(GLW_labels)) +
+    # Reversed so blue = increase, red = decrease
+    scale_fill_gradientn(
+      limits = c(-lim, lim), colours = rev(cmocean("balance")(256)), 
+      labels = scales::label_percent(), na.value = "transparent", 
+      name = "Change in\nhabitat\nsuitability"
+    ) +
+    do.call(coord_sf, bbox_lims(this_iso)) +
+    labs(title = label_model(m), x = NULL, y = NULL) +
+    report_theme(legend = "right") +
+    theme(axis.text = element_text(size = 7))
+}
+
+for (m in HS_models) {
+  cat("\n\n### ", label_model(m), "\n\n")
+  print(plot_HS_change(HS_change[[m]], m))
+}
+```
+
+## Production-weighted habitat suitability
+
+The species rasters combined into a single stack (one layer per GLW) by taking the mean across species, weighted by each species' current production in the country.
+
+```{r HS-weighted}
+#| code-summary: "Combine species HS rasters into a production-weighted stack"
+
+HS_weights <- assigned_farms %>% 
+  st_drop_geometry() %>% 
+  distinct(model_name, value) %>% 
+  filter(model_name %in% HS_models)
+HS_weights <- set_names(HS_weights$value, HS_weights$model_name)[HS_models]
+
+weighted_HS <- function(rasts, weights) {
+  w <- weights / sum(weights)
+  Reduce(`+`, map2(rasts, w, \(r, wi) r * wi))
+}
+
+HS_weighted <- weighted_HS(HS_rasts, HS_weights)
+HS_change_weighted <- weighted_HS(HS_change, HS_weights)
+
+HS_weighted
+```
+
+Weights used:
+
+```{r HS-weights-table}
+#| code-summary: "Table of production weights"
+tibble(model = label_model(names(HS_weights)), production_t = HS_weights, weight = HS_weights / sum(HS_weights)) %>% 
+  knitr::kable(digits = c(0, 0, 3), col.names = c("Model", "Production (t)", "Weight"))
+```
+
+```{r plot-HS-weighted}
+#| code-summary: "Plot production-weighted habitat suitability"
+#| fig-width: 8.5
+#| fig-height: 6.5
+
+ggplot() +
+  geom_spatraster(data = HS_weighted[[names(GLW_ls)]]) +
+  geom_sf(data = land, fill = "grey85", colour = "grey55", linewidth = 0.2) +
+  geom_sf(data = filter(assigned_farms, model_name %in% HS_models), shape = 4, size = 1) +
+  facet_wrap(~lyr, nrow = 1, labeller = as_labeller(GLW_labels)) +
+  scale_fill_viridis_c(
+    option = "viridis", limits = c(0, 1),
+    na.value = "transparent", name = "Habitat\nsuitability"
+  ) +
+  do.call(coord_sf, bbox_lims(this_iso)) +
+  labs(title = paste0("Production-weighted habitat suitability: ", this_country), x = NULL, y = NULL) +
+  report_theme(legend = "right") +
+  theme(axis.text = element_text(size = 7))
+```
+
+```{r plot-HS-weighted-change}
+#| code-summary: "Plot production-weighted change in habitat suitability"
+#| fig-width: 8.5
+#| fig-height: 6.5
+
+lim <- max(abs(minmax(HS_change_weighted)), na.rm = T)
+
+ggplot() +
+  geom_spatraster(data = HS_change_weighted) +
+  geom_sf(data = land, fill = "grey85", colour = "grey55", linewidth = 0.2) +
+  geom_sf(data = filter(assigned_farms, model_name %in% HS_models), shape = 4, size = 1) +
+  facet_wrap(~lyr, nrow = 1, labeller = as_labeller(GLW_labels)) +
+  # Reversed so blue = increase, red = decrease
+  scale_fill_gradientn(
+    limits = c(-lim, lim), colours = rev(cmocean("balance")(256)), 
+    labels = scales::label_percent(), na.value = "transparent", 
+    name = "Change in\nhabitat\nsuitability"
+  ) +
+  do.call(coord_sf, bbox_lims(this_iso)) +
+  labs(title = paste0("Production-weighted change in habitat suitability: ", this_country), x = NULL, y = NULL) +
+  report_theme(legend = "right") +
+  theme(axis.text = element_text(size = 7))
+```
+
+## EEZ-wide summary
+
+Mean habitat suitability (and mean change relative to the reference period) across the whole EEZ, per species and production-weighted.
+
+```{r HS-summary-table}
+#| code-summary: "Summarise HS across the EEZ"
+
+HS_summary <- map2_dfr(
+  c(HS_rasts, list(`Production-weighted` = HS_weighted)),
+  c(label_model(HS_models), "Production-weighted"),
+  function(r, nm) {
+    global(r, "mean", na.rm = T) %>% 
+      rownames_to_column("period") %>% 
+      mutate(model = nm)
+  }
+) %>% 
+  rename(mean_HS = mean) %>% 
+  group_by(model) %>% 
+  mutate(change = (mean_HS - mean_HS[period == "ref_2015_2024"]) / mean_HS[period == "ref_2015_2024"]) %>% 
+  ungroup() %>% 
+  mutate(period = recode(period, !!!GLW_labels, ref_2015_2024 = "Reference (2015–2024)"))
+
+HS_summary %>% 
+  select(model, period, mean_HS, change) %>% 
+  mutate(change = scales::percent(change, accuracy = 0.1)) %>% 
+  knitr::kable(digits = 3, col.names = c("Model", "Period", "Mean HS", "Change from reference"))
+```
+
+::: {style="display: flex; justify-content: space-between;"}
+[← Previous: Habitat suitability](07_habitat_suitability.qmd)
+
+[Next: Home →](../index.qmd)
+:::
