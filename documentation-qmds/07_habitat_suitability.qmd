@@ -117,30 +117,25 @@ harvest_years <- 2015:2099
 
 Habitat suitability is calculated for all species in all countries, even if that species is not currently farmed there. This is in case we want to go back to that - in the consolidation phase, only species actually grown in each country will count towards the overall habitat suitability score.
 
-```{r save-habitat-suitability}
-#| code-summary: "Main harvest year → species → country habitat suitability loop"
+```{r save-habitat-suitability-global}
+#| code-summary: "Main harvest year → species global habitat suitability loop"
 #| eval: false
 
+HS_global_dir <- here("outputs/data/habitat_suitability/global")
+
 # ── Create all filenames & directories ─────────────────────────────────────
-files_HS <- tidyr::crossing(country_dirs, model_names, harvest_years) %>%
-  glue::glue_data("{country_dirs}/{model_names}/FR_{harvest_years}.tif") %>%
+files_HS_global <- tidyr::crossing(model_names, harvest_years) %>%
+  glue::glue_data("{model_names}/FR_{harvest_years}.tif") %>%
   as.character() %>%
-  here("outputs/data/habitat_suitability", .)
+  file.path(HS_global_dir, .)
 
-dirs <- unique(dirname(files_HS))
-for (d in dirs) dir.create(d, recursive = TRUE, showWarnings = FALSE)
-
-# ── Pre-project EEZ polygons to raster CRS ────────────────────────────────
-ref_rast  <- rast(tos_rast_fnms[1])
-ref_crs   <- crs(ref_rast)
-EEZ_vects <- EEZ_by_FAO_full %>%
-  split(.$ISO3_Code) %>%
-  map(~ vect(.x) %>%
-        aggregate(by = "ISO3_Code") %>% # combine all fishing regions into a single EEZ per country
-        project(ref_crs))
+for (d in unique(dirname(files_HS_global))) dir.create(d, recursive = TRUE, showWarnings = FALSE)
 
 # ── Create a binary EEZ-union mask raster ─────────────────────────────────
 # Rasterise the union of all EEZs onto the SST grid so we can mask ocean cells outside any EEZ to NA before running the model.
+ref_rast <- rast(tos_rast_fnms[1])
+ref_crs  <- crs(ref_rast)
+
 sf_use_s2(FALSE)
 eez_union <- EEZ_by_FAO_full %>%
   st_make_valid() %>%      # GEOS make_valid can handle the crossing rings
@@ -149,21 +144,17 @@ eez_union <- EEZ_by_FAO_full %>%
 sf_use_s2(TRUE)            # restore the default for later operations
 
 eez_union_v <- project(vect(eez_union), ref_crs)
-eez_mask   <- rasterize(eez_union_v, ref_rast, field = 1)  # 1 inside EEZ, NA outside
+eez_mask    <- rasterize(eez_union_v, ref_rast, field = 1)  # 1 inside EEZ, NA outside
 rm(ref_rast, eez_union, eez_union_v); gc()
 
 # ── MAIN LOOP ─────────────────────────────────────────────────────────────
-# For each havest year...
+# For each harvest year...
 walk(
   harvest_years,
   function(yr) {
-    # 1. Work out which species still need output files for this year
-    yr_files_FR <- map(
-      set_names(model_names),
-      ~ here("outputs/data/habitat_suitability", country_dirs, .x, paste0("FR_", yr, ".tif"))
-    ) |> 
-      set_names(set_names(model_names))
-    species_todo <- names(yr_files_FR)[!map_lgl(yr_files_FR, ~ all(file.exists(.x)))]
+    # 1. Work out which species still need a global file for this year
+    yr_files_FR  <- set_names(file.path(HS_global_dir, model_names, paste0("FR_", yr, ".tif")), model_names)
+    species_todo <- names(yr_files_FR)[!file.exists(yr_files_FR)]
 
     if (length(species_todo) != 0) {
       # 2. Read SST for this year (only now that we know it's needed)
@@ -176,32 +167,71 @@ walk(
 
       # sp <- species_todo[1]
       for (sp in species_todo) {
-        yr_sp_files_FR <- yr_files_FR[[sp]]
-
         # 3. Run model ONCE on the (masked) global stack
         resp_global <- get_feeding_responses_r(
           temp_stack     = tos_stack_global,
           species_params = parameters_species[[sp]]
         )
 
-        # 4. Sum across days to get a single-layer global raster
-        FR_global <- app(resp_global[["feeding_response"]], sum, na.rm = TRUE)
+        # 4. Sum across days to get a single-layer global raster and save
+        app(resp_global[["feeding_response"]], sum, na.rm = TRUE) %>%
+          writeRaster(yr_files_FR[[sp]], overwrite = TRUE)
         rm(resp_global); gc()
-
-        # 5. Crop/mask single-layer results per country
-        for (i in seq_along(country_dirs)) {
-          fnm_FR <- yr_sp_files_FR[i]
-          if (file.exists(fnm_FR)) next
-
-          eez_v      <- EEZ_vects[[country_dirs[i]]]
-          fr_country <- crop(FR_global, eez_v) %>% mask(eez_v)
-
-          writeRaster(fr_country, fnm_FR, overwrite = TRUE)
-        }
-
-        rm(FR_global); gc()
       }
     }
+  },
+  .progress = T
+)
+```
+
+The global rasters are then cropped and masked to each country's EEZ.
+
+```{r save-habitat-suitability-country}
+#| code-summary: "Split global habitat suitability rasters into per-country files"
+#| eval: false
+
+HS_global_dir <- here("outputs/data/habitat_suitability/global")
+HS_dir        <- here("outputs/data/habitat_suitability")
+
+# ── Pre-project EEZ polygons to raster CRS ────────────────────────────────
+ref_crs   <- list.files(HS_global_dir, pattern = "\\.tif$", recursive = TRUE, full.names = TRUE)[1] %>% rast() %>% crs()
+EEZ_vects <- EEZ_by_FAO_full %>%
+  split(.$ISO3_Code) %>%
+  map(~ vect(.x) %>%
+        aggregate(by = "ISO3_Code") %>% # combine all fishing regions into a single EEZ per country
+        project(ref_crs))
+
+# ── Build job table: one row per global file, listing the country files it produces ──
+jobs <- tibble(
+  global_file = list.files(HS_global_dir, pattern = "^FR_\\d{4}\\.tif$", recursive = TRUE, full.names = TRUE)
+) %>%
+  mutate(
+    model = basename(dirname(global_file)),
+    fname = basename(global_file)
+  ) %>%
+  filter(model %in% model_names) %>%
+  tidyr::crossing(iso = country_dirs) %>%
+  mutate(country_file = file.path(HS_dir, iso, model, fname))
+
+todo <- filter(jobs, !file.exists(country_file))
+message(nrow(todo), " of ", nrow(jobs), " country files to create")
+
+walk(unique(dirname(todo$country_file)), dir.create, recursive = TRUE, showWarnings = FALSE)
+
+# ── Read each global file once, then crop/mask per country ────────────────
+todo_grp <- todo %>%
+  summarise(iso = list(iso), country_file = list(country_file), .by = global_file)
+
+pwalk(
+  todo_grp,
+  function(global_file, iso, country_file) {
+    FR_global <- rast(global_file)
+    walk2(iso, country_file, function(i, fnm) {
+      eez_v <- EEZ_vects[[i]]
+      crop(FR_global, eez_v) %>%
+        mask(eez_v) %>%
+        writeRaster(fnm, overwrite = TRUE)
+    })
   },
   .progress = T
 )
