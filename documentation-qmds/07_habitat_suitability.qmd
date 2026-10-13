@@ -159,9 +159,10 @@ walk(
   function(yr) {
     # 1. Work out which species still need output files for this year
     yr_files_FR <- map(
-      c("golden_pompano", "nile_tilapia"), # set_names(model_names),
+      set_names(model_names),
       ~ here("outputs/data/habitat_suitability", country_dirs, .x, paste0("FR_", yr, ".tif"))
-    ) |> set_names(c("golden_pompano", "nile_tilapia"))
+    ) |> 
+      set_names(set_names(model_names))
     species_todo <- names(yr_files_FR)[!map_lgl(yr_files_FR, ~ all(file.exists(.x)))]
 
     if (length(species_todo) != 0) {
@@ -367,7 +368,7 @@ walk(
     out_dir <- file.path(outs_path, "plots", "habitat_suitability_decadal", iso)
     for (d in out_dir) dir.create(d, recursive = TRUE, showWarnings = FALSE)
 
-    # Plotset 1: Save plots for each model seperately
+    # Plotset 1: Save absolute HS plots for each model seperately
     # mdir <- str_subset(out_dirs, "ALL", negate = T)[1]
     # mn <- basename(str_subset(out_dirs, "ALL", negate = T))[1]
     walk(
@@ -398,20 +399,16 @@ walk(
         }
 
         # Set variables for plot 1
-        title_text <- "Mean annual habitat suitability"
         model_farms <- assigned_farms %>% 
           filter(model_name == mn & ISO3_Code == iso)
         subtitle_text <- paste0(country_data$name, " (", iso, "): ", mn)
-        file_text <- paste0(iso, "_", mn, "_MAHS.png")
+        file_text <- paste0("MAHS_", iso, "_", mn, ".png")
 
         p <- ggplot() +
           geom_spatraster(data = in_data) +
           geom_sf(data = land, fill = "grey85", colour = "grey55", linewidth = 0.2) + 
           geom_sf(data = model_farms, shape = 4, size = 1.5, colour = "black") +
-          coord_sf(
-            xlim = c(country_bbox[["xmin"]], country_bbox[["xmax"]]), 
-            ylim = c(country_bbox[["ymin"]], country_bbox[["ymax"]])
-          ) +
+          country_coord_sf(country_bbox) +
           scale_fill_viridis_c(
             limits = c(0, 1),
             labels = scales::label_percent(),
@@ -419,7 +416,7 @@ walk(
           ) +
           facet_wrap(~lyr, ncol = 2) +
           labs(
-            title = title_text, 
+            title = "Mean annual habitat suitability", 
             subtitle = subtitle_text,
             fill = "HS", x = "Longitude", y = "Latitude"
           ) +
@@ -441,7 +438,7 @@ walk(
 
           save_map(
             p = p, 
-            filename = file.path(HS_plot_path, iso, mn, file_text), 
+            filename = file.path(out_dir, file_text), 
             panel_width = 5, dpi = 300
           )
 
