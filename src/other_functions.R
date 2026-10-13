@@ -473,3 +473,105 @@ get_growing_window <- function(temperatures, grow_days, species_params) {
     mutate(end_doy = doy + grow_days - 1) %>% 
     select(start = doy, end = end_doy)
 }
+
+country_summary <- function(iso, digits = 1) {
+  d <- file.path(prepdata_path, "FAO_with_models.qs") %>% 
+    qs_read() %>% 
+    filter(period %in% 2014:2023) %>%
+    mutate(model_name = case_when(
+      model_name %in% c("drum", "large_yellow_croaker", "whitemouth_croaker", "meagre") ~ "drum_croaker", 
+      model_name %in% c("red_seabream", "gilthead_seabream", "blackhead_seabream") ~ "seabream", 
+      TRUE ~ model_name)
+    ) %>% 
+    group_by(ISO3_Code, country, model_name, Scientific_Name) %>% 
+    reframe(value = sum(value))
+
+  d <- d |>
+    filter(ISO3_Code == iso) |>
+    mutate(value = units::drop_units(value))  # drop [t] units
+
+  if (nrow(d) == 0) stop("No rows found for ISO3_Code '", iso, "'")
+
+  total <- sum(d$value, na.rm = TRUE)
+
+  # % of country total per model
+  models <- d |>
+    summarise(value = sum(value, na.rm = TRUE), .by = model_name) |>
+    mutate(pct = 100 * value / total) |>
+    arrange(desc(value))
+
+  # % within each model per species
+  species <- d |>
+    summarise(value = sum(value, na.rm = TRUE), .by = c(model_name, Scientific_Name)) |>
+    mutate(pct = 100 * value / sum(value), .by = model_name) |>
+    arrange(model_name, desc(value))
+
+  fmt_t <- \(x) format(round(x), big.mark = ",", trim = TRUE)
+  fmt_p <- \(x) sprintf("%.*f%%", digits, x)
+
+  cat(sprintf("%s (%s)\n", d$country[1], iso))
+  cat(sprintf("Total production: %s t\n", fmt_t(total)))
+  cat(sprintf("Number of models: %d\n", nrow(models)))
+
+  for (i in seq_len(nrow(models))) {
+    m <- models$model_name[i]
+    cat(sprintf("\n  %s: %s t (%s of country total)\n",
+                m, fmt_t(models$value[i]), fmt_p(models$pct[i])))
+
+    sp <- filter(species, model_name == m)
+    cat(sprintf("    - %s: %s t (%s of model)\n",
+                sp$Scientific_Name, fmt_t(sp$value), fmt_p(sp$pct)), sep = "")
+  }
+
+  invisible(list(total = total, models = models, species = species))
+}
+
+# country_summary("DZA")
+
+get_country_data <- function(fnms, ids) {
+  annual_biomass <- map2_dfr(
+    fnms, ids,
+    function(fnm, id) {
+      qs_read(fnm) %>% 
+        tidy_stat("weight_scaled") %>% 
+        mutate(farm_ID = id) %>% 
+        slice_max(prod_day, n = 1) %>% 
+        select(farm_ID, year, mean)
+    }
+  ) %>% rename(biomass = mean)
+
+  annual_food_prov <- map2_dfr(
+    fnms, ids,
+    function(fnm, id) {
+      qs_read(fnm) %>% 
+        tidy_stat("food_prov_scaled") %>% 
+        mutate(farm_ID = id) %>% 
+        group_by(farm_ID, year) %>% 
+        reframe(food_prov = sumna(mean))
+    }
+  ) %>% 
+    left_join(annual_biomass, by = join_by(farm_ID, year)) %>% 
+    mutate(food_prov_biom = food_prov/biomass)
+
+  left_join(
+      annual_food_prov,
+      annual_food_prov %>% filter(year == 2025) %>% select(-c(year, biomass)) %>% rename(food_prov_2025 = food_prov, food_prov_biom_2025 = food_prov_biom),
+      by = join_by(farm_ID)
+    ) %>% 
+    left_join(
+      annual_biomass %>% filter(year == 2025) %>% select(farm_ID, biomass) %>% rename(biomass_2025 = biomass),
+      by = join_by(farm_ID)
+    ) %>% 
+    mutate(
+      food_prov_change = food_prov - food_prov_2025,
+      food_prov_biom_change = food_prov_biom - food_prov_biom_2025,
+      biomass_change = biomass - biomass_2025
+    )
+}
+
+country_coord_sf <- function(bbox_data) {
+  coord_sf(
+    xlim = c(bbox_data[["xmin"]], bbox_data[["xmax"]]), 
+    ylim = c(bbox_data[["ymin"]], bbox_data[["ymax"]])
+  ) 
+}
