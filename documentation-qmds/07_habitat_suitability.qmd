@@ -98,9 +98,12 @@ EEZ_by_FAO_full <- file.path(prepdata_path, "EEZ_data_with_FAO_regions.qs") %>%
   st_transform(crs = 4326) %>%
   st_make_valid()
 
-tos_rast_fnms <- file.path(bigdata_path, "ESGF", "EC-Earth3P-HR", "projected_adjusted") %>% 
+data_source <- if (str_detect(here(), "/mnt/rdsi")) {rdsi_path} else {bigdata_path}
+
+tos_rast_fnms <- file.path(rdsi_path, "raw_data", "ESGF", "EC-Earth3P-HR", "projected_adjusted") %>% 
   list.files(full.names = T) %>% 
   sort()
+
 tos_dates <- str_extract(basename(tos_rast_fnms), "\\d{4}-\\d{2}-\\d{2}")
 tos_rast_fnms_annual <- split(tos_rast_fnms, year(as.Date(tos_dates)))
 ```
@@ -156,9 +159,9 @@ walk(
   function(yr) {
     # 1. Work out which species still need output files for this year
     yr_files_FR <- map(
-      set_names(model_names),
+      c("golden_pompano", "nile_tilapia"), # set_names(model_names),
       ~ here("outputs/data/habitat_suitability", country_dirs, .x, paste0("FR_", yr, ".tif"))
-    )
+    ) |> set_names(c("golden_pompano", "nile_tilapia"))
     species_todo <- names(yr_files_FR)[!map_lgl(yr_files_FR, ~ all(file.exists(.x)))]
 
     if (length(species_todo) != 0) {
@@ -170,6 +173,7 @@ walk(
       # Apply the EEZ-union mask so that open ocean == NA
       tos_stack_global <- tos_stack_global * eez_mask
 
+      # sp <- species_todo[1]
       for (sp in species_todo) {
         yr_sp_files_FR <- yr_files_FR[[sp]]
 
