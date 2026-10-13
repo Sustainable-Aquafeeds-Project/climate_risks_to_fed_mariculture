@@ -1,14 +1,15 @@
-# These files are too large for github
+# These are the main data files, which are too large for github
 data/farm_production/*
+
+# These are only used to do a quick visual check of results - not used going forward
+plots/farm_production_checks/*
+plots/farm_production_checks/*/*
 
 # These files are small but there's way too many of them
 data/habitat_suitability/*/*/*
 !data/habitat_suitability/global/*/*
 data/habitat_suitability_decadal/*/*/*
 data/habitat_suitability_decadal_change/*/*/*
-
-plots/farm_production_checks/*
-plots/farm_production_checks/*/*
 
 plots/habitat_suitability_decadal/*
 plots/habitat_suitability_decadal/*/*

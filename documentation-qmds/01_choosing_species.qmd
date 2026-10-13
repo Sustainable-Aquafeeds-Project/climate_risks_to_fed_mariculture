@@ -854,7 +854,7 @@ choosing_ranks_manual <- FAO_with_models %>%
 
 ```{r fig-coverage-manual}
 #| fig-height: 5
-#| fig-width: 6
+#| fig-width: 7.5
 #| fig-cap: "Cumulative production coverage under the manually curated model ranking. Blue line = marine coverage; red line = combined marine + brackishwater coverage. **Bold** names indicate models that are already parameterised. Dotted lines show the % of global fed marine production (blue) and marine + brackishwater production (red) that is covered by the full set of 17 chosen models."
 #| code-summary: "Plot cumulative coverage under the manually curated model ranking"
 
@@ -891,7 +891,8 @@ coverage_manual_rank <- choosing_ranks_manual %>%
 model_order <- coverage_manual_rank %>% distinct(rank, model_name) %>% arrange(rank) %>% pull(model_name) %>% rev()
 
 bold_labels <- ifelse(
-    model_order %in% all_ready,
+    model_order == "bolded",
+    # model_order %in% all_ready,
     paste0("**", model_order, "**"),
     model_order
   )
@@ -906,11 +907,11 @@ coverage_manual_rank %>%
   geom_hline(yintercept = vline_15_B, linetype = "dashed", colour = "#d7191c", alpha = 0.5) +
   annotate(
     "text", x = 16, y = vline_15_M, label = sprintf("%.1f%%", vline_15_M),
-    hjust = -0.5, vjust = 0, colour = "#2c7bb6", size = 3.5
+    hjust = 1.25, vjust = 0.5, colour = "#2c7bb6", size = 3.5
   ) +
   annotate(
     "text", x = 16, y = vline_15_B, label = sprintf("%.1f%%", vline_15_B),
-    hjust = -0.5, vjust = 1, colour = "#d7191c", size = 3.5
+    hjust = -0.25, vjust = 1, colour = "#d7191c", size = 3.5
   ) +
   geom_line(aes(group = scope), linewidth = 1) +
   geom_point(size = 2.5) +
@@ -925,7 +926,7 @@ coverage_manual_rank %>%
   ) +
   labs(
     title    = "Coverage of global production (tonnage) under manual model ranking",
-    subtitle = paste0("FAO data, (2011– ", max(FAO_aqua$period), ", fed species only)"),
+    subtitle = paste0("FAO data, (2012–", max(FAO_aqua$period), ", fed species only)"),
     x        = NULL,
     y        = "Cumulative production coverage (%)",
     colour   = "Production scope"

@@ -1205,7 +1205,7 @@ p_bigmap_robinson +
   scale_colour_viridis_d(name = "Model name", option = "turbo") +
   coord_sf() +
   prettyplot() + rm_x_axis() + rm_y_axis() +
-  theme(legend.position = "right", legend.title = element_text(), legend.title.position = "top")
+  theme(legend.position = "bottom", legend.title = element_text(), legend.title.position = "top")
 ```
 
 ```{r save-plots-per-country}
