@@ -296,10 +296,10 @@ farm_data_GLW %>%
 #| fig-height: 5.5
 
 farm_data_GLW %>% 
-  ggplot(aes(x = GLW, y = biomass_pct_change, colour = model_name)) +
+  ggplot(aes(x = GLW, y = biomass_pct_change, fill = model_name)) +
   geom_hline(yintercept = 0, colour = "grey45", linewidth = 0.5) +
-  geom_boxplot(position = position_dodge(width = 0.7), width = 0.6) +
-  scale_colour_manual(values = country_pal, labels = label_model, name = "Model") +
+  geom_boxplot(position = position_dodge(width = 0.7), width = 0.6, colour = "black") +
+  scale_fill_manual(values = country_pal, labels = label_model, name = "Model") +
   labs(
     title = paste0("Change in production at each global warming level: ", this_country),
     x = "Global warming level", y = "Change from 2025 (%)"
@@ -313,10 +313,10 @@ farm_data_GLW %>%
 #| fig-height: 5.5
 
 farm_data_GLW %>% 
-  ggplot(aes(x = GLW, y = food_prov_pct_change, colour = model_name)) +
+  ggplot(aes(x = GLW, y = food_prov_pct_change, fill = model_name)) +
   geom_hline(yintercept = 0, colour = "grey45", linewidth = 0.5) +
-  geom_boxplot(position = position_dodge(width = 0.7), width = 0.6) +
-  scale_colour_manual(values = country_pal, labels = label_model, name = "Model") +
+  geom_boxplot(position = position_dodge(width = 0.7), width = 0.6, colour = "black") +
+  scale_fill_manual(values = country_pal, labels = label_model, name = "Model") +
   labs(
     title = paste0("Change in feed required at each global warming level: ", this_country),
     x = "Global warming level", y = "Change from 2025 (%)"
