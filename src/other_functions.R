@@ -477,17 +477,18 @@ get_growing_window <- function(temperatures, grow_days, species_params) {
 country_summary <- function(iso, digits = 1) {
   d <- file.path(prepdata_path, "FAO_with_models.qs") %>% 
     qs_read() %>% 
-    filter(period %in% 2014:2023) %>%
+    filter(period %in% 2014:2023 & ISO3_Code == iso) %>%
     mutate(model_name = case_when(
       model_name %in% c("drum", "large_yellow_croaker", "whitemouth_croaker", "meagre") ~ "drum_croaker", 
       model_name %in% c("red_seabream", "gilthead_seabream", "blackhead_seabream") ~ "seabream", 
       TRUE ~ model_name)
     ) %>% 
+    group_by(ISO3_Code, country, model_name, Scientific_Name, period) %>% 
+    reframe(value = sum(value)) %>% 
     group_by(ISO3_Code, country, model_name, Scientific_Name) %>% 
-    reframe(value = sum(value))
+    reframe(value = mean(value))
 
   d <- d |>
-    filter(ISO3_Code == iso) |>
     mutate(value = units::drop_units(value))  # drop [t] units
 
   if (nrow(d) == 0) stop("No rows found for ISO3_Code '", iso, "'")
@@ -553,20 +554,28 @@ get_country_data <- function(fnms, ids) {
     left_join(annual_biomass, by = join_by(farm_ID, year)) %>% 
     mutate(food_prov_biom = food_prov/biomass)
 
-  left_join(
-      annual_food_prov,
-      annual_food_prov %>% filter(year == 2025) %>% select(-c(year, biomass)) %>% rename(food_prov_2025 = food_prov, food_prov_biom_2025 = food_prov_biom),
-      by = join_by(farm_ID)
-    ) %>% 
-    left_join(
-      annual_biomass %>% filter(year == 2025) %>% select(farm_ID, biomass) %>% rename(biomass_2025 = biomass),
-      by = join_by(farm_ID)
-    ) %>% 
-    mutate(
-      food_prov_change = food_prov - food_prov_2025,
-      food_prov_biom_change = food_prov_biom - food_prov_biom_2025,
-      biomass_change = biomass - biomass_2025
+  annual_food_prov_2025 <- annual_food_prov %>% 
+    filter(year == 2025) %>% 
+    select(-c(year)) %>% 
+    rename(
+      biomass_2025        = biomass,
+      food_prov_2025      = food_prov, 
+      food_prov_biom_2025 = food_prov_biom
     )
+
+  left_join(
+    annual_food_prov,
+    annual_food_prov_2025,
+    by = join_by(farm_ID)
+  ) %>% 
+  mutate(
+    food_prov_change           = food_prov - food_prov_2025,
+    food_prov_change_pct       = food_prov_change/food_prov_2025,
+    food_prov_biom_change      = food_prov_biom - food_prov_biom_2025,
+    food_prov_biom_change_pct  = food_prov_biom_change/food_prov_biom_2025,
+    biomass_change             = biomass - biomass_2025,
+    biomass_change_pct         = biomass_change/biomass_2025
+  )
 }
 
 country_coord_sf <- function(bbox_data) {

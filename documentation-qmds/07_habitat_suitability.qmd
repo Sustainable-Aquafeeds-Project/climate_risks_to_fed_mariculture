@@ -120,7 +120,9 @@ tos_dates     <- tos_dates[inds]
 Habitat suitability is calculated for all species in all countries, even if that species is not currently farmed there. This is in case we want to go back to that - in the consolidation phase, only species actually grown in each country will count towards the overall habitat suitability score.
 
 ```{r reference-raster}
-# ── Create a binary EEZ-union mask raster ─────────────────────────────────
+#| code-summary: "Create a binary EEZ-union mask raster"
+#| eval: false
+
 # Rasterise the union of all EEZs onto the SST grid so we can mask ocean cells outside any EEZ to NA before running the model.
 ref_rast <- rast(tos_rast_fnms[1])
 ref_crs  <- crs(ref_rast)
@@ -144,16 +146,63 @@ rm(ref_rast, eez_union, eez_union_v); gc()
 HS_global_dir <- here("outputs/data/habitat_suitability/global")
 
 # ── Create all filenames & directories ─────────────────────────────────────
-files_HS_global <- expand_grid(model_names, harvest_years) %>%
+# One row per species × year × metric (FR = feeding rate, MR = metabolic rate);
+# only rows whose file is missing are kept, so a year is skipped entirely if
+# both files exist, and only the missing metric is calculated otherwise.
+files_HS_global <- expand_grid(model_names, harvest_years, metric = c("FR", "MR")) %>%
   mutate(
-    filename = file.path(HS_global_dir, paste0(model_names, "/FR_", harvest_years, ".tif")),
-    exists = file.exists(filename)
-  ) |> 
+    filename = file.path(HS_global_dir, model_names, paste0(metric, "_", harvest_years, ".tif")),
+    exists   = file.exists(filename)
+  ) %>%
   filter(!exists)
 
 for (d in unique(dirname(files_HS_global$filename))) dir.create(d, recursive = TRUE, showWarnings = FALSE)
 
 files_HS_global <- split(files_HS_global, files_HS_global$harvest_years)
+
+# ── Feed parameters used for metabolism ───────────────────────────────────
+# Several species have more than one feed; the first listed feed is used here.
+feed_for_species <- map(
+  set_names(model_names),
+  function(sp) {
+    nm <- str_subset(feed_names, paste0("^", sp, "-"))[1]
+    if (is.na(nm)) stop("No feed parameters found for ", sp)
+    feed_params[[nm]]
+  }
+)
+
+# ── Raster wrapper for get_metabolism() ───────────────────────────────────
+# get_metabolism() is scalar (uses if()/min()), so it is evaluated once per
+# unique temperature (rounded to `digits`) and the results are looked up for
+# every cell/day, rather than calling it per cell.
+# The overfeeding draw in food_prov_rate() is made deterministic for this
+# application by setting overFdelta = 0, so rnorm() returns overFmean exactly.
+get_metabolism_r <- function(temp_stack, species_params, feed_params, digits = 2) {
+  species_params["overFdelta"] <- 0
+
+  temp_vec <- as.vector(terra::values(temp_stack))
+  ok       <- is.finite(temp_vec)
+
+  temp_round  <- round(temp_vec[ok], digits)
+  temp_unique <- sort(unique(temp_round))
+  mr_unique   <- vapply(
+    temp_unique,
+    function(tt) unname(get_metabolism(
+      water_temp     = tt,
+      species_params = species_params,
+      feed_params    = feed_params,
+      rep_size       = species_params[["CS"]]
+    )),
+    numeric(1)
+  )
+
+  full     <- rep(NA_real_, length(temp_vec))
+  full[ok] <- mr_unique[match(temp_round, temp_unique)]
+
+  r <- terra::setValues(temp_stack, matrix(full, nrow = terra::ncell(temp_stack), ncol = terra::nlyr(temp_stack)))
+  names(r) <- names(temp_stack)
+  r
+}
 
 # ── MAIN LOOP ─────────────────────────────────────────────────────────────
 # files <- files_HS_global[[1]]
@@ -162,39 +211,39 @@ walk2(
   files_HS_global,
   names(files_HS_global),
   function(files, yr_char) {
-    # 1. Work out which species still need a global file for this year
-    species_todo <- unique(files$model_names)
+    if (nrow(files) == 0) return(invisible(NULL))
 
-    if (length(species_todo) != 0) {
-      # 2. Read SST for this year (only now that we know it's needed)
-      this_tos_fnms <- tos_rast_fnms[str_detect(tos_dates, yr_char)]
-      tos_stack_global <- rast(this_tos_fnms)
-      
+    # 1. Read SST for this year (only now that we know at least one file is missing)
+    this_tos_fnms    <- tos_rast_fnms[str_detect(tos_dates, yr_char)]
+    tos_stack_global <- rast(this_tos_fnms)
 
-      # Apply the EEZ-union mask so that open ocean == NA
-      suppressWarnings(tos_stack_global <- tos_stack_global * eez_mask)
+    # Apply the EEZ-union mask so that open ocean == NA
+    suppressWarnings(tos_stack_global <- tos_stack_global * eez_mask)
 
-      # sp <- species_todo[1]
-      walk(
-        species_todo, 
-        function(sp) {
-          # 3. Run model ONCE on the (masked) global stack
-          resp_global <- get_feeding_responses_r(
+    # 2. Calculate and save only the missing species × metric files
+    pwalk(
+      files,
+      function(model_names, metric, filename, ...) {
+        resp_global <- if (metric == "FR") {
+          get_feeding_responses_r(
             temp_stack     = tos_stack_global,
-            species_params = parameters_species[[sp]]
+            species_params = parameters_species[[model_names]]
+          )[["feeding_response"]]
+        } else {
+          get_metabolism_r(
+            temp_stack     = tos_stack_global,
+            species_params = parameters_species[[model_names]],
+            feed_params    = feed_for_species[[model_names]]
           )
-  
-          # 4. Sum across days to get a single-layer global raster and save
-          resp_global <- app(resp_global[["feeding_response"]], sum, na.rm = TRUE)
-          writeRaster(
-            resp_global, 
-            files$filename[files$model_names == sp], 
-            overwrite = TRUE
-          )
-          rm(resp_global); gc()
         }
-      )
-    }
+
+        # 3. Sum across days to get a single-layer global raster and save
+        resp_global <- app(resp_global, sum, na.rm = TRUE)
+        writeRaster(resp_global, filename, overwrite = TRUE)
+        rm(resp_global); gc()
+      }
+    )
+    rm(tos_stack_global); gc()
   },
   .progress = T
 )
@@ -217,13 +266,14 @@ EEZ_vects <- EEZ_by_FAO_full %>%
         aggregate(by = "ISO3_Code") %>% # combine all fishing regions into a single EEZ per country
         project(ref_crs))
 
-# ── Build job table: one row per global file, listing the country files it produces ──
+# ── Build job table: one row per global file (FR and MR) × country ────────
 jobs <- tibble(
-  global_file = list.files(HS_global_dir, pattern = "^FR_\\d{4}\\.tif$", recursive = TRUE, full.names = TRUE)
+  global_file = list.files(HS_global_dir, pattern = "^(FR|MR)_\\d{4}\\.tif$", recursive = TRUE, full.names = TRUE)
 ) %>%
   mutate(
-    model = basename(dirname(global_file)),
-    fname = basename(global_file)
+    model  = basename(dirname(global_file)),
+    fname  = basename(global_file),
+    metric = str_extract(fname, "^(FR|MR)")
   ) %>%
   filter(model %in% model_names) %>%
   tidyr::crossing(iso = country_dirs) %>%
@@ -241,10 +291,10 @@ todo_grp <- todo %>%
 pwalk(
   todo_grp,
   function(global_file, iso, country_file) {
-    FR_global <- rast(global_file)
+    HS_global <- rast(global_file)
     walk2(iso, country_file, function(i, fnm) {
       eez_v <- EEZ_vects[[i]]
-      crop(FR_global, eez_v) %>%
+      crop(HS_global, eez_v) %>%
         mask(eez_v) %>%
         writeRaster(fnm, overwrite = TRUE)
     })
@@ -279,26 +329,35 @@ decades <- list(
 HS_dir     <- file.path(outs_path, "data", "habitat_suitability")
 HS_dec_dir <- file.path(outs_path, "data", "habitat_suitability_decadal")
 
-jobs <- imap(
+# One job per country × model × metric (FR/MR) × decade
+jobs <- map(
   set_names(country_dirs),
-  function(cd, iso) {
-    FR_files <- list.files(file.path(HS_dir, cd), full.names = TRUE, recursive = TRUE, pattern = "FR_") %>% sort()
-    by_model <- split(FR_files, basename(dirname(FR_files)))
+  function(iso) {
+    HS_files <- list.files(file.path(HS_dir, iso), full.names = TRUE, recursive = TRUE, pattern = "^(FR|MR)_\\d{4}\\.tif$") %>% sort()
+    if (length(HS_files) == 0) return(NULL)
 
-    imap(by_model, function(mls, model) {
-      mls_yrs <- as.integer(str_extract(basename(mls), "\\d{4}(?=\\.tif$)"))
+    by_group <- tibble(
+      file   = HS_files,
+      model  = basename(dirname(HS_files)),
+      metric = str_extract(basename(HS_files), "^(FR|MR)"),
+      year   = as.integer(str_extract(basename(HS_files), "\\d{4}(?=\\.tif$)"))
+    ) %>%
+      group_split(model, metric)
+
+    map(by_group, function(g) {
       tibble(
         iso      = iso,
-        model    = model,
+        model    = g$model[1],
+        metric   = g$metric[1],
         dec_name = names(decades),
-        in_files = map(decades, \(d) mls[mls_yrs %in% d])
+        in_files = map(decades, \(d) g$file[g$year %in% d])
       )
     }) %>% list_rbind()
   }
 ) %>%
   list_rbind() %>%
   filter(lengths(in_files) > 0) %>%   # drop decades with no files
-  mutate(out_file = file.path(HS_dec_dir, iso, model, paste0(dec_name, ".tif")))
+  mutate(out_file = file.path(HS_dec_dir, iso, model, paste0(metric, "_", dec_name, ".tif")))
 
 todo <- filter(jobs, !file.exists(out_file))
 message(nrow(todo), " of ", nrow(jobs), " decadal files to create")
@@ -317,197 +376,12 @@ walk2(
 )
 ```
 
-```{r relative-decadal-change}
-#| code-summary: For each country EEZ and model species get the relative change in habitat suitability score for each decade, relative to a reference period.
-
-dec_dir    <- file.path(outs_path, "data", "habitat_suitability_decadal")
-rel_HS_dir <- file.path(outs_path, "data", "habitat_suitability_decadal_change")
-ref_period <- "ref_2015_2024"
-
-jobs <- tibble(
-  dec_file = list.files(file.path(dec_dir, country_dirs), full.names = TRUE, recursive = TRUE, pattern = "\\.tif$")
-) %>%
-  mutate(
-    iso      = basename(dirname(dirname(dec_file))),
-    model    = basename(dirname(dec_file)),
-    dec_name = str_remove(basename(dec_file), "\\.tif$")
-  ) %>%
-  filter(model %in% model_names, dec_name != ref_period) %>%
-  mutate(
-    ref_file = file.path(dec_dir, iso, model, paste0(ref_period, ".tif")),
-    out_file = file.path(rel_HS_dir, iso, model, paste0(dec_name, "__", ref_period, ".tif"))
-  )
-
-# 2. Keep only outputs that don't exist yet (and flag any missing reference files)
-missing_ref <- filter(jobs, !file.exists(ref_file)) %>% distinct(iso, model)
-if (nrow(missing_ref) > 0) warning(nrow(missing_ref), " country/model combos have no reference file and will be skipped")
-
-todo <- filter(jobs, !file.exists(out_file), file.exists(ref_file))
-message(nrow(todo), " of ", nrow(jobs), " change files to compute")
-
-todo_grp <- todo %>%
-  summarise(dec_files = list(dec_file), dec_names = list(dec_name), out_files = list(out_file), .by = ref_file)
-
-walk(unique(dirname(todo$out_file)), dir.create, recursive = TRUE, showWarnings = FALSE)
-
-pwalk(
-  todo_grp,
-  function(ref_file, dec_files, dec_names, out_files) {
-    ref_rast  <- rast(ref_file)
-    dec_rasts <- rast(dec_files)
-    names(dec_rasts) <- dec_names
-
-    ((dec_rasts - ref_rast) / ref_rast) %>%
-      writeRaster(filename = out_files, overwrite = TRUE)
-  },
-  .progress = T
-)
-```
-
 # Re-consolidate habitat suitability
 
 Finally, we narrow down the HS files to those that we actually want to plot. For now, we're going to look at:
 
 - The species that are actually grown in each country
 - The GLW levels, relative to today
-
-```{r save-HS-country-plots}
-#| code-summary: Save plots of habitat suitability
-
-# Specify the decades required
-decades <- decades[c("ref_2015_2024", "GLW_1.5", "GLW_2.0", "GLW_3.0", "GLW_4.0")]
-
-# Load all the bbox data (re-do if you made any changes to the CSV)
-country_bbox_data <- load_country_bbox_data()
-
-# Get assigned farms again, convert to nice crs
-assigned_farms <- file.path(prepdata_path, "assigned_farms.qs") %>% qs_read() %>% st_transform(4326)
-countries <- sort(unique(assigned_farms$ISO3_Code))
-
-# Create directories
-dirs <- 
-for (d in dirs) dir.create(d, recursive = TRUE, showWarnings = FALSE)
-
-# Get land polygon for plotting
-land <- ne_countries(scale = "large", returnclass = "sf")
-
-# This fills out 1 cell of border around the EEZ HS values close to the coastline, purely to stop the ugly white spaces between the coast and the HS data. Note that this gapfilling technically extrapolates "fake" data within the country's EEZ
-gapfill <- T
-fill_coastal_gaps <- function(r, buf_m = 20000, w = 3) {
-  this_land <- land %>% vect() %>% project(crs(r[[1]]))
-  filled     <- focal(r, w, "mean", na.rm = TRUE, na.policy = "only")
-  coast_zone <- buffer(this_land, buf_m)   # band around the coast (land interior is covered by your land layer anyway)
-  cover(r, mask(filled, coast_zone))       # only fill NAs that fall inside the coastal band
-}
-
-# Generate and save all files for each country
-# iso <- countries[12]
-walk(
-  countries,
-  function(iso) {
-    country_data <- country_bbox_data[[iso]]
-    country_bbox <- bbox(iso, crs = 4326)
-
-    # Get all the data files but restrict to species actually being farmed there
-    models_inuse <- country_farms %>% pull(model_name) %>% unique()
-
-    out_dir <- file.path(outs_path, "plots", "habitat_suitability_decadal", iso)
-    for (d in out_dir) dir.create(d, recursive = TRUE, showWarnings = FALSE)
-
-    # Plotset 1: Save absolute HS plots for each model seperately
-    # mdir <- str_subset(out_dirs, "ALL", negate = T)[1]
-    # mn <- basename(str_subset(out_dirs, "ALL", negate = T))[1]
-    walk(
-      models_inuse,
-      function(mn) {
-        # Get existing filenames
-        in_files <- file.path(outs_path, "data",  "habitat_suitability_decadal", iso) %>% 
-          list.files(recursive = T, full.names = T) %>% 
-          str_subset(mn) %>% 
-          str_subset(paste0(names(decades), collapse = "|"))
-        ref_file <- str_subset(in_files, "ref_")
-        glw_files <- setdiff(in_files, ref_file)
-
-        if (length(glw_files) == 0) {
-          message(sprintf("HS decadal files missing for ", mn, ", skipping"))
-          next
-        }
-
-        # Load data and rescale to [0,1] from [0,365]
-        ref_data <- rast(ref_file)/365
-        glw_data <- rast(glw_files)/365
-        names(glw_data) <- str_remove(basename(glw_data), ".tif")
-
-        # Gapfill if desired (takes some time)
-        if (gapfill) {
-          ref_data <- fill_coastal_gaps(ref_data)
-          glw_data <- fill_coastal_gaps(glw_data)
-        }
-
-        # Set variables for plot 1
-        model_farms <- assigned_farms %>% 
-          filter(model_name == mn & ISO3_Code == iso)
-        subtitle_text <- paste0(country_data$name, " (", iso, "): ", mn)
-        file_text <- paste0("MAHS_", iso, "_", mn, ".png")
-
-        p <- ggplot() +
-          geom_spatraster(data = in_data) +
-          geom_sf(data = land, fill = "grey85", colour = "grey55", linewidth = 0.2) + 
-          geom_sf(data = model_farms, shape = 4, size = 1.5, colour = "black") +
-          country_coord_sf(country_bbox) +
-          scale_fill_viridis_c(
-            limits = c(0, 1),
-            labels = scales::label_percent(),
-            na.value = "transparent"
-          ) +
-          facet_wrap(~lyr, ncol = 2) +
-          labs(
-            title = "Mean annual habitat suitability", 
-            subtitle = subtitle_text,
-            fill = "HS", x = "Longitude", y = "Latitude"
-          ) +
-          guides(fill = guide_colourbar(
-            theme = theme(
-              legend.key.height     = unit(14, "lines"),
-              legend.key.width      = unit(1, "lines"),
-              legend.ticks          = element_line(colour = "white", linewidth = 0.4),
-              legend.ticks.length   = unit(0.2, "lines"),
-              legend.frame          = element_rect(colour = "grey30", linewidth = 0.3),
-              legend.title.position = "top"
-            )
-          )) +
-          theme_classic() +
-          theme(
-            legend.position = "right",
-            legend.title    = element_text(hjust = 0.5)
-          )
-
-          save_map(
-            p = p, 
-            filename = file.path(out_dir, file_text), 
-            panel_width = 5, dpi = 300
-          )
-
-    }
-  )
-
-
-    # # Plotset 2: Species are plotted together, weighted by current production
-    # HS_list <- split(in_files, basename(in_files))
-
-    # iwalk(
-    #   HS_list,
-    #   function(dec_files, idx) {
-    #     print(paste(idx, length(dec_files)))
-    #   }
-    # )
-
-
-  },
-  .progress = T
-)
-```
-
 
 ::: {style="display: flex; justify-content: space-between;"}
 [← Previous: Choosing species](01_choosing_species.qmd)

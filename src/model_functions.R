@@ -1354,3 +1354,48 @@ tidy_stat <- function(prod_data, stat_name) {
       mutate(prod_day = day - min(day) + 1)
   })
 }
+
+get_metabolism <- function(water_temp, species_params, feed_params, rep_size) {
+  # Anabolic portion
+  rel_feeding <- feeding_rate(water_temp, species_params)
+  ing_pot     <- species_params[['meanImax']] * (rep_size^species_params['m']) * rel_feeding
+
+  food_prov   <- food_prov_rate(
+    species_params = species_params,
+    water_temp     = water_temp,
+    ing_pot        = ing_pot/species_params['eff'],
+    ing_pot_min    = species_params[['meanImax']] * (rep_size^species_params['m']) * feeding_rate(species_params['Taa'], species_params)
+  )
+  food_enc <- species_params['eff'] * food_prov
+  ing_act  <- min(food_enc, ing_pot)
+  
+  app_carbs    <- apportion_feed(
+    food_prov, ing_act,
+    feed_params[['carb']]$proportion,
+    feed_params[['carb']]$macro,
+    feed_params[['carb']]$digestibility
+  )
+  app_lipids   <- apportion_feed(
+    food_prov, ing_act,
+    feed_params[['lipid']]$proportion,
+    feed_params[['lipid']]$macro,
+    feed_params[['lipid']]$digestibility
+  )
+  app_proteins <- apportion_feed(
+    food_prov, ing_act,
+    feed_params[['protein']]$proportion,
+    feed_params[['protein']]$macro,
+    feed_params[['protein']]$digestibility
+  )
+  
+  # Catabolic portion
+  T_response <- exp(species_params['pk'] * water_temp)
+  E_assim <- 
+    app_carbs['assimilated']    * species_params['epscarb'] +
+    app_lipids['assimilated']   * species_params['epslip']  +
+    app_proteins['assimilated'] * species_params['epsprot']
+  anab       <- E_assim * (1 - species_params['alpha'])
+  catab      <- species_params['epsO2'] * species_params['k0'] * T_response * (rep_size^species_params['n']) * species_params['omega']
+
+  anab - catab
+}
