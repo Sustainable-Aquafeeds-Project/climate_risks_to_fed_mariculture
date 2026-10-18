@@ -126,7 +126,8 @@ assigned_farms <- file.path(prepdata_path, "assigned_farms.qs") %>%
   sf::st_drop_geometry()
 
 farm_temp_files <- file.path(prepdata_path, "assigned_farms_alltemps") %>% 
-  list.files(full.names = T)
+  list.files(full.names = T, pattern = ".qs", recursive = F)
+
 farm_temp_file_IDs <- farm_temp_files %>% 
   basename() %>% 
   str_remove_all(".qs|farm_") %>% 
@@ -162,15 +163,25 @@ assigned_farms <- assigned_farms %>%
 ```{r choose-subset}
 #| code-summary: Choose the current subset of farms we're working with
 
-# # Choose what subset(s) you're going to run this time - REMOTE
-# assigned_farms <- assigned_farms %>% 
-#   filter(!is.na(filename)) %>% 
-#   filter(model_name %in% c("atlantic_salmon", "seabream", "european_seabass", "whiteleg_shrimp", "asian_seabass", "japanese_amberjack", "milkfish"))
-
-# Choose what subset(s) you're going to run this time - LOCAL
-assigned_farms <- assigned_farms %>% 
-  filter(!is.na(filename)) %>% 
-  filter(model_name %in% c("tiger_prawn"))
+# Choose what subset(s) you're going to run this time - REMOTE
+assigned_farms <- assigned_farms %>%
+  filter(!is.na(filename)) %>%
+  filter(model_name %in% c(
+    "atlantic_salmon", 
+    "seabream", 
+    "european_seabass",
+    "grouper",
+    "golden_pompano",
+    "asian_seabass",
+    "nile_tilapia",
+    "japanese_amberjack", 
+    "drum_croaker",
+    "mud_crab",
+    "milkfish", 
+    "grouper",
+    "tiger_prawn",
+    "whiteleg_shrimp" 
+  ))
 
 # Set the path of any files that might exclude production runs
 existing_files <- list.files(file.path(outs_path, "data", "farm_production"), recursive = T, full.names = T) %>% 
@@ -183,7 +194,7 @@ files_to_do <- setdiff(new_files, existing_files)
 assigned_farms_todo <- assigned_farms %>% filter(farm_ID %in% as.integer(str_extract(files_to_do, "(?<=farmID_)\\d+")))
 assigned_farms_todo <- split(assigned_farms_todo, assigned_farms_todo$farm_ID)
 
-sprintf("Files to do: %d", length(files_to_do))
+sprintf("Files to do: %d", length(assigned_farms_todo))
 ```
 
 Before running production, we need to establish the following per-farm parameters:
@@ -194,7 +205,7 @@ Before running production, we need to establish the following per-farm parameter
 ```{r set-per-farm-parameters}
 #| code-summary: Set the grow-times and get the representative harvest size for each farm
 
-# af <- assigned_farms_todo[[12]]
+# af <- assigned_farms_todo[[1]]
 assigned_farms_todo <- map(
   assigned_farms_todo,
   function(af) {
@@ -260,7 +271,8 @@ assigned_farms_todo <- map(
 #| eval: false
 
 assigned_farms_df <- bind_rows(assigned_farms_todo) %>% 
-  filter(farm_ID != 00008994)
+  filter(farm_ID != 00008994) |> 
+  filter(model_name == "drum_croaker")
 
 ggplot(assigned_farms_df, aes(
     x = start_doy, 
@@ -319,14 +331,15 @@ scaled_vars <- c("weight", "dw", "ing_act", "total_excr", "food_prov")
 harvest_years <- 2025:2099      # Leave this - all harvest years are included in the same file per farms
 
 farm_IDs <- map(assigned_farms_todo, function(af) {af$farm_ID}) |> unlist() |> unname()
-prod_files <- file.path(outs_path, "data", "farm_production", "new_local", paste0("production_results_farmID_", fix_int(farm_IDs, 8), "_MC5000.qs"))
+prod_files <- file.path(outs_path, "data", "farm_production", "new_remote", paste0("production_results_farmID_", fix_int(farm_IDs, 8), "_MC5000.qs"))
 ```
 
 ```{r check-farm-growth}
 #| code-summary: Check that the parameters are suitable for the full farm growth (2025 only)
 #| eval: false
 
-af <- assigned_farms_todo[[1]]
+samp <- sample(1:length(assigned_farms_todo), 1)
+af <- assigned_farms_todo[[samp]]
 
 sp <- species_params[[af$model_name]]
 fp <- feed_params[[af$feed_name]]
@@ -395,12 +408,9 @@ check_farm_growth_inputs(
 
 ``` {r run-production}
 #| code-summary: Run the main production and save the outputs at each farm
-#| eval: false
 
 work_cores <- parallelly::availableCores() - 2
 plan(multisession, workers = work_cores)
-
-tictoc::tic()
 
 # af <- assigned_farms_todo[[1]]
 # fnm <- prod_files[1]
@@ -474,12 +484,12 @@ future_walk2(
           times = grow_times,
           N_pop = pop, 
           use_MC_population = T, 
-          MC_pop = MC_pop,
+          MC_pop = 5000,
           output_vars = output_vars,
           scaled_vars = scaled_vars
         )
-      },
-      .progress = T
+      }#,
+      #.progress = T
     )
 
     qs2::qs_save(fg, fnm)
@@ -490,9 +500,6 @@ future_walk2(
 )
 
 plan(sequential)
-
-message(sprintf("%i files done", length(files_to_do)))
-tictoc::toc()
 ```
 
 Check the production files directory to make sure they ran and saved correctly.
