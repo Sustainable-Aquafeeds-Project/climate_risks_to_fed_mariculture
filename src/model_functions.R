@@ -155,9 +155,9 @@ feeding_rate <- function(water_temp, species_params) {
 #'   the viable temperature range (g/day).
 #'
 #' @return Numeric. Food ration provided (g/day).
-food_prov_rate <- function(species_params, water_temp, ing_pot, ing_pot_min) {
+food_prov_rate <- function(species_params, water_temp, ing_pot, ing_pot_min, overF) {
   if (water_temp > species_params['Taa'] & water_temp < species_params['Tma']) {
-    ing_pot * (1 + rnorm(1, species_params['overFmean'], species_params['overFdelta']))
+    ing_pot * overF
   } else {
     ing_pot_min
   }
@@ -576,8 +576,9 @@ fish_growth <- function(
   ingmax,
   output_vars = c("weight", "dw", "water_temp", "T_response", "P_excr", "L_excr", "C_excr", "P_uneat", "L_uneat", "C_uneat", "food_prov", "food_enc", "rel_feeding", "ing_pot", "ing_act", "E_assim", "E_somat", "anab", "catab", "O2", "NH4", "total_excr", "total_uneat", "metab", "nitrogen_excr", "nitrogen_uneat", "carbon_excr", "carbon_uneat", "total_carbon", "total_nitrogen", "SGR")
 ) {
-  # Pre-calculate array sizes
+  # Pre-calculate array sizes and MC values
   n_days <- length(times['t_start']:times['t_end'])
+  overF  <- (1 + rnorm(n_days, species_params['overFmean'], species_params['overFdelta']))
 
   # Always allocate all 22 base columns — the computation loop requires all of
   # them regardless of output_vars. Aggregate columns are appended after the loop.
@@ -604,7 +605,8 @@ fish_growth <- function(
       species_params = species_params,
       water_temp     = result[i, 'water_temp'],
       ing_pot        = result[i, 'ing_pot']/species_params['eff'],
-      ing_pot_min    = ingmax * (result[i, 'weight']^species_params['m']) * feeding_rate(species_params['Taa'], species_params)
+      ing_pot_min    = ingmax * (result[i, 'weight']^species_params['m']) * feeding_rate(species_params['Taa'], species_params),
+      overF          = overF[i]
     )
     result[i, 'food_enc'] <- species_params['eff'] * result[i, 'food_prov']
     result[i, 'ing_act']  <- min(result[i, 'food_enc'], result[i, 'ing_pot'])
@@ -1359,12 +1361,14 @@ get_metabolism <- function(water_temp, species_params, feed_params, rep_size) {
   # Anabolic portion
   rel_feeding <- feeding_rate(water_temp, species_params)
   ing_pot     <- species_params[['meanImax']] * (rep_size^species_params['m']) * rel_feeding
+  overF       <- (1 + rnorm(length(water_temp), species_params['overFmean'], species_params['overFdelta']))
 
   food_prov   <- food_prov_rate(
     species_params = species_params,
     water_temp     = water_temp,
     ing_pot        = ing_pot/species_params['eff'],
-    ing_pot_min    = species_params[['meanImax']] * (rep_size^species_params['m']) * feeding_rate(species_params['Taa'], species_params)
+    ing_pot_min    = species_params[['meanImax']] * (rep_size^species_params['m']) * feeding_rate(species_params['Taa'], species_params),
+    overF          = overF
   )
   food_enc <- species_params['eff'] * food_prov
   ing_act  <- min(food_enc, ing_pot)
