@@ -7,7 +7,7 @@ plots/farm_production_checks/*/*
 
 # These files are small but there's way too many of them
 data/habitat_suitability/*/*/*
-!data/habitat_suitability/global/*/*
+# !data/habitat_suitability/global/*/*
 data/habitat_suitability_decadal/*/*/*
 data/habitat_suitability_decadal_change/*/*/*
 
