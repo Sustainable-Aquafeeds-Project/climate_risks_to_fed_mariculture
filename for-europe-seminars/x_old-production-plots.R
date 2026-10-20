@@ -63,7 +63,7 @@ walk(
   sort(unique(assigned_farms$ISO3_Code)), 
   function(iso) {
 
-    plot_filename <- here("for-europe-seminars", "plots", paste0(iso, ".png"))
+    plot_filename <- here("for-europe-seminars", "plots", "old", paste0(iso, ".png"))
     af <- assigned_farms %>% filter(ISO3_Code == iso)
 
     if (
@@ -177,7 +177,7 @@ p_biomass <- p_data %>%
   theme(legend.position = "right") +
   facet_wrap(~country, nrow = 2, scales = "free")
 
-ggsave(plot = p_biomass, filename = "p_biomass.png", width = 12)
+ggsave(plot = p_biomass, filename = file.path("for-europe-seminars", "plots", "old", "p_biomass.png"), width = 12)
 
 p_feed <- p_data %>% 
   select(country, year, model_name, food_prov_biom_change) %>% 
@@ -193,4 +193,4 @@ p_feed <- p_data %>%
   theme(legend.position = "right") +
   facet_wrap(~country, nrow = 2, scales = "free")
 
-ggsave(plot = p_feed, filename = "p_feed.png", width = 12)
+ggsave(plot = p_feed, filename = file.path("for-europe-seminars", "plots", "old", "p_feed.png"), width = 12)

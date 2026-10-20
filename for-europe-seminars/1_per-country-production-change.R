@@ -9,7 +9,8 @@ source("src/model_functions.R")
 source("src/other_functions.R")
 
 prod_files <- file.path(outs_path, "data", "farm_production") %>% 
-  list.files(recursive = T, full.names = T, pattern = "MC5000.qs")
+  list.files(recursive = T, full.names = T, pattern = "MC5000.qs") %>% 
+  str_subset("testing", negate = T)
 farms_done <- as.integer(str_extract(basename(prod_files), "(?<=farmID_)\\d+"))
 
 assigned_farms <- file.path(prepdata_path, "assigned_farms.qs") %>% 
@@ -113,11 +114,14 @@ walk(
 
 # Plot in terms of GLW change --------------------------------------------------------------------------------
 fnms <- here("for-europe-seminars", "data") %>% 
-  list.files(full.names = T) %>% 
-  str_subset(paste0(
-    c("ESP", "MMR"), # Chosen ocountries
-    collapse = "|"
-  ))
+  list.files(full.names = T) # %>% 
+  # str_subset(paste0(
+  #   c("ESP", "MMR"), # Chosen ocountries
+  #   collapse = "|"
+  # ))
+
+dir.create(here("for-europe-seminars", "plots", "biomass_change"), showWarnings = FALSE)
+dir.create(here("for-europe-seminars", "plots", "feedrequired_change"), showWarnings = FALSE)
 
 lims1 <- c(-0.65, 0.40)
 breaks1 <- seq(-0.80, 0.40, 0.2)
@@ -178,7 +182,7 @@ walk(
       geom_point(size = 2.5, position = position_dodge(width = 0.5)) +
       geom_errorbar(position = position_dodge(width = 0.5), width = 0.25) +
       scale_y_continuous(
-        limits = lims1, breaks = breaks1,
+        # limits = lims1, breaks = breaks1,
         labels = scales::label_percent()
       ) +
       scale_colour_manual(values = warming_cols) +
@@ -192,8 +196,8 @@ walk(
     
     ggsave(
       plot = p1,
-      filename = here("for-europe-seminars", "plots", 
-        paste0("biomass_change_", str_replace(basename(fnm), ".qs", ".png"))
+      filename = here("for-europe-seminars", "plots", "biomass_change", 
+        str_replace(basename(fnm), ".qs", ".png")
       ),
       width = 6, height = 5
     )
@@ -221,7 +225,7 @@ walk(
       geom_point(size = 2.5, position = position_dodge(width = 0.5)) +
       geom_errorbar(position = position_dodge(width = 0.5), width = 0.25) +
       scale_y_continuous(
-        limits = lims2, breaks = breaks2,
+        # limits = lims2, breaks = breaks2,
         labels = scales::label_percent()
       ) +
       scale_colour_manual(values = warming_cols) +
@@ -234,8 +238,8 @@ walk(
       )
     ggsave(
       plot = p2,
-      filename = here("for-europe-seminars", "plots", 
-        paste0("feedrequired_change_", str_replace(basename(fnm), ".qs", ".png"))
+      filename = here("for-europe-seminars", "plots", "feedrequired_change", 
+        str_replace(basename(fnm), ".qs", ".png")
       ),
       width = 6, height = 5
     )

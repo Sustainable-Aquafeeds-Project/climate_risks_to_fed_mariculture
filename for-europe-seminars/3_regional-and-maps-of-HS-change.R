@@ -10,15 +10,15 @@ source("src/other_functions.R")
 
 # Files and regional information -----------------------------------------------------------------------------------------
 hs_files <- file.path(outs_path, "data", "habitat_suitability_decadal") %>% 
-  list.files(recursive = T, full.names = T, pattern = "GLW|ref")
+  list.files(recursive = T, full.names = T, pattern = "GLW|ref") %>% 
+  str_subset("MR")
 isos <- hs_files %>% dirname() %>% dirname() %>% basename()
 spec <- hs_files %>% dirname() %>% basename()
 hs <- data.frame(
   iso = isos, 
   spec = spec, 
   fnm = hs_files
-) %>% 
-  filter(!spec %in% c("golden_pompano", "mud_crab", "nile_tilapia", "drum_croaker", "olive_flounder"))
+) #%>% filter(!spec %in% c("golden_pompano", "mud_crab", "nile_tilapia", "drum_croaker"))
 
 assigned_farms <- file.path(prepdata_path, "assigned_farms.qs") %>% 
   qs_read() %>% 
@@ -40,6 +40,20 @@ regions_PSE <- regions %>% # Need to add Palestine
   )
 regions <- rbind(regions, regions_PSE)
 
+# HS change function (also used in 4_per-country-HS-change.R) ------------------------------------------------------------
+# Takes the file paths for one country x species (ref + GLW rasters) and returns a 4-layer SpatRaster of
+# proportional change in HS relative to the reference period. Positive = HS increases under warming.
+GLW_names <- c("GLW_1.5", "GLW_2.0", "GLW_3.0", "GLW_4.0")
+
+get_HS_change_rast <- function(fnms) {
+  r <- rast(fnms)/365
+  names(r) <- str_remove_all(basename(fnms), "MR_|.tif")
+  ref <- r[["ref_2015_2024"]]
+  r <- (r[[GLW_names]] - ref)/ref
+  names(r) <- GLW_names
+  r
+}
+
 # Get change in HS per region (EEZ) --------------------------------------------------------------------------------------
 # reg <- unique(regions$region_wb)[1]
 HS_data <- map_dfr(
@@ -49,7 +63,7 @@ HS_data <- map_dfr(
     hs_iso <- hs %>% filter(iso %in% isos)
     hs_iso <- split(hs_iso, hs_iso$iso)
 
-    # hsi <- hs_iso[[30]]
+    # hsi <- hs_iso[[1]]
     df_iso <- map_dfr(
       hs_iso,
       function(hsi) {
@@ -64,13 +78,7 @@ HS_data <- map_dfr(
           hsi_spec,
           names(hsi_spec),
           function(hsis, nm) {
-            r <- rast(hsis$fnm)/365
-            names(r) <- str_remove(basename(hsis$fnm), ".tif")
-            r[["GLW_1.5"]] <- (r[["ref_2015_2024"]] - r[["GLW_1.5"]])/r[["ref_2015_2024"]]
-            r[["GLW_2.0"]] <- (r[["ref_2015_2024"]] - r[["GLW_2.0"]])/r[["ref_2015_2024"]]
-            r[["GLW_3.0"]] <- (r[["ref_2015_2024"]] - r[["GLW_3.0"]])/r[["ref_2015_2024"]]
-            r[["GLW_4.0"]] <- (r[["ref_2015_2024"]] - r[["GLW_4.0"]])/r[["ref_2015_2024"]]
-            r <- r[[c("GLW_1.5", "GLW_2.0", "GLW_3.0", "GLW_4.0")]]
+            r <- get_HS_change_rast(hsis$fnm)
 
             # Get mean change in habitat suitability - whole EEZ
             rbind(
@@ -133,7 +141,7 @@ p <- regional_HS_data %>%
   scale_y_continuous(
     breaks = seq(-1, 0.75, 0.1),
     labels = scales::label_percent(),
-    limits = c(-0.41, 0.25),
+    # limits = c(-0.25, 0.41),
     expand = expansion(0)
   ) +
   scale_x_continuous(
@@ -174,3 +182,61 @@ p <- regional_HS_data %>%
     width = 10,
     height = 5.5
   )
+
+# Country-level HS change map, facetted by GLW ---------------------------------------------------------------------------
+
+country_HS_data <- HS_data %>% 
+  select(iso = ISO3_Code, GLW, mean_HS_change) %>% 
+  filter(!is.na(mean_HS_change)) %>% 
+  mutate(GLW = factor(
+    GLW, 
+    levels = c("GLW_1.5", "GLW_2.0", "GLW_3.0", "GLW_4.0"), 
+    labels = c("1.5°C", "2°C", "3°C", "4°C")
+  ))
+
+world <- ne_countries(scale = "medium", returnclass = "sf") %>% 
+  # Natural Earth codes Palestine as PSX; match the ISO code used in the HS files
+  mutate(iso = if_else(iso_a3 == "PSE", "PSE", adm0_a3)) %>% 
+  filter(name != "Antarctica") %>% 
+  select(iso, geometry)
+
+country_HS_sf <- world %>% 
+  inner_join(country_HS_data, by = "iso")
+
+p <- ggplot() +
+  geom_sf(data = world, fill = "grey80", colour = "grey45", linewidth = 0.1) +
+  geom_sf(data = country_HS_sf, aes(fill = mean_HS_change), colour = "grey30", linewidth = 0.1) +
+  scale_fill_gradient2(
+    low = "#B2182B", mid = "white", high = "#2166AC", midpoint = 0,
+    # A few countries (e.g. NOR, PRK) have extreme values from near-zero reference HS, so clip the scale
+    limits = c(-1, 1),
+    oob = scales::squish,
+    labels = scales::label_percent(),
+    name = "Change (%)"
+  ) +
+  coord_sf(crs = "+proj=robin", expand = FALSE) +
+  facet_wrap(~GLW, ncol = 2) +
+  labs(
+    title = "Projected changes in habitat suitability within EEZs by country",
+    subtitle = "Mean of each GLW across species, weighted by 2025 production of fed species"
+  ) +
+  theme_minimal(base_size = 11) +
+  theme(
+    plot.title            = element_text(face = "bold", size = 14, hjust = 0.5),
+    plot.subtitle         = element_text(hjust = 0.5),
+    strip.text            = element_text(face = "bold", size = 11),
+    legend.position       = "bottom",
+    legend.title.position = "bottom",
+    legend.title          = element_text(hjust = 0.5),
+    legend.frame          = element_rect(colour = "grey50", linewidth = 0.4),
+    legend.key.width      = unit(1.5, "cm"),
+    panel.grid            = element_blank(),
+    axis.text             = element_blank()
+  )
+
+ggsave(
+  plot = p,
+  filename = here("for-europe-seminars", "plots", "country_HS_change_map.png"),
+  width = 12,
+  height = 7
+)

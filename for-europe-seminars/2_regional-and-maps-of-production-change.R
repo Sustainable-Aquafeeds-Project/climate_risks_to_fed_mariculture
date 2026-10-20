@@ -254,3 +254,106 @@ p <- regional_feed_data %>%
     width = 10,
     height = 5.5
   )
+
+# Country-level change maps, facetted by GLW -----------------------------------------------------------------------------
+
+# Per-country, per-year change (weighted by 2025 biomass), then mean across the years in each GLW window
+country_data <- map_dfr(
+  prod$fnm,
+  function(fnm) {
+    qs_read(fnm) %>% 
+      filter(year %in% all_years) %>% 
+      group_by(iso = ISO3_Code, year) %>% 
+      reframe(
+        biomass_change = weighted.mean(biomass_change/biomass_2025, w = biomass_2025),
+        food_prov_biom_change = weighted.mean(food_prov_biom_change/food_prov_biom_2025, w = biomass_2025)
+      )
+  },
+  .progress = T
+)
+
+country_GLW_data <- map2_dfr(
+  GLW_ls,
+  names(GLW_ls),
+  function(yrs, glw) {
+    country_data %>% 
+      filter(year %in% yrs) %>% 
+      group_by(iso) %>% 
+      reframe(
+        biomass_change = mean(biomass_change),
+        food_prov_biom_change = mean(food_prov_biom_change)
+      ) %>% 
+      mutate(GLW = as.character(str_remove(glw, "GLW_")))
+  }
+) %>% 
+  mutate(GLW = factor(GLW, levels = c("1.5", "2.0", "3.0", "4.0"), labels = c("1.5°C", "2°C", "3°C", "4°C")))
+
+world <- ne_countries(scale = "medium", returnclass = "sf") %>% 
+  # Natural Earth codes Palestine as PSX; match the ISO code used in the production files
+  mutate(iso = if_else(iso_a3 == "PSE", "PSE", adm0_a3)) %>% 
+  filter(name != "Antarctica") %>% 
+  select(iso, geometry)
+
+country_GLW_sf <- world %>% 
+  inner_join(country_GLW_data, by = "iso")
+
+# Limits default to the full data range (asymmetric), with white fixed at 0
+plot_GLW_map <- function(
+  var, title, 
+  limits = range(country_GLW_sf[[var]]), 
+  midpoint = 0
+) {
+  ggplot() +
+    geom_sf(data = world, fill = "grey80", colour = "grey45", linewidth = 0.1) +
+    geom_sf(data = country_GLW_sf, aes(fill = .data[[var]]), colour = "grey30", linewidth = 0.1) +
+    scale_fill_gradient2(
+      low = "#B2182B", mid = "white", high = "#2166AC", midpoint = midpoint,
+      limits = limits,
+      labels = scales::label_percent(),
+      name = "Change (%)"
+    ) +
+    coord_sf(crs = "+proj=robin", expand = FALSE) +
+    facet_wrap(~GLW, ncol = 2) +
+    labs(
+      title = title,
+      subtitle = "Mean of each GLW across species, weighted by 2025 production"
+    ) +
+    theme_minimal(base_size = 11) +
+    theme(
+      plot.title            = element_text(face = "bold", size = 14, hjust = 0.5),
+      plot.subtitle         = element_text(hjust = 0.5),
+      strip.text            = element_text(face = "bold", size = 11),
+      legend.position       = "bottom",
+      legend.title.position = "bottom",
+      legend.title          = element_text(hjust = 0.5),
+      legend.frame          = element_rect(colour = "grey50", linewidth = 0.4),
+      legend.key.width      = unit(1.5, "cm"),
+      panel.grid            = element_blank(),
+      axis.text             = element_blank()
+    )
+}
+
+p <- plot_GLW_map(
+  var = "biomass_change",
+  title = "Projected changes in farm production by country",
+  limits = c(-0.8,1)
+)
+ggsave(
+  plot = p,
+  filename = here("for-europe-seminars", "plots", "country_biomass_change_map.png"),
+  width = 12,
+  height = 7
+)
+
+p <- plot_GLW_map(
+  var = "food_prov_biom_change",
+  title = "Projected changes in the feed required per unit biomass by country",
+  limits = c(-0.1, 0.75)
+)
+
+ggsave(
+  plot = p,
+  filename = here("for-europe-seminars", "plots", "country_feedrequired_change_map.png"),
+  width = 12,
+  height = 7
+)

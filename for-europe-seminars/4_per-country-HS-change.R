@@ -1,3 +1,5 @@
+# Make sure you've run "3_regional-and-maps-of-HS-change.R" first - it defines get_HS_change_rast()
+
 library(tidyverse)
 library(here)
 library(qs2)
@@ -8,12 +10,35 @@ source("src/dirs.R")
 source("src/model_functions.R")
 source("src/other_functions.R")
 
+stopifnot("Run 3_regional-and-maps-of-HS-change.R first" = exists("get_HS_change_rast"))
+
 # Files and regional information -----------------------------------------------------------------------------------------
 land <- ne_countries(scale = "large", returnclass = "sf")
 
+# Coastal gap-filling ----------------------------------------------------------------------------------------------------
+# Band around the coast of a single country, within which NA cells are allowed to be filled
+get_coast_zone <- function(iso, width_m = 62500) {
+  this_land <- land %>% filter(iso_a3 == iso | adm0_a3 == iso)
+  if (nrow(this_land) == 0) {
+    warning("No land polygon found for ", iso, "; skipping coastal gap-filling")
+    return(NULL)
+  }
+  buffer(vect(this_land), width_m)
+}
+
+fill_coastal_gaps <- function(r, coast_zone, w = 3) {
+  if (is.null(coast_zone)) return(r)
+  filled <- focal(r, w, "mean", na.rm = TRUE, na.policy = "only")
+  cover(r, mask(filled, coast_zone))       # only fill NAs that fall inside the coastal band
+}
+
+dir.create(here("for-europe-seminars", "plots", "HS_change"), showWarnings = FALSE)
+dir.create(here("for-europe-seminars", "plots", "HS_change_map"), showWarnings = FALSE)
+
 hs_files <- file.path(outs_path, "data", "habitat_suitability_decadal") %>% 
   list.files(recursive = T, full.names = T, pattern = "GLW|ref") %>% 
-  str_subset(paste0(c("ESP", "MMR"), collapse = "|"))
+  str_subset("MR") #%>%                                     # Use only the metabolism HS
+  # str_subset(paste0(c("ESP", "MMR"), collapse = "|"))      # Picking out some example countries
 
 isos <- hs_files %>% dirname() %>% dirname() %>% basename()
 spec <- hs_files %>% dirname() %>% basename()
@@ -22,19 +47,17 @@ hs <- data.frame(
   iso = isos, 
   spec = spec, 
   fnm = hs_files
-) %>% 
-  filter(!spec %in% c("golden_pompano", "mud_crab", "nile_tilapia", "drum_croaker", "olive_flounder"))
+)
 
 assigned_farms <- file.path(prepdata_path, "assigned_farms.qs") %>% 
   qs_read() %>% 
   sf::st_drop_geometry() %>% 
-  filter(ISO3_Code %in% c("ESP", "MMR")) %>% 
+  # filter(ISO3_Code %in% c("ESP", "MMR")) %>% 
   group_by(ISO3_Code, country, model_name) %>% 
   reframe(value = sum(value))
 
 assigned_farms_points <- file.path(prepdata_path, "assigned_farms.qs") %>% 
-  qs_read() %>% 
-  filter(ISO3_Code %in% c("ESP", "MMR"))
+  qs_read() # %>% filter(ISO3_Code %in% c("ESP", "MMR"))
 
 # Get change in HS per country (EEZ) --------------------------------------------------------------------------------------
 # i <- unique(isos)[1]
@@ -45,6 +68,7 @@ HS_data <- map_dfr(
     af_iso <- assigned_farms %>% filter(ISO3_Code == i)
     hsi_spec <- hs %>% filter(iso == i & spec %in% af_iso$model_name)
     hsi_spec <- split(hsi_spec, hsi_spec$spec)
+    coast_zone <- get_coast_zone(i)
 
     # hsis <- hsi_spec[[1]]
     # nm <- names(hsi_spec)[1]
@@ -52,13 +76,7 @@ HS_data <- map_dfr(
       hsi_spec,
       names(hsi_spec),
       function(hsis, nm) {
-        r <- rast(hsis$fnm)/365
-        names(r) <- str_remove(basename(hsis$fnm), ".tif")
-        r[["GLW_1.5"]] <- (r[["ref_2015_2024"]] - r[["GLW_1.5"]])/r[["ref_2015_2024"]]
-        r[["GLW_2.0"]] <- (r[["ref_2015_2024"]] - r[["GLW_2.0"]])/r[["ref_2015_2024"]]
-        r[["GLW_3.0"]] <- (r[["ref_2015_2024"]] - r[["GLW_3.0"]])/r[["ref_2015_2024"]]
-        r[["GLW_4.0"]] <- (r[["ref_2015_2024"]] - r[["GLW_4.0"]])/r[["ref_2015_2024"]]
-        r <- r[[c("GLW_1.5", "GLW_2.0", "GLW_3.0", "GLW_4.0")]]
+        r <- get_HS_change_rast(hsis$fnm) #%>% fill_coastal_gaps(coast_zone)
 
         # Get mean change in habitat suitability - whole EEZ
         df1 <- rbind(
@@ -108,7 +126,7 @@ walk(
       geom_point(size = 2.5, position = position_dodge(width = 0.5)) +
       geom_errorbar(position = position_dodge(width = 0.5), width = 0.25) +
       scale_y_continuous(
-        limits = lims1, breaks = breaks1,
+        # limits = lims1, breaks = breaks1,
         labels = scales::label_percent()
       ) +
       scale_colour_manual(values = warming_cols) +
@@ -122,7 +140,7 @@ walk(
 
     ggsave(
       plot = p1,
-      filename = here("for-europe-seminars", "plots", paste0("HS_change_", i, ".png")),
+      filename = here("for-europe-seminars", "plots", "HS_change", paste0(i, ".png")),
       width = 6, height = 5
     )
   }
@@ -140,22 +158,11 @@ walk(
     af_points <- assigned_farms_points %>% filter(ISO3_Code == i)
     hsi_spec <- hs %>% filter(iso == i & spec %in% af_iso$model_name)
     hsi_spec <- split(hsi_spec, hsi_spec$spec)
+    coast_zone <- get_coast_zone(i)
 
     # hsis <- hsi_spec[[1]]
-    hsi_rasts <- map(
-      hsi_spec,
-      function(hsis) {
-        r <- rast(hsis$fnm)/365
-        names(r) <- str_remove(basename(hsis$fnm), ".tif")
-        r[["GLW_1.5"]] <- (r[["ref_2015_2024"]] - r[["GLW_1.5"]])/r[["ref_2015_2024"]]
-        r[["GLW_2.0"]] <- (r[["ref_2015_2024"]] - r[["GLW_2.0"]])/r[["ref_2015_2024"]]
-        r[["GLW_3.0"]] <- (r[["ref_2015_2024"]] - r[["GLW_3.0"]])/r[["ref_2015_2024"]]
-        r[["GLW_4.0"]] <- (r[["ref_2015_2024"]] - r[["GLW_4.0"]])/r[["ref_2015_2024"]]
-        
-        c(r[["GLW_1.5"]], r[["GLW_2.0"]], 
-          r[["GLW_3.0"]], r[["GLW_4.0"]])
-      }
-    ) %>% 
+    hsi_rasts <- map(hsi_spec, \(hsis) get_HS_change_rast(hsis$fnm) %>% 
+      fill_coastal_gaps(coast_zone)) %>% 
       setNames(names(hsi_spec))
 
     w <- setNames(af_iso$value, af_iso$model_name)
@@ -180,8 +187,8 @@ walk(
         ylim = c(country_bbox[["ymin"]], country_bbox[["ymax"]])
       ) +
       scale_fill_viridis_c(
-        option = "inferno",
-        limits = lims, 
+        option = "viridis",
+        # limits = lims, 
         labels = scales::label_percent(),
         na.value = "transparent"
       ) +
@@ -209,7 +216,7 @@ walk(
     
     ggsave(
       plot = p1,
-      filename = here("for-europe-seminars", "plots", paste0("HS_change_map", i, ".png")),
+      filename = here("for-europe-seminars", "plots", "HS_change_map", paste0(i, ".png")),
       width = 9.5, height = 6.5
     )    
   },
