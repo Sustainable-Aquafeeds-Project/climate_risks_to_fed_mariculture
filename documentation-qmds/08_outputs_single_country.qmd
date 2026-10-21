@@ -59,7 +59,7 @@ The purpose of this document is to generate all the required report outputs (plo
 ```{r choose-country}
 #| code-summary: "Choose the country we're looking at."
 
-this_iso <- "FIN"
+this_iso <- "GRC"
 
 assigned_farms <- file.path(prepdata_path, "assigned_farms.qs") %>% 
   qs_read() %>% 
@@ -224,6 +224,16 @@ farm_data <- get_country_data(production_files, farm_IDs_done) %>%
     farm_ID = factor(farm_ID)
   )
 
+# Some plotting globals
+model_order <- farm_data %>% 
+  group_by(model_name) %>% 
+  reframe(biomass_2025 = mean(biomass_2025)) %>% 
+  arrange(-biomass_2025) %>% 
+  pull(model_name)
+
+warming_cols <- c("1.5°C" = "#E9A23B", "2°C"   = "#DB5F32", "3°C"   = "#B3243B", "4°C"   = "#5C0F2E")
+offsets <- c("1.5°C" = -0.24, "2°C" = -0.08, "3°C" = 0.08, "4°C" = 0.24)
+
 # Shared plotting function: mean across farms (line) ± 1 SD (ribbon) per model
 plot_farm_change <- function(df, y, ylab, title) {
   df %>% 
@@ -316,6 +326,70 @@ farm_data_GLW %>%
   report_theme()
 ```
 
+```{r plot-production-GLW-summary-lines}
+#| code-summary: "Plot production change per model and GLW - dot and line approach"
+#| fig-width: 8.5
+#| fig-height: 5.5
+
+plt_data <- farm_data_GLW %>% 
+  mutate(biomass_change_pct = biomass_change_pct/100) %>% 
+  group_by(model_name, GLW) %>% 
+  reframe(
+    median = median(biomass_change_pct),
+    q25 = quantile(biomass_change_pct, 0.25),
+    q75 = quantile(biomass_change_pct, 0.75)
+  ) %>% 
+  mutate(
+    model_name = factor(model_name, levels = rev(model_order)),
+    y = as.numeric(model_name) + offsets[as.character(GLW)]
+  ) 
+
+plt_limits <- pct_limits(c(plt_data$q25, plt_data$q75))
+plt_breaks <- pct_breaks(c(plt_data$q25, plt_data$q75))
+
+plt_data %>% 
+  ggplot(aes(x = y, y = median, colour = GLW)) +
+  geom_hline(yintercept = 0, colour = "grey45", linewidth = 0.5, linetype = "dashed") +
+  geom_segment(aes(y = q25, yend = q75), linewidth = 0.8) +
+  geom_point(aes(y = median), size = 2.3) +
+  scale_colour_manual(values = warming_cols, name = NULL) +
+  scale_y_continuous(
+    breaks = plt_breaks,
+    labels = scales::label_percent(),
+    limits = plt_limits,
+    expand = expansion(0)
+  ) +
+  scale_x_continuous(
+    breaks = seq_along(rev(model_order)),
+    labels = label_model(rev(model_order)),
+    expand = expansion(add = 0.5)
+  ) +
+  coord_flip() +
+  labs(
+    y = "Projected change (%) weighted by current (2025) production",
+    x = NULL
+  ) +
+  guides(colour = guide_legend(override.aes = list(linewidth = 0, size = 3))) +
+  theme_minimal(base_size = 11) +
+  theme(
+    plot.title            = element_text(face = "bold", size = 14),
+    plot.subtitle         = element_text(size = 10, margin = margin(b = 6)),
+    plot.title.position   = "plot",
+    plot.caption.position = "plot",
+    plot.caption          = element_text(hjust = 0, colour = "grey45", size = 9),
+    legend.position       = "top",
+    legend.justification  = "center",
+    legend.text           = element_text(size = 10),
+    legend.margin         = margin(b = -4),
+    panel.grid.major.y    = element_blank(),
+    panel.grid.minor      = element_blank(),
+    panel.grid.major.x    = element_line(colour = "grey92", linewidth = 0.4),
+    axis.text.y           = element_text(colour = "grey25", size = 10),
+    axis.title.x          = element_text(margin = margin(t = 6)),
+    plot.margin           = margin(10, 15, 10, 10)
+  )
+```
+
 ## Change in feed required
 
 ```{r plot-feed-change}
@@ -378,6 +452,70 @@ farm_data_GLW %>%
     x = "Global warming level", y = "Change from 2025 (%)"
   ) +
   report_theme()
+```
+
+```{r plot-feed-per-biomass-GLW-summary-lines}
+#| code-summary: "Plot feed per biomass change per model and GLW - dot and line approach"
+#| fig-width: 8.5
+#| fig-height: 5.5
+
+plt_data <- farm_data_GLW %>% 
+  mutate(food_prov_biom_change_pct = food_prov_biom_change_pct/100) %>% 
+  group_by(model_name, GLW) %>% 
+  reframe(
+    median = median(food_prov_biom_change_pct),
+    q25 = quantile(food_prov_biom_change_pct, 0.25),
+    q75 = quantile(food_prov_biom_change_pct, 0.75)
+  ) %>% 
+  mutate(
+    model_name = factor(model_name, levels = rev(model_order)),
+    y = as.numeric(model_name) + offsets[as.character(GLW)]
+  ) 
+
+plt_limits <- pct_limits(c(plt_data$q25, plt_data$q75))
+plt_breaks <- pct_breaks(c(plt_data$q25, plt_data$q75))
+
+plt_data %>% 
+  ggplot(aes(x = y, y = median, colour = GLW)) +
+  geom_hline(yintercept = 0, colour = "grey45", linewidth = 0.5, linetype = "dashed") +
+  geom_segment(aes(y = q25, yend = q75), linewidth = 0.8) +
+  geom_point(aes(y = median), size = 2.3) +
+  scale_colour_manual(values = warming_cols, name = NULL) +
+  scale_y_continuous(
+    breaks = plt_breaks,
+    labels = scales::label_percent(),
+    limits = plt_limits,
+    expand = expansion(0)
+  ) +
+  scale_x_continuous(
+    breaks = seq_along(rev(model_order)),
+    labels = label_model(rev(model_order)),
+    expand = expansion(add = 0.5)
+  ) +
+  coord_flip() +
+  labs(
+    y = "Projected change (%) weighted by current (2025) production",
+    x = NULL
+  ) +
+  guides(colour = guide_legend(override.aes = list(linewidth = 0, size = 3))) +
+  theme_minimal(base_size = 11) +
+  theme(
+    plot.title            = element_text(face = "bold", size = 14),
+    plot.subtitle         = element_text(size = 10, margin = margin(b = 6)),
+    plot.title.position   = "plot",
+    plot.caption.position = "plot",
+    plot.caption          = element_text(hjust = 0, colour = "grey45", size = 9),
+    legend.position       = "top",
+    legend.justification  = "center",
+    legend.text           = element_text(size = 10),
+    legend.margin         = margin(b = -4),
+    panel.grid.major.y    = element_blank(),
+    panel.grid.minor      = element_blank(),
+    panel.grid.major.x    = element_line(colour = "grey92", linewidth = 0.4),
+    axis.text.y           = element_text(colour = "grey25", size = 10),
+    axis.title.x          = element_text(margin = margin(t = 6)),
+    plot.margin           = margin(10, 15, 10, 10)
+  )
 ```
 
 # Habitat suitability {#sec-habitat-suitability}
@@ -647,7 +785,7 @@ summarise_HS(HS_rasts, HS_weighted) %>%
   pivot_wider(names_from = period, values_from = c(mean_HS, change)) %>% 
   select(-`change_Reference (2015–2024)`) %>% 
   knitr::kable(
-    digits = c(2,2,2,2,2,2,1,1,1),
+    digits = 1,
     col.names = c("model", "Reference (2015–2024)", "1.5°C", "2°C", "3°C", "4°C", "1.5°C (%)", "2°C (%)", "3°C (%)", "4°C (%)")
   )
 ```
@@ -671,7 +809,7 @@ summarise_HS(HS_rasts_coastal, HS_weighted_coastal) %>%
   pivot_wider(names_from = period, values_from = c(mean_HS, change)) %>% 
   select(-`change_Reference (2015–2024)`) %>% 
   knitr::kable(
-    digits = c(2,2,2,2,2,2,1,1,1),
+    digits = 1,
     col.names = c("model", "Reference (2015–2024)", "1.5°C", "2°C", "3°C", "4°C", "1.5°C (%)", "2°C (%)", "3°C (%)", "4°C (%)")
   )
 ```
