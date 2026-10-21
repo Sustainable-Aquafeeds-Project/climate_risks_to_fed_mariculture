@@ -309,6 +309,8 @@ plot_GLW_map <- function(
     scale_fill_gradient2(
       low = "#B2182B", mid = "white", high = "#2166AC", midpoint = midpoint,
       limits = limits,
+      # Values outside the limits are shown at the extreme colour rather than dropped
+      oob = scales::squish,
       labels = scales::label_percent(),
       name = "Change (%)"
     ) +
@@ -336,7 +338,7 @@ plot_GLW_map <- function(
 p <- plot_GLW_map(
   var = "biomass_change",
   title = "Projected changes in farm production by country",
-  limits = c(-0.8,1)
+  limits = unname(quantile(country_GLW_sf$biomass_change, c(0.05, 0.95)))
 )
 ggsave(
   plot = p,
@@ -348,7 +350,8 @@ ggsave(
 p <- plot_GLW_map(
   var = "food_prov_biom_change",
   title = "Projected changes in the feed required per unit biomass by country",
-  limits = c(-0.1, 0.75)
+  # A few countries (e.g. BHR, TUR) are far above the rest, so clip to the 5th-95th percentiles
+  limits = unname(quantile(country_GLW_sf$food_prov_biom_change, c(0.05, 0.95)))
 )
 
 ggsave(
