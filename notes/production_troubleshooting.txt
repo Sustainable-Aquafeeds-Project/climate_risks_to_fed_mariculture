@@ -1,0 +1,45 @@
+# Production troubleshooting notes
+
+- Farm 95751 is japanese_amberjack in the United Arab Emirates (ARE). Farm is way too hot - fish could not feed for ~1/3 of growing time. It's the only farm growing that species in UAE and their annual reported output was ~100t, so let's just exclude that farm.
+
+- Farms 9221, 9432, 9279, 9528, 9644, 9694, 9775, 9861, 9901, 9983, and 10338 are rainbow_trout in Japan (JPN). 
+		- Farms 9221, 9279, 9432, 9775, 9861, 9901, and 9983 could not grow more than 100g in 2025. These should be excluded.
+		- Farms 9528, 9644, 9694, and 10338 were able to reach a harvest weight os > 200g for harvest, which I'm going to consider "acceptable". These can stay.
+	As it stands, the production per farm is Japan is on the lower side (950 t, while some other places are > 2000). Excluding the 6 farms above will put the production per farm at 1388 t, so that is fine.
+
+- Farms 8834 and 8843 are seabream in Iran. They are the only two farms for seabream in Iran and both failed to grow to >100g in 2025 as the farms were too hot. They will be excluded - while this will exclude all of Iran's seabream, it's 2.8% of Iran's total aquaculture. Iran's "seabream" aquaculture is made up of a tropical species (_Acanthopagrus bifasciatus_) so the temperature limits of _Sparus aurata_ may not fit them so well anyway.
+
+- The only problem with some of these files is that they had an "excessive" biomass decrease from 2025 to 2099. That's not a problem, that's a result. This happened for:
+	- Farm 17757: tiger_prawn in Malaysia
+	- Farms 18038, 18871 and 18123: rainbow_trout in New Zealand
+  - Farm 1516: seabream in Egypt
+  - Farm 84409: drum_croaker in Israel
+  - Farm 84502: japanese_amberjack in USA
+  - Farm 95461: drum_croaker in Dominican Republic
+  - Farm 95479: drum_croaker in Guadeloupe
+  - Farm 95483: drum_croaker in Guyana
+  - Farm 95519: drum_croaker in Martinique
+  - Farm 95521: drum_croaker in Mayotte
+
+- These files are very similar ot the ones above, but also didn't quite reach a good representative size in 2025:
+	- Farm 75448: atlantic_salmon in Turkey, only reached a harvest size of ~2000g in 2025
+  - Farm 75216: rainbow_trout in Turkey, only reached ~200g in 2025
+  - Farm 75243: rainbow_trout in Turkey, only reached ~200g in 2025
+  - Farm 75254: rainbow_trout in Turkey, reached <200g in 2025
+  - Farm 75452: rainbow_trout in Turkey, reached <200g in 2025
+  - Farm 95511: seabream in Kuwait, reached ~ 200g in 2025
+
+- Farm 95450 is seabream in Bahrain. It failed to reach more than 100g at any harvest. However, I am going to keep this one in, as even though it's only a single location it's the main model for Bahrain and it's for _Sparus auratus_, the correct species. However, Bahrain may end up being excluded entirely as there's not much going on there. A very similar story for farm 95553 in Qatar, which I'm also going to keep.
+
+- Farm 18944 is amberjack in Panama. This one did technically grow in 2025, but was compeltely unable to grow in 2099. That's fine. Same story with:
+	- Farm 21195: seabream in Singapore
+	- Farm 21197: drum_croaker in Singapore
+
+- Farms 85065, 85067, 85080, 85081, 85082, 85675, 85676, 85677, 85678, 85794, 85795, 85810, 85811, 85812, 85813, 85814, 85815, 85816, 85817, 85818, are atlantic_salmon in Chile. No production in 2025 because the water is too cold. These should be excluded and production absorbed into the remaining 1418 farms.
+
+- Farm 88018: atlantic_salmon in Norway. No production in 2025 because the water is too cold. 
+
+
+
+
+

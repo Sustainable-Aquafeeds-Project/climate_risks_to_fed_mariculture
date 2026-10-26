@@ -1,0 +1,4 @@
+# Purpose
+This is just a running list of things I want/need to do for documentation purposes.
+
+1. Correct the calibration method and add it to the first document - 03_01_check_species_atlantic_salmon.qmd. Even if it's not used there it should be detailed in the first one. Correct all references to it in subsequent documents (currently they point to seabream).

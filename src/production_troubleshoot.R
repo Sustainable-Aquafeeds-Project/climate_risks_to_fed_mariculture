@@ -5,17 +5,7 @@
 # Set `farm_ID_to_check` below and run the whole script. It will:
 #   1. Print the farm's country and assigned model species
 #   2. Plot the daily temperature time series used to drive the model
-#   3. Re-run the growth model for every harvest year (2025-2099), producing
-#      the FULL set of diagnostic output variables (not just the reduced set
-#      saved in the production files), and save one `plot_sim_results()` plot
-#      per year into outputs/production_troubleshooting/. This folder is
-#      overwritten each run, since only one farm is investigated at a time.
-#
-# Re-running (rather than just reading the saved production file) is
-# necessary because the saved files only keep a reduced set of ~15 response
-# variables - useful diagnostics like SGR, O2, NH4, and the elemental budgets
-# aren't stored, but they are exactly what `plot_sim_results()` is designed
-# to show.
+#   3. Read the saved production file and save one `plot_sim_results_troubleshooting()` plot per selected harvest year (see `years_to_plot`; default is 2025, 2099, and one year per decade between) into outputs/production_troubleshooting/. This folder is overwritten each run, since only one farm is investigated at a time.
 
 library(here)
 library(tidyverse)
@@ -31,14 +21,19 @@ source(here("src", "other_functions.R"))
 
 # =========================================================================
 # ---- SET THE FARM TO INVESTIGATE HERE ----
-farm_ID_to_check <- 00008951
+farm_ID_to_check <- 88018
+
+# Harvest years to plot in step 6. Default: 2025, 2099, and one per decade between.
+years_to_plot <- c(2025, seq(2030, 2090, by = 10), 2099)
 
 # production_file <- file.path(outs_path, "data", "farm_production") %>% 
 #   list.files(recursive = T, full.names = T, pattern = "MC5000.qs") %>% 
 #   str_subset(fix_int(farm_ID_to_check, 8))
 
-production_file <- file.path(outs_path, "data", "farm_production", "new_local", "production_results_farmID_00008951_MC100.qs")
-
+production_file <- file.path(
+  outs_path, "data", "farm_production",  
+  paste0("production_results_farmID_", fix_int(farm_ID_to_check, 8), "_MC5000.qs")
+)
 
 # =========================================================================
 troubleshoot_path <- file.path(outs_path, "production_troubleshooting")
@@ -83,6 +78,31 @@ cat(sprintf(
   "farm_ID:       %d\nCountry:       %s (%s)\nModel species: %s\nFeed:          %s\n\n",
   farm_info$farm_ID, farm_info$country, farm_info$ISO3_Code,
   farm_info$model_name, farm_info$feed_name
+))
+
+# ---------- 1b. Other farms in the same country with the same model species ----------
+# The issues CSV only records the production file basename, so recover farm_ID
+# from the zero-padded number in the filename. One row per farm-year, hence distinct().
+issue_farm_IDs <- file.path(outs_path, "production_check_issues.csv") |>
+  read_csv(show_col_types = FALSE) |>
+  mutate(farm_ID = str_extract(file, "(?<=farmID_)\\d+") |> as.integer()) |>
+  distinct(farm_ID) |>
+  pull(farm_ID)
+
+other_farms <- assigned_farms |>
+  filter(
+    country == farm_info$country,
+    model_name == farm_info$model_name,
+    farm_ID != farm_ID_to_check
+  ) |>
+  distinct(farm_ID) |>
+  mutate(has_issue = farm_ID %in% issue_farm_IDs)
+
+cat(sprintf(
+  "Other %s farms in %s: %d\n  ...of which flagged in production_check_issues.csv: %d\nThis farm flagged: %s\n\n",
+  farm_info$model_name, farm_info$country,
+  nrow(other_farms), sum(other_farms$has_issue),
+  if (farm_ID_to_check %in% issue_farm_IDs) "yes" else "no"
 ))
 
 # ---------- 2. Species and feed parameters ----------
@@ -182,8 +202,16 @@ if (length(production_file) > 1) {
 
 prod_data <- qs_read(production_file)
 
+years_available <- intersect(as.character(years_to_plot), names(prod_data))
+if (length(years_available) < length(years_to_plot)) {
+  warning(
+    "Requested years not found in production file: ",
+    paste(setdiff(as.character(years_to_plot), names(prod_data)), collapse = ", ")
+  )
+}
+
 walk(
-  names(prod_data),
+  years_available,
   function(yr) {
     yr_data <- prod_data[[yr]]
     days <- yr_data$days
