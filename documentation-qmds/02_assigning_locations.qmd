@@ -1091,6 +1091,12 @@ assigned_farms <- qs_read(
   file.path(data_path, "intermediates", "assigned_farms_4.qs")
 )
 
+# Somehow, three farms in Singapore ended up outside their EEZ! To deal with this I'm actually going to just manually move the farms.
+assigned_crs <- st_crs(assigned_farms)
+assigned_farms$geometry[assigned_farms$farm_ID == 95561] <- st_sfc(st_point(c(103.875, 1.25)), crs = assigned_crs)
+assigned_farms$geometry[assigned_farms$farm_ID == 95563] <- st_sfc(st_point(c(103.66639, 1.21995)), crs = assigned_crs)
+assigned_farms$geometry[assigned_farms$farm_ID == 95562] <- st_sfc(st_point(c(104.05, 1.375)), crs = assigned_crs)
+
 # Recombine with production data
 assigned_farms <- assigned_farms %>%
   left_join(FAO_aqua_means, by = c("ISO3_Code", "country", "F_CODE", "species_group" = "location_group", "model_name")) %>%
@@ -1122,10 +1128,12 @@ assigned_farms <- qs_read(file.path(prepdata_path, "assigned_farms.qs"))
 mapped_farms <- assigned_farms %>% 
   filter(source == "mapped") %>% 
   pull(farm_ID)
+
 # Get all the filenames in the "mapped" folder that need to be copied
 mapped_farms_files <- farm_temp_path %>% 
   list.files(recursive = T, full.names = T) %>% 
   str_subset(paste0(fix_int(mapped_farms, 8), collapse = "|"))
+
 # Copy them over
 needed_files <- file.path(prepdata_path, "assigned_farms_meanyear", basename(mapped_farms_files))
 file.copy(

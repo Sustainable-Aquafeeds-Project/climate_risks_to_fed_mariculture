@@ -578,6 +578,36 @@ get_country_data <- function(fnms, ids) {
   )
 }
 
+get_country_data2 <- function(fnms) {  
+  model_name  <- str_extract(fnms, "(?<=_).*(?=\\.qs$)")
+  cons_data   <- map2_dfr(fnms, function(fn, mn) {
+      qs_read(fnm) %>% mutate(model_name = mn)
+  })
+
+  cons_data_2025 <- cons_data %>% 
+    filter(year == 2025) %>% 
+    select(-c(year)) %>% 
+    rename(
+      biomass_2025        = biomass,
+      feed_prov_2025      = feed_prov, 
+      feed_prov_per_biomass_2025 = feed_prov_per_biomass
+    )
+
+  left_join(
+    cons_data,
+    cons_data_2025,
+    by = join_by(farm_ID, model_name)
+  ) %>% 
+  mutate(
+    feed_prov_change           = feed_prov - feed_prov_2025,
+    feed_prov_change_pct       = feed_prov_change/feed_prov_2025,
+    feed_prov_biom_change      = feed_prov_biom - feed_prov_per_biomass_2025,
+    feed_prov_biom_change_pct  = feed_prov_biom_change/feed_prov_per_biomass_2025,
+    biomass_change             = biomass - biomass_2025,
+    biomass_change_pct         = biomass_change/biomass_2025
+  )
+}
+
 country_coord_sf <- function(bbox_data) {
   coord_sf(
     xlim = c(bbox_data[["xmin"]], bbox_data[["xmax"]]), 

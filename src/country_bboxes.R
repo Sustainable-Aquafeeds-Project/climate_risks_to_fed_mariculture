@@ -128,6 +128,49 @@ bbox_lims <- function(iso3, crs = 4326, which = c("bbox", "full"), data = countr
        expand = FALSE)
 }
 
+#' Does a country's box cross the antimeridian (xmax > 180)?
+crosses_antimeridian <- function(iso3, which = c("bbox", "full"), data = country_bbox_data) {
+  b <- bbox(iso3, crs = 4326, which = match.arg(which), data = data)
+  b[["xmax"]] > 180 || b[["xmin"]] < -180
+}
+
+#' Shift sf data onto the same longitude axis as a country's bbox
+#'
+#' Boxes that straddle 180 deg are stored with xmax > 180 (see header). For
+#' those countries, geometries in -180..180 need their negative longitudes
+#' recoded to 180..360 (`sf::st_shift_longitude()`) or anything east of the
+#' antimeridian falls outside the plot limits. For all other countries the
+#' data is returned untouched.
+#'
+#' Shifting breaks any polygon/line that straddles 0 deg (UK, France, Ghana...)
+#' since only its negative-longitude vertices move, so those are split at the
+#' prime meridian first. Polygons split at the antimeridian will meet along a
+#' seam after shifting; `union = TRUE` dissolves it (planar), using a small
+#' buffer (`tol`, degrees) because the split halves rarely touch exactly.
+#'
+#'   ggplot() +
+#'     geom_sf(data = shift_for_bbox(land, "FJI")) +
+#'     do.call(coord_sf, bbox_lims("FJI"))
+shift_for_bbox <- function(x, iso3, union = FALSE, tol = 1e-3, which = c("bbox", "full"), data = country_bbox_data) {
+  .need_sf()
+  if (!crosses_antimeridian(iso3, which = match.arg(which), data = data)) return(x)
+
+  s2 <- sf::sf_use_s2()
+  on.exit(suppressMessages(sf::sf_use_s2(s2)))
+  suppressMessages(sf::sf_use_s2(FALSE))
+
+  if (!all(sf::st_is(x, c("POINT", "MULTIPOINT")))) {
+    x <- suppressWarnings(sf::st_break_antimeridian(x, lon_0 = 180))
+  }
+  x <- sf::st_shift_longitude(x)
+  if (union) {
+    x <- suppressWarnings(
+      sf::st_geometry(x) |> sf::st_buffer(tol) |> sf::st_union() |> sf::st_buffer(-tol)
+    )
+  }
+  x
+}
+
 #' Label anchor point(s) as an sf data frame
 #'
 #' Columns iso3, name and geometry, so it drops straight into a plot:

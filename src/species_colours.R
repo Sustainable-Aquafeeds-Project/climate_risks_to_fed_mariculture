@@ -5,15 +5,14 @@ library(colorspace)
 
 here::here("src", "dirs.R") %>% source()
 
-assigned_farms <- file.path(prepdata_path, "assigned_farms.qs") %>% 
+assigned_farms_temporary <- file.path(prepdata_path, "assigned_farms_final.qs") %>% 
   qs2::qs_read() %>% 
   sf::st_drop_geometry()
 
 # which model_names co-occur within a country
-af <- assigned_farms %>% 
+af <- assigned_farms_temporary %>% 
   mutate(model_name = case_when(model_name == "japanese_seabass" ~ "asian_seabass",  T ~ model_name))
 all_models <- af %>% 
-  filter(!model_name %in% c("drum_croaker", "tuna", "mud_crab", "nile_tilapia", "olive_flounder")) %>% 
   pull(model_name) %>% unique()
 co <- af %>% distinct(country, model_name)
 n  <- length(all_models)
@@ -35,7 +34,27 @@ k <- max(color_id)
 base <- createPalette(k, c("#3B82F6", "#EF4444", "#10B981"))
 # base <- desaturate(darken(base, amount = 0.1), amount = 0.2)
 models_pal <- setNames(base[color_id], all_models) # still a fixed named vector
+models_lab <- c(
+  tuna_ranch = "Tuna (ranched)",
+  atlantic_salmon = "Atlantic salmon",
+  whiteleg_shrimp = "Shrimp",
+  grouper = "Grouper",
+  tuna_full = "Tuna (full-cycle)",
+  rainbow_trout = "Trout",
+  tiger_prawn = "Prawns",
+  european_seabass = "Temperate basses",
+  japanese_amberjack = "Amberjack/Yellowtail",
+  drum_croaker = "Drums/Croakers",
+  seabream = "Breams",
+  mud_crab = "Crabs",
+  golden_pompano = "Pompano",
+  nile_tilapia = "Tilapia",
+  olive_flounder = "Flatfishes",
+  asian_seabass = "Tropical/hybrid basses",
+  milkfish = "Milkfish"
+)
 
+rm(assigned_farms_temporary)
 
 # # Golden pompano not being gold is throwing me
 # col1 <- models_pal["golden_pompano"]
