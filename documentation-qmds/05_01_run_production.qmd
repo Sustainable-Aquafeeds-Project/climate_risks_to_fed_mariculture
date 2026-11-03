@@ -123,7 +123,14 @@ The "assigned farms" table acts as a guide for the production run. It specifies 
 
 assigned_farms <- file.path(prepdata_path, "assigned_farms.qs") %>% 
   qs_read() %>% 
-  sf::st_drop_geometry()
+  sf::st_drop_geometry() |> 
+  mutate(
+    model_name = case_when(
+      model_name == "tuna" & country == "Japan" ~ "tuna_full",
+      model_name == "tuna" & country != "Japan" ~ "tuna_ranch",
+      T ~ model_name
+    )
+  )
 
 farm_temp_files <- file.path(prepdata_path, "assigned_farms_alltemps") %>% 
   list.files(full.names = T, pattern = ".qs", recursive = F)
@@ -150,7 +157,8 @@ assigned_farms %>% filter(is.na(filename))
 
 feed_assignments <- file.path(rawdata_path, "feed_profiles_and_composition.xlsx") %>% 
   read_excel(sheet = "feed_assignments") %>% 
-  select(model_name, country, feed_class)
+  select(model_name, country, feed_class) %>% 
+  mutate(country = case_when(country == "Reunion" ~ "Réunion", T ~ country))
 
 assigned_farms <- assigned_farms %>% 
   left_join(feed_assignments, by = join_by(model_name, country)) %>% 
@@ -165,23 +173,7 @@ assigned_farms <- assigned_farms %>%
 
 # Choose what subset(s) you're going to run this time - REMOTE
 assigned_farms <- assigned_farms %>%
-  filter(!is.na(filename)) %>%
-  filter(model_name %in% c(
-    "atlantic_salmon", 
-    "seabream", 
-    "european_seabass",
-    "grouper",
-    "golden_pompano",
-    "asian_seabass",
-    "nile_tilapia",
-    "japanese_amberjack", 
-    "drum_croaker",
-    "mud_crab",
-    "milkfish", 
-    "grouper",
-    "tiger_prawn",
-    "whiteleg_shrimp" 
-  ))
+  filter(!is.na(filename))
 
 # Set the path of any files that might exclude production runs
 existing_files <- list.files(file.path(outs_path, "data", "farm_production"), recursive = T, full.names = T) %>% 
@@ -272,7 +264,7 @@ assigned_farms_todo <- map(
 
 assigned_farms_df <- bind_rows(assigned_farms_todo) %>% 
   filter(farm_ID != 00008994) |> 
-  filter(model_name == "drum_croaker")
+  filter(model_name == "tuna_ranch")
 
 ggplot(assigned_farms_df, aes(
     x = start_doy, 
@@ -409,8 +401,8 @@ check_farm_growth_inputs(
 ``` {r run-production}
 #| code-summary: Run the main production and save the outputs at each farm
 
-work_cores <- parallelly::availableCores() - 2
-plan(multisession, workers = work_cores)
+# work_cores <- parallelly::availableCores() - 2
+# plan(multisession, workers = work_cores)
 
 # af <- assigned_farms_todo[[1]]
 # fnm <- prod_files[1]
@@ -499,7 +491,7 @@ future_walk2(
   .progress = T
 )
 
-plan(sequential)
+# plan(sequential)
 ```
 
 Check the production files directory to make sure they ran and saved correctly.
