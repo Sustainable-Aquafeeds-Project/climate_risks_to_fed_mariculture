@@ -26,6 +26,9 @@
 # NOTE: `bbox()` will mask sp::bbox() / raster::bbox() if you use those.
 # ---------------------------------------------------------------------------
 
+library(raster)
+library(sf)
+
 .need_sf <- function() {
   if (!requireNamespace("sf", quietly = TRUE)) {
     stop("Package 'sf' is required for bbox().", call. = FALSE)

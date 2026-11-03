@@ -318,7 +318,7 @@ plot_sim_results <- function(df, CS = NA) {
           ing_pot = ing_pot/weight, 
           ing_act = ing_act/weight
         ) %>% 
-        select(-weight) %>% 
+        dplyr::select(-weight) %>% 
         pivot_longer(cols = -days, names_to = "output_var", values_to = "value")
     ) +
     geom_line(aes(colour = output_var)) +
@@ -420,7 +420,7 @@ plot_sim_results_troubleshooting <- function(df, CS = NA) {
           food_prov = food_prov/weight, 
           ing_act = ing_act/weight
         ) %>% 
-        select(-weight) %>% 
+        dplyr::select(-weight) %>% 
         pivot_longer(cols = -days, names_to = "output_var", values_to = "value")
     ) +
     geom_line(aes(colour = output_var)) +
@@ -471,7 +471,7 @@ get_growing_window <- function(temperatures, grow_days, species_params) {
     mutate(roll_fr = slide_dbl(fr, sum, .before = 0, .after = grow_days - 1)) %>%
     slice_max(roll_fr, n = 1) %>%
     mutate(end_doy = doy + grow_days - 1) %>% 
-    select(start = doy, end = end_doy)
+    dplyr::select(start = doy, end = end_doy)
 }
 
 country_summary <- function(iso, digits = 1) {
@@ -537,7 +537,7 @@ get_country_data <- function(fnms, ids) {
         tidy_stat("weight_scaled") %>% 
         mutate(farm_ID = id) %>% 
         slice_max(prod_day, n = 1) %>% 
-        select(farm_ID, year, mean)
+        dplyr::select(farm_ID, year, mean)
     }
   ) %>% rename(biomass = mean)
 
@@ -556,7 +556,7 @@ get_country_data <- function(fnms, ids) {
 
   annual_food_prov_2025 <- annual_food_prov %>% 
     filter(year == 2025) %>% 
-    select(-c(year)) %>% 
+    dplyr::select(-c(year)) %>% 
     rename(
       biomass_2025        = biomass,
       food_prov_2025      = food_prov, 
@@ -586,7 +586,7 @@ get_country_data2 <- function(fnms) {
 
   cons_data_2025 <- cons_data %>% 
     filter(year == 2025) %>% 
-    select(-c(year)) %>% 
+    dplyr::select(-c(year)) %>% 
     rename(
       biomass_2025        = biomass,
       feed_prov_2025      = feed_prov, 

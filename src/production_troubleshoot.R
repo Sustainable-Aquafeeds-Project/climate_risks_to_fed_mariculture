@@ -21,7 +21,8 @@ source(here("src", "other_functions.R"))
 
 # =========================================================================
 # ---- SET THE FARM TO INVESTIGATE HERE ----
-farm_ID_to_check <- 88018
+farm_ID_to_check <- 00010339
+
 
 # Harvest years to plot in step 6. Default: 2025, 2099, and one per decade between.
 years_to_plot <- c(2025, seq(2030, 2090, by = 10), 2099)
@@ -34,6 +35,12 @@ production_file <- file.path(
   outs_path, "data", "farm_production",  
   paste0("production_results_farmID_", fix_int(farm_ID_to_check, 8), "_MC5000.qs")
 )
+if (!file.exists(production_file)) {
+  production_file <- file.path(
+    outs_path, "data", "farm_production", "excluded", 
+    paste0("production_results_farmID_", fix_int(farm_ID_to_check, 8), "_MC5000.qs")
+  )
+}
 
 # =========================================================================
 troubleshoot_path <- file.path(outs_path, "production_troubleshooting")
@@ -42,7 +49,14 @@ dir.create(troubleshoot_path, showWarnings = FALSE, recursive = TRUE)
 # ---------- 1. Farm info ----------
 assigned_farms <- file.path(prepdata_path, "assigned_farms.qs") |>
   qs_read() |>
-  sf::st_drop_geometry()
+  sf::st_drop_geometry() %>% 
+  mutate(
+    model_name = case_when(
+      model_name == "tuna" & country == "Japan" ~ "tuna_full",
+      model_name == "tuna" & country != "Japan" ~ "tuna_ranch",
+      T ~ model_name
+    )
+  )
 
 farm_info <- assigned_farms |> filter(farm_ID == farm_ID_to_check)
 
@@ -60,7 +74,7 @@ if (nrow(farm_info) > 1) {
 # Attach the feed assignment (mirrors 05_01_run_production.qmd)
 feed_assignments <- file.path(rawdata_path, "feed_profiles_and_composition.xlsx") |>
   read_excel(sheet = "feed_assignments") |>
-  select(model_name, country, feed_class)
+  dplyr::select(model_name, country, feed_class)
 
 farm_info <- farm_info |>
   left_join(feed_assignments, by = join_by(model_name, country)) |>

@@ -1282,12 +1282,12 @@ format_feeds <- function(feeds_df, ingredients_df, digestibility_df) {
   
   feeds_df_full <- feeds_df %>% 
     left_join(
-      ingredients_df %>% select(ingredient, protein, lipid, carb),
+      ingredients_df %>% dplyr::select(ingredient, protein, lipid, carb),
       by = "ingredient",
       relationship = "many-to-many"
     ) %>% 
     left_join(
-      digestibility_df %>% select(ingredient, protein_digestibility, lipid_digestibility, carb_digestibility),
+      digestibility_df %>% dplyr::select(ingredient, protein_digestibility, lipid_digestibility, carb_digestibility),
       by = "ingredient",
       relationship = "many-to-many"
     )
@@ -1299,13 +1299,13 @@ format_feeds <- function(feeds_df, ingredients_df, digestibility_df) {
     mutate(sum_proportion = sum(proportion)) %>% 
     ungroup() %>% 
     mutate(proportion = proportion/sum_proportion) %>% 
-    select(-sum_proportion)
+    dplyr::select(-sum_proportion)
 
     map(feed_names, function(fn) {
       df <- feeds_df_full %>% 
         filter(feed == fn)
       map(macro_names, function(mn) {
-        df2 <- df %>% select(feed, ingredient, proportion, contains(mn))
+        df2 <- df %>% dplyr::select(feed, ingredient, proportion, contains(mn))
         colnames(df2) <- c("feed", "ingredient", "proportion", "macro", "digestibility")
         df2
       }) %>% 
