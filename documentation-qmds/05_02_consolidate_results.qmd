@@ -9,7 +9,7 @@ date: last-modified
 ::: {style="display: flex; justify-content: space-between;"}
 [← Previous: Testing production](05_01_run_production.qmd)
 
-[Next: Home →](../index.qmd)
+[Next: Exploring production →](06_explore_production.qmd)
 :::
 
 # Overview {#sec-overview}
@@ -26,14 +26,8 @@ library(here)
 library(janitor)
 library(qs2)
 library(units)
-
-remove_unit("g_fish")
-remove_unit("kg_fish")
-remove_unit("t_fish")
-
-install_unit("g_fish")
-install_unit("kg_fish", "1000 g_fish")
-install_unit("t_fish", "1000 kg_fish")
+library(future)
+library(furrr)
 ```
 
 ```{r source-scripts}
@@ -59,8 +53,10 @@ First check that all the files in the folder are complete.
 #| code-summary: Check that the files in the production folder are complete and correct structure
 
 prod_path <- file.path(outs_path, "data", "farm_production")
-production_files <- list.files(prod_path, full.names = TRUE, recursive = TRUE, pattern = "MC5000\\.qs$") %>% 
-  str_subset("testing", negate = T)
+production_files <- prod_path %>% 
+  list.files(full.names = TRUE, recursive = TRUE, pattern = "MC5000.qs$") %>% 
+  str_subset("testing", negate = T) %>% 
+  str_subset("RESCALED", negate = T)
 
 # here("src", "check_production_files.R") %>% source(echo = T)
 ```
@@ -70,33 +66,29 @@ And display how many farms are present/missing.
 ```{r check-farm-production-missing}
 #| code-summary: Check what files have been done
 
-farms_done <- as.integer(str_extract(basename(production_files), "(?<=farmID_)\\d+"))
+farms_done <- as.integer(str_extract(basename(production_files), "(?<=farmID_)\\d+")) %>% unique()
 
 assigned_farms <- file.path(prepdata_path, "assigned_farms.qs") %>% 
   qs_read() %>% 
-  sf::st_drop_geometry() %>% 
-  mutate(done = case_when(farm_ID %in% farms_done ~ T, T ~ F))
+  sf::st_drop_geometry() %>%
+  mutate(
+    model_name = case_when(
+      model_name == "tuna" & country == "Japan" ~ "tuna_full",
+      model_name == "tuna" & country != "Japan" ~ "tuna_ranch",
+      T ~ model_name
+    )
+  )
 
 # Pair assigned farms with feed assignment data
 feed_assignments <- file.path(rawdata_path, "feed_profiles_and_composition.xlsx") %>% 
   read_excel(sheet = "feed_assignments") %>% 
-  select(model_name, country, feed_class)
+  dplyr::select(model_name, country, feed_class)
 
 assigned_farms <- assigned_farms %>% 
   left_join(feed_assignments, by = join_by(model_name, country))
-
-assigned_farms %>% 
-  group_by(model_name, feed_class, done) %>% 
-  reframe(n = n()) %>% 
-  # filter(model_name %in% c("atlantic_salmon", "rainbow_trout", "seabream")) %>% 
-  filter(!is.na(feed_class)) %>% 
-  mutate(done = factor(done, levels = c(TRUE, FALSE), labels = c("prod_done", "prod_waiting"))) %>% 
-  pivot_wider(names_from = done, values_from = n) %>% 
-  arrange(model_name) %>% 
-  print(n = 50)
 ```
 
-# Per-farm plots
+# Per-farm diagnostic plots
 
 These plots aren't meant to show anything specifically - they're just so that I can quickly flick through the pictures and see if anything has gone awry with the production modelling. For that reason, there are only three plots saved for each farm:
 
@@ -133,7 +125,7 @@ walk(prod_files_subset, function(fnm) {
         mean = mean %>% set_units("g") %>% set_units("t"),
         sd = sd %>% set_units("g") %>% set_units("t")
       ) %>% 
-      select(-prod_day, -day)
+      dplyr::select(-prod_day, -day)
 
     fr <- tidy_stat(prod_ls, "ing_act_scaled") %>% 
       group_by(year) %>% 
@@ -213,228 +205,252 @@ walk(prod_files_subset, function(fnm) {
 )
 ```
 
-# Group and save {#sec-group-save}
+# Final adjustments to production data
 
-| model_name         | feed_class  | production waiting | production done |
-|--------------------|-------------|-----------------|--------------------|
-| asian_seabass      | china       |         235     |                 0  |
-| atlantic_salmon    | canada      |           0     |               230  |
-| atlantic_salmon    | chile       |           1     |              1494  |
-| atlantic_salmon    | norway      |          10     |               905  |
-| atlantic_salmon    | uk          |           2     |               276  |
-| drum_croaker       | china       |         227     |                 0  |
-| european_seabass   | europe      |         404     |                67  |
-| golden_pompano     | china       |         253     |                 0  |
-| grouper            | world       |          50     |               201  |
-| japanese_amberjack | japan       |          48     |               143  |
-| milkfish           | philippines |          29     |               717  |
-| mud_crab           | world       |         707     |                 0  |
-| nile_tilapia       | thailand    |          95     |                 0  |
-| olive_flounder     | korea       |         227     |                 0  |
-| rainbow_trout      | chile       |           1     |               334  |
-| rainbow_trout      | norway      |           0     |               342  |
-| rainbow_trout      | world       |          39     |                68  |
-| seabream           | china       |          61     |               178  |
-| seabream           | europe      |         212     |                40  |
-| tiger_prawn        | world       |          81     |              1881  |
-| tuna               | japan       |          92     |                 0  |
-| tuna               | ranch       |         141     |                 0  |
-| whiteleg_shrimp    | china       |           1     |              1229  |
-| whiteleg_shrimp    | ecuador     |          77     |              2070  |
-| whiteleg_shrimp    | india       |          40     |              1186  |
-| whiteleg_shrimp    | indonesia   |          17     |              1504  |
+After running the production, we need to modify assigned_farms to exclude those ones that we've decided to drop, and adjust prod_perfarm to fit.
 
-```{r subset}
-#| code-summary: Subset results
+```{r get-decisions}
 
-# Check what stats you have to work with
-qs_read(production_files[1])[[1]] %>% str()
+decisions <- file.path(outs_path, "production_check_high_error_files_decisions.xlsx") %>% 
+  readxl::read_excel() %>% 
+  mutate(farm_ID = as.integer(str_extract(file, "(?<=farmID_)\\d+")))
 
-subset_farms <- assigned_farms %>% 
-  filter(model_name == "atlantic_salmon" & feed_class == "norway")
+excl_path <- file.path(outs_path, "data", "farm_production", "excluded")
+dir.create(excl_path, showWarnings = F)
 
-# These farms have been excluded as production run failed (temperature too terrible)
-# exclude_farm_IDs <- c(88018)
-# subset_farms <- subset_farms %>% 
-#   filter(!farm_ID %in% exclude_farm_IDs)
+# The files that we're going to keep don't need any further action
+# to_keep <- decisions %>% filter(Conclusion == "Keep")
 
-subset_prod_files <- production_files[which(as.integer(str_extract(basename(production_files), "(?<=farmID_)\\d+")) %in% subset_farms$farm_ID)]
+to_excl <- decisions %>% filter(Conclusion == "Exclude")
+assigned_farms_ls <- assigned_farms %>% 
+  group_by(country, model_name) %>% 
+  group_split()
 
-cons_path <- file.path(outs_path, "data", "consolidated")
-dir.create(cons_path, showWarnings = F)
-```
+# afn <- assigned_farms_ls[[1]]
+assigned_farms_final <- map_dfr(
+  assigned_farms_ls,
+  function(afn) {
+    # Go through each country x model
+    excl <- to_excl %>% 
+      filter(country == unique(afn$country) & model_name == unique(afn$model_name))
 
-```{r farm-biomass}
-#| code-summary: Save farm biomass results per species/feed type
-
-weight_scaled <- map_dfr(
-  subset_prod_files,
-  function(fnm) {
-    tidy_stat(qs_read(fnm), "weight_scaled") %>% 
-      mutate(farm_ID = as.integer(str_extract(basename(fnm), "(?<=farmID_)\\d+"))) %>% 
-      slice_max(prod_day) %>% 
-      rename(farm_mean = mean, farm_sd = sd) %>% 
-      select(-day, -prod_day)
+    # If there are any to exclude, adjust farm numbers
+    if (nrow(excl) > 0) {
+      total_value      <- unique(afn$value)
+      afn              <- afn %>% filter(!farm_ID %in% excl$farm_ID)
+      afn$prod_perfarm <- total_value/nrow(afn)
+      afn$n_farms      <- nrow(afn)
+    }
+    afn
   },
   .progress = T
 )
 
-weight_scaled <- assigned_farms %>% 
-  right_join(weight_scaled, by = join_by(farm_ID))
+# Now move all the files we're not keeping to a dedicated "excluded" folder
+base_prod_files <- file.path(outs_path, "data", "farm_production") %>% 
+  list.files(full.names = T, pattern = "MC5000.qs", recursive = F) %>% 
+  str_subset("RESCALED", negate = T)
 
-weight_scaled_2025 <- weight_scaled %>% 
-  filter(year == 2025) %>% 
-  select(farm_ID, mean_2025 = farm_mean)
-# max(weight_scaled_2025$error)
+keep_files     <- file.path(
+  outs_path, "data", "farm_production", 
+  paste0("production_results_farmID_", fix_int(assigned_farms_final$farm_ID, 8), "_MC5000.qs")
+)
+to_move <- setdiff(base_prod_files, keep_files)
 
-weight_scaled <- weight_scaled %>% 
-  right_join(weight_scaled_2025, by = join_by(farm_ID)) %>% 
-  group_by(ISO3_Code, country, F_CODE, model_name, feed_class, year) %>% 
-  reframe(
-    mean_2025 = sum(mean_2025),
-    n_farms = n(),
-    mean = sum(farm_mean),
-    sd = sqrt(sumna(farm_sd^2))
-  )
+# Move files
+file.rename(
+  to_move, 
+  file.path(outs_path, "data", "farm_production", "excluded", basename(to_move))
+)
 
-qs_save(
-  weight_scaled, 
-  file.path(cons_path, paste0("weight_scaled-", unique(weight_scaled$model_name), "-", unique(weight_scaled$feed_class), ".qs"))
-  )
+# Add the geometry column back to the new list of assigned farms
+assigned_farms_old <- file.path(prepdata_path, "assigned_farms.qs") %>% 
+  qs_read() %>% 
+  left_join(feed_assignments, by = join_by(model_name, country))
+  
+assigned_farms <- assigned_farms_old %>% 
+  filter(farm_ID %in% assigned_farms_final$farm_ID) 
+
+col_geom <- sf::st_geometry(assigned_farms)
+assigned_farms <- assigned_farms %>% 
+  sf::st_drop_geometry() %>% 
+  rows_update(assigned_farms_final, by = "farm_ID") %>% 
+  # st_drop_geometry() strips the sf class, so restore it along with the geometry
+  sf::st_set_geometry(col_geom)
+
+assigned_farms_final <- assigned_farms
+rm(assigned_farms)
+
+qs_save(assigned_farms_final, file.path(prepdata_path, "assigned_farms_final.qs"))
 ```
 
-```{r feed-demand}
-#| code-summary: Save feed demand results per species/feed type
+Next, we need to rescale the production files of all the other farms in each of the countries where we excluded at least one farm, because the prod_perfarm has changed.
 
-ing_act_scaled <- map_dfr(
-  subset_prod_files,
-  function(fnm) {
-    tidy_stat(qs_read(fnm), "ing_act_scaled") %>% 
-      mutate(farm_ID = as.integer(str_extract(basename(fnm), "(?<=farmID_)\\d+"))) %>% 
-      group_by(farm_ID, year) %>% 
-      reframe(
-        farm_mean = sumna(mean),
-        farm_sd = sqrt(sumna(sd^2))
+Note that the following code creates duplicates of farm production files rather than rewriting the old files. This is in case we decide to run this process again, or differently, we don't lose the original files.
+
+```{r}
+#| code-summary: "Rescale the data generated within the remaining farms so that the country's overall production remains the same even when farms are excluded"
+#| eval: false
+
+farms_excluded <- assigned_farms_old %>% 
+  filter(farm_ID %in% setdiff(assigned_farms_old$farm_ID, assigned_farms_final$farm_ID))
+
+groups_excluded <- farms_excluded %>% 
+  distinct(country, model_name)
+
+# g <- 2 # Atlantic salmon in Chile
+walk(
+  1:nrow(groups_excluded),
+  function(g) {
+    remaining_farms <- assigned_farms_final %>% 
+      filter(country == groups_excluded$country[g] & model_name == groups_excluded$model_name[g])
+
+    # If nrow(remaining_farms) == 0 then there are no non-excluded farms, nothing to rescale
+    if (nrow(remaining_farms) > 0) {
+      remaining_files <- file.path(
+        outs_path, "data", "farm_production", paste0("production_results_farmID_", fix_int(remaining_farms$farm_ID, 8), "_MC5000.qs")
       )
-  },
-  .progress = T
-)
-
-ing_act_scaled <- assigned_farms %>% 
-  right_join(ing_act_scaled, by = join_by(farm_ID)) 
-
-ing_act_scaled_2025 <- ing_act_scaled %>% 
-  filter(year == 2025) %>% 
-  select(farm_ID, mean_2025 = farm_mean)
-
-ing_act_scaled <- ing_act_scaled %>% 
-  right_join(ing_act_scaled_2025, by = join_by(farm_ID)) %>% 
-  group_by(ISO3_Code, country, F_CODE, model_name, feed_class, year) %>% 
-  reframe(
-    mean_2025 = sumna(mean_2025),
-    n_farms = n(),
-    mean = sumna(farm_mean),
-    sd = sqrt(sumna(farm_sd^2))
-  )
-
-qs_save(
-  ing_act_scaled, 
-  file.path(cons_path, paste0("ing_act_scaled-", unique(ing_act_scaled$model_name), "-", unique(ing_act_scaled$feed_class), ".qs"))
-  )
-```
-
-```{r feed-provided}
-#| code-summary: Save feed provided results per species/feed type
-
-food_prov_scaled <- map_dfr(
-  subset_prod_files,
-  function(fnm) {
-    tidy_stat(qs_read(fnm), "food_prov_scaled") %>% 
-      mutate(farm_ID = as.integer(str_extract(basename(fnm), "(?<=farmID_)\\d+"))) %>% 
-      group_by(farm_ID, year) %>% 
-      reframe(
-        farm_mean = sumna(mean),
-        farm_sd = sqrt(sumna(sd^2))
+      rescaled_files <- file.path(
+        outs_path, "data", "farm_production", paste0("production_results_farmID_", fix_int(remaining_farms$farm_ID, 8), "_RESCALED_MC5000.qs")
       )
+
+      old_prod_perfarm <- assigned_farms_old %>% 
+        filter(country == groups_excluded$country[g] & model_name == groups_excluded$model_name[g]) %>% 
+        pull(prod_perfarm) %>% unique()
+      new_prod_perfarm <- remaining_farms %>% pull(prod_perfarm) %>% unique()
+      prod_perfarm_increase <- new_prod_perfarm/old_prod_perfarm
+
+      # old_fnm <- remaining_files[1]
+      # new_fnm <- rescaled_files[1]
+      walk2(
+        remaining_files, rescaled_files,
+        function(old_fnm, new_fnm) {
+
+          data_all  <- qs_read(old_fnm)
+          vars <- c("weight_scaled", "dw_scaled", "ing_act_scaled", "total_excr_scaled", "food_prov_scaled")
+          
+          # dat <- data_all[[2]]
+          data_all_rescaled <- map(
+            data_all, 
+            function(dat) {
+              for (var in vars) {
+                vardat     <- dat[["stats"]][[var]]                # get both columns
+                vardat[,2] <- vardat[,2]/vardat[,1]                # express sd as proportion
+                vardat[,1] <- vardat[,1] * prod_perfarm_increase   # rescale mean
+                vardat[,2] <- vardat[,2] * prod_perfarm_increase   # rescale sd
+                vardat[,2] <- vardat[,2] * vardat[,1]              # re-express sd as absolute
+                dat[["stats"]][[var]] <- vardat                    # put data back
+              }
+              dat
+            }
+          )
+
+          qs_save(data_all_rescaled, new_fnm)
+          
+        }
+      )
+    }
   },
   .progress = T
 )
-
-food_prov_scaled <- assigned_farms %>% 
-  right_join(food_prov_scaled, by = join_by(farm_ID)) 
-
-food_prov_scaled_2025 <- food_prov_scaled %>% 
-  filter(year == 2025) %>% 
-  select(farm_ID, mean_2025 = farm_mean)
-
-food_prov_scaled <- food_prov_scaled %>% 
-  right_join(food_prov_scaled_2025, by = join_by(farm_ID)) %>% 
-  group_by(ISO3_Code, country, F_CODE, model_name, feed_class, year) %>% 
-  reframe(
-    mean_2025 = sumna(mean_2025),
-    n_farms = n(),
-    mean = sumna(farm_mean),
-    sd = sqrt(sumna(farm_sd^2))
-  )
-
-qs_save(
-  food_prov_scaled, 
-  file.path(cons_path, paste0("food_prov_scaled-", unique(ing_act_scaled$model_name), "-", unique(ing_act_scaled$feed_class), ".qs"))
-  )
 ```
 
-```{r ingestion-per-biomass}
-#| code-summary: Save feed ingested per biomass results per species/feed type
+# Consolidated data
 
-ingest_biomass <- left_join(
-  ing_act_scaled %>% rename(ing_act_2025 = mean_2025, ing_act_mean = mean, ing_act_sd = sd), 
-  weight_scaled %>% rename(weight_2025 = mean_2025, weight_mean = mean, weight_sd = sd),
-  by = join_by(ISO3_Code, country, F_CODE, model_name, feed_class, year, n_farms)
-)
-
-ingest_biomass <- ingest_biomass %>% 
-  mutate(
-    ingest_biomass_2025 = ing_act_2025/weight_2025,
-    ingest_biomass_mean = ing_act_mean/weight_mean,
-    ingest_biomass_sd = ingest_biomass_mean * sqrt((ing_act_sd/ing_act_mean)^2 + (weight_sd/weight_mean)^2)
-  ) %>% 
-    select(-c(ing_act_2025, weight_2025, ing_act_mean, weight_mean, ing_act_sd, weight_sd))
-
-qs_save(
-  ingest_biomass, 
-  file.path(cons_path, paste0("ingest_biomass-", unique(ingest_biomass$model_name), "-", unique(ingest_biomass$feed_class), ".qs"))
-  )
-```
-
-```{r feed-prov-per-biomass}
-#| code-summary: Save feed provided per biomass results per species/feed type
-
-feedprov_biomass <- left_join(
-  food_prov_scaled %>% rename(food_prov_2025 = mean_2025, food_prov_mean = mean, food_prov_sd = sd), 
-  weight_scaled %>% rename(weight_2025 = mean_2025, weight_mean = mean, weight_sd = sd),
-  by = join_by(ISO3_Code, country, F_CODE, model_name, feed_class, year, n_farms)
-)
-
-feedprov_biomass <- feedprov_biomass %>% 
-  mutate(
-    feedprov_biomass_2025 = food_prov_2025/weight_2025,
-    feedprov_biomass_mean = food_prov_mean/weight_mean,
-    feedprov_biomass_sd = feedprov_biomass_mean * sqrt((food_prov_sd/food_prov_mean)^2 + (weight_sd/weight_mean)^2)
-  ) %>% 
-    select(-c(food_prov_2025, weight_2025, food_prov_mean, weight_mean, food_prov_sd, weight_sd))
-
-qs_save(
-  feedprov_biomass, 
-  file.path(cons_path, paste0("feedprov_biomass-", unique(feedprov_biomass$model_name), "-", unique(feedprov_biomass$feed_class), ".qs"))
-  )
+```{r}
+assigned_farms_final %>% 
+  mutate(done = case_when(farm_ID %in% farms_done ~ T, T ~ F)) %>% 
+  group_by(model_name, feed_class, done) %>% 
+  reframe(n = n()) %>% 
+  filter(!is.na(feed_class)) %>% 
+  mutate(done = factor(done, levels = c(TRUE, FALSE), labels = c("prod_done", "prod_waiting"))) %>% 
+  pivot_wider(names_from = done, values_from = n) %>% 
+  arrange(model_name) %>% 
+  print(n = 50)
 ```
 
 ```{r}
+#| code-summary: "Consolidate farm production data into data per country and per species"
 
+# First modify the `production_files` list so that the RESCALED files take precedent over their older counterparts
+new_production_files <- file.path(outs_path, "data", "farm_production") %>% 
+  list.files(recursive = F, full.names = T, pattern = ".qs")
+new_production_files <- tibble(path = new_production_files) |>
+  mutate(
+    farm_id  = str_extract(path, "farmID_\\d+"),
+    rescaled = str_detect(path, "_RESCALED\\.qs$")
+  ) |>
+  arrange(farm_id, desc(rescaled)) |>
+  distinct(farm_id, .keep_all = TRUE) |>
+  pull(path)
+
+cons_path <- file.path(outs_path, "data", "farm_production_consolidated")
+dir.create(cons_path, showWarnings = F)
+
+cons_fnms <- assigned_farms_final %>% 
+  distinct(ISO3_Code, model_name) %>% 
+  expand_grid(var = c("weight_scaled", "food_prov_scaled")) %>% 
+  mutate(fname = file.path(cons_path, str_glue("{ISO3_Code}_{model_name}.qs"))) %>% 
+  filter(!file.exists(fname))
+
+work_cores <- parallelly::availableCores() - 4
+plan(multisession, workers = work_cores)
+
+walk(
+  1:nrow(cons_fnms),
+  function(i) {
+    farm_IDs <- assigned_farms_final %>% 
+      filter(ISO3_Code == cons_fnms$ISO3_Code[i] & model_name == cons_fnms$model_name[i]) %>% 
+      pull(farm_ID)
+
+    if (all(farm_IDs %in% farms_done)) {
+      files   <- production_files[which(farms_done %in% farm_IDs)]
+      fids    <- as.integer(str_extract(basename(files), "(?<=farmID_)\\d+"))
+      df      <- map2_dfr(
+        files, fids,
+        function(fn, id) {
+          bm <- qs_read(fn) %>% 
+            tidy_stat(stat_name = "weight_scaled") %>% 
+            dplyr::select(-c(day, sd)) %>% 
+            group_by(year) %>% 
+            slice_max(mean) %>% 
+            ungroup() %>% 
+            rename(biomass = mean) %>% 
+            mutate(farm_ID = id)
+
+          fd <- qs_read(fn) %>% 
+            tidy_stat(stat_name = "food_prov_scaled") %>% 
+            dplyr::select(-c(day, sd))
+
+          bm <- split(bm, bm$year)
+          fd <- split(fd, fd$year)
+
+          map2_dfr(
+            bm, fd,
+            function(b, f) {
+              f %>% 
+                filter(prod_day <= b$prod_day) %>% 
+                group_by(year) %>% 
+                reframe(feed_prov = sumna(mean)) %>% 
+                right_join(b, by = join_by(year))
+            })
+        })
+
+      df %>% 
+        dplyr::select(-c(prod_day)) %>% 
+        relocate(farm_ID, .before = year) %>% 
+        mutate(feed_prov_per_biomass = feed_prov/biomass) %>% 
+        qs_save(cons_fnms$fname[i])
+    }
+  },
+  .progress = T
+)
+
+plan(sequential)
 ```
 
 ::: {style="display: flex; justify-content: space-between;"}
-[← Previous: Testing production](05_00_test_production.qmd)
+[← Previous: Testing production](05_01_run_production.qmd)
 
-[Next: Home →](../index.qmd)
+[Next: Exploring production →](06_explore_production.qmd)
 :::
