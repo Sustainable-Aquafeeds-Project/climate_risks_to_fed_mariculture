@@ -82,10 +82,14 @@ assigned_farms <- file.path(prepdata_path, "assigned_farms.qs") %>%
 # Pair assigned farms with feed assignment data
 feed_assignments <- file.path(rawdata_path, "feed_profiles_and_composition.xlsx") %>% 
   read_excel(sheet = "feed_assignments") %>% 
-  dplyr::select(model_name, country, feed_class)
+  dplyr::select(model_name, country, feed_class) %>% 
+  mutate(country = case_when(country == "Reunion" ~ "Réunion", T ~ country))
 
 assigned_farms <- assigned_farms %>% 
   left_join(feed_assignments, by = join_by(model_name, country))
+
+assigned_farms %>% 
+  filter(is.na(feed_class))
 ```
 
 # Per-farm diagnostic plots
