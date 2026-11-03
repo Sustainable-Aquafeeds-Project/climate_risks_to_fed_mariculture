@@ -110,7 +110,7 @@ HS is calculated per country (EEZ), per species (model_name), per harvest year, 
 
 ```{r}
 country_dirs  <- unique(EEZ_by_FAO_full$ISO3_Code)
-harvest_years <- 2037:2064
+harvest_years <- 2015:2099
 
 inds          <- str_detect(tos_dates, paste0(harvest_years, collapse = "|"))
 tos_rast_fnms <- tos_rast_fnms[inds]
@@ -356,7 +356,7 @@ jobs <- map(
   }
 ) %>%
   list_rbind() %>%
-  filter(lengths(in_files) > 0) %>%   # drop decades with no files
+  filter(lengths(in_files) > 0) %>%   # drop decades with no input files
   mutate(out_file = file.path(HS_dec_dir, iso, model, paste0(metric, "_", dec_name, ".tif")))
 
 todo <- filter(jobs, !file.exists(out_file))
@@ -364,6 +364,9 @@ message(nrow(todo), " of ", nrow(jobs), " decadal files to create")
 
 walk(unique(dirname(todo$out_file)), dir.create, recursive = TRUE, showWarnings = FALSE)
 
+# This "mean" captures different things for the different metrics (FR and MR).
+# Decadal mean FR is the annual habitat suitability score, with a minimum of 0 and a maximum of 365 (0-1 for all days).
+# Dacadal mean MR is the annual surplus energy available to an individual at harvest size (kJ). This has no maximum, and may be negative.
 walk2(
   todo$in_files,
   todo$out_file,
