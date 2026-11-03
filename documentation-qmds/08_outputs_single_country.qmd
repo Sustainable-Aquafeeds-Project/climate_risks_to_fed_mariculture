@@ -59,7 +59,7 @@ The purpose of this document is to generate all the required report outputs (plo
 ```{r choose-country}
 #| code-summary: "Choose the country we're looking at."
 
-this_iso <- "IND"
+this_iso <- "IDN"
 
 assigned_farms <- file.path(prepdata_path, "assigned_farms_final.qs") %>% 
   qs_read() %>% 
@@ -168,6 +168,7 @@ assigned_farms %>%
 
 ```{r failed-farms}
 #| code-summary: "Examine production file error report for failed farms"
+#| eval: false
 
 errored <- file.path(outs_path, "production_check_high_error_files_decisions.xlsx") %>% 
   read_excel() %>% 
@@ -176,7 +177,7 @@ errored <- file.path(outs_path, "production_check_high_error_files_decisions.xls
   
 if (nrow(errored) > 0) {
   errored %>% 
-    select(-c(country)) %>% 
+    dplyr::select(-c(country)) %>% 
     left_join(assigned_farms, by = join_by(farm_ID, model_name)) %>% 
     group_by(country, model_name, reason) %>% 
     reframe(n_farms = n()) %>% 
@@ -234,7 +235,7 @@ Annual biomass harvested and feed required, relative to the 2025 baseline, from 
 
 farm_data <- get_country_data2(production_files) %>% 
   left_join(
-    assigned_farms %>% st_drop_geometry() %>% select(farm_ID),
+    assigned_farms %>% st_drop_geometry() %>% dplyr::select(farm_ID),
     by = join_by(farm_ID)
   ) %>% 
   mutate(
@@ -383,7 +384,7 @@ plt_data %>%
   ) +
   coord_flip() +
   labs(
-    y = "Projected change (%) weighted by current (2025) production",
+    y = "Projected change (%)",
     x = NULL
   ) +
   guides(colour = guide_legend(override.aes = list(linewidth = 0, size = 3))) +
@@ -480,7 +481,7 @@ plt_data %>%
   ) +
   coord_flip() +
   labs(
-    y = "Projected change (%) weighted by current (2025) production",
+    y = "Projected change (%)",
     x = NULL
   ) +
   guides(colour = guide_legend(override.aes = list(linewidth = 0, size = 3))) +
@@ -767,9 +768,9 @@ summarise_HS <- function(rasts, weighted) {
 }
 
 summarise_HS(HS_rasts, HS_weighted) %>% 
-  select(model, period, mean_HS, change) %>% 
+  dplyr::select(model, period, mean_HS, change) %>% 
   pivot_wider(names_from = period, values_from = c(mean_HS, change)) %>% 
-  select(-`change_Reference (2015–2024)`) %>% 
+  dplyr::select(-`change_Reference (2015–2024)`) %>% 
   knitr::kable(
     digits = 1,
     col.names = c("model", "Reference (2015–2024)", "1.5°C", "2°C", "3°C", "4°C", "1.5°C (%)", "2°C (%)", "3°C (%)", "4°C (%)")
@@ -791,9 +792,9 @@ HS_rasts_coastal <- map(HS_rasts, \(r) mask(r, coast_zone))
 HS_weighted_coastal <- mask(HS_weighted, coast_zone)
 
 summarise_HS(HS_rasts_coastal, HS_weighted_coastal) %>% 
-  select(model, period, mean_HS, change) %>% 
+  dplyr::select(model, period, mean_HS, change) %>% 
   pivot_wider(names_from = period, values_from = c(mean_HS, change)) %>% 
-  select(-`change_Reference (2015–2024)`) %>% 
+  dplyr::select(-`change_Reference (2015–2024)`) %>% 
   knitr::kable(
     digits = 1,
     col.names = c("model", "Reference (2015–2024)", "1.5°C", "2°C", "3°C", "4°C", "1.5°C (%)", "2°C (%)", "3°C (%)", "4°C (%)")

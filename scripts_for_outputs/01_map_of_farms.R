@@ -54,7 +54,7 @@ farm_location_map <- function(this_iso, out_dir) {
       scale_colour_manual(values = country_pal, labels = models_lab, name = "Model") +
       do.call(coord_sf, bbox_lims(this_iso)) +
       labs(
-        title = paste0("Assigned farms: ", country_info(this_iso)$name, " (", this_iso, ")"),
+        # title = paste0("Assigned farms: ", country_info(this_iso)$name, " (", this_iso, ")"),
         x = NULL, y = NULL
       ) +
       prettyplot() +
@@ -63,7 +63,7 @@ farm_location_map <- function(this_iso, out_dir) {
 
   ggsave(
     filename = file.path(out_dir, paste0("Fig_1_map_NoEEZ_", this_iso, ".png")),
-    plot = build_map(), width = 8.5, height = 6.5, dpi = 300, bg = "white"
+    plot = build_map(), width = 6.5, height = 5.5, dpi = 300, bg = "white"
   )
 
   # Create the same map but with a border around the country's EEZ
@@ -73,7 +73,7 @@ farm_location_map <- function(this_iso, out_dir) {
 
   ggsave(
     filename = file.path(out_dir, paste0("Fig_1_map_EEZ_", this_iso, ".png")),
-    plot = p_eez, width = 8.5, height = 6.5, dpi = 300, bg = "white"
+    plot = p_eez, width = 6.5, height = 5.5, dpi = 300, bg = "white"
   )
 }
 
