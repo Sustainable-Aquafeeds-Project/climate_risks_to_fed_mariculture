@@ -4,6 +4,8 @@
 
 library(sf)
 library(rnaturalearth)
+library(rnaturalearthhires)
+library(here)
 
 here("src", "species_colours.R") %>% source()    # species_pal
 here("src", "other_functions.R") %>% source()    # prettyplot()
@@ -32,7 +34,10 @@ farm_location_map <- function(this_iso, out_dir) {
   # Countries straddling 180° (e.g. FJI) need their data shifted to 0..360 to match the bbox
   these_farms <- shift_for_bbox(these_farms, this_iso)
   this_eez    <- shift_for_bbox(this_eez, this_iso, union = TRUE)
-  this_land   <- shift_for_bbox(land, this_iso)
+  # this_land_1 <- shift_for_bbox(land, this_iso)
+
+  this_land <- file.path(prepdata_path, "detailed_land_polys", paste0(this_iso, ".qs")) %>% 
+    qs_read()
 
   # Models present in this country, with a colour for each. Models not in `models_pal` (e.g. tuna) get a grey fallback.
   models_here <- sort(unique(these_farms$model_name))
@@ -56,18 +61,18 @@ farm_location_map <- function(this_iso, out_dir) {
       theme(legend.position = "bottom", legend.title = element_blank())
   }
 
-  # ggsave(
-  #   filename = file.path(out_dir, paste0("farm_location_map_", this_iso, ".png")),
-  #   plot = build_map(), width = 8.5, height = 6.5, dpi = 300, bg = "white"
-  # )
+  ggsave(
+    filename = file.path(out_dir, paste0("Fig_1_map_NoEEZ_", this_iso, ".png")),
+    plot = build_map(), width = 8.5, height = 6.5, dpi = 300, bg = "white"
+  )
 
   # Create the same map but with a border around the country's EEZ
   p_eez <- build_map(
-    geom_sf(data = this_eez, fill = NA, colour = "grey30", linewidth = 0.4, linetype = "dashed")
+    geom_sf(data = this_eez, fill = NA, colour = "grey30", linewidth = 0.4, linetype = "dotted")
   )
 
   ggsave(
-    filename = file.path(out_dir, paste0("farm_location_map_EEZ_", this_iso, ".png")),
+    filename = file.path(out_dir, paste0("Fig_1_map_EEZ_", this_iso, ".png")),
     plot = p_eez, width = 8.5, height = 6.5, dpi = 300, bg = "white"
   )
 }

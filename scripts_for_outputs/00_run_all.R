@@ -8,7 +8,7 @@ source(here("src/dirs.R"))
 # General data shared across all scripts
 reports_dir    <- file.path(outs_path, "for_report")
 assigned_farms <- file.path(prepdata_path, "assigned_farms_final.qs") %>% qs_read()
-land           <- file.path(prepdata_path, "my_world.qs") %>% qs_read()
+land           <- file.path(prepdata_path, "my_world.qs") %>% qs_read() # may not need this
 
 GLW_ls <- list(
   "GLW_1.5" = 2018:2037,
@@ -26,8 +26,7 @@ focus_countries <- file.path(prepdata_path, "assigned_farms_final.qs") %>%
   mutate(
     clean_country = make_clean_names(country, case = "title"),
     dir_name = file.path(reports_dir, paste0(ISO3_Code, " - ", clean_country))
-  ) %>% 
-  mutate(dir_name = file.path(reports_dir))        # temporary so I can see them all together
+  ) # %>% mutate(dir_name = file.path(reports_dir))        # temporary so I can see them all together
 walk(focus_countries$dir_name, dir.create, showWarnings = F)
 
 # Create maps of the farm locations

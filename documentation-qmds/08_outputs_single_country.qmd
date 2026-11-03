@@ -59,17 +59,19 @@ The purpose of this document is to generate all the required report outputs (plo
 ```{r choose-country}
 #| code-summary: "Choose the country we're looking at."
 
-this_iso <- "GRC"
+this_iso <- "IND"
 
-assigned_farms <- file.path(prepdata_path, "assigned_farms.qs") %>% 
+assigned_farms <- file.path(prepdata_path, "assigned_farms_final.qs") %>% 
   qs_read() %>% 
   filter(ISO3_Code == this_iso)
 
-farm_IDs <- unique(assigned_farms$farm_ID)
+this_country  <- unique(assigned_farms$country)
+farm_IDs  <- unique(assigned_farms$farm_ID)
 
-production_files <- file.path(outs_path, "data", "farm_production") %>% 
-  list.files(recursive = F, full.names = T, pattern = "MC5000.qs") %>%
-  str_subset(paste0(fix_int(farm_IDs, 8), collapse = "|"))
+production_files <- file.path(
+  outs_path, "data", "farm_production_consolidated", 
+  paste0(this_iso, "_", unique(assigned_farms$model_name), ".qs")
+)
 
 GLW_ls <- list(
   "GLW_1.5" = 2018:2037,
@@ -77,8 +79,6 @@ GLW_ls <- list(
   "GLW_3.0" = 2055:2074,
   "GLW_4.0" = 2075:2094
 )
-
-this_country  <- unique(assigned_farms$country)
 
 # This fills out 1 cell of border around the EEZ HS values close to the coastline, purely to stop the ugly white spaces between the coast and the HS data. Note that this gapfilling technically extrapolates "fake" data within the country's EEZ, so country HS stats/numbers need to be calculated BEFORE gapfilling.
 land       <- ne_countries(scale = "large", returnclass = "sf")
@@ -119,10 +119,17 @@ Every assigned farm in `r this_country`, coloured by the species model it is run
 #| code-summary: "Map of assigned farms"
 #| fig-width: 8.5
 #| fig-height: 6.5
+#| eval: false
 
 ggplot() +
   geom_sf(data = land, fill = "grey85", colour = "grey55", linewidth = 0.2) +
   geom_sf(data = assigned_farms, aes(colour = model_name), size = 2) +
+  geom_text(
+    data = assigned_farms %>% 
+      filter(farm_ID %in% c(95561, 95562, 95563)) %>% 
+      mutate(X = st_coordinates(geometry)[,"X"], Y = st_coordinates(geometry)[,"Y"]),
+    aes(x = X, y = Y, label = farm_ID)
+    ) +
   scale_colour_manual(values = country_pal, labels = label_model, name = "Model") +
   do.call(coord_sf, bbox_lims(this_iso)) +
   labs(
@@ -140,39 +147,45 @@ The number of assigned farms per model, how many of those have completed product
 #| code-summary: "Summary table of farms per model"
 
 # Farm IDs that actually have a production file
-farm_IDs_done <- basename(production_files) %>% 
-  str_extract("(?<=farmID_)\\d+") %>% 
-  as.numeric()
+# farm_IDs_done <- basename(production_files) %>% 
+#   str_extract("(?<=farmID_)\\d+") %>% 
+#   as.numeric()
 
 assigned_farms %>% 
   st_drop_geometry() %>% 
   group_by(model_name) %>% 
   reframe(
     n_farms = n(),
-    n_farms_with_production = sum(farm_ID %in% farm_IDs_done),
     production_t = unique(value),
     production_perfarm_t = unique(prod_perfarm)
   ) %>% 
   arrange(desc(production_t)) %>% 
   knitr::kable(
-    digits = 0,
-    col.names = c("Model", "Farms", "Farms with production run", "Production (t)", "Production per farm (t)")
+    digits = 1,
+    col.names = c("Model", "Farms", "Reported production (t)", "Production per farm (t)")
   )
 ```
 
 ```{r failed-farms}
 #| code-summary: "Examine production file error report for failed farms"
 
-error_files <- file.path(outs_path, "production_check_issues.csv") %>% 
-  read.csv() %>% 
+errored <- file.path(outs_path, "production_check_high_error_files_decisions.xlsx") %>% 
+  read_excel() %>% 
   mutate(farm_ID = as.integer(str_remove_all(file, "production_results_farmID_|_MC5000.qs"))) %>% 
-  filter(farm_ID %in% farm_IDs) %>% 
-  left_join(assigned_farms, by = join_by(farm_ID)) %>% 
-  group_by(model_name, detail, year) %>% 
-  reframe(n_farms = n()) %>% 
-  knitr::kable(
-    col.names = c("Model", "Error type", "Year", "No. farms")
-  )
+  filter(farm_ID %in% farm_IDs & Conclusion == "Exclude") 
+  
+if (nrow(errored) > 0) {
+  errored %>% 
+    select(-c(country)) %>% 
+    left_join(assigned_farms, by = join_by(farm_ID, model_name)) %>% 
+    group_by(country, model_name, reason) %>% 
+    reframe(n_farms = n()) %>% 
+    knitr::kable(
+      col.names = c("Country", "Model", "Error detail", "No. farms")
+    )
+} else {
+  message("No farms excluded due to run errors.")
+}
 ```
 
 ## Country production summary
@@ -188,14 +201,18 @@ file.path(prepdata_path, "FAO_with_models.qs") %>%
     model_name %in% c("red_seabream", "gilthead_seabream", "blackhead_seabream") ~ "seabream", 
     TRUE ~ model_name)
   ) %>% 
-  group_by(ISO3_Code, country, environment, model_name, period) %>% 
+  # Average each species over the years it was reported (missing years = not reported, not zero),
+  # then sum species within a model. This matches country_summary().
+  group_by(ISO3_Code, country, model_name, Scientific_Name, period) %>% 
   reframe(value = sum(value)) %>% 
-  group_by(ISO3_Code, country, environment, model_name) %>% 
+  group_by(ISO3_Code, country, model_name, Scientific_Name) %>% 
   reframe(value = mean(value)) %>% 
+  group_by(ISO3_Code, country, model_name) %>% 
+  reframe(value = sum(value)) %>% 
   mutate(included = case_when(model_name %in% models_here ~ T, T ~ F)) %>% 
   knitr::kable(
     digits = 1,
-    col.names = c("ISO", "Country", "Environment", "Model", "Mean production (2014-2023)", "Included")
+    col.names = c("ISO", "Country", "Model", "Mean production (2014-2023)", "Included")
   )
 ```
 
@@ -209,19 +226,19 @@ country_summary(this_iso)
 
 # Farm production {#sec-production}
 
-Annual biomass harvested and feed required, relative to the 2025 baseline, from the farm production model runs. Lines show the mean across farms within each model and ribbons show ± 1 standard deviation. Only farms with a completed production file are included (`r length(farm_IDs_done)` of `r length(farm_IDs)` farms).
+Annual biomass harvested and feed required, relative to the 2025 baseline, from the farm production model runs. Lines show the mean across farms within each model and ribbons show ± 1 standard deviation.
 
 ```{r get-production-data}
 #| code-summary: "Load farm production data"
 #| cache: true
 
-farm_data <- get_country_data(production_files, farm_IDs_done) %>% 
+farm_data <- get_country_data2(production_files) %>% 
   left_join(
-    assigned_farms %>% st_drop_geometry() %>% select(farm_ID, model_name),
+    assigned_farms %>% st_drop_geometry() %>% select(farm_ID),
     by = join_by(farm_ID)
   ) %>% 
   mutate(
-    farm_ID = factor(farm_ID)
+    farm_ID = as.factor(farm_ID)
   )
 
 # Some plotting globals
@@ -270,8 +287,8 @@ farm_data_GLW <- map2_dfr(
       group_by(farm_ID, model_name) %>% 
       reframe(
         biomass_change_pct        = 100* mean(biomass_change_pct, na.rm = T),
-        food_prov_change_pct      = 100* mean(food_prov_change_pct, na.rm = T),
-        food_prov_biom_change_pct = 100* mean(food_prov_biom_change_pct, na.rm = T)
+        feed_prov_change_pct      = 100* mean(feed_prov_change_pct, na.rm = T),
+        feed_prov_biom_change_pct = 100* mean(feed_prov_biom_change_pct, na.rm = T)
       ) %>% 
       mutate(GLW = nm)
   }
@@ -285,9 +302,9 @@ farm_data_GLW %>%
     biomass_median = median(biomass_change_pct, na.rm = T),
     biomass_q25 = quantile(biomass_change_pct, 0.25, na.rm = T),
     biomass_q75 = quantile(biomass_change_pct, 0.75, na.rm = T),
-    feed_median = median(food_prov_biom_change_pct, na.rm = T),
-    feed_q25 = quantile(food_prov_biom_change_pct, 0.25, na.rm = T),
-    feed_q75 = quantile(food_prov_biom_change_pct, 0.75, na.rm = T)
+    feed_median = median(feed_prov_biom_change_pct, na.rm = T),
+    feed_q25 = quantile(feed_prov_biom_change_pct, 0.25, na.rm = T),
+    feed_q75 = quantile(feed_prov_biom_change_pct, 0.75, na.rm = T)
   ) %>% 
   knitr::kable(
     digits = 1,
@@ -390,37 +407,6 @@ plt_data %>%
   )
 ```
 
-## Change in feed required
-
-```{r plot-feed-change}
-#| code-summary: "Plot change in feed required"
-#| fig-width: 8.5
-#| fig-height: 5.5
-
-plot_farm_change(
-  farm_data, food_prov_change_pct, 
-  ylab = "Change in feed required from 2025 (%)", 
-  title = paste0("Change in feed required by model: ", this_country)
-)
-```
-
-```{r plot-feed-GLW-summary}
-#| code-summary: "Plot feed required change per model and GLW"
-#| fig-width: 8.5
-#| fig-height: 5.5
-
-farm_data_GLW %>% 
-  ggplot(aes(x = GLW, y = food_prov_change_pct, fill = model_name)) +
-  geom_hline(yintercept = 0, colour = "grey45", linewidth = 0.5, linetype = "dashed") +
-  geom_boxplot(position = position_dodge(width = 0.7), width = 0.6, colour = "black") +
-  scale_fill_manual(values = country_pal, labels = label_model, name = "Model") +
-  labs(
-    title = paste0("Change in feed required at each global warming level: ", this_country),
-    x = "Global warming level", y = "Change from 2025 (%)"
-  ) +
-  report_theme()
-```
-
 ## Change in feed per unit biomass
 
 Feed required per unit of harvested biomass. An increase means more feed is needed to produce the same amount of fish.
@@ -431,7 +417,7 @@ Feed required per unit of harvested biomass. An increase means more feed is need
 #| fig-height: 5.5
 
 plot_farm_change(
-  farm_data, food_prov_biom_change_pct, 
+  farm_data, feed_prov_biom_change_pct, 
   ylab = "Change in feed per unit biomass from 2025 (%)", 
   title = paste0("Change in feed per unit biomass by model: ", this_country)
 )
@@ -443,7 +429,7 @@ plot_farm_change(
 #| fig-height: 5.5
 
 farm_data_GLW %>% 
-  ggplot(aes(x = GLW, y = food_prov_biom_change_pct, fill = model_name)) +
+  ggplot(aes(x = GLW, y = feed_prov_biom_change_pct, fill = model_name)) +
   geom_hline(yintercept = 0, colour = "grey45", linewidth = 0.5, linetype = "dashed") +
   geom_boxplot(position = position_dodge(width = 0.7), width = 0.6, colour = "black") +
   scale_fill_manual(values = country_pal, labels = label_model, name = "Model") +
@@ -460,12 +446,12 @@ farm_data_GLW %>%
 #| fig-height: 5.5
 
 plt_data <- farm_data_GLW %>% 
-  mutate(food_prov_biom_change_pct = food_prov_biom_change_pct/100) %>% 
+  mutate(feed_prov_biom_change_pct = feed_prov_biom_change_pct/100) %>% 
   group_by(model_name, GLW) %>% 
   reframe(
-    median = median(food_prov_biom_change_pct),
-    q25 = quantile(food_prov_biom_change_pct, 0.25),
-    q75 = quantile(food_prov_biom_change_pct, 0.75)
+    median = median(feed_prov_biom_change_pct),
+    q25 = quantile(feed_prov_biom_change_pct, 0.25),
+    q75 = quantile(feed_prov_biom_change_pct, 0.75)
   ) %>% 
   mutate(
     model_name = factor(model_name, levels = rev(model_order)),
