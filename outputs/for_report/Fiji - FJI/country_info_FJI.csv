@@ -1,0 +1,9 @@
+table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_of_country_total,pct_of_model,included,reason
+farms_per_model,FJI,Fiji,tiger_prawn,,1,15.2,15.2,,,,
+farms_per_model,FJI,Fiji,mud_crab,,1,10,10,,,,
+fao_production_by_model,FJI,Fiji,tiger_prawn,,,12.7,,57.5,,TRUE,
+fao_production_by_model,FJI,Fiji,mud_crab,,,9.4,,42.5,,TRUE,
+fao_production_by_model,FJI,Fiji,flathead_grey_mullet,,,0,,0,,FALSE,
+fao_production_by_species,FJI,Fiji,flathead_grey_mullet,Mugil cephalus,,0,,,,FALSE,
+fao_production_by_species,FJI,Fiji,mud_crab,Scylla serrata,,9.4,,,100,TRUE,
+fao_production_by_species,FJI,Fiji,tiger_prawn,Penaeus monodon,,12.7,,,100,TRUE,

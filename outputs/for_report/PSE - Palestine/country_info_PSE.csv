@@ -1,7 +1,0 @@
-table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_of_country_total,pct_of_model,included,reason
-farms_per_model,PSE,Palestine,seabream,,1,536.25,536.25,,,,
-farms_per_model,PSE,Palestine,european_seabass,,1,12.5,12.5,,,,
-fao_production_by_model,PSE,Palestine,seabream,,,473,,97.43,,TRUE,
-fao_production_by_model,PSE,Palestine,european_seabass,,,12.5,,2.57,,TRUE,
-fao_production_by_species,PSE,Palestine,european_seabass,Dicentrarchus labrax,,12.5,,,100,TRUE,
-fao_production_by_species,PSE,Palestine,seabream,Sparus aurata,,473,,,100,TRUE,

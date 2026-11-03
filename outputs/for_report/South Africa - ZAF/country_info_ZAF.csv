@@ -1,0 +1,11 @@
+table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_of_country_total,pct_of_model,included,reason
+farms_per_model,ZAF,South Africa,drum_croaker,,1,26.8,26.8,,,,
+farms_per_model,ZAF,South Africa,rainbow_trout,,1,17.8,17.8,,,,
+fao_production_by_model,ZAF,South Africa,abalone,,,1788.4,,96,,FALSE,
+fao_production_by_model,ZAF,South Africa,drum_croaker,,,51.9,,2.8,,TRUE,
+fao_production_by_model,ZAF,South Africa,rainbow_trout,,,17.8,,1,,TRUE,
+fao_production_by_model,ZAF,South Africa,yellowtail_kingfish,,,4.6,,0.2,,FALSE,
+fao_production_by_species,ZAF,South Africa,abalone,Haliotis midae,,1788.4,,,100,FALSE,
+fao_production_by_species,ZAF,South Africa,drum_croaker,Argyrosomus japonicus,,51.9,,,100,TRUE,
+fao_production_by_species,ZAF,South Africa,rainbow_trout,Oncorhynchus mykiss,,17.8,,,100,TRUE,
+fao_production_by_species,ZAF,South Africa,yellowtail_kingfish,Seriola lalandi,,4.6,,,100,FALSE,

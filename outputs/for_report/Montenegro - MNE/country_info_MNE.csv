@@ -1,0 +1,7 @@
+table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_of_country_total,pct_of_model,included,reason
+farms_per_model,MNE,Montenegro,european_seabass,,1,61.2,61.2,,,,
+farms_per_model,MNE,Montenegro,seabream,,1,54.2,54.2,,,,
+fao_production_by_model,MNE,Montenegro,european_seabass,,,64.2,,55.1,,TRUE,
+fao_production_by_model,MNE,Montenegro,seabream,,,52.4,,44.9,,TRUE,
+fao_production_by_species,MNE,Montenegro,european_seabass,Dicentrarchus labrax,,64.2,,,100,TRUE,
+fao_production_by_species,MNE,Montenegro,seabream,Sparus aurata,,52.4,,,100,TRUE,

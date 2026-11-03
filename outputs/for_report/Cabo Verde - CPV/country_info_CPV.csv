@@ -1,0 +1,4 @@
+table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_of_country_total,pct_of_model,included,reason
+farms_per_model,CPV,Cabo Verde,whiteleg_shrimp,,1,22.7,22.7,,,,
+fao_production_by_model,CPV,Cabo Verde,whiteleg_shrimp,,,22.7,,100,,TRUE,
+fao_production_by_species,CPV,Cabo Verde,whiteleg_shrimp,Penaeus vannamei,,22.7,,,100,TRUE,

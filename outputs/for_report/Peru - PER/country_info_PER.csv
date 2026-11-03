@@ -1,0 +1,12 @@
+table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_of_country_total,pct_of_model,included,reason
+farms_per_model,PER,Peru,whiteleg_shrimp,,72,35755.7,496.6,,,,
+farms_per_model,PER,Peru,olive_flounder,,1,9.5,9.5,,,,
+fao_production_by_model,PER,Peru,whiteleg_shrimp,,,29438.3,,100,,TRUE,
+fao_production_by_model,PER,Peru,olive_flounder,,,8.5,,0,,TRUE,
+fao_production_by_model,PER,Peru,general_fish,,,0,,0,,FALSE,
+fao_production_by_model,PER,Peru,general_gastropod,,,0,,0,,FALSE,
+fao_production_by_species,PER,Peru,general_fish,Actinopterygii,,0,,,,FALSE,
+fao_production_by_species,PER,Peru,general_gastropod,Concholepas concholepas,,0,,,,FALSE,
+fao_production_by_species,PER,Peru,general_gastropod,Gastropoda,,0,,,,FALSE,
+fao_production_by_species,PER,Peru,olive_flounder,Paralichthys adspersus,,8.5,,,100,TRUE,
+fao_production_by_species,PER,Peru,whiteleg_shrimp,Penaeus vannamei,,29438.3,,,100,TRUE,

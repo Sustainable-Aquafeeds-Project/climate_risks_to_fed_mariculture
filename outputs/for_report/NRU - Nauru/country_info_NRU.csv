@@ -1,4 +1,0 @@
-table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_of_country_total,pct_of_model,included,reason
-farms_per_model,NRU,Nauru,milkfish,,1,0.5,0.5,,,,
-fao_production_by_model,NRU,Nauru,milkfish,,,0.42,,100,,TRUE,
-fao_production_by_species,NRU,Nauru,milkfish,Chanos chanos,,0.42,,,100,TRUE,

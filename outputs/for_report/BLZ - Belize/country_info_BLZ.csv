@@ -1,4 +1,0 @@
-table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_of_country_total,pct_of_model,included,reason
-farms_per_model,BLZ,Belize,whiteleg_shrimp,,12,582.5,48.54,,,,
-fao_production_by_model,BLZ,Belize,whiteleg_shrimp,,,1296,,100,,TRUE,
-fao_production_by_species,BLZ,Belize,whiteleg_shrimp,Penaeus vannamei,,1296,,,100,TRUE,

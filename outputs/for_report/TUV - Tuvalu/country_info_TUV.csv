@@ -1,4 +1,0 @@
-table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_of_country_total,pct_of_model,included,reason
-farms_per_model,TUV,Tuvalu,milkfish,,1,0.46,0.46,,,,
-fao_production_by_model,TUV,Tuvalu,milkfish,,,0.87,,100,,TRUE,
-fao_production_by_species,TUV,Tuvalu,milkfish,Chanos chanos,,0.87,,,100,TRUE,

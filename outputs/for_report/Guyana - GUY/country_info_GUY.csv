@@ -1,0 +1,11 @@
+table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_of_country_total,pct_of_model,included,reason
+farms_per_model,GUY,Guyana,whiteleg_shrimp,,1,312.9,312.9,,,,
+farms_per_model,GUY,Guyana,drum_croaker,,1,44,44,,,,
+fao_production_by_model,GUY,Guyana,whiteleg_shrimp,,,570.4,,78,,TRUE,
+fao_production_by_model,GUY,Guyana,flathead_grey_mullet,,,137.3,,18.8,,FALSE,
+fao_production_by_model,GUY,Guyana,drum_croaker,,,23.9,,3.3,,TRUE,
+fao_production_by_species,GUY,Guyana,drum_croaker,Micropogonias furnieri,,23.9,,,100,TRUE,
+fao_production_by_species,GUY,Guyana,flathead_grey_mullet,Mugil cephalus,,74,,,53.9,FALSE,
+fao_production_by_species,GUY,Guyana,flathead_grey_mullet,Mugil liza,,63.4,,,46.1,FALSE,
+fao_production_by_species,GUY,Guyana,whiteleg_shrimp,Penaeus subtilis,,350,,,61.4,TRUE,
+fao_production_by_species,GUY,Guyana,whiteleg_shrimp,Penaeus spp,,220.4,,,38.6,TRUE,

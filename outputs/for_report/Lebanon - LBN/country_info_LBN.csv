@@ -1,0 +1,10 @@
+table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_of_country_total,pct_of_model,included,reason
+farms_per_model,LBN,Lebanon,whiteleg_shrimp,,1,10,10,,,,
+farms_per_model,LBN,Lebanon,seabream,,1,2,2,,,,
+farms_per_model,LBN,Lebanon,european_seabass,,1,1,1,,,,
+fao_production_by_model,LBN,Lebanon,whiteleg_shrimp,,,10,,76.9,,TRUE,
+fao_production_by_model,LBN,Lebanon,seabream,,,2,,15.4,,TRUE,
+fao_production_by_model,LBN,Lebanon,european_seabass,,,1,,7.7,,TRUE,
+fao_production_by_species,LBN,Lebanon,european_seabass,Dicentrarchus labrax,,1,,,100,TRUE,
+fao_production_by_species,LBN,Lebanon,seabream,Sparus aurata,,2,,,100,TRUE,
+fao_production_by_species,LBN,Lebanon,whiteleg_shrimp,Penaeus vannamei,,10,,,100,TRUE,

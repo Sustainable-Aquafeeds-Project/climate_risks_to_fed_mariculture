@@ -1,0 +1,9 @@
+table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_of_country_total,pct_of_model,included,reason
+farms_per_model,FIN,Finland,rainbow_trout,,263,11592.3,44.1,,,,
+farms_per_model,FIN,Finland,atlantic_salmon,,5,190.8,38.2,,,,
+fao_production_by_model,FIN,Finland,rainbow_trout,,,11375.2,,94.4,,TRUE,
+fao_production_by_model,FIN,Finland,atlantic_salmon,,,673.2,,5.6,,TRUE,
+fao_production_by_species,FIN,Finland,atlantic_salmon,Salmoniformes (=Salmonoidei),,572.5,,,85,TRUE,
+fao_production_by_species,FIN,Finland,atlantic_salmon,Salmo trutta,,100.7,,,15,TRUE,
+fao_production_by_species,FIN,Finland,atlantic_salmon,Salmo salar,,0,,,0,TRUE,
+fao_production_by_species,FIN,Finland,rainbow_trout,Oncorhynchus mykiss,,11375.2,,,100,TRUE,

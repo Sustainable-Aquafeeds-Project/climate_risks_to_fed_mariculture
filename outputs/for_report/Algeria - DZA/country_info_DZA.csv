@@ -1,0 +1,13 @@
+table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_of_country_total,pct_of_model,included,reason
+farms_per_model,DZA,Algeria,seabream,,2,1448.1,724.1,,,,
+farms_per_model,DZA,Algeria,european_seabass,,1,164,164,,,,
+farms_per_model,DZA,Algeria,whiteleg_shrimp,,1,2.3,2.3,,,,
+fao_production_by_model,DZA,Algeria,seabream,,,1159.6,,86.8,,TRUE,
+fao_production_by_model,DZA,Algeria,european_seabass,,,162.3,,12.1,,TRUE,
+fao_production_by_model,DZA,Algeria,drum_croaker,,,11.3,,0.8,,FALSE,
+fao_production_by_model,DZA,Algeria,whiteleg_shrimp,,,3.2,,0.2,,TRUE,
+fao_production_by_species,DZA,Algeria,drum_croaker,Argyrosomus regius,,11.3,,,100,FALSE,
+fao_production_by_species,DZA,Algeria,european_seabass,Dicentrarchus labrax,,162.3,,,100,TRUE,
+fao_production_by_species,DZA,Algeria,seabream,Sparus aurata,,1159.6,,,100,TRUE,
+fao_production_by_species,DZA,Algeria,whiteleg_shrimp,Penaeus spp,,3,,,93.7,TRUE,
+fao_production_by_species,DZA,Algeria,whiteleg_shrimp,Penaeus kerathurus,,0.2,,,6.3,TRUE,

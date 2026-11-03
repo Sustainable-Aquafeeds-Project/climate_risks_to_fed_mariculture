@@ -1,0 +1,13 @@
+table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_of_country_total,pct_of_model,included,reason
+farms_per_model,HKG,Hong Kong S.A.R.,golden_pompano,,1,41,41,,,,
+farms_per_model,HKG,Hong Kong S.A.R.,grouper,,1,17.1,17.1,,,,
+farms_per_model,HKG,Hong Kong S.A.R.,seabream,,1,10.5,10.5,,,,
+fao_production_by_model,HKG,Hong Kong S.A.R.,general_fish,,,554.4,,77.4,,FALSE,
+fao_production_by_model,HKG,Hong Kong S.A.R.,grouper,,,119.6,,16.7,,TRUE,
+fao_production_by_model,HKG,Hong Kong S.A.R.,golden_pompano,,,34,,4.7,,TRUE,
+fao_production_by_model,HKG,Hong Kong S.A.R.,seabream,,,8.6,,1.2,,TRUE,
+fao_production_by_species,HKG,Hong Kong S.A.R.,general_fish,Actinopterygii,,554.4,,,100,FALSE,
+fao_production_by_species,HKG,Hong Kong S.A.R.,golden_pompano,Trachinotus blochii,,34,,,100,TRUE,
+fao_production_by_species,HKG,Hong Kong S.A.R.,grouper,Epinephelus coioides,,109.9,,,91.8,TRUE,
+fao_production_by_species,HKG,Hong Kong S.A.R.,grouper,Epinephelus areolatus,,9.8,,,8.2,TRUE,
+fao_production_by_species,HKG,Hong Kong S.A.R.,seabream,Rhabdosargus sarba,,8.6,,,100,TRUE,

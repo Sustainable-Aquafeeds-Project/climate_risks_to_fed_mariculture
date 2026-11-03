@@ -1,0 +1,6 @@
+table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_of_country_total,pct_of_model,included,reason
+farms_per_model,MYT,Mayotte,drum_croaker,,1,6.7,6.7,,,,
+fao_production_by_model,MYT,Mayotte,drum_croaker,,,33,,100,,TRUE,
+fao_production_by_model,MYT,Mayotte,nile_tilapia,,,0,,0,,FALSE,
+fao_production_by_species,MYT,Mayotte,drum_croaker,Sciaenops ocellatus,,33,,,100,TRUE,
+fao_production_by_species,MYT,Mayotte,nile_tilapia,Oreochromis spp,,0,,,,FALSE,

@@ -1,6 +1,0 @@
-table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_of_country_total,pct_of_model,included,reason
-farms_per_model,SWE,Sweden,rainbow_trout,,12,1553.33,129.44,,,,
-fao_production_by_model,SWE,Sweden,rainbow_trout,,,1913.8,,99.9,,TRUE,
-fao_production_by_model,SWE,Sweden,atlantic_salmon,,,2,,0.1,,FALSE,
-fao_production_by_species,SWE,Sweden,atlantic_salmon,Salmo salar,,2,,,100,FALSE,
-fao_production_by_species,SWE,Sweden,rainbow_trout,Oncorhynchus mykiss,,1913.8,,,100,TRUE,

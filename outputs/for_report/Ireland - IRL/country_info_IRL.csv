@@ -1,0 +1,7 @@
+table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_of_country_total,pct_of_model,included,reason
+farms_per_model,IRL,Ireland,atlantic_salmon,,58,12256.7,211.3,,,,
+excluded_farms,IRL,Ireland,atlantic_salmon,,5,,,,,,Too inland
+fao_production_by_model,IRL,Ireland,atlantic_salmon,,,24975,,100,,TRUE,
+fao_production_by_model,IRL,Ireland,general_invertebrate,,,9.7,,0,,FALSE,
+fao_production_by_species,IRL,Ireland,atlantic_salmon,Salmo salar,,24975,,,100,TRUE,
+fao_production_by_species,IRL,Ireland,general_invertebrate,Invertebrata,,9.7,,,100,FALSE,

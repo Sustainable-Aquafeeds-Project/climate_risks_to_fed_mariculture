@@ -1,4 +1,0 @@
-table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_of_country_total,pct_of_model,included,reason
-farms_per_model,NIC,Nicaragua,whiteleg_shrimp,,36,30147.33,837.43,,,,
-fao_production_by_model,NIC,Nicaragua,whiteleg_shrimp,,,28429.6,,100,,TRUE,
-fao_production_by_species,NIC,Nicaragua,whiteleg_shrimp,Penaeus vannamei,,28429.6,,,100,TRUE,

@@ -1,5 +1,0 @@
-table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_of_country_total,pct_of_model,included,reason
-farms_per_model,CUB,Cuba,whiteleg_shrimp,,3,2621.14,873.71,,,,
-fao_production_by_model,CUB,Cuba,whiteleg_shrimp,,,4454.14,,100,,TRUE,
-fao_production_by_species,CUB,Cuba,whiteleg_shrimp,Penaeus vannamei,,4454.14,,,100,TRUE,
-fao_production_by_species,CUB,Cuba,whiteleg_shrimp,Penaeus schmitti,,0,,,0,TRUE,

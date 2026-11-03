@@ -1,0 +1,4 @@
+table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_of_country_total,pct_of_model,included,reason
+farms_per_model,COL,Colombia,whiteleg_shrimp,,14,5215.3,372.5,,,,
+fao_production_by_model,COL,Colombia,whiteleg_shrimp,,,4241.6,,100,,TRUE,
+fao_production_by_species,COL,Colombia,whiteleg_shrimp,Penaeus vannamei,,4241.6,,,100,TRUE,

@@ -1,0 +1,6 @@
+table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_of_country_total,pct_of_model,included,reason
+farms_per_model,KNA,Saint Kitts and Nevis,nile_tilapia,,1,1.2,1.2,,,,
+fao_production_by_model,KNA,Saint Kitts and Nevis,nile_tilapia,,,1.1,,100,,TRUE,
+fao_production_by_model,KNA,Saint Kitts and Nevis,whiteleg_shrimp,,,0,,0,,FALSE,
+fao_production_by_species,KNA,Saint Kitts and Nevis,nile_tilapia,Oreochromis spp,,1.1,,,100,TRUE,
+fao_production_by_species,KNA,Saint Kitts and Nevis,whiteleg_shrimp,Penaeus vannamei,,0,,,,FALSE,
