@@ -1,0 +1,4 @@
+table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_of_country_total,pct_of_model,included,reason
+farms_per_model,GHA,Ghana,tiger_prawn,,1,16.67,16.67,,,,
+fao_production_by_model,GHA,Ghana,tiger_prawn,,,14,,100,,TRUE,
+fao_production_by_species,GHA,Ghana,tiger_prawn,Penaeus monodon,,14,,,100,TRUE,

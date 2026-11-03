@@ -1,0 +1,7 @@
+table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_of_country_total,pct_of_model,included,reason
+farms_per_model,PLW,Palau,milkfish,,1,8.5,8.5,,,,
+farms_per_model,PLW,Palau,whiteleg_shrimp,,1,0.4,0.4,,,,
+fao_production_by_model,PLW,Palau,milkfish,,,10.8,,93.51,,TRUE,
+fao_production_by_model,PLW,Palau,whiteleg_shrimp,,,0.75,,6.49,,TRUE,
+fao_production_by_species,PLW,Palau,milkfish,Chanos chanos,,10.8,,,100,TRUE,
+fao_production_by_species,PLW,Palau,whiteleg_shrimp,Penaeus spp,,0.75,,,100,TRUE,

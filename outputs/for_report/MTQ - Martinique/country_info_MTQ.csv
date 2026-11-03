@@ -1,0 +1,4 @@
+table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_of_country_total,pct_of_model,included,reason
+farms_per_model,MTQ,Martinique,drum_croaker,,1,35.12,35.12,,,,
+fao_production_by_model,MTQ,Martinique,drum_croaker,,,35.32,,100,,TRUE,
+fao_production_by_species,MTQ,Martinique,drum_croaker,Sciaenops ocellatus,,35.32,,,100,TRUE,

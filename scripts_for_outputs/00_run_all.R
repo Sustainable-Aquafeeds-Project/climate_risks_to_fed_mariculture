@@ -32,3 +32,6 @@ walk(focus_countries$dir_name, dir.create, showWarnings = F)
 # Create maps of the farm locations
 source(here("scripts_for_outputs/01_map_of_farms.R"))
 
+# Collate country summary tables (farms per model, excluded farms, FAO production) into one csv per country
+source(here("scripts_for_outputs/02_country_info.R"))
+

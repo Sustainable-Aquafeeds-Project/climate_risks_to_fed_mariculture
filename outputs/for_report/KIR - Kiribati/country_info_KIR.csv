@@ -1,0 +1,4 @@
+table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_of_country_total,pct_of_model,included,reason
+farms_per_model,KIR,Kiribati,milkfish,,1,2,2,,,,
+fao_production_by_model,KIR,Kiribati,milkfish,,,2,,100,,TRUE,
+fao_production_by_species,KIR,Kiribati,milkfish,Chanos chanos,,2,,,100,TRUE,

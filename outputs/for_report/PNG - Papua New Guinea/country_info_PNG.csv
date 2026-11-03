@@ -1,0 +1,11 @@
+table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_of_country_total,pct_of_model,included,reason
+farms_per_model,PNG,Papua New Guinea,mud_crab,,1,0.67,0.67,,,,
+farms_per_model,PNG,Papua New Guinea,milkfish,,1,0.03,0.03,,,,
+fao_production_by_model,PNG,Papua New Guinea,tiger_prawn,,,3.33,,57.94,,FALSE,
+fao_production_by_model,PNG,Papua New Guinea,mud_crab,,,2,,34.76,,TRUE,
+fao_production_by_model,PNG,Papua New Guinea,milkfish,,,0.42,,7.3,,TRUE,
+fao_production_by_model,PNG,Papua New Guinea,barramundi,,,0,,0,,FALSE,
+fao_production_by_species,PNG,Papua New Guinea,barramundi,Lates calcarifer,,0,,,,FALSE,
+fao_production_by_species,PNG,Papua New Guinea,milkfish,Chanos chanos,,0.42,,,100,TRUE,
+fao_production_by_species,PNG,Papua New Guinea,mud_crab,Scylla serrata,,2,,,100,TRUE,
+fao_production_by_species,PNG,Papua New Guinea,tiger_prawn,Penaeus monodon,,3.33,,,100,FALSE,

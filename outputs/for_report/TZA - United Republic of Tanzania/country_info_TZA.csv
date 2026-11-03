@@ -1,0 +1,12 @@
+table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_of_country_total,pct_of_model,included,reason
+farms_per_model,TZA,United Republic of Tanzania,tiger_prawn,,1,148.98,148.98,,,,
+farms_per_model,TZA,United Republic of Tanzania,milkfish,,1,77.62,77.62,,,,
+farms_per_model,TZA,United Republic of Tanzania,mud_crab,,1,2.13,2.13,,,,
+fao_production_by_model,TZA,United Republic of Tanzania,tiger_prawn,,,236.59,,65.49,,TRUE,
+fao_production_by_model,TZA,United Republic of Tanzania,milkfish,,,114.73,,31.76,,TRUE,
+fao_production_by_model,TZA,United Republic of Tanzania,sandfish_sea_cucumber,,,7.41,,2.05,,FALSE,
+fao_production_by_model,TZA,United Republic of Tanzania,mud_crab,,,2.5,,0.69,,TRUE,
+fao_production_by_species,TZA,United Republic of Tanzania,milkfish,Chanos chanos,,114.73,,,100,TRUE,
+fao_production_by_species,TZA,United Republic of Tanzania,mud_crab,Scylla serrata,,2.5,,,100,TRUE,
+fao_production_by_species,TZA,United Republic of Tanzania,sandfish_sea_cucumber,Holothuria scabra,,7.41,,,100,FALSE,
+fao_production_by_species,TZA,United Republic of Tanzania,tiger_prawn,Penaeus monodon,,236.59,,,100,TRUE,

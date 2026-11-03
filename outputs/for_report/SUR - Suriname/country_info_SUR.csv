@@ -1,0 +1,7 @@
+table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_of_country_total,pct_of_model,included,reason
+farms_per_model,SUR,Suriname,whiteleg_shrimp,,1,12.5,12.5,,,,
+farms_per_model,SUR,Suriname,nile_tilapia,,1,5,5,,,,
+fao_production_by_model,SUR,Suriname,whiteleg_shrimp,,,23.8,,84.58,,TRUE,
+fao_production_by_model,SUR,Suriname,nile_tilapia,,,4.34,,15.42,,TRUE,
+fao_production_by_species,SUR,Suriname,nile_tilapia,Oreochromis spp,,4.34,,,100,TRUE,
+fao_production_by_species,SUR,Suriname,whiteleg_shrimp,Penaeus vannamei,,23.8,,,100,TRUE,

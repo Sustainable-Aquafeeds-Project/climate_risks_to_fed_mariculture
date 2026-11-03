@@ -1,0 +1,26 @@
+table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_of_country_total,pct_of_model,included,reason
+farms_per_model,ARE,United Arab Emirates,european_seabass,,1,523,523,,,,
+farms_per_model,ARE,United Arab Emirates,grouper,,1,215,215,,,,
+farms_per_model,ARE,United Arab Emirates,whiteleg_shrimp,,1,166.25,166.25,,,,
+farms_per_model,ARE,United Arab Emirates,nile_tilapia,,1,36.8,36.8,,,,
+excluded_farms,ARE,United Arab Emirates,atlantic_salmon,,1,,,,,,Farm too hot in 2025
+excluded_farms,ARE,United Arab Emirates,japanese_amberjack,,1,,,,,,Farm too hot in 2025
+excluded_farms,ARE,United Arab Emirates,seabream,,1,,,,,,Farm too hot in 2025
+fao_production_by_model,ARE,United Arab Emirates,seabream,,,1483,,51.33,,FALSE,
+fao_production_by_model,ARE,United Arab Emirates,european_seabass,,,523,,18.1,,TRUE,
+fao_production_by_model,ARE,United Arab Emirates,atlantic_salmon,,,360,,12.46,,FALSE,
+fao_production_by_model,ARE,United Arab Emirates,whiteleg_shrimp,,,207,,7.16,,TRUE,
+fao_production_by_model,ARE,United Arab Emirates,grouper,,,107.5,,3.72,,TRUE,
+fao_production_by_model,ARE,United Arab Emirates,japanese_amberjack,,,100,,3.46,,FALSE,
+fao_production_by_model,ARE,United Arab Emirates,yellowtail_kingfish,,,46.67,,1.62,,FALSE,
+fao_production_by_model,ARE,United Arab Emirates,nile_tilapia,,,36.8,,1.27,,TRUE,
+fao_production_by_model,ARE,United Arab Emirates,barramundi,,,25.4,,0.88,,FALSE,
+fao_production_by_species,ARE,United Arab Emirates,atlantic_salmon,Salmo salar,,360,,,100,FALSE,
+fao_production_by_species,ARE,United Arab Emirates,barramundi,Lates calcarifer,,25.4,,,100,FALSE,
+fao_production_by_species,ARE,United Arab Emirates,european_seabass,Dicentrarchus labrax,,523,,,100,TRUE,
+fao_production_by_species,ARE,United Arab Emirates,grouper,Epinephelus coioides,,107.5,,,100,TRUE,
+fao_production_by_species,ARE,United Arab Emirates,japanese_amberjack,Seriola lalandi,,100,,,100,FALSE,
+fao_production_by_species,ARE,United Arab Emirates,nile_tilapia,Oreochromis niloticus,,36.8,,,100,TRUE,
+fao_production_by_species,ARE,United Arab Emirates,seabream,Sparus aurata,,1483,,,100,FALSE,
+fao_production_by_species,ARE,United Arab Emirates,whiteleg_shrimp,Penaeus indicus,,207,,,100,TRUE,
+fao_production_by_species,ARE,United Arab Emirates,yellowtail_kingfish,Seriola lalandi,,46.67,,,100,FALSE,

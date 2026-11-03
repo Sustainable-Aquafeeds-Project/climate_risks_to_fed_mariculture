@@ -1,0 +1,6 @@
+table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_of_country_total,pct_of_model,included,reason
+farms_per_model,GEO,Georgia,rainbow_trout,,1,80,80,,,,
+fao_production_by_model,GEO,Georgia,rainbow_trout,,,80,,80,,TRUE,
+fao_production_by_model,GEO,Georgia,general_fish,,,20,,20,,FALSE,
+fao_production_by_species,GEO,Georgia,general_fish,Actinopterygii,,20,,,100,FALSE,
+fao_production_by_species,GEO,Georgia,rainbow_trout,Oncorhynchus mykiss,,80,,,100,TRUE,

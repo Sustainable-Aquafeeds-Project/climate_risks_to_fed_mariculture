@@ -1,0 +1,10 @@
+table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_of_country_total,pct_of_model,included,reason
+farms_per_model,GUM,Guam,whiteleg_shrimp,,1,10.5,10.5,,,,
+farms_per_model,GUM,Guam,milkfish,,1,6.67,6.67,,,,
+farms_per_model,GUM,Guam,nile_tilapia,,1,5.33,5.33,,,,
+fao_production_by_model,GUM,Guam,milkfish,,,16,,50.42,,TRUE,
+fao_production_by_model,GUM,Guam,whiteleg_shrimp,,,10.4,,32.77,,TRUE,
+fao_production_by_model,GUM,Guam,nile_tilapia,,,5.33,,16.81,,TRUE,
+fao_production_by_species,GUM,Guam,milkfish,Chanos chanos,,16,,,100,TRUE,
+fao_production_by_species,GUM,Guam,nile_tilapia,Oreochromis spp,,5.33,,,100,TRUE,
+fao_production_by_species,GUM,Guam,whiteleg_shrimp,Penaeus vannamei,,10.4,,,100,TRUE,

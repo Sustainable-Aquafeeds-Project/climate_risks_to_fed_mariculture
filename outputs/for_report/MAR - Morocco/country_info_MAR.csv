@@ -1,0 +1,10 @@
+table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_of_country_total,pct_of_model,included,reason
+farms_per_model,MAR,Morocco,european_seabass,,2,171.48,171.48,,,,
+farms_per_model,MAR,Morocco,european_seabass,,2,57.94,57.94,,,,
+farms_per_model,MAR,Morocco,drum_croaker,,1,9.42,9.42,,,,
+fao_production_by_model,MAR,Morocco,european_seabass,,,174.68,,68.74,,TRUE,
+fao_production_by_model,MAR,Morocco,tuna,,,70,,27.55,,FALSE,
+fao_production_by_model,MAR,Morocco,drum_croaker,,,9.42,,3.71,,TRUE,
+fao_production_by_species,MAR,Morocco,drum_croaker,Argyrosomus regius,,9.42,,,100,TRUE,
+fao_production_by_species,MAR,Morocco,european_seabass,Dicentrarchus labrax,,174.68,,,100,TRUE,
+fao_production_by_species,MAR,Morocco,tuna,Thunnus thynnus,,70,,,100,FALSE,

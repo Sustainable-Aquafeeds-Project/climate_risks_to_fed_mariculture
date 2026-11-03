@@ -1,0 +1,6 @@
+table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_of_country_total,pct_of_model,included,reason
+farms_per_model,SLV,El Salvador,whiteleg_shrimp,,39,1212.25,31.08,,,,
+fao_production_by_model,SLV,El Salvador,whiteleg_shrimp,,,1186.6,,99.76,,TRUE,
+fao_production_by_model,SLV,El Salvador,general_fish,,,2.8,,0.24,,FALSE,
+fao_production_by_species,SLV,El Salvador,general_fish,Actinopterygii,,2.8,,,100,FALSE,
+fao_production_by_species,SLV,El Salvador,whiteleg_shrimp,Penaeus vannamei,,1186.6,,,100,TRUE,

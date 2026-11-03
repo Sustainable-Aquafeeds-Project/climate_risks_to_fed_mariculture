@@ -1,0 +1,11 @@
+table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_of_country_total,pct_of_model,included,reason
+farms_per_model,TLS,Timor-Leste,milkfish,,1,10,10,,,,
+farms_per_model,TLS,Timor-Leste,whiteleg_shrimp,,1,5.83,5.83,,,,
+farms_per_model,TLS,Timor-Leste,mud_crab,,1,1.25,1.25,,,,
+fao_production_by_model,TLS,Timor-Leste,whiteleg_shrimp,,,11.67,,53.23,,TRUE,
+fao_production_by_model,TLS,Timor-Leste,milkfish,,,9,,41.06,,TRUE,
+fao_production_by_model,TLS,Timor-Leste,mud_crab,,,1.25,,5.7,,TRUE,
+fao_production_by_species,TLS,Timor-Leste,milkfish,Chanos chanos,,9,,,100,TRUE,
+fao_production_by_species,TLS,Timor-Leste,mud_crab,Scylla serrata,,1.25,,,100,TRUE,
+fao_production_by_species,TLS,Timor-Leste,whiteleg_shrimp,Penaeus vannamei,,10.67,,,91.43,TRUE,
+fao_production_by_species,TLS,Timor-Leste,whiteleg_shrimp,Penaeus spp,,1,,,8.57,TRUE,

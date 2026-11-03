@@ -1,0 +1,11 @@
+table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_of_country_total,pct_of_model,included,reason
+farms_per_model,CAN,Canada,atlantic_salmon,,159,44670.86,406.1,,,,
+farms_per_model,CAN,Canada,atlantic_salmon,,159,19661.43,401.25,,,,
+fao_production_by_model,CAN,Canada,atlantic_salmon,,,267736.25,,94.45,,TRUE,
+fao_production_by_model,CAN,Canada,general_fish,,,15737.5,,5.55,,FALSE,
+fao_production_by_model,CAN,Canada,tuna,,,0,,0,,FALSE,
+fao_production_by_species,CAN,Canada,atlantic_salmon,Salmo salar,,172694,,,64.5,TRUE,
+fao_production_by_species,CAN,Canada,atlantic_salmon,Salmonidae,,92624,,,34.6,TRUE,
+fao_production_by_species,CAN,Canada,atlantic_salmon,Salmo spp,,2418.25,,,0.9,TRUE,
+fao_production_by_species,CAN,Canada,general_fish,Actinopterygii,,15737.5,,,100,FALSE,
+fao_production_by_species,CAN,Canada,tuna,Thunnus thynnus,,0,,,,FALSE,
