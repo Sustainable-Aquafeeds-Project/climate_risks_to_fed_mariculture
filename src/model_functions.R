@@ -1181,11 +1181,17 @@ farm_growth <- function(
     full_results <- farm_growth_full(species_params, feed_params, water_temp, times, use_MC_population, MC_pop, output_vars = output_vars)
   }
   consolidated  <- consolidate_farm(full_results)
-  scaled        <- scale_farm_population(consolidated, N_pop, scaled_vars = scaled_vars)
+
+  if (!is.null(scaled_vars)) {
+    scaled      <- scale_farm_population(consolidated, N_pop, scaled_vars = scaled_vars)
+    stats       <- c(consolidated[["stats"]], scaled[["stats"]])
+  } else {
+    stats       <- consolidated[["stats"]]
+  }
 
   list(
     days  = consolidated[["days"]],
-    stats = c(consolidated[["stats"]], scaled[["stats"]])
+    stats = stats
   )
 }
 

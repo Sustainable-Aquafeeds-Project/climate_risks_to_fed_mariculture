@@ -171,15 +171,16 @@ assigned_farms <- assigned_farms %>%
 ```{r choose-subset}
 #| code-summary: Choose the current subset of farms we're working with
 
-# Choose what subset(s) you're going to run this time - REMOTE
+# Choose what subset(s) you're going to run this time
 assigned_farms <- assigned_farms %>%
+  filter(model_name %in% c("tuna_full", "tuna_ranch", "whiteleg_shrimp", "nile_tilapia", "olive_flounder", "atlantic_salmon", "rainbow_trout", "european_seabass")) %>% 
   filter(!is.na(filename))
 
 # Set the path of any files that might exclude production runs
 existing_files <- list.files(file.path(outs_path, "data", "farm_production"), recursive = T, full.names = T) %>% 
   str_subset("testing", negate = T) %>% 
   basename()
-new_files <- paste0("production_results_farmID_", fix_int(assigned_farms$farm_ID, 8), "_MC5000.qs")
+new_files <- paste0("production_results_farmID_", fix_int(assigned_farms$farm_ID, 8), "_MC500.qs")
 
 files_to_do <- setdiff(new_files, existing_files)
 
@@ -318,12 +319,12 @@ There are several important metrics to get out of this process. At each farm and
 # "days" is always included in the output variables
 output_vars <- c("weight", "dw", "T_response", "rel_feeding", "food_prov", "ing_act", "anab", "catab", "total_excr", "metab")
 # These are the variables that will be scaled up to give farm-level responses
-scaled_vars <- c("weight", "dw", "ing_act", "total_excr", "food_prov")
+scaled_vars <- NULL # c("weight", "dw", "ing_act", "total_excr", "food_prov")
 
 harvest_years <- 2025:2099      # Leave this - all harvest years are included in the same file per farms
 
 farm_IDs <- map(assigned_farms_todo, function(af) {af$farm_ID}) |> unlist() |> unname()
-prod_files <- file.path(outs_path, "data", "farm_production", "new_remote", paste0("production_results_farmID_", fix_int(farm_IDs, 8), "_MC5000.qs"))
+prod_files <- file.path(outs_path, "data", "farm_production", "new_remote", paste0("production_results_farmID_", fix_int(farm_IDs, 8), "_MC500.qs"))
 ```
 
 ```{r check-farm-growth}
@@ -392,7 +393,7 @@ check_farm_growth_inputs(
   times = grow_times,
   N_pop = pop, 
   use_MC_population = T, 
-  MC_pop = 5000,
+  MC_pop = 500,
   output_vars = output_vars,
   scaled_vars = scaled_vars
 )
@@ -476,7 +477,7 @@ future_walk2(
           times = grow_times,
           N_pop = pop, 
           use_MC_population = T, 
-          MC_pop = 5000,
+          MC_pop = 500,
           output_vars = output_vars,
           scaled_vars = scaled_vars
         )
@@ -498,7 +499,7 @@ Check the production files directory to make sure they ran and saved correctly.
 
 ```{r check-production}
 prod_path <- file.path(outs_path, "data", "farm_production")
-production_files <- list.files(prod_path, full.names = TRUE, pattern = "MC5000\\.qs$")
+production_files <- list.files(prod_path, full.names = TRUE, pattern = "MC500\\.qs$")
 
 here("src", "check_production_files.R") %>% source(echo = T)
 

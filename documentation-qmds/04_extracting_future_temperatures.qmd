@@ -182,7 +182,7 @@ message(sprintf("%i of %i remaining farm IDs have cells from the expanded cell r
 message(sprintf("There are %i farm_IDs still remaining.", still_missing_3 %>% filter(is.na(new_cells)) %>% nrow()))
 ```
 
-After 4 rounds of searching progressively wider areas, there are still 132 farms missing temperatures. Where are they?
+After 4 rounds of searching progressively wider areas, there are still 85 farms missing temperatures. Where are they?
 
 ```{r fig-where-are-the-missing-farms}
 #| code-summary: Show the missing farms and their nearest neighbour
@@ -218,7 +218,7 @@ ggplot() +
   prettyplot() + coord_sf()
 ```
 
-The missing farms are mostly in Chile, with a few in Norway. They're generally a little bit inland of the coast (up estuaries, etc) so they're not being well-captured by SST changes. However, they're extremely close to non-missing points of data, so we'll be copying those temperatures for those features.
+The missing farms are all in Chile. They're generally a little bit inland of the coast (up estuaries, etc) so they're not being well-captured by SST changes. However, they're extremely close to non-missing points of data, so we'll be copying those temperatures for those features.
 
 ```{r combine-all-assigned-cells-together}
 #| code-summary: Combine cell assignments
