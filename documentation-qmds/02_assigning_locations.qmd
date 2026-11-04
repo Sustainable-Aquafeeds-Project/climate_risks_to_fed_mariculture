@@ -201,7 +201,7 @@ FAO_aqua %>%
 #| code-summary: "Sum production data from 2017-2023. This will be the production set used going forward."
 
 FAO_aqua_means <- FAO_aqua %>% 
-    filter(period >= 2017) %>% 
+    filter(period >= 2015) %>% 
     group_by(ISO3_Code, country, F_CODE, location_group, model_name) %>% 
     reframe(value = mean(value, na.rm = TRUE)) %>% 
     filter(value != 0)
