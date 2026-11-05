@@ -19,7 +19,7 @@ assigned_farms_new <- file.path(prepdata_path, "assigned_farms.qs") %>% qs_read(
 existing_prod_files <- file.path(outs_path, "data", "farm_production") %>% 
   list.files(recursive = T, full.names = T) %>% 
   str_subset("MC5000.qs") %>% 
-  str_subset("RESCALED", negate = T)
+  str_subset("temp_hold|excluded", negate = T)
 
 existing_prod_IDs <- existing_prod_files %>% 
   basename() %>% 
@@ -87,7 +87,7 @@ existing_prod_files <- file.path(outs_path, "data", "farm_production") %>%
   str_subset("MC5000.qs") %>% 
   str_subset("testing", negate = T) %>% 
   str_subset("temp_hold", negate = T) %>% 
-  str_subset("RESCALED", negate = T)
+  str_subset("excluded", negate = T)
 existing_prod_IDs <- existing_prod_files %>% 
   basename() %>% 
   str_extract("\\d+(?=\\_MC5000.qs$)") %>% 

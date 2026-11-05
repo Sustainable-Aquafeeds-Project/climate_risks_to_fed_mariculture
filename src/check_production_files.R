@@ -4,23 +4,24 @@
 # Each file should be a list of 75 elements named "2025"-"2099".
 # Each element should contain:
 #   - $days: a numeric vector of length N
-#   - $stats: a list of 15 response matrices, each with N rows
+#   - $stats: a list of 10 response matrices, each with N rows
 #
-# The 15 expected response matrices:
+# The 10 expected response matrices:
 #   weight, dw, T_response, rel_feeding, ing_act, anab, catab,
-#   total_excr, metab, weight_scaled, dw_scaled, ing_act_scaled, total_excr_scaled,
-#   food_prov, food_prov_scaled
+#   total_excr, metab, food_prov
+# ("*_scaled" variables are no longer produced by the production runs and are
+# ignored if present.)
 #
 # Additional data quality checks (Check 6):
 #   - Weight must increase at some point (not monotonically decreasing)
 #   - dw (weight change) must not be negative for the entire growth period
 #   - rel_feeding and ing_act must be mostly numeric (not predominantly NaN/NA)
-#   - anab, total_excr, food_prov, and food_prov_scaled must not be all zeros
+#   - anab, total_excr, and food_prov must not be all zeros
 #   If feeding issues are detected, the issue is reported as FEEDING_FAILED;
 #   otherwise, growth-only issues are reported as NO_GROWTH.
 #
 # Additional data quality check (Check 7):
-#   - Harvest biomass (weight_scaled, last finite value of the year) must not
+#   - Harvest weight (weight, last finite value of the year) must not
 #     increase by more than 250% from 2025 to 2099
 #     (flagged as BIOMASS_INCREASE_EXCESSIVE), nor decrease by more than 90%
 #     over the same period (flagged as BIOMASS_DECREASE_EXCESSIVE).
@@ -34,8 +35,8 @@ source(here("src", "dirs.R"))
 expected_years <- as.character(2025:2099)
 expected_n_years <- length(expected_years) # 75
 
-expected_response_names <- c("weight", "dw", "T_response", "rel_feeding", "ing_act", "anab", "catab", "total_excr", "metab", "weight_scaled", "dw_scaled", "ing_act_scaled", "total_excr_scaled", "food_prov", "food_prov_scaled")
-expected_n_responses <- length(expected_response_names) # 15
+expected_response_names <- c("weight", "dw", "T_response", "rel_feeding", "ing_act", "anab", "catab", "total_excr", "metab", "food_prov")
+expected_n_responses <- length(expected_response_names) # 10
 
 # ---------- Find production files ----------
 if (length(production_files) == 0) {
@@ -114,7 +115,7 @@ for (i in seq_along(production_files)) {
     n_days <- length(days_vec)
     days_vectors[[yr]] <- days_vec
     
-    # Check 3: Does "stats" exist and have all 13 responses?
+    # Check 3: Does "stats" exist and have all expected responses?
     if (!"stats" %in% names(yr_dat)) {
       add_issue(fpath, yr, "MISSING_STATS", "No 'stats' element found")
       next
@@ -165,7 +166,6 @@ for (i in seq_along(production_files)) {
     has_anab      <- "anab"        %in% stat_names && is.matrix(stats[["anab"]])
     has_totalexcr <- "total_excr"  %in% stat_names && is.matrix(stats[["total_excr"]])
     has_foodprov  <- "food_prov"   %in% stat_names && is.matrix(stats[["food_prov"]])
-    has_foodprovs <- "food_prov_scaled" %in% stat_names && is.matrix(stats[["food_prov_scaled"]])
     
     # Feeding checks (use column 1 = mean)
     feeding_failed <- FALSE
@@ -215,14 +215,6 @@ for (i in seq_along(production_files)) {
       }
     }
     
-    if (has_foodprovs) {
-      fps_vals <- stats[["food_prov_scaled"]][, 1]
-      if (all(fps_vals == 0, na.rm = TRUE)) {
-        feeding_failed <- TRUE
-        feeding_details <- c(feeding_details, "food_prov_scaled is all zeros")
-      }
-    }
-    
     # Growth checks (use column 1 = mean)
     no_growth <- FALSE
     growth_details <- character(0)
@@ -258,18 +250,20 @@ for (i in seq_along(production_files)) {
     }
   }
   
-  # --- Check 7: Harvest biomass (weight_scaled) must not change excessively from 2025 to 2099 ---
+  # --- Check 7: Harvest weight must not change excessively from 2025 to 2099 ---
+  # Uses per-individual weight; previously used weight_scaled, which is no longer
+  # produced. Percent change is the same either way (scaling is a constant factor).
   if (all(c("2025", "2099") %in% element_names)) {
     stats_2025 <- dat[["2025"]][["stats"]]
     stats_2099 <- dat[["2099"]][["stats"]]
     
-    has_ws_2025 <- !is.null(stats_2025) && "weight_scaled" %in% names(stats_2025) && is.matrix(stats_2025[["weight_scaled"]])
-    has_ws_2099 <- !is.null(stats_2099) && "weight_scaled" %in% names(stats_2099) && is.matrix(stats_2099[["weight_scaled"]])
+    has_ws_2025 <- !is.null(stats_2025) && "weight" %in% names(stats_2025) && is.matrix(stats_2025[["weight"]])
+    has_ws_2099 <- !is.null(stats_2099) && "weight" %in% names(stats_2099) && is.matrix(stats_2099[["weight"]])
     
     if (has_ws_2025 && has_ws_2099) {
-      ws_2025_finite <- stats_2025[["weight_scaled"]][, 1]
+      ws_2025_finite <- stats_2025[["weight"]][, 1]
       ws_2025_finite <- ws_2025_finite[is.finite(ws_2025_finite)]
-      ws_2099_finite <- stats_2099[["weight_scaled"]][, 1]
+      ws_2099_finite <- stats_2099[["weight"]][, 1]
       ws_2099_finite <- ws_2099_finite[is.finite(ws_2099_finite)]
       
       if (length(ws_2025_finite) > 0 && length(ws_2099_finite) > 0) {
@@ -281,11 +275,11 @@ for (i in seq_along(production_files)) {
           pct_change <- (harvest_biomass_2099 - harvest_biomass_2025) / harvest_biomass_2025 * 100
           if (pct_change > 250) {
             add_issue(fpath, NA, "BIOMASS_INCREASE_EXCESSIVE",
-                      sprintf("Harvest biomass (weight_scaled) increased by %.1f%% from 2025 (%.4f) to 2099 (%.4f)",
+                      sprintf("Harvest weight increased by %.1f%% from 2025 (%.4f) to 2099 (%.4f)",
                               pct_change, harvest_biomass_2025, harvest_biomass_2099))
           } else if (pct_change < -90) {
             add_issue(fpath, NA, "BIOMASS_DECREASE_EXCESSIVE",
-                      sprintf("Harvest biomass (weight_scaled) decreased by %.1f%% from 2025 (%.4f) to 2099 (%.4f)",
+                      sprintf("Harvest weight decreased by %.1f%% from 2025 (%.4f) to 2099 (%.4f)",
                               pct_change, harvest_biomass_2025, harvest_biomass_2099))
           }
         }

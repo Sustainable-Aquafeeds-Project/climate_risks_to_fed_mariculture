@@ -35,6 +35,8 @@ library(janitor)
 library(countrycode)
 library(tidyterra)
 library(magrittr)
+library(future)
+library(furrr)
 ```
 
 ```{r source-scripts}
@@ -307,6 +309,19 @@ tos_rast_fnms_ls <- tibble(
 tos_rast_fnms_ls <- split(tos_rast_fnms_ls, tos_rast_fnms_ls$year)
 ```
 
+```{r split-out-extra}
+#| code-summary: "Split out the extra cells that we need - only the ones that have changed"
+
+assigned_farms_old <- file.path(prepdata_path, "assigned_farms_OLD.qs") %>% 
+  qs_read()
+
+# New cells?
+new_cells <- c(
+  setdiff(unique(assigned_farms_cells$farm_ID), unique(assigned_farms_old$farm_ID)),
+  unique(assigned_farms_cells$farm_ID[assigned_farms_cells$farm_ID > 95443])
+)
+```
+
 This next cell extracts all temperatures in each year for every focal cell. This avoids having to do multiple extracts of the surface temperature rasters.
 
 ```{r extract-temps-lookup-cells}
@@ -314,7 +329,8 @@ This next cell extracts all temperatures in each year for every focal cell. This
 #| eval: false
 
 # Get all focal cells we need to extract for all farms
-all_cells <- unique(unlist(assigned_farms_cells$focal_cells))
+# all_cells <- unique(unlist(assigned_farms_cells$focal_cells))
+all_cells <- unique(unlist(assigned_farms_cells$focal_cells[assigned_farms_cells$farm_ID %in% new_cells])) # for extracted cells only
 
 # yr_fnms <- tos_rast_fnms_ls[[1]]
 walk(
@@ -330,7 +346,7 @@ walk(
     extracted$cell <- all_cells
     qs2::qs_save(
       extracted, 
-      file.path(data_path, "intermediates", "farm_focal_lookup_files", paste0("extracted_", unique(yr_fnms$year), ".qs"))
+      file.path(data_path, "intermediates", "farm_focal_lookup_files", paste0("extracted_", unique(yr_fnms$year), "_EXTRA.qs"))
     )
   },
   .progress = T
@@ -346,19 +362,24 @@ The focal cell temperatures are then combined according to the focal cell lookup
 assigned_farms_cells <- file.path(prepdata_path, "assigned_farms_focal_cells.qs") %>% qs_read()
 
 subset_farms <- assigned_farms_cells %>% 
+  filter(farm_ID %in% new_cells) %>% 
   mutate(
     out_file = file.path(farm_temp_outputs, paste0("farm_", fix_int(farm_ID, digits = 8), ".qs")),
     file_exists = file.exists(out_file)
     ) %>% 
-  filter(!file_exists) %>% # comment out if overwriting
+  # filter(!file_exists) %>% # comment out if overwriting
   pull(farm_ID) %>% 
   unique()
 
 lookup_files <- file.path(data_path, "intermediates", "farm_focal_lookup_files") %>% 
-  list.files(pattern = "extracted_\\d{4}\\.qs", full.names = TRUE)
+  list.files(pattern = "extracted_\\d{4}\\_EXTRA.qs", full.names = TRUE)
 
 # id <- subset_farms[1]
-walk(
+
+work_cores <- parallelly::availableCores() - 2
+plan(multisession, workers = work_cores)
+
+future_walk(
   subset_farms,
   function(id) {
       cells <- assigned_farms_cells$focal_cells[assigned_farms_cells$farm_ID == id][[1]]
@@ -384,6 +405,8 @@ walk(
   },
   .progress = T
 )
+
+plan(sequential)
 
 # ! Warning! Cell 87416 has missing temperatures!   
 # ! Warning! Cell 87479 has missing temperatures!   

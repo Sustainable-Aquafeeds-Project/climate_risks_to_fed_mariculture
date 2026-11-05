@@ -128,9 +128,16 @@ FAO_aqua <- file.path(prepdata_path, "FAO_with_models_final_production.csv") %>%
     read.csv() %>% 
     mutate(across(where(is.character), str_trim))
 
+# For some reason yellowtail got seperated
+FAO_aqua <- FAO_aqua %>% 
+  mutate(model_name = case_when(
+    model_name == "yellowtail_kingfish" ~ "japanese_amberjack",
+    T ~ model_name
+  ))
+
 # Get FAO fishing region code keys and add to production data
 FAO_code_key <- file.path(prepdata_path, "FAO_code_key.csv") %>% 
-    read.csv() %>% select(-X)
+    read.csv() %>% dplyr::select(-X)
 FAO_aqua <- FAO_aqua %>% 
     left_join(FAO_code_key, by = c("fao_fishing_area" = "NAME_EN"))
 
@@ -152,7 +159,7 @@ FAO_aqua <- FAO_aqua %>%
             TRUE ~ "General marine fish",
         )
     ) %>% 
-    select(-c(fao_fishing_area, species_name, environment)) %>% 
+    dplyr::select(-c(fao_fishing_area, species_name, environment)) %>% 
     filter(location_group != "Unfed or algae fed bivalve molluscs")
 
 # Somehow some 99% landlocked countries made it in here
@@ -234,7 +241,7 @@ countries_fix <- left_join(
         is.na(country.y) ~ country.x, 
         T ~ country.y
     )) %>% 
-    select(ISO3_Code, country)
+    dplyr::select(ISO3_Code, country)
 
 # Fix country names!
 FAO_aqua_means <- FAO_aqua_means %>% 
@@ -299,7 +306,7 @@ farms_required <- FAO_aqua_means %>%
 # Estimate required farms where there are no farms mapped
 farms_required <- farms_required %>% 
   mutate(per_farm_prod_now = total_production/total_farms_required) %>% 
-  select(-per_farm_prod_2017) %>% 
+  dplyr::select(-per_farm_prod_2017) %>% 
   group_by(location_group) %>% 
   mutate(typical_per_farm_prod = mean(per_farm_prod_now, na.rm = T)) %>% 
   ungroup() %>% 
@@ -323,7 +330,7 @@ farms_required <- farms_required %>%
     #   - There are no farms mapped, or there are more farms required than mapped (new farms need to be created)
     cell_temps_needed = is.na(n_farms) | (total_farms_required > n_farms)
   ) %>% 
-  select(country, F_CODE, location_group, n_farms, model_names, total_farms_required, farm_temps_needed, cell_temps_needed) %>% 
+  dplyr::select(country, F_CODE, location_group, n_farms, model_names, total_farms_required, farm_temps_needed, cell_temps_needed) %>% 
   mutate(ISO3_Code = countrycode(country, origin = "country.name", destination = "iso3c"))
 
 cat("\nTotal regions: ", nrow(farms_required))
@@ -349,7 +356,7 @@ norway_blanks <- farms_required %>%
     n_farms = n_farms - length(to_exclude_norway),
     total_farms_required = total_farms_required - length(to_exclude_norway)
   ) %>% 
-  select(ISO3_Code, n_farms, total_farms_required)
+  dplyr::select(ISO3_Code, n_farms, total_farms_required)
 
 farms_required <- rows_update(
   farms_required, 
@@ -385,7 +392,6 @@ In some regions, the number of mapped farms is appropriate for the single `model
 
 ```{r assign-group-1}
 #| code-summary: "Assign farms to groups where simple one-to-one assignment is sufficient"
-#| eval: false
 
 for (i in 1:nrow(farms_required_1)) {
   # Exclude any farms already assigned in a previous iteration
@@ -401,7 +407,7 @@ for (i in 1:nrow(farms_required_1)) {
       model_name = FAO_aqua_means_1$model_name,
       prod_perfarm = FAO_aqua_means_1$value / nrow(aqua_locs_1)
     ) %>%
-    select(-c(tonnes_per_farm, NAME_EN))
+    dplyr::select(-c(tonnes_per_farm, NAME_EN))
 
   assigned_farms <- rbind(assigned_farms, result_1)
 }
@@ -437,7 +443,6 @@ This next chunk gets the typical mean year of temperatures for each farm locatio
 
 ```{r extract-farm-temperatures-2}
 #| code-summary: Extract and save the mean daily temperatures at all the farms that might be assigned to Group 2 (or Group 4).
-#| eval: false
 
 combined <- rbind(farms_required_2, farms_required_4)
 
@@ -472,7 +477,6 @@ After the extraction process, some farms failed to get any temperature data from
 
 ```{r exclude-blank-farms}
 #| code-summary: Find blank farms and deal with them
-#| eval: false
 
 # # Check for blank farms
 # temp_check <- farm_temp_path %>% 
@@ -500,7 +504,7 @@ bf_region <- aqua_locs %>%
 
 farms_required_blank <- farms_required %>% 
   inner_join(bf_region, by = c("country", "F_CODE", "location_group" = "species_group")) %>% 
-  select(-c(model_names, farm_temps_needed, cell_temps_needed, farm_ID)) %>% 
+  dplyr::select(-c(model_names, farm_temps_needed, cell_temps_needed, farm_ID)) %>% 
   group_by(country, F_CODE, location_group, total_farms_required, n_farms) %>% 
   reframe(farms_removed = n()) %>% 
   mutate(
@@ -519,7 +523,7 @@ aqua_locs <- aqua_locs %>%
 # Also adjust the farms required (all these blank farms are in places included in farms_required_2)
 farms_required_2 <- rows_update(
   farms_required_2, 
-  farms_required_blank %>% select(-c(farms_removed, original_farms_required)), 
+  farms_required_blank %>% dplyr::select(-c(farms_removed, original_farms_required)), 
   by = c("country", "F_CODE", "location_group")
 )
 ```
@@ -535,7 +539,7 @@ assign_models <- function(ideal_days_df, n_required) {
   n_vars       <- n_loc * n_models
   
   # Extract values matrix internally for indexing convenience
-  val_mat <- ideal_days_df %>% select(all_of(model_cols)) %>% as.matrix()
+  val_mat <- ideal_days_df %>% dplyr::select(all_of(model_cols)) %>% as.matrix()
   rownames(val_mat) <- as.character(loc_ids)
   
   obj           <- as.vector(val_mat)
@@ -593,7 +597,6 @@ assign_models <- function(ideal_days_df, n_required) {
 
 ```{r ideal-model-temperatures}
 #| code-summary: Get the ideal temperature ranges for each model
-#| eval: false
 
 # Default feeding temperature function
 feeding_rate <- function(
@@ -633,7 +636,6 @@ ideal_temperatures <- unique(FAO_aqua_means$model_name) %>%
 
 ```{r manual-adjustments-2}
 #| code-summary: Manual adjustments - some of these assignments are impossible given the species temperature requirements
-#| eval: false
 
 # All farms in Malaysia are much too warm for abalone
 farms_required_2$farm_temps_needed[farms_required_2$country == "Malaysia" & farms_required_2$F_CODE == 71 & farms_required_2$location_group == "Unfed or algae fed bivalve molluscs"] <- FALSE
@@ -664,7 +666,6 @@ farms_required_3 <- bind_rows(
 
 ```{r assign-group-2}
 #| code-summary: "Assign farms using temperature-based optimisation for mapped regions"
-#| eval: false
 
 for (i in 1:nrow(farms_required_2)) {
   cat(sprintf("Starting region %d of %d...\n", i, nrow(farms_required_2)))
@@ -691,7 +692,7 @@ for (i in 1:nrow(farms_required_2)) {
       rank_rem = rank(-remainder, ties.method = "first"),
       farms_required = as.integer(floor_val + if_else(rank_rem <= leftover, 1L, 0L))
     ) %>%
-    select(-prop, -remaining, -raw, -floor_val, -remainder, -leftover, -rank_rem)
+    dplyr::select(-prop, -remaining, -raw, -floor_val, -remainder, -leftover, -rank_rem)
 
   # Put into a named vector for optimisation function
   n_required <- FAO_aqua_means_2$farms_required
@@ -745,7 +746,7 @@ for (i in 1:nrow(farms_required_2)) {
       source     = "mapped",
       prod_perfarm = NA
     ) %>%
-    select(-c(tonnes_per_farm, NAME_EN))
+    dplyr::select(-c(tonnes_per_farm, NAME_EN))
 
   assigned_farms <- rbind(assigned_farms, result_2)
 }
@@ -767,7 +768,6 @@ This group has no farms available to assign. We will need to create new farms wi
 
 ```{r load-EEZ-data}
 #| code-summary: Load previously-saved EEZ data, restricted to 50km of the coast and divided by FAO region
-#| eval: false
 
 old_s2 <- sf_use_s2(FALSE)
 on.exit(sf_use_s2(old_s2), add = TRUE)  # restore afterwards
@@ -792,7 +792,6 @@ EEZ_by_FAO <- EEZ_by_FAO_full %>%
 
 ```{r assign-farms-3}
 #| code-summary: Assign farms based on suitable habitat
-#| eval: false
 
 assigned_farms <- qs_read(
   file.path(data_path, "intermediates", "assigned_farms_2.qs")
@@ -831,7 +830,7 @@ for (i in 1:nrow(farms_required_3)) {
       rank_rem = rank(-remainder, ties.method = "first"),
       farms_required = as.integer(floor_val + if_else(rank_rem <= leftover, 1L, 0L))
     ) %>%
-    select(-prop, -remaining, -raw, -floor_val, -remainder, -leftover, -rank_rem)
+    dplyr::select(-prop, -remaining, -raw, -floor_val, -remainder, -leftover, -rank_rem)
 
   # Put into a named vector for optimisation function
   n_required <- FAO_aqua_means_3$farms_required
@@ -854,7 +853,7 @@ for (i in 1:nrow(farms_required_3)) {
   ) %>%
     relocate(cell, .after = ID) %>%
     rename(farm_ID = cell) %>%
-    select(-ID) %>%
+    dplyr::select(-ID) %>%
     pivot_longer(
       cols = contains("DOY"),
       names_to = "DOY", names_prefix = "DOY_", names_transform = as.integer,
@@ -925,7 +924,6 @@ There are only a few regions left for the final assignment.
 
 ```{r assign-farms-4}
 #| code-summary: "Assign farms using both mapped and habitat-extracted locations"
-#| eval: false
 
 assigned_farms <- qs_read(
   file.path(data_path, "intermediates", "assigned_farms_3.qs")
@@ -956,7 +954,7 @@ for (i in 1:nrow(farms_required_4)) {
       rank_rem = rank(-remainder, ties.method = "first"),
       farms_required = as.integer(floor_val + if_else(rank_rem <= leftover, 1L, 0L))
     ) %>%
-    select(-prop, -remaining, -raw, -floor_val, -remainder, -leftover, -rank_rem)
+    dplyr::select(-prop, -remaining, -raw, -floor_val, -remainder, -leftover, -rank_rem)
 
   # Put into a named vector for optimisation function
   n_required <- FAO_aqua_means_4$farms_required
@@ -999,7 +997,7 @@ for (i in 1:nrow(farms_required_4)) {
   ) %>%
     relocate(cell, .after = ID) %>%
     rename(farm_ID = cell) %>%
-    select(-ID) %>%
+    dplyr::select(-ID) %>%
     pivot_longer(
       cols = contains("DOY"),
       names_to = "DOY", names_prefix = "DOY_", names_transform = as.integer,
@@ -1065,7 +1063,7 @@ for (i in 1:nrow(farms_required_4)) {
       source       = "mapped",
       prod_perfarm = NA
     ) %>%
-    select(all_of(colnames(locs_1))) %>% 
+    dplyr::select(all_of(colnames(locs_1))) %>% 
     st_as_sf() %>% 
     st_transform(crs = crs(assigned_farms))
 
@@ -1083,19 +1081,72 @@ qs_save(
 
 # Clean up data {#sec-clean-up}
 
-```{r finalise-assigned-farms}
-#| code-summary: Recombine with production data and save the final assigned farms dataframe
-#| eval: false
+Extracted farms are placed at the centre of a 0.25° SST cell. When a country's EEZ is smaller than a cell (e.g. Singapore), no cell centre falls inside the polygon, `terra::extract()` falls back to the cells the polygon touches, and the resulting cell centres can sit just outside the EEZ. Any extracted farm outside its own country/FAO-region polygon is moved to the nearest point inside that polygon. Extracted `farm_ID`s are assigned sequentially, so they are not stable between runs - this check must never rely on hardcoded IDs.
+
+```{r snap-extracted-farms}
+#| code-summary: Move any extracted farms that fall outside their EEZ/FAO polygon to the nearest point inside it
+#| message: false
 
 assigned_farms <- qs_read(
   file.path(data_path, "intermediates", "assigned_farms_4.qs")
 )
 
-# Somehow, three farms in Singapore ended up outside their EEZ! To deal with this I'm actually going to just manually move the farms.
-assigned_crs <- st_crs(assigned_farms)
-assigned_farms$geometry[assigned_farms$farm_ID == 95561] <- st_sfc(st_point(c(103.875, 1.25)), crs = assigned_crs)
-assigned_farms$geometry[assigned_farms$farm_ID == 95563] <- st_sfc(st_point(c(103.66639, 1.21995)), crs = assigned_crs)
-assigned_farms$geometry[assigned_farms$farm_ID == 95562] <- st_sfc(st_point(c(104.05, 1.375)), crs = assigned_crs)
+old_s2 <- sf_use_s2(FALSE)
+
+# One polygon per country x FAO region, in the same CRS as the farms
+EEZ_regions <- EEZ_by_FAO_full %>%
+  st_transform(crs = st_crs(assigned_farms)) %>%
+  group_by(ISO3_Code, F_CODE) %>%
+  summarise(geometry = st_union(geometry), .groups = "drop")
+
+# Nearest point inside the polygon. A small inward buffer stops the snapped point landing exactly on the boundary (which fails a strict st_intersects test); fall back to the raw polygon if the buffer collapses it.
+snap_inside <- function(pts, polys, inset = 0.005) {
+  map2(pts, polys, function(p, poly) {
+    target <- st_buffer(poly, -inset)
+    if (st_is_empty(target)) target <- poly
+    st_cast(st_nearest_points(p, target), "POINT")[2]
+  }) %>%
+    do.call(c, .) %>%
+    st_sfc(crs = st_crs(pts))
+}
+
+is_extracted <- assigned_farms$source == "extracted"
+region_idx <- match(
+  paste(assigned_farms$ISO3_Code, assigned_farms$F_CODE),
+  paste(EEZ_regions$ISO3_Code, EEZ_regions$F_CODE)
+)
+if (any(is.na(region_idx[is_extracted]))) stop("Some extracted farms have no matching EEZ/FAO polygon")
+
+inside_region <- map2_lgl(
+  st_geometry(assigned_farms),
+  st_geometry(EEZ_regions)[region_idx],
+  ~ length(st_intersects(.x, .y)[[1]]) > 0
+)
+
+to_snap <- which(is_extracted & !inside_region)
+cat("Extracted farms outside their EEZ/FAO polygon: ", length(to_snap), "\n")
+
+if (length(to_snap) > 0) {
+  old_geom <- st_geometry(assigned_farms)[to_snap]
+  new_geom <- snap_inside(old_geom, st_geometry(EEZ_regions)[region_idx[to_snap]])
+  st_geometry(assigned_farms)[to_snap] <- new_geom
+
+  assigned_farms %>%
+    st_drop_geometry() %>%
+    slice(to_snap) %>%
+    dplyr::select(farm_ID, ISO3_Code, F_CODE, model_name) %>%
+    mutate(
+      old = st_as_text(old_geom),
+      new = st_as_text(new_geom)
+    ) %>%
+    print()
+}
+
+sf_use_s2(old_s2)
+```
+
+```{r finalise-assigned-farms}
+#| code-summary: Recombine with production data and save the final assigned farms dataframe
 
 # Recombine with production data
 assigned_farms <- assigned_farms %>%
@@ -1117,7 +1168,6 @@ After assigning all farms, we save the relevant meanyear temperature data in a f
 
 ```{r meanyear-extracted-farms}
 #| code-summary: Save the meanyear temperatures for all assigned farms in the correct place
-#| eval: false
 
 assigned_farms <- qs_read(file.path(prepdata_path, "assigned_farms.qs"))
 
@@ -1218,7 +1268,6 @@ p_bigmap_robinson +
 
 ```{r save-plots-per-country}
 #| code-summary: Plot the extracted farm locations by country
-#| eval: false
 
 assigned_farms <- qs_read(file.path(prepdata_path, "assigned_farms.qs"))
 lands <- ne_countries(scale = "large", return = "sf")

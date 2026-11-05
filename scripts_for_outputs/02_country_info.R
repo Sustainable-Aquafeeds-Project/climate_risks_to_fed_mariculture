@@ -52,7 +52,8 @@ country_info_table <- function(this_iso, out_dir) {
     reframe(n_farms = n()) %>%
     mutate(table = "excluded_farms")
 
-  # 3 & 4. FAO-reported production (2014-2023 mean) by model and by species within model.
+  # 3 & 4. FAO-reported production (2014-2023 mean): country total with the share
+  # covered by included models, and by species within model.
   # country_summary() prints to the console; keep only its return value.
   fao <- tryCatch(
     {
@@ -62,14 +63,12 @@ country_info_table <- function(this_iso, out_dir) {
     error = function(e) NULL
   )
 
-  fao_models <- if (is.null(fao)) tibble() else fao$models %>%
-    transmute(
-      model_name,
-      production_t = value,
-      pct_of_country_total = pct,
-      included = is_included(model_name),
-      table = "fao_production_by_model"
-    )
+  fao_country <- if (is.null(fao)) tibble() else fao$models %>%
+    reframe(
+      production_t = sum(value),
+      pct_included = 100 * sum(value[is_included(model_name)]) / sum(value)
+    ) %>%
+    mutate(table = "fao_production_by_country")
 
   fao_species <- if (is.null(fao)) tibble() else fao$species %>%
     transmute(
@@ -81,7 +80,7 @@ country_info_table <- function(this_iso, out_dir) {
       table = "fao_production_by_species"
     )
 
-  out <- bind_rows(farms_per_model, failed_farms, fao_models, fao_species) %>%
+  out <- bind_rows(farms_per_model, failed_farms, fao_country, fao_species) %>%
     mutate(
       ISO3_Code = this_iso,
       country = country_info(this_iso)$name,
@@ -90,7 +89,7 @@ country_info_table <- function(this_iso, out_dir) {
     dplyr::select(
       table, ISO3_Code, country, model_name, any_of(c(
         "species", "n_farms", "production_t", "production_perfarm_t",
-        "pct_of_country_total", "pct_of_model", "included", "reason"
+        "pct_included", "pct_of_model", "included", "reason"
       ))
     )
 

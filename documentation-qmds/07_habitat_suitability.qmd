@@ -356,10 +356,15 @@ jobs <- map(
   }
 ) %>%
   list_rbind() %>%
-  filter(lengths(in_files) > 0) %>%   # drop decades with no input files
+  mutate(files_req  = case_when(
+    dec_name %in% c("GLW_1.5", "GLW_2.0", "GLW_3.0", "GLW_4.0") ~ 20,
+    T ~ 10
+  )) %>% 
+  filter(lengths(in_files) == files_req) %>%   # drop decades with missing input files
   mutate(out_file = file.path(HS_dec_dir, iso, model, paste0(metric, "_", dec_name, ".tif")))
 
-todo <- filter(jobs, !file.exists(out_file))
+# todo <- filter(jobs, !file.exists(out_file))
+todo <- jobs
 message(nrow(todo), " of ", nrow(jobs), " decadal files to create")
 
 walk(unique(dirname(todo$out_file)), dir.create, recursive = TRUE, showWarnings = FALSE)
