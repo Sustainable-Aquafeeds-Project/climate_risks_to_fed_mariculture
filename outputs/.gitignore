@@ -5,9 +5,8 @@ data/farm_production/*
 plots/farm_production_checks/*
 plots/farm_production_checks/*/*
 
-# These files are small but there's way too many of them
+# These files are small but there's way too many of them, and they're derived from data/habitat_suitability/global/*/*
 data/habitat_suitability/*/*/*
-# !data/habitat_suitability/global/*/*
 data/habitat_suitability_decadal/*/*/*
 data/habitat_suitability_decadal_change/*/*/*
 
