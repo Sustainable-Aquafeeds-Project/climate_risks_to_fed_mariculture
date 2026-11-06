@@ -1,8 +1,6 @@
-table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_of_country_total,pct_of_model,included,reason
+table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_included,pct_of_model,included,reason
 farms_per_model,BRA,Brazil,whiteleg_shrimp,,179,75379.3,421.1,,,,
-fao_production_by_model,BRA,Brazil,whiteleg_shrimp,,,74407.7,,100,,TRUE,
-fao_production_by_model,BRA,Brazil,cobia,,,10,,0,,FALSE,
-fao_production_by_model,BRA,Brazil,general_fish,,,10,,0,,FALSE,
+fao_production_by_country,BRA,Brazil,,,,74427.7,,100,,,
 fao_production_by_species,BRA,Brazil,cobia,Rachycentron canadum,,10,,,100,FALSE,
 fao_production_by_species,BRA,Brazil,general_fish,Actinopterygii,,10,,,100,FALSE,
 fao_production_by_species,BRA,Brazil,whiteleg_shrimp,Penaeus vannamei,,74407.7,,,100,TRUE,

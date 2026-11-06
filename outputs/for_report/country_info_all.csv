@@ -1,0 +1,1076 @@
+"table","ISO3_Code","country","model_name","species","production_t","pct_included","pct_of_model","included"
+"fao_production_by_country","CHN","China",,,4012448.8,63.5,,
+"fao_production_by_country","NOR","Norway",,,2885258.7,100,,
+"fao_production_by_country","CHL","Chile",,,1655548.9,99.9,,
+"fao_production_by_country","IDN","Indonesia",,,1609231.8,94,,
+"fao_production_by_country","VNM","Vietnam",,,1199325.7,74.6,,
+"fao_production_by_country","IND","India",,,824263,86.8,,
+"fao_production_by_country","ECU","Ecuador",,,730752.6,100,,
+"fao_production_by_country","PHL","Philippines",,,472788,99.9,,
+"fao_production_by_country","THA","Thailand",,,403279.3,91.5,,
+"fao_production_by_country","GBR","United Kingdom",,,373291.9,100,,
+"fao_production_by_country","CAN","Canada",,,283473.8,94.4,,
+"fao_production_by_country","JPN","Japan",,,250646.2,94.1,,
+"fao_production_by_country","TUR","Turkey",,,237996.2,100,,
+"fao_production_by_country","BGD","Bangladesh",,,220093.5,42.6,,
+"fao_production_by_country","FRO","Faroe Islands",,,178493.6,100,,
+"fao_production_by_country","AUS","Australia",,,140444.1,95.2,,
+"fao_production_by_country","KOR","South Korea",,,131371.3,47.9,,
+"fao_production_by_country","EGY","Egypt",,,115772,82.1,,
+"fao_production_by_country","MEX","Mexico",,,93221.1,95.6,,
+"fao_production_by_country","TWN","Taiwan",,,86869.4,80,,
+"fao_production_by_country","GRC","Greece",,,77169.2,99.4,,
+"fao_production_by_country","BRA","Brazil",,,74427.7,100,,
+"fao_production_by_country","RUS","Russia",,,69575.4,94.4,,
+"fao_production_by_country","MMR","Myanmar",,,62547.9,97.1,,
+"fao_production_by_country","MYS","Malaysia",,,62223.5,70.5,,
+"fao_production_by_country","ISL","Iceland",,,57655.4,91.2,,
+"fao_production_by_country","SAU","Saudi Arabia",,,56583,82.7,,
+"fao_production_by_country","IRN","Iran",,,53188.4,78.6,,
+"fao_production_by_country","USA","United States of America",,,33194.8,97.4,,
+"fao_production_by_country","ESP","Spain",,,33013.6,73.5,,
+"fao_production_by_country","VEN","Venezuela",,,31941,100,,
+"fao_production_by_country","HND","Honduras",,,30848.8,100,,
+"fao_production_by_country","PER","Peru",,,29446.7,100,,
+"fao_production_by_country","NIC","Nicaragua",,,28429.6,100,,
+"fao_production_by_country","IRL","Ireland",,,24984.8,100,,
+"fao_production_by_country","GTM","Guatemala",,,18623,100,,
+"fao_production_by_country","HRV","Croatia",,,17285.6,95.5,,
+"fao_production_by_country","MLT","Malta",,,15847.7,99.4,,
+"fao_production_by_country","LKA","Sri Lanka",,,13570.8,96.9,,
+"fao_production_by_country","TUN","Tunisia",,,13421.6,100,,
+"fao_production_by_country","NZL","New Zealand",,,12936.8,99.4,,
+"fao_production_by_country","FIN","Finland",,,12048.5,100,,
+"fao_production_by_country","DNK","Denmark",,,10102.3,96.9,,
+"fao_production_by_country","ITA","Italy",,,10045.5,77.4,,
+"fao_production_by_country","PRT","Portugal",,,9520.4,30.9,,
+"fao_production_by_country","PAN","Panama",,,8900.9,84.8,,
+"fao_production_by_country","CYP","Cyprus",,,6742.8,100,,
+"fao_production_by_country","MDG","Madagascar",,,5283.9,99.1,,
+"fao_production_by_country","FRA","France",,,4860.3,58.9,,
+"fao_production_by_country","ALB","Albania",,,4508.2,100,,
+"fao_production_by_country","CUB","Cuba",,,4454.1,100,,
+"fao_production_by_country","OMN","Oman",,,4263.8,99.9,,
+"fao_production_by_country","COL","Colombia",,,4241.6,100,,
+"fao_production_by_country","BRN","Brunei",,,3781,95.4,,
+"fao_production_by_country","SGP","Singapore",,,3271.7,65.9,,
+"fao_production_by_country","ISR","Israel",,,3183.6,83.3,,
+"fao_production_by_country","ARE","United Arab Emirates",,,2889.4,30.3,,
+"fao_production_by_country","CRI","Costa Rica",,,2398.9,100,,
+"fao_production_by_country","KHM","Cambodia",,,2291.8,65.1,,
+"fao_production_by_country","SWE","Sweden",,,1915.8,99.9,,
+"fao_production_by_country","ZAF","South Africa",,,1862.7,3.7,,
+"fao_production_by_country","MUS","Mauritius",,,1742.4,100,,
+"fao_production_by_country","NCL","New Caledonia",,,1630,93.9,,
+"fao_production_by_country","DZA","Algeria",,,1336.3,99.2,,
+"fao_production_by_country","BLZ","Belize",,,1296,100,,
+"fao_production_by_country","SLV","El Salvador",,,1189.4,99.8,,
+"fao_production_by_country","DOM","Dominican Republic",,,936,73.3,,
+"fao_production_by_country","GUY","Guyana",,,731.6,81.2,,
+"fao_production_by_country","HKG","Hong Kong S.A.R.",,,716.6,22.6,,
+"fao_production_by_country","PSE","Palestine",,,485.5,100,,
+"fao_production_by_country","TZA","United Republic of Tanzania",,,361.2,97.9,,
+"fao_production_by_country","PRK","North Korea",,,298,33.6,,
+"fao_production_by_country","PAK","Pakistan",,,272,49.7,,
+"fao_production_by_country","MAR","Morocco",,,254.1,72.5,,
+"fao_production_by_country","EST","Estonia",,,209.4,100,,
+"fao_production_by_country","SEN","Senegal",,,133.2,100,,
+"fao_production_by_country","MNE","Montenegro",,,116.6,100,,
+"fao_production_by_country","NGA","Nigeria",,,102.5,100,,
+"fao_production_by_country","GEO","Georgia",,,100,80,,
+"fao_production_by_country","QAT","Qatar",,,73.5,79.6,,
+"fao_production_by_country","PYF","French Polynesia",,,61.7,97.9,,
+"fao_production_by_country","MTQ","Martinique",,,35.3,100,,
+"fao_production_by_country","MYT","Mayotte",,,33,100,,
+"fao_production_by_country","GUM","Guam",,,31.7,100,,
+"fao_production_by_country","SYC","Seychelles",,,28.8,100,,
+"fao_production_by_country","GLP","Guadeloupe",,,28.4,100,,
+"fao_production_by_country","SUR","Suriname",,,28.1,100,,
+"fao_production_by_country","CPV","Cabo Verde",,,22.7,100,,
+"fao_production_by_country","FJI","Fiji",,,22.1,100,,
+"fao_production_by_country","TLS","Timor-Leste",,,21.9,100,,
+"fao_production_by_country","MNP","Northern Mariana Islands",,,21.8,100,,
+"fao_production_by_country","MOZ","Mozambique",,,20.8,100,,
+"fao_production_by_country","GHA","Ghana",,,14,100,,
+"fao_production_by_country","BHR","Bahrain",,,13.4,100,,
+"fao_production_by_country","LBN","Lebanon",,,13,100,,
+"fao_production_by_country","PLW","Palau",,,11.6,100,,
+"fao_production_by_country","ARG","Argentina",,,11.3,100,,
+"fao_production_by_country","KEN","Kenya",,,9,100,,
+"fao_production_by_country","REU","Reunion",,,8,37.5,,
+"fao_production_by_country","VUT","Vanuatu",,,7.3,100,,
+"fao_production_by_country","KWT","Kuwait",,,6.2,59.6,,
+"fao_production_by_country","PNG","Papua New Guinea",,,5.8,42.1,,
+"fao_production_by_country","MDV","Maldives",,,5.2,61.5,,
+"fao_production_by_country","WSM","Samoa",,,3.1,9.7,,
+"fao_production_by_country","SLB","Solomon Islands",,,3,100,,
+"fao_production_by_country","KIR","Kiribati",,,2,100,,
+"fao_production_by_country","KNA","Saint Kitts and Nevis",,,1.1,100,,
+"fao_production_by_country","TUV","Tuvalu",,,0.9,100,,
+"fao_production_by_country","NRU","Nauru",,,0.4,100,,
+"fao_production_by_species","NOR","Norway","atlantic_salmon","Salmo salar",2803454.3,,100,TRUE
+"fao_production_by_species","CHL","Chile","atlantic_salmon","Salmo salar",1366765.2,,100,TRUE
+"fao_production_by_species","CHN","China","whiteleg_shrimp","Penaeus vannamei",1156831,,85.4,TRUE
+"fao_production_by_species","ECU","Ecuador","whiteleg_shrimp","Penaeus vannamei",730714.3,,100,TRUE
+"fao_production_by_species","IND","India","whiteleg_shrimp","Penaeus vannamei",651373,,99.8,TRUE
+"fao_production_by_species","IDN","Indonesia","whiteleg_shrimp","Penaeus vannamei",599952.9,,92,TRUE
+"fao_production_by_species","IDN","Indonesia","milkfish","Chanos chanos",588414.8,,100,TRUE
+"fao_production_by_species","VNM","Vietnam","whiteleg_shrimp","Penaeus vannamei",526145,,93,TRUE
+"fao_production_by_species","CHN","China","general_fish","Actinopterygii",491414.2,,100,FALSE
+"fao_production_by_species","GBR","United Kingdom","atlantic_salmon","Salmo salar",368660.8,,100,TRUE
+"fao_production_by_species","PHL","Philippines","milkfish","Chanos chanos",368314,,100,TRUE
+"fao_production_by_species","THA","Thailand","whiteleg_shrimp","Penaeus vannamei",349550.4,,99.9,TRUE
+"fao_production_by_species","VNM","Vietnam","general_fish","Osteichthyes",276854.4,,92.4,FALSE
+"fao_production_by_species","VNM","Vietnam","tiger_prawn","Penaeus monodon",261406.9,,100,TRUE
+"fao_production_by_species","CHN","China","rapa_whelk","Rapana spp",257147.8,,100,FALSE
+"fao_production_by_species","CHN","China","japanese_sea_cucumber","Apostichopus japonicus",220695,,100,FALSE
+"fao_production_by_species","CHN","China","drum_croaker","Larimichthys crocea",198301.6,,74.7,TRUE
+"fao_production_by_species","CHL","Chile","rainbow_trout","Oncorhynchus kisutch",196969.4,,68.4,TRUE
+"fao_production_by_species","CHN","China","golden_pompano","Trachinotus ovatus",187634.2,,100,TRUE
+"fao_production_by_species","CHN","China","abalone","Haliotis spp",182840.2,,100,FALSE
+"fao_production_by_species","FRO","Faroe Islands","atlantic_salmon","Salmo salar",178493.6,,100,TRUE
+"fao_production_by_species","CAN","Canada","atlantic_salmon","Salmo salar",172694,,64.5,TRUE
+"fao_production_by_species","CHN","China","asian_seabass","Lateolabrax japonicus",165309.2,,100,TRUE
+"fao_production_by_species","CHN","China","mud_crab","Scylla paramamosain",150500.4,,100,TRUE
+"fao_production_by_species","CHN","China","grouper","Epinephelus spp",149774.2,,100,TRUE
+"fao_production_by_species","IDN","Indonesia","tiger_prawn","Penaeus monodon",135944.2,,100,TRUE
+"fao_production_by_species","JPN","Japan","japanese_amberjack","Seriola quinqueradiata",133015.8,,100,TRUE
+"fao_production_by_species","BGD","Bangladesh","general_fish","Actinopterygii",126340.4,,100,FALSE
+"fao_production_by_species","TUR","Turkey","european_seabass","Dicentrarchus labrax",125701.4,,100,TRUE
+"fao_production_by_species","AUS","Australia","atlantic_salmon","Salmo salar",122758.7,,100,TRUE
+"fao_production_by_species","CHN","China","whiteleg_shrimp","Penaeus spp",113336.4,,8.4,TRUE
+"fao_production_by_species","CHN","China","swimming_crab","Portunus spp",110658.2,,84.3,FALSE
+"fao_production_by_species","IND","India","general_fish","Actinopterygii",103914.8,,100,FALSE
+"fao_production_by_species","CHN","China","seabream","Sparidae",95229.8,,100,TRUE
+"fao_production_by_species","CHN","China","tiger_prawn","Penaeus monodon",92974,,100,TRUE
+"fao_production_by_species","CAN","Canada","atlantic_salmon","Salmonidae",92624,,34.6,TRUE
+"fao_production_by_species","CHL","Chile","rainbow_trout","Oncorhynchus mykiss",90913.2,,31.6,TRUE
+"fao_production_by_species","TUR","Turkey","seabream","Sparus aurata",87805,,99.7,TRUE
+"fao_production_by_species","CHN","China","general_invertebrate","Invertebrata",85195.3,,100,FALSE
+"fao_production_by_species","MEX","Mexico","whiteleg_shrimp","Penaeus vannamei",83076.2,,99.7,TRUE
+"fao_production_by_species","NOR","Norway","rainbow_trout","Oncorhynchus mykiss",81559.2,,100,TRUE
+"fao_production_by_species","BRA","Brazil","whiteleg_shrimp","Penaeus vannamei",74407.7,,100,TRUE
+"fao_production_by_species","BGD","Bangladesh","tiger_prawn","Penaeus monodon",69792.2,,100,TRUE
+"fao_production_by_species","IDN","Indonesia","nile_tilapia","Oreochromis niloticus",69098.5,,72,TRUE
+"fao_production_by_species","VNM","Vietnam","mud_crab","Scylla serrata",67892.8,,100,TRUE
+"fao_production_by_species","CHN","China","drum_croaker","Sciaenops ocellatus",67213,,25.3,TRUE
+"fao_production_by_species","JPN","Japan","seabream","Pagrus major",65239.4,,100,TRUE
+"fao_production_by_species","IDN","Indonesia","general_fish","Osteichthyes",60014.2,,85.3,FALSE
+"fao_production_by_species","CHN","China","turbot","Scophthalmus maximus",59700,,100,FALSE
+"fao_production_by_species","IND","India","tiger_prawn","Penaeus monodon",55421.4,,100,TRUE
+"fao_production_by_species","CHN","China","olive_flounder","Bothidae",53373.7,,82.5,TRUE
+"fao_production_by_species","ISL","Iceland","atlantic_salmon","Salmo salar",52585.2,,100,TRUE
+"fao_production_by_species","MMR","Myanmar","tiger_prawn","Penaeus monodon",49453.3,,100,TRUE
+"fao_production_by_species","CHN","China","whiteleg_shrimp","Penaeus japonicus",48891,,3.6,TRUE
+"fao_production_by_species","KOR","South Korea","olive_flounder","Paralichthys olivaceus",42398.6,,91.3,TRUE
+"fao_production_by_species","PHL","Philippines","tiger_prawn","Penaeus monodon",42004,,100,TRUE
+"fao_production_by_species","GRC","Greece","european_seabass","Dicentrarchus labrax",41888.1,,100,TRUE
+"fao_production_by_species","IRN","Iran","whiteleg_shrimp","Penaeus vannamei",41808,,100,TRUE
+"fao_production_by_species","IDN","Indonesia","whiteleg_shrimp","Metapenaeus spp",40789.8,,6.3,TRUE
+"fao_production_by_species","SAU","Saudi Arabia","whiteleg_shrimp","Penaeus vannamei",40112.9,,100,TRUE
+"fao_production_by_species","VNM","Vietnam","whiteleg_shrimp","Metapenaeus spp",36682.9,,6.5,TRUE
+"fao_production_by_species","CHN","China","whiteleg_shrimp","Penaeus chinensis",35724.8,,2.6,TRUE
+"fao_production_by_species","EGY","Egypt","seabream","Sparus aurata",34716.2,,100,TRUE
+"fao_production_by_species","CHN","China","cobia","Rachycentron canadum",34526.8,,100,FALSE
+"fao_production_by_species","THA","Thailand","barramundi","Lates calcarifer",34139.6,,100,FALSE
+"fao_production_by_species","RUS","Russia","atlantic_salmon","Salmo salar",34014.8,,100,TRUE
+"fao_production_by_species","VEN","Venezuela","whiteleg_shrimp","Penaeus vannamei",31941,,100,TRUE
+"fao_production_by_species","RUS","Russia","rainbow_trout","Oncorhynchus mykiss",31455,,99.4,TRUE
+"fao_production_by_species","TWN","Taiwan","milkfish","Chanos chanos",31413.2,,100,TRUE
+"fao_production_by_species","HND","Honduras","whiteleg_shrimp","Penaeus vannamei",30848.8,,100,TRUE
+"fao_production_by_species","PER","Peru","whiteleg_shrimp","Penaeus vannamei",29438.3,,100,TRUE
+"fao_production_by_species","GRC","Greece","seabream","Sparus aurata",29168.6,,91.1,TRUE
+"fao_production_by_species","NIC","Nicaragua","whiteleg_shrimp","Penaeus vannamei",28429.6,,100,TRUE
+"fao_production_by_species","EGY","Egypt","european_seabass","Dicentrarchus labrax",28216.8,,100,TRUE
+"fao_production_by_species","USA","United States of America","atlantic_salmon","Salmo salar",28057,,100,TRUE
+"fao_production_by_species","IDN","Indonesia","nile_tilapia","Oreochromis mossambicus",26822,,28,TRUE
+"fao_production_by_species","IRL","Ireland","atlantic_salmon","Salmo salar",24975,,100,TRUE
+"fao_production_by_species","EGY","Egypt","drum_croaker","Argyrosomus regius",24080,,100,TRUE
+"fao_production_by_species","CHN","China","japanese_amberjack","Seriola spp",23197.8,,100,TRUE
+"fao_production_by_species","VNM","Vietnam","general_fish","Actinopterygii",22881.2,,7.6,FALSE
+"fao_production_by_species","KOR","South Korea","general_ascidians","Halocynthia roretzi",22711.2,,53.9,FALSE
+"fao_production_by_species","PHL","Philippines","whiteleg_shrimp","Penaeus vannamei",20890.3,,91.7,TRUE
+"fao_production_by_species","MYS","Malaysia","whiteleg_shrimp","Penaeus vannamei",20808.1,,100,TRUE
+"fao_production_by_species","TWN","Taiwan","grouper","Epinephelus spp",20779.9,,100,TRUE
+"fao_production_by_species","EGY","Egypt","flathead_grey_mullet","Mugilidae",20710.6,,100,FALSE
+"fao_production_by_species","CHN","China","swimming_crab","Brachyura",20619.6,,15.7,FALSE
+"fao_production_by_species","KOR","South Korea","general_ascidians","Ascidiacea",19453.2,,46.1,FALSE
+"fao_production_by_species","GTM","Guatemala","whiteleg_shrimp","Penaeus vannamei",18623,,100,TRUE
+"fao_production_by_species","PHL","Philippines","mud_crab","Scylla serrata",18381.3,,100,TRUE
+"fao_production_by_species","JPN","Japan","rainbow_trout","Oncorhynchus kisutch",17221,,100,TRUE
+"fao_production_by_species","MYS","Malaysia","barramundi","Lates calcarifer",16959.1,,100,FALSE
+"fao_production_by_species","JPN","Japan","tuna","Thunnus orientalis",16892,,100,TRUE
+"fao_production_by_species","KOR","South Korea","abalone","Haliotis spp",16701.5,,100,FALSE
+"fao_production_by_species","TUR","Turkey","rainbow_trout","Oncorhynchus mykiss",16465.2,,100,TRUE
+"fao_production_by_species","THA","Thailand","tiger_prawn","Penaeus monodon",16430.4,,100,TRUE
+"fao_production_by_species","CAN","Canada","general_fish","Actinopterygii",15737.5,,100,FALSE
+"fao_production_by_species","IDN","Indonesia","grouper","Epinephelus spp",15585.1,,65.1,TRUE
+"fao_production_by_species","PHL","Philippines","nile_tilapia","Oreochromis spp",15353.8,,75.1,TRUE
+"fao_production_by_species","MLT","Malta","tuna","Thunnus thynnus",13395.6,,100,TRUE
+"fao_production_by_species","NZL","New Zealand","rainbow_trout","Oncorhynchus tshawytscha",12864.4,,100,TRUE
+"fao_production_by_species","BGD","Bangladesh","mud_crab","Scylla olivacea",12726.5,,100,TRUE
+"fao_production_by_species","JPN","Japan","general_ascidians","Halocynthia roretzi",11386.4,,100,FALSE
+"fao_production_by_species","FIN","Finland","rainbow_trout","Oncorhynchus mykiss",11375.2,,100,TRUE
+"fao_production_by_species","CHN","China","olive_flounder","Pleuronectidae",11360.6,,17.5,TRUE
+"fao_production_by_species","ESP","Spain","european_seabass","Dicentrarchus labrax",10834.8,,100,TRUE
+"fao_production_by_species","IDN","Indonesia","whiteleg_shrimp","Penaeus merguiensis",10620.4,,1.6,TRUE
+"fao_production_by_species","IDN","Indonesia","general_fish","Actinopterygii",10350.5,,14.7,FALSE
+"fao_production_by_species","IDN","Indonesia","mud_crab","Scylla serrata",9837.3,,62.6,TRUE
+"fao_production_by_species","TUN","Tunisia","seabream","Sparus aurata",9831.4,,100,TRUE
+"fao_production_by_species","DNK","Denmark","rainbow_trout","Oncorhynchus mykiss",9766.9,,99.8,TRUE
+"fao_production_by_species","SAU","Saudi Arabia","barramundi","Lates calcarifer",9742.6,,100,FALSE
+"fao_production_by_species","MYS","Malaysia","tiger_prawn","Penaeus monodon",9724,,100,TRUE
+"fao_production_by_species","TWN","Taiwan","nile_tilapia","Oreochromis spp",9498.6,,100,TRUE
+"fao_production_by_species","TWN","Taiwan","fourfinger_threadfin","Eleutheronema tetradactylum",8779.3,,100,FALSE
+"fao_production_by_species","ESP","Spain","turbot","Scophthalmus maximus",8451.8,,100,FALSE
+"fao_production_by_species","MMR","Myanmar","whiteleg_shrimp","Penaeus vannamei",8407.5,,99.9,TRUE
+"fao_production_by_species","AUS","Australia","tuna","Thunnus maccoyii",8074,,100,TRUE
+"fao_production_by_species","LKA","Sri Lanka","whiteleg_shrimp","Penaeus vannamei",7958.5,,100,TRUE
+"fao_production_by_species","IDN","Indonesia","general_crustacean","Carpilius maculatus",7420,,98.7,FALSE
+"fao_production_by_species","EGY","Egypt","whiteleg_shrimp","Penaeus spp",7235,,89.9,TRUE
+"fao_production_by_species","IND","India","mud_crab","Scylla olivacea",7220,,100,TRUE
+"fao_production_by_species","KOR","South Korea","whiteleg_shrimp","Penaeus vannamei",6948.5,,99.8,TRUE
+"fao_production_by_species","KOR","South Korea","flathead_grey_mullet","Mugilidae",6910.7,,100,FALSE
+"fao_production_by_species","PAN","Panama","whiteleg_shrimp","Penaeus vannamei",6610.8,,100,TRUE
+"fao_production_by_species","HRV","Croatia","seabream","Sparus aurata",6440.1,,99.3,TRUE
+"fao_production_by_species","HRV","Croatia","european_seabass","Dicentrarchus labrax",6306.7,,100,TRUE
+"fao_production_by_species","ESP","Spain","seabream","Sparus aurata",5936.8,,97.5,TRUE
+"fao_production_by_species","IDN","Indonesia","mud_crab","Scylla olivacea",5883,,37.4,TRUE
+"fao_production_by_species","SAU","Saudi Arabia","seabream","Sparus aurata",5769.8,,97.5,TRUE
+"fao_production_by_species","IDN","Indonesia","grouper","Epinephelus fuscoguttatus",5735.9,,23.9,TRUE
+"fao_production_by_species","IRN","Iran","barramundi","Lates calcarifer",5673.7,,100,FALSE
+"fao_production_by_species","KOR","South Korea","seabream","Pagrus major",5662.9,,79.8,TRUE
+"fao_production_by_species","IDN","Indonesia","flathead_grey_mullet","Mugil cephalus",5365.9,,52.3,FALSE
+"fao_production_by_species","TWN","Taiwan","whiteleg_shrimp","Penaeus vannamei",5315.5,,96.5,TRUE
+"fao_production_by_species","MDG","Madagascar","tiger_prawn","Penaeus monodon",5230.6,,100,TRUE
+"fao_production_by_species","MEX","Mexico","tuna","Thunnus orientalis",5143.4,,99.7,TRUE
+"fao_production_by_species","PHL","Philippines","nile_tilapia","Oreochromis niloticus",5080.7,,24.9,TRUE
+"fao_production_by_species","ISL","Iceland","arctic_char","Salvelinus alpinus",5070.2,,100,FALSE
+"fao_production_by_species","LKA","Sri Lanka","tiger_prawn","Penaeus monodon",4951.2,,100,TRUE
+"fao_production_by_species","IDN","Indonesia","barramundi","Lates calcarifer",4904,,100,FALSE
+"fao_production_by_species","IDN","Indonesia","flathead_grey_mullet","Mugilidae",4895.8,,47.7,FALSE
+"fao_production_by_species","BGD","Bangladesh","whiteleg_shrimp","Penaeus spp",4775.4,,42.5,TRUE
+"fao_production_by_species","IND","India","barramundi","Lates calcarifer",4760.8,,100,FALSE
+"fao_production_by_species","CYP","Cyprus","seabream","Sparus aurata",4541.2,,99.6,TRUE
+"fao_production_by_species","GBR","United Kingdom","rainbow_trout","Oncorhynchus mykiss",4526.6,,100,TRUE
+"fao_production_by_species","TWN","Taiwan","barramundi","Lates calcarifer",4471.6,,100,FALSE
+"fao_production_by_species","CUB","Cuba","whiteleg_shrimp","Penaeus vannamei",4454.1,,100,TRUE
+"fao_production_by_species","BGD","Bangladesh","whiteleg_shrimp","Metapenaeus monoceros",4299.6,,38.3,TRUE
+"fao_production_by_species","MYS","Malaysia","grouper","Epinephelus spp",4276.5,,63.6,TRUE
+"fao_production_by_species","COL","Colombia","whiteleg_shrimp","Penaeus vannamei",4241.6,,100,TRUE
+"fao_production_by_species","IRN","Iran","general_fish","Actinopterygii",4206.8,,100,FALSE
+"fao_production_by_species","ESP","Spain","tuna","Thunnus thynnus",4116.6,,100,TRUE
+"fao_production_by_species","MEX","Mexico","carp","Cyprinus carpio",4087.8,,100,FALSE
+"fao_production_by_species","KOR","South Korea","olive_flounder","Pleuronectidae",4049.5,,8.7,TRUE
+"fao_production_by_species","RUS","Russia","japanese_sea_cucumber","Apostichopus japonicus",3822.8,,100,FALSE
+"fao_production_by_species","TUR","Turkey","drum_croaker","Argyrosomus regius",3787,,98.5,TRUE
+"fao_production_by_species","ITA","Italy","seabream","Sparus aurata",3742.6,,99.3,TRUE
+"fao_production_by_species","VNM","Vietnam","cobia","Rachycentron canadum",3704.2,,100,FALSE
+"fao_production_by_species","ITA","Italy","european_seabass","Dicentrarchus labrax",3600,,100,TRUE
+"fao_production_by_species","PRT","Portugal","general_fish","Actinopterygii",3557.9,,100,FALSE
+"fao_production_by_species","TUR","Turkey","tuna","Thunnus thynnus",3351.6,,100,TRUE
+"fao_production_by_species","MYS","Malaysia","milkfish","Chanos chanos",3344.3,,100,TRUE
+"fao_production_by_species","JPN","Japan","general_fish","Actinopterygii",3259.8,,100,FALSE
+"fao_production_by_species","HRV","Croatia","tuna","Thunnus thynnus",3173.5,,100,TRUE
+"fao_production_by_species","ESP","Spain","drum_croaker","Argyrosomus regius",3135.5,,100,TRUE
+"fao_production_by_species","PRT","Portugal","turbot","Scophthalmus maximus",3018.4,,100,FALSE
+"fao_production_by_species","IDN","Indonesia","swimming_crab","Portunus spp",2995.7,,100,FALSE
+"fao_production_by_species","AUS","Australia","general_fish","Actinopterygii",2927.4,,100,FALSE
+"fao_production_by_species","OMN","Oman","whiteleg_shrimp","Penaeus vannamei",2917,,94.4,TRUE
+"fao_production_by_species","BRN","Brunei","whiteleg_shrimp","Penaeus vannamei",2915.9,,84.9,TRUE
+"fao_production_by_species","MMR","Myanmar","mud_crab","Scylla olivacea",2862.6,,100,TRUE
+"fao_production_by_species","AUS","Australia","whiteleg_shrimp","Penaeus spp",2847.5,,100,TRUE
+"fao_production_by_species","AUS","Australia","barramundi","Lates calcarifer",2847.4,,100,FALSE
+"fao_production_by_species","VNM","Vietnam","whiteleg_shrimp","Penaeus merguiensis",2833.3,,0.5,TRUE
+"fao_production_by_species","ALB","Albania","seabream","Sparus aurata",2812.8,,100,TRUE
+"fao_production_by_species","GRC","Greece","seabream","Pagrus pagrus",2753.9,,8.6,TRUE
+"fao_production_by_species","KOR","South Korea","general_invertebrate","Invertebrata",2593.1,,100,FALSE
+"fao_production_by_species","GRC","Greece","drum_croaker","Argyrosomus regius",2540.8,,93.3,TRUE
+"fao_production_by_species","CAN","Canada","atlantic_salmon","Salmo spp",2418.2,,0.9,TRUE
+"fao_production_by_species","CRI","Costa Rica","whiteleg_shrimp","Penaeus vannamei",2398.9,,100,TRUE
+"fao_production_by_species","ISR","Israel","seabream","Sparus aurata",2329.2,,100,TRUE
+"fao_production_by_species","MYS","Malaysia","grouper","Epinephelus fuscoguttatus x E. lanceolatus",2295.1,,34.1,TRUE
+"fao_production_by_species","MLT","Malta","seabream","Sparus aurata",2279.6,,100,TRUE
+"fao_production_by_species","BGD","Bangladesh","whiteleg_shrimp","Penaeus indicus",2159.4,,19.2,TRUE
+"fao_production_by_species","JPN","Japan","olive_flounder","Paralichthys olivaceus",2146.8,,100,TRUE
+"fao_production_by_species","CYP","Cyprus","european_seabass","Dicentrarchus labrax",2121.2,,100,TRUE
+"fao_production_by_species","TUN","Tunisia","european_seabass","Dicentrarchus labrax",2113.9,,100,TRUE
+"fao_production_by_species","USA","United States of America","drum_croaker","Sciaenops ocellatus",2112.4,,100,TRUE
+"fao_production_by_species","PRT","Portugal","seabream","Sparus aurata",2068.2,,99.9,TRUE
+"fao_production_by_species","FRA","France","general_fish","Actinopterygii",1971,,100,FALSE
+"fao_production_by_species","SWE","Sweden","rainbow_trout","Oncorhynchus mykiss",1913.8,,100,TRUE
+"fao_production_by_species","ZAF","South Africa","abalone","Haliotis midae",1788.4,,100,FALSE
+"fao_production_by_species","THA","Thailand","grouper","Epinephelus spp",1762.2,,100,TRUE
+"fao_production_by_species","USA","United States of America","whiteleg_shrimp","Penaeus vannamei",1754.2,,100,TRUE
+"fao_production_by_species","FRA","France","european_seabass","Dicentrarchus labrax",1646.6,,100,TRUE
+"fao_production_by_species","SGP","Singapore","milkfish","Chanos chanos",1638.4,,100,TRUE
+"fao_production_by_species","ALB","Albania","european_seabass","Dicentrarchus labrax",1599.4,,100,TRUE
+"fao_production_by_species","MUS","Mauritius","drum_croaker","Sciaenops ocellatus",1594,,97.4,TRUE
+"fao_production_by_species","MYS","Malaysia","golden_pompano","Trachinotus blochii",1591.7,,100,TRUE
+"fao_production_by_species","IND","India","whiteleg_shrimp","Penaeus indicus",1573,,0.2,TRUE
+"fao_production_by_species","NCL","New Caledonia","whiteleg_shrimp","Penaeus stylirostris",1530,,100,TRUE
+"fao_production_by_species","MYS","Malaysia","nile_tilapia","Oreochromis spp",1514.4,,100,TRUE
+"fao_production_by_species","IRN","Iran","seabream","Acanthopagrus bifasciatus",1500,,100,FALSE
+"fao_production_by_species","ARE","United Arab Emirates","seabream","Sparus aurata",1483,,100,FALSE
+"fao_production_by_species","TWN","Taiwan","flathead_grey_mullet","Mugil cephalus",1467.3,,100,FALSE
+"fao_production_by_species","PAN","Panama","cobia","Rachycentron canadum",1350.5,,100,FALSE
+"fao_production_by_species","JPN","Japan","whiteleg_shrimp","Penaeus japonicus",1335.8,,100,TRUE
+"fao_production_by_species","PHL","Philippines","whiteleg_shrimp","Penaeus merguiensis",1329.8,,5.8,TRUE
+"fao_production_by_species","BLZ","Belize","whiteleg_shrimp","Penaeus vannamei",1296,,100,TRUE
+"fao_production_by_species","KOR","South Korea","asian_seabass","Lateolabrax japonicus",1277.6,,100,TRUE
+"fao_production_by_species","MYS","Malaysia","general_fish","Actinopterygii",1222.3,,100,FALSE
+"fao_production_by_species","SLV","El Salvador","whiteleg_shrimp","Penaeus vannamei",1186.6,,100,TRUE
+"fao_production_by_species","OMN","Oman","seabream","Sparus aurata",1170.3,,100,TRUE
+"fao_production_by_species","DZA","Algeria","seabream","Sparus aurata",1159.6,,100,TRUE
+"fao_production_by_species","KOR","South Korea","seabream","Acanthopagrus schlegelii",1139.3,,16,TRUE
+"fao_production_by_species","KHM","Cambodia","whiteleg_shrimp","Penaeus spp",1090.8,,100,TRUE
+"fao_production_by_species","TUN","Tunisia","tuna","Thunnus thynnus",1066.5,,100,TRUE
+"fao_production_by_species","TWN","Taiwan","asian_seabass","Lateolabrax japonicus",1005.3,,100,TRUE
+"fao_production_by_species","AUS","Australia","abalone","Haliotis spp",989.1,,100,FALSE
+"fao_production_by_species","IDN","Indonesia","sandfish_sea_cucumber","Holothuroidea",988.7,,100,FALSE
+"fao_production_by_species","IDN","Indonesia","grouper","Epinephelus longispinis",971,,4.1,TRUE
+"fao_production_by_species","TWN","Taiwan","general_fish","Actinopterygii",953.9,,97.7,FALSE
+"fao_production_by_species","MMR","Myanmar","barramundi","Lates calcarifer",951.2,,100,FALSE
+"fao_production_by_species","THA","Thailand","mud_crab","Scylla spp",880.7,,100,TRUE
+"fao_production_by_species","CHL","Chile","abalone","Haliotis rufescens",865.7,,98.7,FALSE
+"fao_production_by_species","TWN","Taiwan","cobia","Rachycentron canadum",853.5,,100,FALSE
+"fao_production_by_species","VNM","Vietnam","general_invertebrate","Invertebrata",850,,100,FALSE
+"fao_production_by_species","ITA","Italy","general_fish","Actinopterygii",836,,100,FALSE
+"fao_production_by_species","MMR","Myanmar","general_gastropod","Rochia nilotica",827.8,,100,FALSE
+"fao_production_by_species","EGY","Egypt","whiteleg_shrimp","Penaeus vannamei",813.4,,10.1,TRUE
+"fao_production_by_species","HRV","Croatia","general_fish","Actinopterygii",761.7,,100,FALSE
+"fao_production_by_species","PAN","Panama","japanese_amberjack","Seriola rivoliana",714,,100,TRUE
+"fao_production_by_species","FRA","France","seabream","Sparus aurata",711.1,,100,TRUE
+"fao_production_by_species","ITA","Italy","flathead_grey_mullet","Mugil cephalus",695.1,,48.5,FALSE
+"fao_production_by_species","PRT","Portugal","european_seabass","Dicentrarchus labrax",688.6,,99.8,TRUE
+"fao_production_by_species","USA","United States of America","general_fish","Actinopterygii",643.2,,100,FALSE
+"fao_production_by_species","KHM","Cambodia","barramundi","Lates calcarifer",640.4,,100,FALSE
+"fao_production_by_species","KOR","South Korea","japanese_amberjack","Seriola spp",621.5,,100,TRUE
+"fao_production_by_species","ITA","Italy","flathead_grey_mullet","Mugilidae",581.3,,40.6,FALSE
+"fao_production_by_species","FIN","Finland","atlantic_salmon","Salmoniformes (=Salmonoidei)",572.5,,85,TRUE
+"fao_production_by_species","PHL","Philippines","whiteleg_shrimp","Metapenaeus spp",564.7,,2.5,TRUE
+"fao_production_by_species","HKG","Hong Kong S.A.R.","general_fish","Actinopterygii",554.4,,100,FALSE
+"fao_production_by_species","TUR","Turkey","atlantic_salmon","Salmo spp",550.6,,100,TRUE
+"fao_production_by_species","HRV","Croatia","drum_croaker","Argyrosomus regius",539.4,,100,TRUE
+"fao_production_by_species","TWN","Taiwan","japanese_amberjack","Seriola spp",529.8,,100,TRUE
+"fao_production_by_species","ARE","United Arab Emirates","european_seabass","Dicentrarchus labrax",523,,100,TRUE
+"fao_production_by_species","BRN","Brunei","whiteleg_shrimp","Penaeus stylirostris",520.3,,15.1,TRUE
+"fao_production_by_species","IDN","Indonesia","grouper","Chromileptes altivelis",519.8,,2.2,TRUE
+"fao_production_by_species","TWN","Taiwan","yellowtail_kingfish","Seriola spp",502.8,,100,FALSE
+"fao_production_by_species","SGP","Singapore","barramundi","Lates calcarifer",497.9,,100,FALSE
+"fao_production_by_species","MEX","Mexico","european_seabass","Morone saxatilis",493.9,,100,TRUE
+"fao_production_by_species","PHL","Philippines","general_fish","Actinopterygii",490.7,,100,FALSE
+"fao_production_by_species","SAU","Saudi Arabia","nile_tilapia","Oreochromis spilurus",489.6,,100,TRUE
+"fao_production_by_species","PSE","Palestine","seabream","Sparus aurata",473,,100,TRUE
+"fao_production_by_species","IDN","Indonesia","golden_pompano","Trachinotus blochii",460,,100,TRUE
+"fao_production_by_species","SGP","Singapore","flathead_grey_mullet","Mugil cephalus",454.5,,100,FALSE
+"fao_production_by_species","FRA","France","drum_croaker","Argyrosomus regius",450.8,,100,TRUE
+"fao_production_by_species","IDN","Indonesia","grouper","Gracila albomarginata",435.7,,1.8,TRUE
+"fao_production_by_species","IDN","Indonesia","whiteleg_shrimp","Metapenaeopsis novaeguineae",417.2,,0.1,TRUE
+"fao_production_by_species","TUN","Tunisia","drum_croaker","Argyrosomus regius",408.7,,100,TRUE
+"fao_production_by_species","USA","United States of America","japanese_amberjack","Seriola rivoliana",400,,100,TRUE
+"fao_production_by_species","IDN","Indonesia","grouper","Serranidae",389.9,,1.6,TRUE
+"fao_production_by_species","ISR","Israel","barramundi","Lates calcarifer",360,,100,FALSE
+"fao_production_by_species","ARE","United Arab Emirates","atlantic_salmon","Salmo salar",360,,100,FALSE
+"fao_production_by_species","GUY","Guyana","whiteleg_shrimp","Penaeus subtilis",350,,61.4,TRUE
+"fao_production_by_species","TWN","Taiwan","seabream","Sparidae",341.1,,76.7,TRUE
+"fao_production_by_species","DOM","Dominican Republic","whiteleg_shrimp","Penaeus vannamei",334,,100,TRUE
+"fao_production_by_species","KOR","South Korea","seabream","Sparidae",297.2,,4.2,TRUE
+"fao_production_by_species","PHL","Philippines","grouper","Serranidae",291.8,,100,TRUE
+"fao_production_by_species","TWN","Taiwan","tiger_prawn","Penaeus monodon",280.7,,100,TRUE
+"fao_production_by_species","DOM","Dominican Republic","seabream","Sparus aurata",260,,100,TRUE
+"fao_production_by_species","KHM","Cambodia","mud_crab","Scylla serrata",250.6,,100,TRUE
+"fao_production_by_species","GRC","Greece","flathead_grey_mullet","Mugil cephalus",245.4,,100,FALSE
+"fao_production_by_species","NOR","Norway","general_fish","Actinopterygii",245.1,,100,FALSE
+"fao_production_by_species","DNK","Denmark","yellowtail_kingfish","Seriola lalandi",238.5,,100,FALSE
+"fao_production_by_species","TZA","United Republic of Tanzania","tiger_prawn","Penaeus monodon",236.6,,100,TRUE
+"fao_production_by_species","TWN","Taiwan","abalone","Haliotis spp",236.3,,100,FALSE
+"fao_production_by_species","LKA","Sri Lanka","sandfish_sea_cucumber","Holothuria scabra",232.1,,100,FALSE
+"fao_production_by_species","USA","United States of America","abalone","Haliotis rufescens",228,,100,FALSE
+"fao_production_by_species","PAN","Panama","golden_pompano","Trachinotus carolinus",225.6,,100,TRUE
+"fao_production_by_species","GUY","Guyana","whiteleg_shrimp","Penaeus spp",220.4,,38.6,TRUE
+"fao_production_by_species","MEX","Mexico","whiteleg_shrimp","Penaeus stylirostris",218.2,,0.3,TRUE
+"fao_production_by_species","KOR","South Korea","drum_croaker","Miichthys miiuy",217.6,,100,TRUE
+"fao_production_by_species","EST","Estonia","rainbow_trout","Oncorhynchus mykiss",209.4,,100,TRUE
+"fao_production_by_species","ARE","United Arab Emirates","whiteleg_shrimp","Penaeus indicus",207,,100,TRUE
+"fao_production_by_species","DOM","Dominican Republic","golden_pompano","Trachinotus carolinus",200,,100,FALSE
+"fao_production_by_species","ISR","Israel","drum_croaker","Sciaenops ocellatus",188.6,,100,TRUE
+"fao_production_by_species","LKA","Sri Lanka","barramundi","Lates calcarifer",186.4,,100,FALSE
+"fao_production_by_species","ITA","Italy","drum_croaker","Sciaenops ocellatus",182,,45.6,TRUE
+"fao_production_by_species","IDN","Indonesia","grouper","Epinephelus bleekeri",180.6,,0.8,TRUE
+"fao_production_by_species","LKA","Sri Lanka","nile_tilapia","Oreochromis spp",179.7,,100,TRUE
+"fao_production_by_species","RUS","Russia","rainbow_trout","Oncorhynchus keta",177,,0.6,TRUE
+"fao_production_by_species","KOR","South Korea","grouper","Hyporthodus septemfasciatus",176.6,,100,TRUE
+"fao_production_by_species","MYS","Malaysia","mud_crab","Scylla serrata",174.9,,100,TRUE
+"fao_production_by_species","MAR","Morocco","european_seabass","Dicentrarchus labrax",174.7,,100,TRUE
+"fao_production_by_species","GRC","Greece","drum_croaker","Umbrina cirrosa",173.5,,6.4,TRUE
+"fao_production_by_species","OMN","Oman","whiteleg_shrimp","Penaeus indicus",173.5,,5.6,TRUE
+"fao_production_by_species","ISR","Israel","general_fish","Actinopterygii",170.5,,100,FALSE
+"fao_production_by_species","DZA","Algeria","european_seabass","Dicentrarchus labrax",162.3,,100,TRUE
+"fao_production_by_species","TWN","Taiwan","whiteleg_shrimp","Metapenaeus ensis",161.4,,2.9,TRUE
+"fao_production_by_species","KHM","Cambodia","general_fish","Actinopterygii",160,,100,FALSE
+"fao_production_by_species","ESP","Spain","giant_river_prawn","Palaemonidae",157.3,,100,FALSE
+"fao_production_by_species","ITA","Italy","flathead_grey_mullet","Mugil spp",157.1,,11,FALSE
+"fao_production_by_species","THA","Thailand","whiteleg_shrimp","Metapenaeus spp",150.8,,0,TRUE
+"fao_production_by_species","SAU","Saudi Arabia","seabream","Sparidentex hasta",150.3,,2.5,TRUE
+"fao_production_by_species","KHM","Cambodia","grouper","Epinephelus coioides",150,,100,TRUE
+"fao_production_by_species","JPN","Japan","general_invertebrate","Invertebrata",149.2,,100,FALSE
+"fao_production_by_species","ESP","Spain","seabream","Pagellus bogaraveo",148.6,,2.4,TRUE
+"fao_production_by_species","PAK","Pakistan","barramundi","Lates calcarifer",136.8,,100,FALSE
+"fao_production_by_species","GRC","Greece","general_fish","Actinopterygii",136.1,,100,FALSE
+"fao_production_by_species","PAK","Pakistan","whiteleg_shrimp","Penaeus spp",135.2,,100,TRUE
+"fao_production_by_species","THA","Thailand","whiteleg_shrimp","Penaeus merguiensis",134.4,,0,TRUE
+"fao_production_by_species","PRT","Portugal","tuna","Thunnus thynnus",134,,100,TRUE
+"fao_production_by_species","IDN","Indonesia","grouper","Plectropomus laevis",133.8,,0.6,TRUE
+"fao_production_by_species","SEN","Senegal","nile_tilapia","Sarotherodon melanotheron",133.2,,100,TRUE
+"fao_production_by_species","SGP","Singapore","fourfinger_threadfin","Eleutheronema tetradactylum",132.2,,100,FALSE
+"fao_production_by_species","THA","Thailand","whiteleg_shrimp","Penaeus spp",131.6,,0,TRUE
+"fao_production_by_species","BRN","Brunei","barramundi","Lates calcarifer",121.6,,100,FALSE
+"fao_production_by_species","ITA","Italy","drum_croaker","Argyrosomus regius",119.7,,30,TRUE
+"fao_production_by_species","SGP","Singapore","grouper","Epinephelus spp",116.1,,52.8,TRUE
+"fao_production_by_species","TZA","United Republic of Tanzania","milkfish","Chanos chanos",114.7,,100,TRUE
+"fao_production_by_species","SAU","Saudi Arabia","grouper","Epinephelus spp",113.3,,100,TRUE
+"fao_production_by_species","ISR","Israel","european_seabass","Dicentrarchus labrax",112,,82.8,TRUE
+"fao_production_by_species","HKG","Hong Kong S.A.R.","grouper","Epinephelus coioides",109.9,,91.8,TRUE
+"fao_production_by_species","ARE","United Arab Emirates","grouper","Epinephelus coioides",107.5,,100,TRUE
+"fao_production_by_species","TWN","Taiwan","swimming_crab","Brachyura",105.5,,99.1,FALSE
+"fao_production_by_species","TWN","Taiwan","seabream","Acanthopagrus schlegelii",103.5,,23.3,TRUE
+"fao_production_by_species","MUS","Mauritius","european_seabass","Dicentrarchus labrax",103.4,,100,TRUE
+"fao_production_by_species","NGA","Nigeria","whiteleg_shrimp","Penaeus spp",102.5,,100,TRUE
+"fao_production_by_species","GBR","United Kingdom","general_fish","Actinopterygii",102.5,,100,FALSE
+"fao_production_by_species","IDN","Indonesia","general_crustacean","Acetes indicus",101,,1.3,FALSE
+"fao_production_by_species","FIN","Finland","atlantic_salmon","Salmo trutta",100.7,,15,TRUE
+"fao_production_by_species","PRK","North Korea","atlantic_salmon","Salmo salar",100,,100,TRUE
+"fao_production_by_species","PRK","North Korea","japanese_sea_cucumber","Apostichopus japonicus",100,,100,FALSE
+"fao_production_by_species","NCL","New Caledonia","sandfish_sea_cucumber","Holothuria scabra",100,,100,FALSE
+"fao_production_by_species","ARE","United Arab Emirates","japanese_amberjack","Seriola lalandi",100,,100,FALSE
+"fao_production_by_species","PRK","North Korea","general_fish","Actinopterygii",98,,100,FALSE
+"fao_production_by_species","SGP","Singapore","golden_pompano","Trachinotus blochii",97.7,,100,TRUE
+"fao_production_by_species","ITA","Italy","drum_croaker","Umbrina cirrosa",97.5,,24.4,TRUE
+"fao_production_by_species","ALB","Albania","tuna","Thunnus thynnus",96,,100,TRUE
+"fao_production_by_species","MLT","Malta","general_fish","Actinopterygii",95.5,,100,FALSE
+"fao_production_by_species","KOR","South Korea","general_fish","Actinopterygii",94.8,,100,FALSE
+"fao_production_by_species","MYS","Malaysia","grouper","Epinephelus fuscoguttatus",91.5,,1.4,TRUE
+"fao_production_by_species","RUS","Russia","general_invertebrate","Invertebrata",89.8,,100,FALSE
+"fao_production_by_species","PHL","Philippines","golden_pompano","Trachinotus blochii",86.6,,100,TRUE
+"fao_production_by_species","KOR","South Korea","rainbow_trout","Oncorhynchus mykiss",84.5,,100,TRUE
+"fao_production_by_species","SAU","Saudi Arabia","drum_croaker","Argyrosomus regius",82.6,,100,TRUE
+"fao_production_by_species","MYS","Malaysia","fourfinger_threadfin","Eleutheronema tetradactylum",81.1,,100,FALSE
+"fao_production_by_species","GEO","Georgia","rainbow_trout","Oncorhynchus mykiss",80,,100,TRUE
+"fao_production_by_species","GRC","Greece","seabream","Diplodus puntazzo",79.9,,0.2,TRUE
+"fao_production_by_species","SGP","Singapore","nile_tilapia","Oreochromis mossambicus",78.6,,99.6,TRUE
+"fao_production_by_species","DNK","Denmark","atlantic_salmon","Salmo trutta",77,,100,FALSE
+"fao_production_by_species","MLT","Malta","european_seabass","Dicentrarchus labrax",77,,100,TRUE
+"fao_production_by_species","BRN","Brunei","grouper","Epinephelus spp",76.3,,85.5,TRUE
+"fao_production_by_species","VNM","Vietnam","sandfish_sea_cucumber","Holothuria scabra",75,,100,FALSE
+"fao_production_by_species","GUY","Guyana","flathead_grey_mullet","Mugil cephalus",74,,53.9,FALSE
+"fao_production_by_species","TUR","Turkey","seabream","Pagrus caeruleostictus",74,,0.1,TRUE
+"fao_production_by_species","MEX","Mexico","drum_croaker","Sciaenops ocellatus",73.8,,100,TRUE
+"fao_production_by_species","NZL","New Zealand","abalone","Haliotis iris",72.4,,100,FALSE
+"fao_production_by_species","TUR","Turkey","seabream","Pagrus pagrus",72.4,,0.1,TRUE
+"fao_production_by_species","GRC","Greece","general_crustacean","Carcinus aestuarii",70,,100,FALSE
+"fao_production_by_species","MAR","Morocco","tuna","Thunnus thynnus",70,,100,FALSE
+"fao_production_by_species","SAU","Saudi Arabia","european_seabass","Dicentrarchus labrax",68.5,,100,TRUE
+"fao_production_by_species","GRC","Greece","japanese_amberjack","Seriola dumerili",64.7,,100,TRUE
+"fao_production_by_species","SGP","Singapore","grouper","Epinephelus malabaricus",64.5,,29.3,TRUE
+"fao_production_by_species","MNE","Montenegro","european_seabass","Dicentrarchus labrax",64.2,,100,TRUE
+"fao_production_by_species","ESP","Spain","flathead_grey_mullet","Mugilidae",64.1,,82.3,FALSE
+"fao_production_by_species","GUY","Guyana","flathead_grey_mullet","Mugil liza",63.4,,46.1,FALSE
+"fao_production_by_species","PYF","French Polynesia","whiteleg_shrimp","Penaeus stylirostris",60.4,,100,TRUE
+"fao_production_by_species","THA","Thailand","general_fish","Actinopterygii",60.2,,100,FALSE
+"fao_production_by_species","TUR","Turkey","seabream","Dentex dentex",60,,0.1,TRUE
+"fao_production_by_species","TUR","Turkey","drum_croaker","Umbrina cirrosa",58.8,,1.5,TRUE
+"fao_production_by_species","MEX","Mexico","whiteleg_shrimp","Penaeus aztecus",55.9,,0.1,TRUE
+"fao_production_by_species","FRA","France","whiteleg_shrimp","Penaeus japonicus",54.4,,100,TRUE
+"fao_production_by_species","MYS","Malaysia","sandfish_sea_cucumber","Holothuria scabra",53.5,,100,FALSE
+"fao_production_by_species","SAU","Saudi Arabia","flathead_grey_mullet","Mugil cephalus",53.3,,100,FALSE
+"fao_production_by_species","BRN","Brunei","general_fish","Actinopterygii",52.5,,100,FALSE
+"fao_production_by_species","ESP","Spain","japanese_amberjack","Seriola dumerili",52.5,,100,TRUE
+"fao_production_by_species","MNE","Montenegro","seabream","Sparus aurata",52.4,,100,TRUE
+"fao_production_by_species","TUR","Turkey","seabream","Dentex gibbosus",52.2,,0.1,TRUE
+"fao_production_by_species","ZAF","South Africa","drum_croaker","Argyrosomus japonicus",51.9,,100,TRUE
+"fao_production_by_species","DOM","Dominican Republic","cobia","Rachycentron canadum",50,,100,FALSE
+"fao_production_by_species","ARE","United Arab Emirates","yellowtail_kingfish","Seriola lalandi",46.7,,100,FALSE
+"fao_production_by_species","PRT","Portugal","drum_croaker","Argyrosomus regius",46,,98.5,TRUE
+"fao_production_by_species","MDG","Madagascar","sandfish_sea_cucumber","Holothuria scabra",45.3,,100,FALSE
+"fao_production_by_species","ESP","Spain","general_fish","Actinopterygii",44.4,,100,FALSE
+"fao_production_by_species","MUS","Mauritius","drum_croaker","Argyrosomus japonicus",43,,2.6,TRUE
+"fao_production_by_species","SGP","Singapore","mud_crab","Scylla serrata",43,,100,TRUE
+"fao_production_by_species","BRN","Brunei","golden_pompano","Trachinotus blochii",42.4,,100,TRUE
+"fao_production_by_species","DOM","Dominican Republic","european_seabass","Dicentrarchus labrax",42,,100,TRUE
+"fao_production_by_species","HRV","Croatia","seabream","Pagrus spp",40.2,,0.6,TRUE
+"fao_production_by_species","CYP","Cyprus","drum_croaker","Argyrosomus regius",39,,100,TRUE
+"fao_production_by_species","ARE","United Arab Emirates","nile_tilapia","Oreochromis niloticus",36.8,,100,TRUE
+"fao_production_by_species","MTQ","Martinique","drum_croaker","Sciaenops ocellatus",35.3,,100,TRUE
+"fao_production_by_species","QAT","Qatar","seabream","Sparus aurata",35,,98.4,TRUE
+"fao_production_by_species","THA","Thailand","flathead_grey_mullet","Ellochelon vaigiensis",35,,100,FALSE
+"fao_production_by_species","HKG","Hong Kong S.A.R.","golden_pompano","Trachinotus blochii",34,,100,TRUE
+"fao_production_by_species","ECU","Ecuador","cobia","Rachycentron canadum",33.3,,100,FALSE
+"fao_production_by_species","MYT","Mayotte","drum_croaker","Sciaenops ocellatus",33,,100,TRUE
+"fao_production_by_species","LKA","Sri Lanka","mud_crab","Scylla serrata",32.3,,100,TRUE
+"fao_production_by_species","SGP","Singapore","whiteleg_shrimp","Penaeus spp",31.8,,50.3,TRUE
+"fao_production_by_species","LKA","Sri Lanka","milkfish","Chanos chanos",30.6,,100,TRUE
+"fao_production_by_species","SGP","Singapore","whiteleg_shrimp","Penaeus vannamei",30.5,,48.1,TRUE
+"fao_production_by_species","MYS","Malaysia","grouper","Plectropomus leopardus",30.2,,0.4,TRUE
+"fao_production_by_species","DOM","Dominican Republic","drum_croaker","Argyrosomus regius",30,,100,TRUE
+"fao_production_by_species","BRN","Brunei","tiger_prawn","Penaeus monodon",29.7,,100,TRUE
+"fao_production_by_species","ESP","Spain","tiger_prawn","Penaeus monodon",29.3,,100,TRUE
+"fao_production_by_species","SYC","Seychelles","whiteleg_shrimp","Penaeus vannamei",28.8,,100,TRUE
+"fao_production_by_species","GLP","Guadeloupe","drum_croaker","Sciaenops ocellatus",28.4,,100,TRUE
+"fao_production_by_species","MEX","Mexico","abalone","Haliotis rufescens",27.1,,85.7,FALSE
+"fao_production_by_species","MMR","Myanmar","general_crustacean","Miyakella nepa",26,,100,FALSE
+"fao_production_by_species","MYS","Malaysia","abalone","Haliotis spp",25.6,,100,FALSE
+"fao_production_by_species","ARE","United Arab Emirates","barramundi","Lates calcarifer",25.4,,100,FALSE
+"fao_production_by_species","TWN","Taiwan","whiteleg_shrimp","Penaeus japonicus",24.9,,0.5,TRUE
+"fao_production_by_species","GUY","Guyana","drum_croaker","Micropogonias furnieri",23.9,,100,TRUE
+"fao_production_by_species","SUR","Suriname","whiteleg_shrimp","Penaeus vannamei",23.8,,100,TRUE
+"fao_production_by_species","ISR","Israel","european_seabass","Morone chrysops x M. saxatilis",23.3,,17.2,TRUE
+"fao_production_by_species","QAT","Qatar","whiteleg_shrimp","Penaeus vannamei",22.9,,100,TRUE
+"fao_production_by_species","CPV","Cabo Verde","whiteleg_shrimp","Penaeus vannamei",22.7,,100,TRUE
+"fao_production_by_species","KOR","South Korea","japanese_sea_cucumber","Apostichopus japonicus",22.2,,100,FALSE
+"fao_production_by_species","TWN","Taiwan","general_fish","Osteichthyes",22,,2.3,FALSE
+"fao_production_by_species","MNP","Northern Mariana Islands","whiteleg_shrimp","Penaeus vannamei",21.8,,100,TRUE
+"fao_production_by_species","MEX","Mexico","general_fish","Actinopterygii",21.3,,100,FALSE
+"fao_production_by_species","CYP","Cyprus","whiteleg_shrimp","Penaeus indicus",20.9,,100,TRUE
+"fao_production_by_species","CYP","Cyprus","seabream","Pagrus major",20.5,,0.4,TRUE
+"fao_production_by_species","DOM","Dominican Republic","nile_tilapia","Oreochromis spp",20,,100,TRUE
+"fao_production_by_species","FRA","France","worm","Arenicola marina",20,,100,FALSE
+"fao_production_by_species","GEO","Georgia","general_fish","Actinopterygii",20,,100,FALSE
+"fao_production_by_species","MYS","Malaysia","grouper","Epinephelus lanceolatus",18.9,,0.3,TRUE
+"fao_production_by_species","SGP","Singapore","grouper","Plectropomus maculatus",18.3,,8.3,TRUE
+"fao_production_by_species","DNK","Denmark","rainbow_trout","Oncorhynchus kisutch",18,,0.2,TRUE
+"fao_production_by_species","ZAF","South Africa","rainbow_trout","Oncorhynchus mykiss",17.8,,100,TRUE
+"fao_production_by_species","GUM","Guam","milkfish","Chanos chanos",16,,100,TRUE
+"fao_production_by_species","TWN","Taiwan","mud_crab","Scylla serrata",15.6,,100,TRUE
+"fao_production_by_species","SGP","Singapore","swimming_crab","Portunus pelagicus",15.3,,100,FALSE
+"fao_production_by_species","MEX","Mexico","tuna","Thunnus albacares",15.2,,0.3,TRUE
+"fao_production_by_species","GRC","Greece","whiteleg_shrimp","Penaeus vannamei",15,,92,TRUE
+"fao_production_by_species","QAT","Qatar","barramundi","Lates calcarifer",15,,100,FALSE
+"fao_production_by_species","SGP","Singapore","general_fish","Actinopterygii",14.8,,100,FALSE
+"fao_production_by_species","GHA","Ghana","tiger_prawn","Penaeus monodon",14,,100,TRUE
+"fao_production_by_species","ESP","Spain","flathead_grey_mullet","Chelon ramada",13.8,,17.7,FALSE
+"fao_production_by_species","ESP","Spain","atlantic_salmon","Salmo salar",13.7,,100,TRUE
+"fao_production_by_species","ITA","Italy","seabream","Sparidae",13.4,,0.4,TRUE
+"fao_production_by_species","MOZ","Mozambique","tiger_prawn","Penaeus monodon",13.3,,100,TRUE
+"fao_production_by_species","MMR","Myanmar","grouper","Epinephelus spp",13.3,,100,TRUE
+"fao_production_by_species","BRN","Brunei","grouper","Epinephelus coioides",12.9,,14.5,TRUE
+"fao_production_by_species","HRV","Croatia","rainbow_trout","Oncorhynchus mykiss",12.8,,100,FALSE
+"fao_production_by_species","FJI","Fiji","tiger_prawn","Penaeus monodon",12.7,,100,TRUE
+"fao_production_by_species","GRC","Greece","tiger_prawn","Penaeus monodon",12.5,,100,TRUE
+"fao_production_by_species","PSE","Palestine","european_seabass","Dicentrarchus labrax",12.5,,100,TRUE
+"fao_production_by_species","BHR","Bahrain","seabream","Sparus aurata",12.2,,90.9,TRUE
+"fao_production_by_species","MYS","Malaysia","grouper","Chromileptes altivelis",11.7,,0.2,TRUE
+"fao_production_by_species","CHL","Chile","abalone","Haliotis discus",11.6,,1.3,FALSE
+"fao_production_by_species","CHL","Chile","yellowtail_kingfish","Seriola lalandi",11.5,,100,FALSE
+"fao_production_by_species","DZA","Algeria","drum_croaker","Argyrosomus regius",11.3,,100,FALSE
+"fao_production_by_species","ARG","Argentina","rainbow_trout","Oncorhynchus mykiss",11.3,,100,TRUE
+"fao_production_by_species","TUR","Turkey","whiteleg_shrimp","Penaeus vannamei",11,,100,TRUE
+"fao_production_by_species","PLW","Palau","milkfish","Chanos chanos",10.8,,100,TRUE
+"fao_production_by_species","SGP","Singapore","tiger_prawn","Penaeus monodon",10.8,,100,TRUE
+"fao_production_by_species","KOR","South Korea","whiteleg_shrimp","Penaeus chinensis",10.7,,0.2,TRUE
+"fao_production_by_species","TLS","Timor-Leste","whiteleg_shrimp","Penaeus vannamei",10.7,,91.4,TRUE
+"fao_production_by_species","SGP","Singapore","grouper","Epinephelus fuscoguttatus",10.6,,4.8,TRUE
+"fao_production_by_species","GUM","Guam","whiteleg_shrimp","Penaeus vannamei",10.4,,100,TRUE
+"fao_production_by_species","ITA","Italy","seabream","Diplodus puntazzo",10.1,,0.3,TRUE
+"fao_production_by_species","BRA","Brazil","cobia","Rachycentron canadum",10,,100,FALSE
+"fao_production_by_species","BRA","Brazil","general_fish","Actinopterygii",10,,100,FALSE
+"fao_production_by_species","LBN","Lebanon","whiteleg_shrimp","Penaeus vannamei",10,,100,TRUE
+"fao_production_by_species","HKG","Hong Kong S.A.R.","grouper","Epinephelus areolatus",9.8,,8.2,TRUE
+"fao_production_by_species","IRL","Ireland","general_invertebrate","Invertebrata",9.7,,100,FALSE
+"fao_production_by_species","FJI","Fiji","mud_crab","Scylla serrata",9.4,,100,TRUE
+"fao_production_by_species","MAR","Morocco","drum_croaker","Argyrosomus regius",9.4,,100,TRUE
+"fao_production_by_species","RUS","Russia","general_crustacean","Paralithodes camtschaticus",9,,100,FALSE
+"fao_production_by_species","TLS","Timor-Leste","milkfish","Chanos chanos",9,,100,TRUE
+"fao_production_by_species","HKG","Hong Kong S.A.R.","seabream","Rhabdosargus sarba",8.6,,100,TRUE
+"fao_production_by_species","PER","Peru","olive_flounder","Paralichthys adspersus",8.5,,100,TRUE
+"fao_production_by_species","MDG","Madagascar","mud_crab","Scylla serrata",8,,100,TRUE
+"fao_production_by_species","GRC","Greece","drum_croaker","Sciaena spp",7.8,,0.3,TRUE
+"fao_production_by_species","GRC","Greece","seabream","Pagellus erythrinus",7.7,,0,TRUE
+"fao_production_by_species","MOZ","Mozambique","mud_crab","Scylla serrata",7.5,,100,TRUE
+"fao_production_by_species","TZA","United Republic of Tanzania","sandfish_sea_cucumber","Holothuria scabra",7.4,,100,FALSE
+"fao_production_by_species","HRV","Croatia","turbot","Scophthalmus maximus",7.1,,100,FALSE
+"fao_production_by_species","VUT","Vanuatu","whiteleg_shrimp","Penaeus vannamei",7.1,,97.9,TRUE
+"fao_production_by_species","FRA","France","abalone","Haliotis tuberculata",6.4,,100,FALSE
+"fao_production_by_species","MMR","Myanmar","whiteleg_shrimp","Penaeus spp",6.2,,0.1,TRUE
+"fao_production_by_species","CHL","Chile","drum_croaker","Cilus gilberti",5.7,,100,TRUE
+"fao_production_by_species","BRN","Brunei","nile_tilapia","Oreochromis spp",5.4,,100,TRUE
+"fao_production_by_species","GUM","Guam","nile_tilapia","Oreochromis spp",5.3,,100,TRUE
+"fao_production_by_species","CHL","Chile","general_gastropod","Trochita spp",5,,100,FALSE
+"fao_production_by_species","ECU","Ecuador","general_fish","Actinopterygii",5,,100,FALSE
+"fao_production_by_species","REU","Reunion","seabream","Pagrus spp",5,,100,FALSE
+"fao_production_by_species","RUS","Russia","rainbow_trout","Oncorhynchus nerka",5,,0,TRUE
+"fao_production_by_species","TUR","Turkey","seabream","Diplodus puntazzo",5,,0,TRUE
+"fao_production_by_species","ITA","Italy","whiteleg_shrimp","Penaeus japonicus",4.6,,100,TRUE
+"fao_production_by_species","KEN","Kenya","mud_crab","Scylla serrata",4.6,,100,TRUE
+"fao_production_by_species","ZAF","South Africa","yellowtail_kingfish","Seriola lalandi",4.6,,100,FALSE
+"fao_production_by_species","MEX","Mexico","abalone","Haliotis spp",4.5,,14.3,FALSE
+"fao_production_by_species","KEN","Kenya","milkfish","Chanos chanos",4.4,,100,TRUE
+"fao_production_by_species","SUR","Suriname","nile_tilapia","Oreochromis spp",4.3,,100,TRUE
+"fao_production_by_species","HRV","Croatia","seabream","Dentex dentex",4.2,,0.1,TRUE
+"fao_production_by_species","SGP","Singapore","grouper","Epinephelus lanceolatus",4.1,,1.9,TRUE
+"fao_production_by_species","IDN","Indonesia","cobia","Rachycentron canadum",4,,100,FALSE
+"fao_production_by_species","ESP","Spain","general_gastropod","Gastropoda",4,,100,FALSE
+"fao_production_by_species","SGP","Singapore","grouper","Epinephelus coioides",3.9,,1.8,TRUE
+"fao_production_by_species","GRC","Greece","seabream","Diplodus sargus",3.8,,0,TRUE
+"fao_production_by_species","TWN","Taiwan","whiteleg_shrimp","Natantia",3.7,,0.1,TRUE
+"fao_production_by_species","ITA","Italy","seabream","Diplodus sargus",3.5,,0.1,TRUE
+"fao_production_by_species","PNG","Papua New Guinea","tiger_prawn","Penaeus monodon",3.3,,100,FALSE
+"fao_production_by_species","MDV","Maldives","grouper","Epinephelus fuscoguttatus",3.2,,100,TRUE
+"fao_production_by_species","ESP","Spain","whiteleg_shrimp","Penaeus vannamei",3.2,,73.2,TRUE
+"fao_production_by_species","MEX","Mexico","general_gastropod","Gastropoda",3.1,,100,FALSE
+"fao_production_by_species","DZA","Algeria","whiteleg_shrimp","Penaeus spp",3,,93.7,TRUE
+"fao_production_by_species","BRN","Brunei","milkfish","Chanos chanos",3,,100,TRUE
+"fao_production_by_species","OMN","Oman","abalone","Haliotis midae",3,,100,FALSE
+"fao_production_by_species","REU","Reunion","nile_tilapia","Oreochromis spp",3,,100,TRUE
+"fao_production_by_species","SLB","Solomon Islands","milkfish","Chanos chanos",3,,100,TRUE
+"fao_production_by_species","TWN","Taiwan","carp","Ctenopharyngodon idella",3,,100,FALSE
+"fao_production_by_species","SGP","Singapore","seabream","Acanthopagrus latus",2.9,,100,TRUE
+"fao_production_by_species","SLV","El Salvador","general_fish","Actinopterygii",2.8,,100,FALSE
+"fao_production_by_species","WSM","Samoa","nile_tilapia","Oreochromis niloticus",2.8,,100,FALSE
+"fao_production_by_species","ITA","Italy","turbot","Scophthalmus maximus",2.5,,100,FALSE
+"fao_production_by_species","TZA","United Republic of Tanzania","mud_crab","Scylla serrata",2.5,,100,TRUE
+"fao_production_by_species","KWT","Kuwait","seabream","Sparidentex hasta",2.2,,100,TRUE
+"fao_production_by_species","PRT","Portugal","flathead_grey_mullet","Mugilidae",2.1,,100,FALSE
+"fao_production_by_species","DNK","Denmark","olive_flounder","Platichthys flesus",2,,100,FALSE
+"fao_production_by_species","KIR","Kiribati","milkfish","Chanos chanos",2,,100,TRUE
+"fao_production_by_species","LBN","Lebanon","seabream","Sparus aurata",2,,100,TRUE
+"fao_production_by_species","MDV","Maldives","sandfish_sea_cucumber","Holothuria scabra",2,,100,FALSE
+"fao_production_by_species","PNG","Papua New Guinea","mud_crab","Scylla serrata",2,,100,TRUE
+"fao_production_by_species","RUS","Russia","rainbow_trout","Oncorhynchus gorbuscha",2,,0,TRUE
+"fao_production_by_species","ESP","Spain","general_crustacean","Maja squinado",2,,85.1,FALSE
+"fao_production_by_species","ESP","Spain","seabream","Diplodus sargus",2,,0,TRUE
+"fao_production_by_species","SWE","Sweden","atlantic_salmon","Salmo salar",2,,100,FALSE
+"fao_production_by_species","THA","Thailand","abalone","Haliotis spp",2,,100,FALSE
+"fao_production_by_species","THA","Thailand","swimming_crab","Portunus spp",2,,100,FALSE
+"fao_production_by_species","GBR","United Kingdom","atlantic_salmon","Salmo trutta",2,,0,TRUE
+"fao_production_by_species","CHL","Chile","turbot","Scophthalmus maximus",1.7,,100,FALSE
+"fao_production_by_species","PRT","Portugal","european_seabass","Dicentrarchus spp",1.6,,0.2,TRUE
+"fao_production_by_species","KWT","Kuwait","general_fish","Actinopterygii",1.5,,100,FALSE
+"fao_production_by_species","KWT","Kuwait","grouper","Epinephelus coioides",1.5,,100,TRUE
+"fao_production_by_species","PRT","Portugal","japanese_amberjack","Seriola dumerili",1.5,,100,FALSE
+"fao_production_by_species","PYF","French Polynesia","barramundi","Lates calcarifer",1.3,,100,FALSE
+"fao_production_by_species","GRC","Greece","whiteleg_shrimp","Penaeus japonicus",1.3,,8,TRUE
+"fao_production_by_species","BHR","Bahrain","seabream","Sparidentex hasta",1.2,,9.1,TRUE
+"fao_production_by_species","PRT","Portugal","seabream","Diplodus sargus",1.2,,0.1,TRUE
+"fao_production_by_species","SGP","Singapore","drum_croaker","Sciaenops ocellatus",1.2,,100,TRUE
+"fao_production_by_species","SGP","Singapore","grouper","Cephalopholis argus",1.2,,0.5,TRUE
+"fao_production_by_species","TLS","Timor-Leste","mud_crab","Scylla serrata",1.2,,100,TRUE
+"fao_production_by_species","KNA","Saint Kitts and Nevis","nile_tilapia","Oreochromis spp",1.1,,100,TRUE
+"fao_production_by_species","TUN","Tunisia","whiteleg_shrimp","Penaeus vannamei",1.1,,100,TRUE
+"fao_production_by_species","BRN","Brunei","mud_crab","Scylla serrata",1,,100,TRUE
+"fao_production_by_species","KWT","Kuwait","barramundi","Lates calcarifer",1,,100,FALSE
+"fao_production_by_species","LBN","Lebanon","european_seabass","Dicentrarchus labrax",1,,100,TRUE
+"fao_production_by_species","MUS","Mauritius","mud_crab","Scylla serrata",1,,100,TRUE
+"fao_production_by_species","MUS","Mauritius","seabream","Rhabdosargus sarba",1,,100,TRUE
+"fao_production_by_species","SGP","Singapore","grouper","Chromileptes altivelis",1,,0.5,TRUE
+"fao_production_by_species","SGP","Singapore","whiteleg_shrimp","Penaeus monodon",1,,1.7,TRUE
+"fao_production_by_species","TLS","Timor-Leste","whiteleg_shrimp","Penaeus spp",1,,8.6,TRUE
+"fao_production_by_species","TUR","Turkey","seabream","Pagrus auriga",1,,0,TRUE
+"fao_production_by_species","TUR","Turkey","swimming_crab","Callinectes sapidus",1,,100,FALSE
+"fao_production_by_species","ESP","Spain","abalone","Haliotis discus",0.9,,100,FALSE
+"fao_production_by_species","TWN","Taiwan","swimming_crab","Portunus pelagicus",0.9,,0.9,FALSE
+"fao_production_by_species","TUV","Tuvalu","milkfish","Chanos chanos",0.9,,100,TRUE
+"fao_production_by_species","PLW","Palau","whiteleg_shrimp","Penaeus spp",0.8,,100,TRUE
+"fao_production_by_species","ESP","Spain","whiteleg_shrimp","Penaeus kerathurus",0.8,,19.4,TRUE
+"fao_production_by_species","PRT","Portugal","drum_croaker","Sciaenidae",0.7,,1.5,TRUE
+"fao_production_by_species","MYS","Malaysia","grouper","Epinephelus fasciatus",0.6,,0,TRUE
+"fao_production_by_species","QAT","Qatar","seabream","Acanthopagrus latus",0.6,,1.6,TRUE
+"fao_production_by_species","SGP","Singapore","asian_seabass","Lateolabrax japonicus",0.6,,100,TRUE
+"fao_production_by_species","ESP","Spain","european_seabass","Dicentrarchus punctatus",0.6,,0,TRUE
+"fao_production_by_species","MEX","Mexico","whiteleg_shrimp","Penaeus setiferus",0.5,,0,TRUE
+"fao_production_by_species","NRU","Nauru","milkfish","Chanos chanos",0.4,,100,TRUE
+"fao_production_by_species","PNG","Papua New Guinea","milkfish","Chanos chanos",0.4,,100,TRUE
+"fao_production_by_species","ESP","Spain","general_crustacean","Carcinus maenas",0.4,,14.9,FALSE
+"fao_production_by_species","ESP","Spain","general_invertebrate","Invertebrata",0.4,,100,FALSE
+"fao_production_by_species","PRT","Portugal","seabream","Diplodus spp",0.3,,0,TRUE
+"fao_production_by_species","WSM","Samoa","mud_crab","Scylla serrata",0.3,,100,TRUE
+"fao_production_by_species","SGP","Singapore","nile_tilapia","Oreochromis niloticus",0.3,,0.4,TRUE
+"fao_production_by_species","ESP","Spain","whiteleg_shrimp","Penaeus japonicus",0.3,,7.4,TRUE
+"fao_production_by_species","DZA","Algeria","whiteleg_shrimp","Penaeus kerathurus",0.2,,6.3,TRUE
+"fao_production_by_species","SGP","Singapore","grouper","Epinephelus tukula",0.2,,0.1,TRUE
+"fao_production_by_species","IDN","Indonesia","grouper","Plectropomus oligacanthus",0.1,,0,TRUE
+"fao_production_by_species","PHL","Philippines","whiteleg_shrimp","Penaeus monodon",0.1,,0,TRUE
+"fao_production_by_species","TWN","Taiwan","whiteleg_shrimp","Penaeus penicillatus",0.1,,0,TRUE
+"fao_production_by_species","VUT","Vanuatu","whiteleg_shrimp","Penaeus stylirostris",0.1,,2.1,TRUE
+"fao_production_by_species","BHR","Bahrain","grouper","Epinephelus coioides",0,,,FALSE
+"fao_production_by_species","BRN","Brunei","nile_tilapia","Oreochromis niloticus",0,,0,TRUE
+"fao_production_by_species","CAN","Canada","tuna","Thunnus thynnus",0,,,FALSE
+"fao_production_by_species","CHL","Chile","rainbow_trout","Oncorhynchus masou",0,,0,TRUE
+"fao_production_by_species","CHL","Chile","rainbow_trout","Oncorhynchus tshawytscha",0,,0,TRUE
+"fao_production_by_species","CRI","Costa Rica","whiteleg_shrimp","Natantia",0,,0,TRUE
+"fao_production_by_species","HRV","Croatia","seabream","Diplodus puntazzo",0,,0,TRUE
+"fao_production_by_species","CUB","Cuba","whiteleg_shrimp","Penaeus schmitti",0,,0,TRUE
+"fao_production_by_species","CYP","Cyprus","tuna","Thunnus thynnus",0,,,FALSE
+"fao_production_by_species","ECU","Ecuador","drum_croaker","Sciaenops ocellatus",0,,,FALSE
+"fao_production_by_species","FJI","Fiji","flathead_grey_mullet","Mugil cephalus",0,,,FALSE
+"fao_production_by_species","FIN","Finland","atlantic_salmon","Salmo salar",0,,0,TRUE
+"fao_production_by_species","FRA","France","seabream","Diplodus sargus",0,,0,TRUE
+"fao_production_by_species","GRC","Greece","tuna","Thunnus thynnus",0,,,FALSE
+"fao_production_by_species","ISL","Iceland","european_seabass","Dicentrarchus labrax",0,,,FALSE
+"fao_production_by_species","ISL","Iceland","rainbow_trout","Oncorhynchus mykiss",0,,,TRUE
+"fao_production_by_species","IRN","Iran","whiteleg_shrimp","Penaeus indicus",0,,0,TRUE
+"fao_production_by_species","ITA","Italy","tiger_prawn","Penaeus monodon",0,,,FALSE
+"fao_production_by_species","ITA","Italy","whiteleg_shrimp","Penaeus semisulcatus",0,,0,TRUE
+"fao_production_by_species","MDG","Madagascar","sandfish_sea_cucumber","Holothuroidea",0,,0,FALSE
+"fao_production_by_species","MLT","Malta","nile_tilapia","Oreochromis niloticus",0,,,FALSE
+"fao_production_by_species","MLT","Malta","nile_tilapia","Oreochromis spilurus",0,,,FALSE
+"fao_production_by_species","MLT","Malta","turbot","Scophthalmus maximus",0,,,FALSE
+"fao_production_by_species","MUS","Mauritius","general_fish","Actinopterygii",0,,,FALSE
+"fao_production_by_species","MUS","Mauritius","nile_tilapia","Oreochromis spp",0,,,FALSE
+"fao_production_by_species","MUS","Mauritius","tiger_prawn","Penaeus monodon",0,,,FALSE
+"fao_production_by_species","MYT","Mayotte","nile_tilapia","Oreochromis spp",0,,,FALSE
+"fao_production_by_species","MEX","Mexico","flathead_grey_mullet","Mugil cephalus",0,,,FALSE
+"fao_production_by_species","MEX","Mexico","olive_flounder","Paralichthys spp",0,,,FALSE
+"fao_production_by_species","MOZ","Mozambique","drum_croaker","Argyrosomus japonicus",0,,,FALSE
+"fao_production_by_species","PNG","Papua New Guinea","barramundi","Lates calcarifer",0,,,FALSE
+"fao_production_by_species","PER","Peru","general_fish","Actinopterygii",0,,,FALSE
+"fao_production_by_species","PER","Peru","general_gastropod","Concholepas concholepas",0,,,FALSE
+"fao_production_by_species","PER","Peru","general_gastropod","Gastropoda",0,,,FALSE
+"fao_production_by_species","PHL","Philippines","banana_prawn","Penaeus merguiensis",0,,100,FALSE
+"fao_production_by_species","PHL","Philippines","whiteleg_shrimp","Penaeus spp",0,,0,TRUE
+"fao_production_by_species","PRT","Portugal","whiteleg_shrimp","Penaeus japonicus",0,,,FALSE
+"fao_production_by_species","KOR","South Korea","whiteleg_shrimp","Penaeus japonicus",0,,0,TRUE
+"fao_production_by_species","REU","Reunion","cobia","Rachycentron canadum",0,,,FALSE
+"fao_production_by_species","RUS","Russia","flathead_grey_mullet","Mugilidae",0,,,FALSE
+"fao_production_by_species","RUS","Russia","general_fish","Actinopterygii",0,,,FALSE
+"fao_production_by_species","RUS","Russia","olive_flounder","Pleuronectiformes",0,,,FALSE
+"fao_production_by_species","KNA","Saint Kitts and Nevis","whiteleg_shrimp","Penaeus vannamei",0,,,FALSE
+"fao_production_by_species","SAU","Saudi Arabia","nile_tilapia","Oreochromis spp",0,,0,TRUE
+"fao_production_by_species","SEN","Senegal","nile_tilapia","Oreochromis niloticus",0,,0,TRUE
+"fao_production_by_species","SYC","Seychelles","tiger_prawn","Penaeus monodon",0,,,FALSE
+"fao_production_by_species","SGP","Singapore","banana_prawn","Penaeus merguiensis",0,,,FALSE
+"fao_production_by_species","SGP","Singapore","cobia","Rachycentron canadum",0,,100,FALSE
+"fao_production_by_species","ESP","Spain","european_seabass","Dicentrarchus spp",0,,0,TRUE
+"fao_production_by_species","ESP","Spain","european_seabass","Morone chrysops x M. saxatilis",0,,0,TRUE
+"fao_production_by_species","ESP","Spain","flathead_grey_mullet","Mugil cephalus",0,,0,FALSE
+"fao_production_by_species","ESP","Spain","rainbow_trout","Oncorhynchus mykiss",0,,,FALSE
+"fao_production_by_species","ESP","Spain","seabream","Dentex dentex",0,,0,TRUE
+"fao_production_by_species","TWN","Taiwan","largemouth_bass","Micropterus salmoides",0,,,FALSE
+"fao_production_by_species","TWN","Taiwan","seabream","Evynnis tumifrons",0,,0,TRUE
+"fao_production_by_species","THA","Thailand","fourfinger_threadfin","Eleutheronema tetradactylum",0,,,FALSE
+"fao_production_by_species","TUN","Tunisia","flathead_grey_mullet","Mugil cephalus",0,,,FALSE
+"fao_production_by_species","TUN","Tunisia","general_fish","Actinopterygii",0,,,FALSE
+"fao_production_by_species","GBR","United Kingdom","european_seabass","Dicentrarchus labrax",0,,,FALSE
+"fao_production_by_species","USA","United States of America","whiteleg_shrimp","Penaeus setiferus",0,,0,TRUE
+"farms_per_model","NOR","Norway","atlantic_salmon",,1426322.5,,,
+"farms_per_model","ECU","Ecuador","whiteleg_shrimp",,812642.8,,,
+"farms_per_model","CHL","Chile","atlantic_salmon",,702140.2,,,
+"farms_per_model","IND","India","whiteleg_shrimp",,415686.8,,,
+"farms_per_model","CHN","China","whiteleg_shrimp",,398232.9,,,
+"farms_per_model","IDN","Indonesia","milkfish",,376946.9,,,
+"farms_per_model","VNM","Vietnam","tiger_prawn",,274233.1,,,
+"farms_per_model","VNM","Vietnam","whiteleg_shrimp",,230077,,,
+"farms_per_model","CHN","China","golden_pompano",,207042.8,,,
+"farms_per_model","CHN","China","asian_seabass",,193293.3,,,
+"farms_per_model","GBR","United Kingdom","atlantic_salmon",,187482.5,,,
+"farms_per_model","PHL","Philippines","milkfish",,186991.6,,,
+"farms_per_model","CHN","China","grouper",,185813.3,,,
+"farms_per_model","IDN","Indonesia","whiteleg_shrimp",,175074.3,,,
+"farms_per_model","CHN","China","mud_crab",,157268.7,,,
+"farms_per_model","CHL","Chile","rainbow_trout",,156730.6,,,
+"farms_per_model","IDN","Indonesia","tiger_prawn",,140611.5,,,
+"farms_per_model","CHN","China","drum_croaker",,139587.9,,,
+"farms_per_model","TUR","Turkey","european_seabass",,138335.8,,,
+"farms_per_model","JPN","Japan","japanese_amberjack",,129867.7,,,
+"farms_per_model","CHN","China","seabream",,115770.3,,,
+"farms_per_model","MEX","Mexico","whiteleg_shrimp",,98627.3,,,
+"farms_per_model","CHN","China","tiger_prawn",,98094.5,,,
+"farms_per_model","FRO","Faroe Islands","atlantic_salmon",,92160,,,
+"farms_per_model","NOR","Norway","rainbow_trout",,83718.7,,,
+"farms_per_model","THA","Thailand","whiteleg_shrimp",,76773.2,,,
+"farms_per_model","BRA","Brazil","whiteleg_shrimp",,75379.3,,,
+"farms_per_model","VNM","Vietnam","mud_crab",,75230.3,,,
+"farms_per_model","AUS","Australia","atlantic_salmon",,69730.3,,,
+"farms_per_model","BGD","Bangladesh","tiger_prawn",,68421.8,,,
+"farms_per_model","JPN","Japan","seabream",,65648,,,
+"farms_per_model","THA","Thailand","whiteleg_shrimp",,59705.8,,,
+"farms_per_model","SAU","Saudi Arabia","whiteleg_shrimp",,54509.9,,,
+"farms_per_model","IDN","Indonesia","nile_tilapia",,51899.8,,,
+"farms_per_model","IND","India","tiger_prawn",,49796,,,
+"farms_per_model","MMR","Myanmar","tiger_prawn",,49343.9,,,
+"farms_per_model","IRN","Iran","whiteleg_shrimp",,47811.2,,,
+"farms_per_model","CAN","Canada","atlantic_salmon",,44670.9,,,
+"farms_per_model","RUS","Russia","rainbow_trout",,40801,,,
+"farms_per_model","EGY","Egypt","seabream",,39372.2,,,
+"farms_per_model","VEN","Venezuela","whiteleg_shrimp",,36519.5,,,
+"farms_per_model","PER","Peru","whiteleg_shrimp",,35755.7,,,
+"farms_per_model","CHN","China","olive_flounder",,33408.6,,,
+"farms_per_model","HND","Honduras","whiteleg_shrimp",,33081.4,,,
+"farms_per_model","ISL","Iceland","atlantic_salmon",,32050.8,,,
+"farms_per_model","EGY","Egypt","european_seabass",,31740,,,
+"farms_per_model","TUR","Turkey","seabream",,30827.4,,,
+"farms_per_model","NIC","Nicaragua","whiteleg_shrimp",,30147.3,,,
+"farms_per_model","TWN","Taiwan","milkfish",,29110.2,,,
+"farms_per_model","EGY","Egypt","drum_croaker",,27770.8,,,
+"farms_per_model","MYS","Malaysia","whiteleg_shrimp",,26809.3,,,
+"farms_per_model","PHL","Philippines","tiger_prawn",,26748.9,,,
+"farms_per_model","KOR","South Korea","olive_flounder",,25813.6,,,
+"farms_per_model","TUR","Turkey","rainbow_trout",,24290.3,,,
+"farms_per_model","CHN","China","japanese_amberjack",,24092.2,,,
+"farms_per_model","GRC","Greece","european_seabass",,22469.9,,,
+"farms_per_model","GTM","Guatemala","whiteleg_shrimp",,19711.7,,,
+"farms_per_model","CAN","Canada","atlantic_salmon",,19661.4,,,
+"farms_per_model","JPN","Japan","tuna_full",,18778,,,
+"farms_per_model","JPN","Japan","rainbow_trout",,18042,,,
+"farms_per_model","RUS","Russia","atlantic_salmon",,17835,,,
+"farms_per_model","MLT","Malta","tuna_ranch",,16745,,,
+"farms_per_model","GRC","Greece","seabream",,14939.9,,,
+"farms_per_model","ESP","Spain","european_seabass",,14083.9,,,
+"farms_per_model","NZL","New Zealand","rainbow_trout",,13378.8,,,
+"farms_per_model","USA","United States of America","atlantic_salmon",,12855.8,,,
+"farms_per_model","BGD","Bangladesh","mud_crab",,12582,,,
+"farms_per_model","MYS","Malaysia","whiteleg_shrimp",,12516.9,,,
+"farms_per_model","IRL","Ireland","atlantic_salmon",,12256.7,,,
+"farms_per_model","FIN","Finland","rainbow_trout",,11592.3,,,
+"farms_per_model","TUN","Tunisia","seabream",,9776.5,,,
+"farms_per_model","TWN","Taiwan","grouper",,9623,,,
+"farms_per_model","PHL","Philippines","mud_crab",,9463.5,,,
+"farms_per_model","TWN","Taiwan","nile_tilapia",,9310,,,
+"farms_per_model","MYS","Malaysia","tiger_prawn",,9304.2,,,
+"farms_per_model","THA","Thailand","tiger_prawn",,9188.8,,,
+"farms_per_model","ESP","Spain","tuna_ranch",,9177.8,,,
+"farms_per_model","THA","Thailand","tiger_prawn",,8324.8,,,
+"farms_per_model","IND","India","mud_crab",,8200,,,
+"farms_per_model","AUS","Australia","tuna_ranch",,7988,,,
+"farms_per_model","LKA","Sri Lanka","whiteleg_shrimp",,7958.5,,,
+"farms_per_model","ESP","Spain","seabream",,7688.5,,,
+"farms_per_model","HRV","Croatia","european_seabass",,7669.5,,,
+"farms_per_model","PHL","Philippines","whiteleg_shrimp",,7194.4,,,
+"farms_per_model","IDN","Indonesia","mud_crab",,7087.2,,,
+"farms_per_model","PHL","Philippines","nile_tilapia",,7032.4,,,
+"farms_per_model","HRV","Croatia","seabream",,7031.4,,,
+"farms_per_model","DNK","Denmark","rainbow_trout",,6762.6,,,
+"farms_per_model","AUS","Australia","whiteleg_shrimp",,6298,,,
+"farms_per_model","PAN","Panama","whiteleg_shrimp",,5906.3,,,
+"farms_per_model","MYS","Malaysia","milkfish",,5874.1,,,
+"farms_per_model","IDN","Indonesia","grouper",,5864.6,,,
+"farms_per_model","MDG","Madagascar","tiger_prawn",,5774.3,,,
+"farms_per_model","ISL","Iceland","rainbow_trout",,5353.5,,,
+"farms_per_model","COL","Colombia","whiteleg_shrimp",,5215.3,,,
+"farms_per_model","ESP","Spain","european_seabass",,5098.5,,,
+"farms_per_model","SAU","Saudi Arabia","seabream",,5048.9,,,
+"farms_per_model","LKA","Sri Lanka","tiger_prawn",,4525.3,,,
+"farms_per_model","ESP","Spain","drum_croaker",,4269.8,,,
+"farms_per_model","MMR","Myanmar","whiteleg_shrimp",,4206.9,,,
+"farms_per_model","KOR","South Korea","whiteleg_shrimp",,4178.1,,,
+"farms_per_model","BGD","Bangladesh","whiteleg_shrimp",,4108.7,,,
+"farms_per_model","TUR","Turkey","tuna_ranch",,3929.3,,,
+"farms_per_model","ITA","Italy","european_seabass",,3835,,,
+"farms_per_model","MYS","Malaysia","tiger_prawn",,3615.9,,,
+"farms_per_model","ALB","Albania","seabream",,3521.3,,,
+"farms_per_model","HRV","Croatia","tuna_ranch",,3316,,,
+"farms_per_model","RUS","Russia","rainbow_trout",,3312,,,
+"farms_per_model","MMR","Myanmar","mud_crab",,3053.8,,,
+"farms_per_model","GBR","United Kingdom","rainbow_trout",,2992.5,,,
+"farms_per_model","MEX","Mexico","tuna_ranch",,2977.1,,,
+"farms_per_model","OMN","Oman","whiteleg_shrimp",,2917,,,
+"farms_per_model","CUB","Cuba","whiteleg_shrimp",,2621.1,,,
+"farms_per_model","CYP","Cyprus","european_seabass",,2424,,,
+"farms_per_model","MYS","Malaysia","golden_pompano",,2390.8,,,
+"farms_per_model","TUR","Turkey","drum_croaker",,2329.7,,,
+"farms_per_model","KOR","South Korea","seabream",,2269.3,,,
+"farms_per_model","USA","United States of America","drum_croaker",,2265.5,,,
+"farms_per_model","ALB","Albania","european_seabass",,2165.7,,,
+"farms_per_model","MLT","Malta","seabream",,2157.6,,,
+"farms_per_model","CYP","Cyprus","seabream",,2118.6,,,
+"farms_per_model","TUN","Tunisia","european_seabass",,2015.6,,,
+"farms_per_model","JPN","Japan","olive_flounder",,1939.3,,,
+"farms_per_model","GRC","Greece","drum_croaker",,1853.8,,,
+"farms_per_model","USA","United States of America","whiteleg_shrimp",,1741.5,,,
+"farms_per_model","ITA","Italy","seabream",,1687.1,,,
+"farms_per_model","THA","Thailand","mud_crab",,1607,,,
+"farms_per_model","ESP","Spain","seabream",,1592.2,,,
+"farms_per_model","SWE","Sweden","rainbow_trout",,1553.3,,,
+"farms_per_model","NCL","New Caledonia","whiteleg_shrimp",,1475.7,,,
+"farms_per_model","SGP","Singapore","milkfish",,1458.4,,,
+"farms_per_model","DZA","Algeria","seabream",,1448.1,,,
+"farms_per_model","TUN","Tunisia","tuna_ranch",,1355.7,,,
+"farms_per_model","MUS","Mauritius","drum_croaker",,1354.2,,,
+"farms_per_model","MYS","Malaysia","grouper",,1350.1,,,
+"farms_per_model","TWN","Taiwan","whiteleg_shrimp",,1343.5,,,
+"farms_per_model","JPN","Japan","whiteleg_shrimp",,1341.2,,,
+"farms_per_model","EGY","Egypt","whiteleg_shrimp",,1322,,,
+"farms_per_model","KHM","Cambodia","whiteleg_shrimp",,1286.3,,,
+"farms_per_model","BRN","Brunei","whiteleg_shrimp",,1274.3,,,
+"farms_per_model","SLV","El Salvador","whiteleg_shrimp",,1212.2,,,
+"farms_per_model","CRI","Costa Rica","whiteleg_shrimp",,1204.3,,,
+"farms_per_model","ISR","Israel","seabream",,1171.2,,,
+"farms_per_model","OMN","Oman","seabream",,1170.3,,,
+"farms_per_model","KOR","South Korea","asian_seabass",,1152,,,
+"farms_per_model","FRA","France","european_seabass",,1075,,,
+"farms_per_model","PRT","Portugal","seabream",,1027.1,,,
+"farms_per_model","FRA","France","seabream",,996,,,
+"farms_per_model","MEX","Mexico","whiteleg_shrimp",,982.2,,,
+"farms_per_model","ESP","Spain","european_seabass",,966.9,,,
+"farms_per_model","FRA","France","european_seabass",,888.5,,,
+"farms_per_model","HRV","Croatia","drum_croaker",,837.2,,,
+"farms_per_model","THA","Thailand","grouper",,834,,,
+"farms_per_model","TWN","Taiwan","asian_seabass",,718.3,,,
+"farms_per_model","PAN","Panama","japanese_amberjack",,714,,,
+"farms_per_model","PRT","Portugal","european_seabass",,646.2,,,
+"farms_per_model","KOR","South Korea","japanese_amberjack",,621.5,,,
+"farms_per_model","THA","Thailand","mud_crab",,621.5,,,
+"farms_per_model","TWN","Taiwan","japanese_amberjack",,587.4,,,
+"farms_per_model","BLZ","Belize","whiteleg_shrimp",,582.5,,,
+"farms_per_model","MYS","Malaysia","nile_tilapia",,573.7,,,
+"farms_per_model","ESP","Spain","tuna_ranch",,545.4,,,
+"farms_per_model","PSE","Palestine","seabream",,536.2,,,
+"farms_per_model","ARE","United Arab Emirates","european_seabass",,523,,,
+"farms_per_model","THA","Thailand","grouper",,515.7,,,
+"farms_per_model","MEX","Mexico","european_seabass",,493.9,,,
+"farms_per_model","IDN","Indonesia","golden_pompano",,460,,,
+"farms_per_model","SAU","Saudi Arabia","nile_tilapia",,449.5,,,
+"farms_per_model","MYS","Malaysia","nile_tilapia",,424.5,,,
+"farms_per_model","TUN","Tunisia","drum_croaker",,408.7,,,
+"farms_per_model","USA","United States of America","japanese_amberjack",,400,,,
+"farms_per_model","FRA","France","seabream",,391.8,,,
+"farms_per_model","FRA","France","drum_croaker",,376.2,,,
+"farms_per_model","AUS","Australia","whiteleg_shrimp",,365.2,,,
+"farms_per_model","MYS","Malaysia","grouper",,361.5,,,
+"farms_per_model","PHL","Philippines","grouper",,335.2,,,
+"farms_per_model","ESP","Spain","seabream",,329.8,,,
+"farms_per_model","MYS","Malaysia","golden_pompano",,321.7,,,
+"farms_per_model","GUY","Guyana","whiteleg_shrimp",,312.9,,,
+"farms_per_model","DOM","Dominican Republic","whiteleg_shrimp",,305,,,
+"farms_per_model","TUR","Turkey","atlantic_salmon",,294,,,
+"farms_per_model","KHM","Cambodia","mud_crab",,289.2,,,
+"farms_per_model","TWN","Taiwan","tiger_prawn",,286.8,,,
+"farms_per_model","MYS","Malaysia","milkfish",,260.7,,,
+"farms_per_model","DOM","Dominican Republic","seabream",,260,,,
+"farms_per_model","ARE","United Arab Emirates","grouper",,215,,,
+"farms_per_model","EST","Estonia","rainbow_trout",,209.4,,,
+"farms_per_model","KOR","South Korea","grouper",,199.7,,,
+"farms_per_model","TWN","Taiwan","seabream",,198.8,,,
+"farms_per_model","FIN","Finland","atlantic_salmon",,190.8,,,
+"farms_per_model","LKA","Sri Lanka","nile_tilapia",,179.7,,,
+"farms_per_model","MYS","Malaysia","mud_crab",,177.3,,,
+"farms_per_model","MAR","Morocco","european_seabass",,171.5,,,
+"farms_per_model","ARE","United Arab Emirates","whiteleg_shrimp",,166.2,,,
+"farms_per_model","DZA","Algeria","european_seabass",,164,,,
+"farms_per_model","KHM","Cambodia","grouper",,162.5,,,
+"farms_per_model","ISR","Israel","drum_croaker",,161.7,,,
+"farms_per_model","TZA","United Republic of Tanzania","tiger_prawn",,149,,,
+"farms_per_model","ITA","Italy","drum_croaker",,145.7,,,
+"farms_per_model","PAN","Panama","golden_pompano",,142.7,,,
+"farms_per_model","PAK","Pakistan","whiteleg_shrimp",,139.2,,,
+"farms_per_model","PRT","Portugal","tuna_ranch",,134,,,
+"farms_per_model","RUS","Russia","rainbow_trout",,127.7,,,
+"farms_per_model","SEN","Senegal","nile_tilapia",,106.8,,,
+"farms_per_model","NGA","Nigeria","whiteleg_shrimp",,102.5,,,
+"farms_per_model","SAU","Saudi Arabia","grouper",,100,,,
+"farms_per_model","ALB","Albania","tuna_ranch",,96,,,
+"farms_per_model","SGP","Singapore","golden_pompano",,94.9,,,
+"farms_per_model","MLT","Malta","european_seabass",,89.5,,,
+"farms_per_model","ESP","Spain","japanese_amberjack",,87.5,,,
+"farms_per_model","KOR","South Korea","rainbow_trout",,84.5,,,
+"farms_per_model","SGP","Singapore","nile_tilapia",,83.3,,,
+"farms_per_model","ISR","Israel","european_seabass",,82.9,,,
+"farms_per_model","SAU","Saudi Arabia","drum_croaker",,82.6,,,
+"farms_per_model","KOR","South Korea","drum_croaker",,80.5,,,
+"farms_per_model","GEO","Georgia","rainbow_trout",,80,,,
+"farms_per_model","TZA","United Republic of Tanzania","milkfish",,77.6,,,
+"farms_per_model","BRN","Brunei","grouper",,76.3,,,
+"farms_per_model","PYF","French Polynesia","whiteleg_shrimp",,72.7,,,
+"farms_per_model","DOM","Dominican Republic","european_seabass",,70,,,
+"farms_per_model","SAU","Saudi Arabia","european_seabass",,68.5,,,
+"farms_per_model","GRC","Greece","japanese_amberjack",,64.7,,,
+"farms_per_model","MUS","Mauritius","european_seabass",,63.6,,,
+"farms_per_model","MNE","Montenegro","european_seabass",,61.2,,,
+"farms_per_model","CYP","Cyprus","drum_croaker",,60,,,
+"farms_per_model","MEX","Mexico","drum_croaker",,59.9,,,
+"farms_per_model","MAR","Morocco","european_seabass",,57.9,,,
+"farms_per_model","PRK","North Korea","atlantic_salmon",,57.5,,,
+"farms_per_model","MNE","Montenegro","seabream",,54.2,,,
+"farms_per_model","FRA","France","whiteleg_shrimp",,48,,,
+"farms_per_model","LKA","Sri Lanka","milkfish",,44.2,,,
+"farms_per_model","GUY","Guyana","drum_croaker",,44,,,
+"farms_per_model","BRN","Brunei","golden_pompano",,42.4,,,
+"farms_per_model","HKG","Hong Kong S.A.R.","golden_pompano",,41,,,
+"farms_per_model","LKA","Sri Lanka","mud_crab",,39.1,,,
+"farms_per_model","PRT","Portugal","drum_croaker",,38.4,,,
+"farms_per_model","BRN","Brunei","tiger_prawn",,36.8,,,
+"farms_per_model","ARE","United Arab Emirates","nile_tilapia",,36.8,,,
+"farms_per_model","GLP","Guadeloupe","drum_croaker",,36,,,
+"farms_per_model","SGP","Singapore","grouper",,35.8,,,
+"farms_per_model","MTQ","Martinique","drum_croaker",,35.1,,,
+"farms_per_model","DOM","Dominican Republic","drum_croaker",,30,,,
+"farms_per_model","ESP","Spain","tiger_prawn",,29.3,,,
+"farms_per_model","SYC","Seychelles","whiteleg_shrimp",,28.8,,,
+"farms_per_model","ZAF","South Africa","drum_croaker",,26.8,,,
+"farms_per_model","MYS","Malaysia","mud_crab",,26.2,,,
+"farms_per_model","QAT","Qatar","whiteleg_shrimp",,22.9,,,
+"farms_per_model","CPV","Cabo Verde","whiteleg_shrimp",,22.7,,,
+"farms_per_model","SGP","Singapore","whiteleg_shrimp",,21.2,,,
+"farms_per_model","MNP","Northern Mariana Islands","whiteleg_shrimp",,21,,,
+"farms_per_model","DOM","Dominican Republic","nile_tilapia",,20,,,
+"farms_per_model","ESP","Spain","drum_croaker",,19.8,,,
+"farms_per_model","CYP","Cyprus","whiteleg_shrimp",,18.5,,,
+"farms_per_model","ZAF","South Africa","rainbow_trout",,17.8,,,
+"farms_per_model","HKG","Hong Kong S.A.R.","grouper",,17.1,,,
+"farms_per_model","GHA","Ghana","tiger_prawn",,16.7,,,
+"farms_per_model","FJI","Fiji","tiger_prawn",,15.2,,,
+"farms_per_model","SGP","Singapore","mud_crab",,14.2,,,
+"farms_per_model","MMR","Myanmar","grouper",,13.6,,,
+"farms_per_model","MOZ","Mozambique","tiger_prawn",,13.3,,,
+"farms_per_model","GRC","Greece","tiger_prawn",,12.5,,,
+"farms_per_model","PSE","Palestine","european_seabass",,12.5,,,
+"farms_per_model","SUR","Suriname","whiteleg_shrimp",,12.5,,,
+"farms_per_model","ESP","Spain","atlantic_salmon",,11.6,,,
+"farms_per_model","TWN","Taiwan","mud_crab",,11.6,,,
+"farms_per_model","SGP","Singapore","tiger_prawn",,11.2,,,
+"farms_per_model","TUR","Turkey","whiteleg_shrimp",,11,,,
+"farms_per_model","GUM","Guam","whiteleg_shrimp",,10.5,,,
+"farms_per_model","HKG","Hong Kong S.A.R.","seabream",,10.5,,,
+"farms_per_model","FJI","Fiji","mud_crab",,10,,,
+"farms_per_model","LBN","Lebanon","whiteleg_shrimp",,10,,,
+"farms_per_model","TLS","Timor-Leste","milkfish",,10,,,
+"farms_per_model","PER","Peru","olive_flounder",,9.5,,,
+"farms_per_model","MAR","Morocco","drum_croaker",,9.4,,,
+"farms_per_model","MDG","Madagascar","mud_crab",,8.8,,,
+"farms_per_model","PLW","Palau","milkfish",,8.5,,,
+"farms_per_model","GRC","Greece","whiteleg_shrimp",,8.2,,,
+"farms_per_model","BHR","Bahrain","seabream",,8,,,
+"farms_per_model","QAT","Qatar","seabream",,7.6,,,
+"farms_per_model","MOZ","Mozambique","mud_crab",,7.5,,,
+"farms_per_model","ESP","Spain","whiteleg_shrimp",,7.5,,,
+"farms_per_model","ARG","Argentina","rainbow_trout",,6.8,,,
+"farms_per_model","FRA","France","whiteleg_shrimp",,6.8,,,
+"farms_per_model","GUM","Guam","milkfish",,6.7,,,
+"farms_per_model","MYT","Mayotte","drum_croaker",,6.7,,,
+"farms_per_model","PHL","Philippines","golden_pompano",,5.9,,,
+"farms_per_model","TLS","Timor-Leste","whiteleg_shrimp",,5.8,,,
+"farms_per_model","CHL","Chile","drum_croaker",,5.7,,,
+"farms_per_model","BRN","Brunei","nile_tilapia",,5.4,,,
+"farms_per_model","GUM","Guam","nile_tilapia",,5.3,,,
+"farms_per_model","KEN","Kenya","milkfish",,5.3,,,
+"farms_per_model","KEN","Kenya","mud_crab",,5,,,
+"farms_per_model","SUR","Suriname","nile_tilapia",,5,,,
+"farms_per_model","ITA","Italy","whiteleg_shrimp",,4.3,,,
+"farms_per_model","MDV","Maldives","grouper",,3.5,,,
+"farms_per_model","VUT","Vanuatu","whiteleg_shrimp",,3.5,,,
+"farms_per_model","BRN","Brunei","milkfish",,3,,,
+"farms_per_model","REU","Reunion","nile_tilapia",,3,,,
+"farms_per_model","SLB","Solomon Islands","milkfish",,3,,,
+"farms_per_model","SGP","Singapore","seabream",,2.9,,,
+"farms_per_model","KWT","Kuwait","seabream",,2.8,,,
+"farms_per_model","DZA","Algeria","whiteleg_shrimp",,2.3,,,
+"farms_per_model","TZA","United Republic of Tanzania","mud_crab",,2.1,,,
+"farms_per_model","KIR","Kiribati","milkfish",,2,,,
+"farms_per_model","KWT","Kuwait","grouper",,2,,,
+"farms_per_model","LBN","Lebanon","seabream",,2,,,
+"farms_per_model","TUN","Tunisia","whiteleg_shrimp",,1.6,,,
+"farms_per_model","KNA","Saint Kitts and Nevis","nile_tilapia",,1.2,,,
+"farms_per_model","SGP","Singapore","drum_croaker",,1.2,,,
+"farms_per_model","TLS","Timor-Leste","mud_crab",,1.2,,,
+"farms_per_model","BRN","Brunei","mud_crab",,1,,,
+"farms_per_model","LBN","Lebanon","european_seabass",,1,,,
+"farms_per_model","MUS","Mauritius","mud_crab",,1,,,
+"farms_per_model","MUS","Mauritius","seabream",,1,,,
+"farms_per_model","SGP","Singapore","asian_seabass",,0.8,,,
+"farms_per_model","PNG","Papua New Guinea","mud_crab",,0.7,,,
+"farms_per_model","ESP","Spain","whiteleg_shrimp",,0.7,,,
+"farms_per_model","NRU","Nauru","milkfish",,0.5,,,
+"farms_per_model","TUV","Tuvalu","milkfish",,0.5,,,
+"farms_per_model","PLW","Palau","whiteleg_shrimp",,0.4,,,
+"farms_per_model","WSM","Samoa","mud_crab",,0.3,,,
+"farms_per_model","PNG","Papua New Guinea","milkfish",,0,,,

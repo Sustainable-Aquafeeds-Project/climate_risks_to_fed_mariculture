@@ -1,8 +1,6 @@
-table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_of_country_total,pct_of_model,included,reason
+table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_included,pct_of_model,included,reason
 farms_per_model,REU,Reunion,nile_tilapia,,1,3,3,,,,
-fao_production_by_model,REU,Reunion,seabream,,,5,,62.5,,FALSE,
-fao_production_by_model,REU,Reunion,nile_tilapia,,,3,,37.5,,TRUE,
-fao_production_by_model,REU,Reunion,cobia,,,0,,0,,FALSE,
+fao_production_by_country,REU,Reunion,,,,8,,37.5,,,
 fao_production_by_species,REU,Reunion,cobia,Rachycentron canadum,,0,,,,FALSE,
 fao_production_by_species,REU,Reunion,nile_tilapia,Oreochromis spp,,3,,,100,TRUE,
 fao_production_by_species,REU,Reunion,seabream,Pagrus spp,,5,,,100,FALSE,

@@ -1,5 +1,5 @@
-table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_of_country_total,pct_of_model,included,reason
+table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_included,pct_of_model,included,reason
 farms_per_model,SEN,Senegal,nile_tilapia,,1,106.8,106.8,,,,
-fao_production_by_model,SEN,Senegal,nile_tilapia,,,133.2,,100,,TRUE,
+fao_production_by_country,SEN,Senegal,,,,133.2,,100,,,
 fao_production_by_species,SEN,Senegal,nile_tilapia,Sarotherodon melanotheron,,133.2,,,100,TRUE,
 fao_production_by_species,SEN,Senegal,nile_tilapia,Oreochromis niloticus,,0,,,0,TRUE,

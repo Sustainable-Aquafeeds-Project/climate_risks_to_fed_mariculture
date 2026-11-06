@@ -1,6 +1,5 @@
-table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_of_country_total,pct_of_model,included,reason
+table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_included,pct_of_model,included,reason
 farms_per_model,PYF,French Polynesia,whiteleg_shrimp,,1,72.7,72.7,,,,
-fao_production_by_model,PYF,French Polynesia,whiteleg_shrimp,,,60.4,,97.9,,TRUE,
-fao_production_by_model,PYF,French Polynesia,barramundi,,,1.3,,2.1,,FALSE,
+fao_production_by_country,PYF,French Polynesia,,,,61.7,,97.9,,,
 fao_production_by_species,PYF,French Polynesia,barramundi,Lates calcarifer,,1.3,,,100,FALSE,
 fao_production_by_species,PYF,French Polynesia,whiteleg_shrimp,Penaeus stylirostris,,60.4,,,100,TRUE,

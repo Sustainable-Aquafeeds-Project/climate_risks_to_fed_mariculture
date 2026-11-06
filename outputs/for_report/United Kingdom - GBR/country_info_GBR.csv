@@ -1,10 +1,7 @@
-table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_of_country_total,pct_of_model,included,reason
+table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_included,pct_of_model,included,reason
 farms_per_model,GBR,United Kingdom,atlantic_salmon,,212,187482.5,884.4,,,,
 farms_per_model,GBR,United Kingdom,rainbow_trout,,4,2992.5,748.1,,,,
-fao_production_by_model,GBR,United Kingdom,atlantic_salmon,,,368662.8,,98.8,,TRUE,
-fao_production_by_model,GBR,United Kingdom,rainbow_trout,,,4526.6,,1.2,,TRUE,
-fao_production_by_model,GBR,United Kingdom,general_fish,,,102.5,,0,,FALSE,
-fao_production_by_model,GBR,United Kingdom,european_seabass,,,0,,0,,FALSE,
+fao_production_by_country,GBR,United Kingdom,,,,373291.9,,100,,,
 fao_production_by_species,GBR,United Kingdom,atlantic_salmon,Salmo salar,,368660.8,,,100,TRUE,
 fao_production_by_species,GBR,United Kingdom,atlantic_salmon,Salmo trutta,,2,,,0,TRUE,
 fao_production_by_species,GBR,United Kingdom,european_seabass,Dicentrarchus labrax,,0,,,,FALSE,

@@ -1,11 +1,8 @@
-table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_of_country_total,pct_of_model,included,reason
+table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_included,pct_of_model,included,reason
 farms_per_model,BGD,Bangladesh,tiger_prawn,,203,68421.8,337.1,,,,
 farms_per_model,BGD,Bangladesh,mud_crab,,38,12582,331.1,,,,
 farms_per_model,BGD,Bangladesh,whiteleg_shrimp,,13,4108.7,316.1,,,,
-fao_production_by_model,BGD,Bangladesh,general_fish,,,126340.4,,57.4,,FALSE,
-fao_production_by_model,BGD,Bangladesh,tiger_prawn,,,69792.2,,31.7,,TRUE,
-fao_production_by_model,BGD,Bangladesh,mud_crab,,,12726.5,,5.8,,TRUE,
-fao_production_by_model,BGD,Bangladesh,whiteleg_shrimp,,,11234.4,,5.1,,TRUE,
+fao_production_by_country,BGD,Bangladesh,,,,220093.5,,42.6,,,
 fao_production_by_species,BGD,Bangladesh,general_fish,Actinopterygii,,126340.4,,,100,FALSE,
 fao_production_by_species,BGD,Bangladesh,mud_crab,Scylla olivacea,,12726.5,,,100,TRUE,
 fao_production_by_species,BGD,Bangladesh,tiger_prawn,Penaeus monodon,,69792.2,,,100,TRUE,

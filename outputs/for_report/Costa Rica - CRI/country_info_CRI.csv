@@ -1,5 +1,5 @@
-table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_of_country_total,pct_of_model,included,reason
+table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_included,pct_of_model,included,reason
 farms_per_model,CRI,Costa Rica,whiteleg_shrimp,,37,1204.3,32.5,,,,
-fao_production_by_model,CRI,Costa Rica,whiteleg_shrimp,,,2398.9,,100,,TRUE,
+fao_production_by_country,CRI,Costa Rica,,,,2398.9,,100,,,
 fao_production_by_species,CRI,Costa Rica,whiteleg_shrimp,Penaeus vannamei,,2398.9,,,100,TRUE,
 fao_production_by_species,CRI,Costa Rica,whiteleg_shrimp,Natantia,,0,,,0,TRUE,

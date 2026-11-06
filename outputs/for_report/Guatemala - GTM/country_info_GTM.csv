@@ -1,4 +1,4 @@
-table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_of_country_total,pct_of_model,included,reason
+table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_included,pct_of_model,included,reason
 farms_per_model,GTM,Guatemala,whiteleg_shrimp,,11,19711.7,1792,,,,
-fao_production_by_model,GTM,Guatemala,whiteleg_shrimp,,,18623,,100,,TRUE,
+fao_production_by_country,GTM,Guatemala,,,,18623,,100,,,
 fao_production_by_species,GTM,Guatemala,whiteleg_shrimp,Penaeus vannamei,,18623,,,100,TRUE,

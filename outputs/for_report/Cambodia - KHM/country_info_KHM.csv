@@ -1,12 +1,8 @@
-table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_of_country_total,pct_of_model,included,reason
+table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_included,pct_of_model,included,reason
 farms_per_model,KHM,Cambodia,whiteleg_shrimp,,3,1286.3,428.8,,,,
 farms_per_model,KHM,Cambodia,mud_crab,,1,289.2,289.2,,,,
 farms_per_model,KHM,Cambodia,grouper,,1,162.5,162.5,,,,
-fao_production_by_model,KHM,Cambodia,whiteleg_shrimp,,,1090.8,,47.6,,TRUE,
-fao_production_by_model,KHM,Cambodia,barramundi,,,640.4,,27.9,,FALSE,
-fao_production_by_model,KHM,Cambodia,mud_crab,,,250.6,,10.9,,TRUE,
-fao_production_by_model,KHM,Cambodia,general_fish,,,160,,7,,FALSE,
-fao_production_by_model,KHM,Cambodia,grouper,,,150,,6.5,,TRUE,
+fao_production_by_country,KHM,Cambodia,,,,2291.8,,65.1,,,
 fao_production_by_species,KHM,Cambodia,barramundi,Lates calcarifer,,640.4,,,100,FALSE,
 fao_production_by_species,KHM,Cambodia,general_fish,Actinopterygii,,160,,,100,FALSE,
 fao_production_by_species,KHM,Cambodia,grouper,Epinephelus coioides,,150,,,100,TRUE,

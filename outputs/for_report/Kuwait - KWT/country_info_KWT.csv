@@ -1,10 +1,7 @@
-table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_of_country_total,pct_of_model,included,reason
+table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_included,pct_of_model,included,reason
 farms_per_model,KWT,Kuwait,seabream,,1,2.8,2.8,,,,
 farms_per_model,KWT,Kuwait,grouper,,1,2,2,,,,
-fao_production_by_model,KWT,Kuwait,seabream,,,2.2,,35.6,,TRUE,
-fao_production_by_model,KWT,Kuwait,general_fish,,,1.5,,24.4,,FALSE,
-fao_production_by_model,KWT,Kuwait,grouper,,,1.5,,24,,TRUE,
-fao_production_by_model,KWT,Kuwait,barramundi,,,1,,16,,FALSE,
+fao_production_by_country,KWT,Kuwait,,,,6.2,,59.6,,,
 fao_production_by_species,KWT,Kuwait,barramundi,Lates calcarifer,,1,,,100,FALSE,
 fao_production_by_species,KWT,Kuwait,general_fish,Actinopterygii,,1.5,,,100,FALSE,
 fao_production_by_species,KWT,Kuwait,grouper,Epinephelus coioides,,1.5,,,100,TRUE,

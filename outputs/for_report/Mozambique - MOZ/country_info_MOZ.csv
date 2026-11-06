@@ -1,9 +1,7 @@
-table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_of_country_total,pct_of_model,included,reason
+table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_included,pct_of_model,included,reason
 farms_per_model,MOZ,Mozambique,tiger_prawn,,1,13.3,13.3,,,,
 farms_per_model,MOZ,Mozambique,mud_crab,,1,7.5,7.5,,,,
-fao_production_by_model,MOZ,Mozambique,tiger_prawn,,,13.3,,64,,TRUE,
-fao_production_by_model,MOZ,Mozambique,mud_crab,,,7.5,,36,,TRUE,
-fao_production_by_model,MOZ,Mozambique,drum_croaker,,,0,,0,,FALSE,
+fao_production_by_country,MOZ,Mozambique,,,,20.8,,100,,,
 fao_production_by_species,MOZ,Mozambique,drum_croaker,Argyrosomus japonicus,,0,,,,FALSE,
 fao_production_by_species,MOZ,Mozambique,mud_crab,Scylla serrata,,7.5,,,100,TRUE,
 fao_production_by_species,MOZ,Mozambique,tiger_prawn,Penaeus monodon,,13.3,,,100,TRUE,

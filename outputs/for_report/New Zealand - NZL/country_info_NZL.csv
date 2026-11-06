@@ -1,6 +1,5 @@
-table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_of_country_total,pct_of_model,included,reason
+table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_included,pct_of_model,included,reason
 farms_per_model,NZL,New Zealand,rainbow_trout,,23,13378.8,581.7,,,,
-fao_production_by_model,NZL,New Zealand,rainbow_trout,,,12864.4,,99.4,,TRUE,
-fao_production_by_model,NZL,New Zealand,abalone,,,72.4,,0.6,,FALSE,
+fao_production_by_country,NZL,New Zealand,,,,12936.8,,99.4,,,
 fao_production_by_species,NZL,New Zealand,abalone,Haliotis iris,,72.4,,,100,FALSE,
 fao_production_by_species,NZL,New Zealand,rainbow_trout,Oncorhynchus tshawytscha,,12864.4,,,100,TRUE,

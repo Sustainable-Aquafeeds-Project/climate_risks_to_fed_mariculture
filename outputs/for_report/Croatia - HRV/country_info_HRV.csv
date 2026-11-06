@@ -1,15 +1,9 @@
-table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_of_country_total,pct_of_model,included,reason
+table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_included,pct_of_model,included,reason
 farms_per_model,HRV,Croatia,european_seabass,,28,7669.5,273.9,,,,
 farms_per_model,HRV,Croatia,seabream,,26,7031.4,270.4,,,,
 farms_per_model,HRV,Croatia,tuna_ranch,,19,3316,174.5,,,,
 farms_per_model,HRV,Croatia,drum_croaker,,4,837.2,209.3,,,,
-fao_production_by_model,HRV,Croatia,seabream,,,6484.5,,37.5,,TRUE,
-fao_production_by_model,HRV,Croatia,european_seabass,,,6306.7,,36.5,,TRUE,
-fao_production_by_model,HRV,Croatia,tuna,,,3173.5,,18.4,,TRUE,
-fao_production_by_model,HRV,Croatia,general_fish,,,761.7,,4.4,,FALSE,
-fao_production_by_model,HRV,Croatia,drum_croaker,,,539.4,,3.1,,TRUE,
-fao_production_by_model,HRV,Croatia,rainbow_trout,,,12.8,,0.1,,FALSE,
-fao_production_by_model,HRV,Croatia,turbot,,,7.1,,0,,FALSE,
+fao_production_by_country,HRV,Croatia,,,,17285.6,,95.5,,,
 fao_production_by_species,HRV,Croatia,drum_croaker,Argyrosomus regius,,539.4,,,100,TRUE,
 fao_production_by_species,HRV,Croatia,european_seabass,Dicentrarchus labrax,,6306.7,,,100,TRUE,
 fao_production_by_species,HRV,Croatia,general_fish,Actinopterygii,,761.7,,,100,FALSE,

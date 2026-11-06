@@ -1,9 +1,6 @@
-table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_of_country_total,pct_of_model,included,reason
+table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_included,pct_of_model,included,reason
 farms_per_model,DNK,Denmark,rainbow_trout,,12,6762.6,563.5,,,,
-fao_production_by_model,DNK,Denmark,rainbow_trout,,,9784.9,,96.9,,TRUE,
-fao_production_by_model,DNK,Denmark,yellowtail_kingfish,,,238.5,,2.4,,FALSE,
-fao_production_by_model,DNK,Denmark,atlantic_salmon,,,77,,0.8,,FALSE,
-fao_production_by_model,DNK,Denmark,olive_flounder,,,2,,0,,FALSE,
+fao_production_by_country,DNK,Denmark,,,,10102.3,,96.9,,,
 fao_production_by_species,DNK,Denmark,atlantic_salmon,Salmo trutta,,77,,,100,FALSE,
 fao_production_by_species,DNK,Denmark,olive_flounder,Platichthys flesus,,2,,,100,FALSE,
 fao_production_by_species,DNK,Denmark,rainbow_trout,Oncorhynchus mykiss,,9766.9,,,99.8,TRUE,

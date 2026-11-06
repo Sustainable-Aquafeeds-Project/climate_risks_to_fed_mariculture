@@ -1,4 +1,4 @@
-table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_of_country_total,pct_of_model,included,reason
+table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_included,pct_of_model,included,reason
 farms_per_model,EST,Estonia,rainbow_trout,,1,209.4,209.4,,,,
-fao_production_by_model,EST,Estonia,rainbow_trout,,,209.4,,100,,TRUE,
+fao_production_by_country,EST,Estonia,,,,209.4,,100,,,
 fao_production_by_species,EST,Estonia,rainbow_trout,Oncorhynchus mykiss,,209.4,,,100,TRUE,

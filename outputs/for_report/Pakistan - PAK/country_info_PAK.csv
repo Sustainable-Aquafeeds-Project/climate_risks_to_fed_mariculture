@@ -1,6 +1,5 @@
-table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_of_country_total,pct_of_model,included,reason
+table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_included,pct_of_model,included,reason
 farms_per_model,PAK,Pakistan,whiteleg_shrimp,,1,139.2,139.2,,,,
-fao_production_by_model,PAK,Pakistan,barramundi,,,136.8,,50.3,,FALSE,
-fao_production_by_model,PAK,Pakistan,whiteleg_shrimp,,,135.2,,49.7,,TRUE,
+fao_production_by_country,PAK,Pakistan,,,,272,,49.7,,,
 fao_production_by_species,PAK,Pakistan,barramundi,Lates calcarifer,,136.8,,,100,FALSE,
 fao_production_by_species,PAK,Pakistan,whiteleg_shrimp,Penaeus spp,,135.2,,,100,TRUE,

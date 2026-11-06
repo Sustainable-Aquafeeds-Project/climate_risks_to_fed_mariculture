@@ -1,4 +1,4 @@
-table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_of_country_total,pct_of_model,included,reason
+table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_included,pct_of_model,included,reason
 farms_per_model,JPN,Japan,japanese_amberjack,,150,129867.7,865.8,,,,
 farms_per_model,JPN,Japan,seabream,,76,65648,863.8,,,,
 farms_per_model,JPN,Japan,tuna_full,,83,18778,226.2,,,,
@@ -7,15 +7,7 @@ farms_per_model,JPN,Japan,olive_flounder,,3,1939.3,646.4,,,,
 farms_per_model,JPN,Japan,whiteleg_shrimp,,4,1341.2,335.3,,,,
 excluded_farms,JPN,Japan,rainbow_trout,,7,,,,,,Farm too hot in 2025
 excluded_farms,JPN,Japan,tuna_full,,9,,,,,,Farm too hot in 2025
-fao_production_by_model,JPN,Japan,japanese_amberjack,,,133015.8,,53.1,,TRUE,
-fao_production_by_model,JPN,Japan,seabream,,,65239.4,,26,,TRUE,
-fao_production_by_model,JPN,Japan,rainbow_trout,,,17221,,6.9,,TRUE,
-fao_production_by_model,JPN,Japan,tuna,,,16892,,6.7,,TRUE,
-fao_production_by_model,JPN,Japan,general_ascidians,,,11386.4,,4.5,,FALSE,
-fao_production_by_model,JPN,Japan,general_fish,,,3259.8,,1.3,,FALSE,
-fao_production_by_model,JPN,Japan,olive_flounder,,,2146.8,,0.9,,TRUE,
-fao_production_by_model,JPN,Japan,whiteleg_shrimp,,,1335.8,,0.5,,TRUE,
-fao_production_by_model,JPN,Japan,general_invertebrate,,,149.2,,0.1,,FALSE,
+fao_production_by_country,JPN,Japan,,,,250646.2,,94.1,,,
 fao_production_by_species,JPN,Japan,general_ascidians,Halocynthia roretzi,,11386.4,,,100,FALSE,
 fao_production_by_species,JPN,Japan,general_fish,Actinopterygii,,3259.8,,,100,FALSE,
 fao_production_by_species,JPN,Japan,general_invertebrate,Invertebrata,,149.2,,,100,FALSE,

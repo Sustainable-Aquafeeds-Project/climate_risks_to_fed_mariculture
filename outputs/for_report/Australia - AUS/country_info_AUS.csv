@@ -1,14 +1,9 @@
-table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_of_country_total,pct_of_model,included,reason
+table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_included,pct_of_model,included,reason
 farms_per_model,AUS,Australia,atlantic_salmon,,50,69730.3,1394.6,,,,
 farms_per_model,AUS,Australia,tuna_ranch,,10,7988,798.8,,,,
 farms_per_model,AUS,Australia,whiteleg_shrimp,,9,6298,787.2,,,,
 farms_per_model,AUS,Australia,whiteleg_shrimp,,9,365.2,365.2,,,,
-fao_production_by_model,AUS,Australia,atlantic_salmon,,,122758.7,,87.4,,TRUE,
-fao_production_by_model,AUS,Australia,tuna,,,8074,,5.7,,TRUE,
-fao_production_by_model,AUS,Australia,general_fish,,,2927.4,,2.1,,FALSE,
-fao_production_by_model,AUS,Australia,whiteleg_shrimp,,,2847.5,,2,,TRUE,
-fao_production_by_model,AUS,Australia,barramundi,,,2847.4,,2,,FALSE,
-fao_production_by_model,AUS,Australia,abalone,,,989.1,,0.7,,FALSE,
+fao_production_by_country,AUS,Australia,,,,140444.1,,95.2,,,
 fao_production_by_species,AUS,Australia,abalone,Haliotis spp,,989.1,,,100,FALSE,
 fao_production_by_species,AUS,Australia,atlantic_salmon,Salmo salar,,122758.7,,,100,TRUE,
 fao_production_by_species,AUS,Australia,barramundi,Lates calcarifer,,2847.4,,,100,FALSE,

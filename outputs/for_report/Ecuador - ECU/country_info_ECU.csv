@@ -1,9 +1,6 @@
-table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_of_country_total,pct_of_model,included,reason
+table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_included,pct_of_model,included,reason
 farms_per_model,ECU,Ecuador,whiteleg_shrimp,,1308,812642.8,621.3,,,,
-fao_production_by_model,ECU,Ecuador,whiteleg_shrimp,,,730714.3,,100,,TRUE,
-fao_production_by_model,ECU,Ecuador,cobia,,,33.3,,0,,FALSE,
-fao_production_by_model,ECU,Ecuador,general_fish,,,5,,0,,FALSE,
-fao_production_by_model,ECU,Ecuador,drum_croaker,,,0,,0,,FALSE,
+fao_production_by_country,ECU,Ecuador,,,,730752.6,,100,,,
 fao_production_by_species,ECU,Ecuador,cobia,Rachycentron canadum,,33.3,,,100,FALSE,
 fao_production_by_species,ECU,Ecuador,drum_croaker,Sciaenops ocellatus,,0,,,,FALSE,
 fao_production_by_species,ECU,Ecuador,general_fish,Actinopterygii,,5,,,100,FALSE,

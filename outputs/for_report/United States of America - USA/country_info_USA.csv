@@ -1,14 +1,9 @@
-table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_of_country_total,pct_of_model,included,reason
+table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_included,pct_of_model,included,reason
 farms_per_model,USA,United States of America,atlantic_salmon,,21,12855.8,612.2,,,,
 farms_per_model,USA,United States of America,drum_croaker,,5,2265.5,453.1,,,,
 farms_per_model,USA,United States of America,whiteleg_shrimp,,9,1741.5,193.5,,,,
 farms_per_model,USA,United States of America,japanese_amberjack,,1,400,400,,,,
-fao_production_by_model,USA,United States of America,atlantic_salmon,,,28057,,84.5,,TRUE,
-fao_production_by_model,USA,United States of America,drum_croaker,,,2112.4,,6.4,,TRUE,
-fao_production_by_model,USA,United States of America,whiteleg_shrimp,,,1754.2,,5.3,,TRUE,
-fao_production_by_model,USA,United States of America,general_fish,,,643.2,,1.9,,FALSE,
-fao_production_by_model,USA,United States of America,japanese_amberjack,,,400,,1.2,,TRUE,
-fao_production_by_model,USA,United States of America,abalone,,,228,,0.7,,FALSE,
+fao_production_by_country,USA,United States of America,,,,33194.8,,97.4,,,
 fao_production_by_species,USA,United States of America,abalone,Haliotis rufescens,,228,,,100,FALSE,
 fao_production_by_species,USA,United States of America,atlantic_salmon,Salmo salar,,28057,,,100,TRUE,
 fao_production_by_species,USA,United States of America,drum_croaker,Sciaenops ocellatus,,2112.4,,,100,TRUE,
