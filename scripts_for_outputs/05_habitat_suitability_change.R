@@ -54,12 +54,13 @@ HS_change_theme <- function() {
     )
 }
 
+# this_iso <- focus_countries$ISO3_Code[1]
+# out_dir <- focus_countries$dir_name[1]
 HS_change_maps <- function(this_iso, out_dir) {
   these_farms <- assigned_farms %>% filter(ISO3_Code == this_iso)
   models_here <- sort(unique(these_farms$model_name))
 
-  # Species farmed here that have a complete set of HS rasters (ref + every GLW).
-  # Tuna currently only has rasters up to GLW 2.0, so it is skipped here.
+  # Species farmed here that have a complete set of HS rasters (ref + every GLW)
   HS_path   <- file.path(HS_dir, this_iso)
   HS_models <- keep(models_here, \(m) {
     all(file.exists(file.path(HS_path, m, paste0("MR_", lyr_names, ".tif"))))
@@ -73,29 +74,18 @@ HS_change_maps <- function(this_iso, out_dir) {
     message(this_iso, ": no complete HS rasters for ", paste(no_HS, collapse = ", "))
   }
 
+  land_file  <- file.path(prepdata_path, "detailed_land_polys", paste0(this_iso, ".qs"))
+  coast_file <- file.path(prepdata_path, "coastal_zone_polys",  paste0(this_iso, ".qs"))
+  if (!file.exists(land_file) || !file.exists(coast_file)) {
+    warning(this_iso, ": missing detailed land or coastal zone polygons, skipping")
+    return(invisible(NULL))
+  }
+
   # Countries straddling 180° (e.g. FJI) need everything shifted to 0..360 to match the bbox
   shift_raster <- crosses_antimeridian(this_iso)
   these_farms  <- shift_for_bbox(these_farms, this_iso)
-  this_land    <- file.path(prepdata_path, "detailed_land_polys", paste0(this_iso, ".qs")) %>%
-    qs_read()
-
-  # Band around the coast used to limit gap-filling. The fill is only one 0.25°
-  # cell wide, so a planar ~0.6° buffer is ample and avoids geodesic-buffer
-  # topology problems on shifted (0..360) geometries.
-  coast_zone <- land %>% filter(ISO3_Code == this_iso)
-  coast_zone <- if (nrow(coast_zone) == 0) {
-    warning(this_iso, ": no land polygon in `land`, coastal gaps not filled")
-    NULL
-  } else {
-    s2 <- sf_use_s2()
-    suppressMessages(sf_use_s2(FALSE))
-    on.exit(suppressMessages(sf_use_s2(s2)), add = TRUE)
-    coast_zone %>%
-      shift_for_bbox(this_iso) %>%
-      st_make_valid() %>%
-      st_buffer(0.6) %>%
-      vect()
-  }
+  this_land    <- qs_read(land_file)
+  coast_zone   <- qs_read(coast_file)
 
   # One SpatRaster per species: layers = ref + each GLW, scaled to 0-1
   HS_rasts <- map(
