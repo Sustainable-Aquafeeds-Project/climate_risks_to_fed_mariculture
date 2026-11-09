@@ -54,11 +54,11 @@ First check that all the files in the folder are complete.
 
 prod_path <- file.path(outs_path, "data", "farm_production")
 production_files <- prod_path %>% 
-  list.files(full.names = TRUE, recursive = TRUE, pattern = "MC5000.qs$") %>% 
+  list.files(full.names = TRUE, recursive = TRUE, pattern = "MC500.qs$") %>% 
   str_subset("testing", negate = T) %>% 
-  str_subset("RESCALED", negate = T)
+  str_subset("SCALED", negate = T)
 
-# here("src", "check_production_files.R") %>% source(echo = T)
+here("src", "check_production_files.R") %>% source(echo = T)
 ```
 
 And display how many farms are present/missing.
@@ -288,75 +288,69 @@ rm(assigned_farms)
 qs_save(assigned_farms_final, file.path(prepdata_path, "assigned_farms_final.qs"))
 ```
 
-Next, we need to rescale the production files of all the other farms in each of the countries where we excluded at least one farm, because the prod_perfarm has changed.
+Next, we need to scale the production files of all farms.
 
-Note that the following code creates duplicates of farm production files rather than rewriting the old files. This is in case we decide to run this process again, or differently, we don't lose the original files.
+Note that the following code creates duplicates of farm production files rather than rewriting the old files. This is in case we decide to run this process again, or differently, we don't lose the original files. Because of this, there is no check here to skip existing filenames.
 
 ```{r}
-#| code-summary: "Rescale the data generated within the remaining farms so that the country's overall production remains the same even when farms are excluded"
+#| code-summary: "Rescale the data generated for each farm"
 #| eval: false
 
-farms_excluded <- assigned_farms_old %>% 
-  filter(farm_ID %in% setdiff(assigned_farms_old$farm_ID, assigned_farms_final$farm_ID))
+assigned_farms_final <- qs_read(file.path(prepdata_path, "assigned_farms_final.qs"))
+assigned_farms_final_ls <- assigned_farms_final %>% 
+  sf::st_drop_geometry() %>% 
+  mutate(filename = file.path(outs_path, "data", "farm_production", paste0("production_results_farmID_", fix_int(farm_ID, 8), "_MC500.qs")), 
+  exists = file.exists(filename)) %>% 
+    filter(exists) %>% 
+  group_by(farm_ID) %>% 
+  group_split()
 
-groups_excluded <- farms_excluded %>% 
-  distinct(country, model_name)
+plan(multisession, workers = parallelly::availableCores() - 2)
 
-# g <- 2 # Atlantic salmon in Chile
-walk(
-  1:nrow(groups_excluded),
-  function(g) {
-    remaining_farms <- assigned_farms_final %>% 
-      filter(country == groups_excluded$country[g] & model_name == groups_excluded$model_name[g])
+# af <- assigned_farms_final_ls[[1]]
+future_walk(
+  assigned_farms_final_ls,
+  function(af) {
+    # Load consolidated (unscaled) data
+    consolidated_data <- qs_read(af$filename)
 
-    # If nrow(remaining_farms) == 0 then there are no non-excluded farms, nothing to rescale
-    if (nrow(remaining_farms) > 0) {
-      remaining_files <- file.path(
-        outs_path, "data", "farm_production", paste0("production_results_farmID_", fix_int(remaining_farms$farm_ID, 8), "_MC5000.qs")
-      )
-      rescaled_files <- file.path(
-        outs_path, "data", "farm_production", paste0("production_results_farmID_", fix_int(remaining_farms$farm_ID, 8), "_RESCALED_MC5000.qs")
-      )
+    # Get the representative individual weight
+    rep_ind <- consolidated_data[["2025"]][["stats"]]$weight
+    rep_ind <- unname(rep_ind[nrow(rep_ind), 2]) # get harvest weight (g)
 
-      old_prod_perfarm <- assigned_farms_old %>% 
-        filter(country == groups_excluded$country[g] & model_name == groups_excluded$model_name[g]) %>% 
-        pull(prod_perfarm) %>% unique()
-      new_prod_perfarm <- remaining_farms %>% pull(prod_perfarm) %>% unique()
-      prod_perfarm_increase <- new_prod_perfarm/old_prod_perfarm
+    # Get scaling factor from harvest weight (g) and per-farm production (t)
+    final_pop <- (af$prod_perfarm * 10^6)/rep_ind
 
-      # old_fnm <- remaining_files[1]
-      # new_fnm <- rescaled_files[1]
-      walk2(
-        remaining_files, rescaled_files,
-        function(old_fnm, new_fnm) {
+    # Get the growtimes from the "days" element
+    days <- consolidated_data[["2025"]][["days"]]
+    grow_times <- c(t_start = first(days), t_end = last(days), dt = 1L)
 
-          data_all  <- qs_read(old_fnm)
-          vars <- c("weight_scaled", "dw_scaled", "ing_act_scaled", "total_excr_scaled", "food_prov_scaled")
-          
-          # dat <- data_all[[2]]
-          data_all_rescaled <- map(
-            data_all, 
-            function(dat) {
-              for (var in vars) {
-                vardat     <- dat[["stats"]][[var]]                # get both columns
-                vardat[,2] <- vardat[,2]/vardat[,1]                # express sd as proportion
-                vardat[,1] <- vardat[,1] * prod_perfarm_increase   # rescale mean
-                vardat[,2] <- vardat[,2] * prod_perfarm_increase   # rescale sd
-                vardat[,2] <- vardat[,2] * vardat[,1]              # re-express sd as absolute
-                dat[["stats"]][[var]] <- vardat                    # put data back
-              }
-              dat
-            }
+    # Get population based on species mortality rate
+    sp <- file.path(prepdata_path, "species_parameters", paste0("species_parameters_", af$model_name, ".qs")) %>% qd_read()
+    pop <- generate_pop(harvest_n = final_pop, mort = sp[["mortmyt"]], times = grow_times)
+
+    # Finally, scale farm production each year
+    scaled_data <- map(
+      consolidated_data,
+      function(cd) {
+        sd <- scale_farm_population(
+          cd, N_pop = pop, 
+          scaled_vars = c("weight", "dw", "food_prov", "ing_act", "total_excr") # "weight" "dw" "rel_feeding" "food_prov" "ing_act" "anab" "catab" "total_excr" "metab"
           )
+        list(
+          days = cd[["days"]],
+          stats = c(cd[["stats"]], sd[["stats"]])
+        )
+      }
+    )
 
-          qs_save(data_all_rescaled, new_fnm)
-          
-        }
-      )
-    }
+    # Save scaled data
+    qs_save(scaled_data, str_replace(af$filename, ".qs", "_SCALED.qs"))
   },
   .progress = T
 )
+
+plan(sequential) 
 ```
 
 # Consolidated data
