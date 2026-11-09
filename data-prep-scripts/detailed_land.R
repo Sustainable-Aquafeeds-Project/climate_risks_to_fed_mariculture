@@ -5,26 +5,34 @@ library(sf)
 library(here)
 library(tidyverse)
 library(qs2)
+library(furrr)
+library(future)
 
 here("src/dirs.R") %>% source()
 here("src/country_bboxes.R") %>% source()
 
 land_path <- file.path(prepdata_path, "detailed_land_polys")
+coast_path <- file.path(prepdata_path, "coastal_zone_polys")
 dir.create(land_path, showWarnings = F)
+dir.create(coast_path, showWarnings = F)
 
 assigned_farms_final <- file.path(prepdata_path, "assigned_farms_final.qs") %>% qs_read()
 isos <- assigned_farms_final %>% pull(ISO3_Code) %>% unique() %>% sort()
 
-# Comment out to completely regenerate
-isos_files <- file.path(land_path, paste0(isos, ".qs"))
-isos <- isos[which(!file.exists(isos_files))]
+land_files <- file.path(land_path, paste0(isos, ".qs"))
+coast_files <- file.path(coast_path, paste0(isos, ".qs"))
+
+# Only create files that don't already exist (delete the files to regenerate)
+land_isos <- isos[!file.exists(land_files)]
+coast_isos <- isos[!file.exists(coast_files)]
 
 # The OSM split land polygons are planar-valid but not always valid on the sphere,
 # so s2 throws "Loop 0 is not valid: Edge crosses edge" for some countries.
 sf_use_s2(FALSE)
 
+# 1. Detailed land polygons ----
 walk(
-  isos,
+  land_isos,
   function(this_iso) {
     this_bbox <- bbox_lims(this_iso)
     this_bbox <- st_bbox(c(
@@ -48,4 +56,22 @@ walk(
   .progress = T
 )
 
+# 2. Coastal zone polygons ----
+# Buffer around the land polygons (in degrees, since s2 is off), read from the files saved above
+plan(multisession, workers = 15)
+future_walk(
+  coast_isos,
+  function(this_iso) {
+    this_land <- file.path(land_path, paste0(this_iso, ".qs")) %>% qs_read()
+
+    this_coast <- this_land %>% 
+      st_simplify(dTolerance = 0.075, preserveTopology = TRUE) %>%   # ~10% of the buffer
+      st_buffer(0.75, nQuadSegs = 5)  # This is 0.75 degrees
+    this_coast <- st_make_valid(this_coast)
+
+    qs_save(this_coast, file.path(coast_path, paste0(this_iso, ".qs")))
+  },
+  .progress = T
+)
 sf_use_s2(TRUE)
+plan(sequential)
