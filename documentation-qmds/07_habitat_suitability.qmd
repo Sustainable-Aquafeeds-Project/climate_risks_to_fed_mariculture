@@ -98,9 +98,9 @@ EEZ_by_FAO_full <- file.path(prepdata_path, "EEZ_data_with_FAO_regions.qs") %>%
   st_transform(crs = 4326) %>%
   st_make_valid()
 
-data_source <- if (str_detect(here(), "/mnt/rdsi")) {rdsi_path} else {bigdata_path}
+data_source <- if (str_detect(here(), "/mnt/rdsi")) {file.path(rdsi_path, "raw_data")} else {bigdata_path}
 
-tos_rast_fnms <- file.path(rdsi_path, "raw_data", "ESGF", "EC-Earth3P-HR", "projected_adjusted") %>% 
+tos_rast_fnms <- file.path(data_source, "ESGF", "EC-Earth3P-HR", "projected_adjusted") %>% 
   list.files(full.names = T) %>% sort()
 
 tos_dates <- str_extract(basename(tos_rast_fnms), "\\d{4}-\\d{2}-\\d{2}")
@@ -126,6 +126,7 @@ Habitat suitability is calculated for all species in all countries, even if that
 # Rasterise the union of all EEZs onto the SST grid so we can mask ocean cells outside any EEZ to NA before running the model.
 ref_rast <- rast(tos_rast_fnms[1])
 ref_crs  <- crs(ref_rast)
+
 
 sf_use_s2(FALSE)
 eez_union <- EEZ_by_FAO_full %>%
@@ -303,9 +304,7 @@ pwalk(
 )
 ```
 
-Habitat suitability is then saved per country EEZ, per species, and per decade (manually defined). Since it would be way too many plots to show HS (or relative change in HS) over all production years, instead we're going to save absolute HS in each decade and relative change in HS compared to the reference.
-
-We also decided to save HS in "global warming levels" using the corresponding periods defined in [Table 1 here](https://climatedata.ca/resource/introduction-to-global-warming-levels/).
+Habitat suitability is then saved per country EEZ, per species, and per decade (manually defined). We also decided to save HS in "global warming levels" using the corresponding periods defined in [Table 1 here](https://climatedata.ca/resource/introduction-to-global-warming-levels/).
 
 ```{r decadal-HS}
 #| code-summary: Calculate (absolute) decadal mean HS rasters per country and species
@@ -363,15 +362,14 @@ jobs <- map(
   filter(lengths(in_files) == files_req) %>%   # drop decades with missing input files
   mutate(out_file = file.path(HS_dec_dir, iso, model, paste0(metric, "_", dec_name, ".tif")))
 
-# todo <- filter(jobs, !file.exists(out_file))
-todo <- jobs
+todo <- filter(jobs, !file.exists(out_file))
 message(nrow(todo), " of ", nrow(jobs), " decadal files to create")
 
 walk(unique(dirname(todo$out_file)), dir.create, recursive = TRUE, showWarnings = FALSE)
 
 # This "mean" captures different things for the different metrics (FR and MR).
 # Decadal mean FR is the annual habitat suitability score, with a minimum of 0 and a maximum of 365 (0-1 for all days).
-# Dacadal mean MR is the annual surplus energy available to an individual at harvest size (kJ). This has no maximum, and may be negative.
+# Decadal mean MR is the annual surplus energy available to an individual at harvest size (kJ). This has no maximum, and may be negative.
 walk2(
   todo$in_files,
   todo$out_file,
@@ -383,13 +381,6 @@ walk2(
   .progress = T
 )
 ```
-
-# Re-consolidate habitat suitability
-
-Finally, we narrow down the HS files to those that we actually want to plot. For now, we're going to look at:
-
-- The species that are actually grown in each country
-- The GLW levels, relative to today
 
 ::: {style="display: flex; justify-content: space-between;"}
 [← Previous: Choosing species](01_choosing_species.qmd)
