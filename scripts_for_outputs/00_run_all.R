@@ -7,9 +7,11 @@ source(here("src/dirs.R"))
 
 # General data shared across all scripts
 reports_dir    <- file.path(outs_path, "for_report")
-# assigned_farms <- file.path(prepdata_path, "assigned_farms_final.qs") %>% qs_read()
-assigned_farms <- file.path(prepdata_path, "assigned_farms.qs") %>% qs_read() # TEMPORARY
-land           <- file.path(prepdata_path, "my_world.qs") %>% qs_read() # may not need this
+assigned_farms <- file.path(prepdata_path, "assigned_farms_final.qs") %>% 
+  qs_read() %>% 
+  arrange(ISO3_Code)
+# assigned_farms <- file.path(prepdata_path, "assigned_farms.qs") %>% qs_read() # TEMPORARY
+# land           <- file.path(prepdata_path, "my_world.qs") %>% qs_read() # may not need this
 
 GLW_ls <- list(
   "GLW_1.5" = 2018:2037,
@@ -64,16 +66,16 @@ source(here("scripts_for_outputs/01_map_of_farms.R"))
 # Step 3: Collate country summary tables (farms per model, excluded farms, FAO production) into one csv per country
 source(here("scripts_for_outputs/02_country_info.R"))
 
-country_info <- file.path(outs_path, "for_report") %>% 
-  list.files(recursive = T, pattern = "country_info_", full.name = T) %>% 
-  str_subset("all.csv", negate = T) %>% 
-  map_dfr(read_csv, show_col_types = FALSE) %>% 
-  # Exclude these for now, once decisions.xlsx is up to date these will be correct
-  filter(table != "excluded_farms") %>% 
-  arrange(table, -production_t) %>% 
-  dplyr::select(-any_of(c("n_farms", "production_perfarm_t", "reason")))
-
-write.csv(country_info, file.path(outs_path, "for_report", "country_info_all.csv"), na = "", row.names = FALSE)
+  # Step 3a: consolidate all the stats together so it's easier to transfer
+  file.path(outs_path, "for_report") %>% 
+    list.files(recursive = T, pattern = "country_info_", full.name = T) %>% 
+    str_subset("all.csv", negate = T) %>% 
+    map_dfr(read_csv, show_col_types = FALSE) %>% 
+    # Exclude these for now, once decisions.xlsx is up to date these will be correct
+    filter(table != "excluded_farms") %>% 
+    arrange(table, -production_t) %>% 
+    dplyr::select(-any_of(c("n_farms", "production_perfarm_t", "reason"))) %>% 
+    write.csv(file.path(outs_path, "for_report", "country_info_all.csv"), na = "", row.names = FALSE)
 
 # Step 4: Dot-and-line plot of projected biomass change per model at each GLW
 source(here("scripts_for_outputs/03_production_change.R"))
