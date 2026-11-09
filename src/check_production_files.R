@@ -4,13 +4,13 @@
 # Each file should be a list of 75 elements named "2025"-"2099".
 # Each element should contain:
 #   - $days: a numeric vector of length N
-#   - $stats: a list of 10 response matrices, each with N rows
+#   - $stats: a list of 9 response matrices, each with N rows
 #
-# The 10 expected response matrices:
-#   weight, dw, T_response, rel_feeding, ing_act, anab, catab,
+# The 9 expected response matrices:
+#   weight, dw, rel_feeding, ing_act, anab, catab,
 #   total_excr, metab, food_prov
-# ("*_scaled" variables are no longer produced by the production runs and are
-# ignored if present.)
+# ("*_scaled" variables and "T_response" are no longer produced by the
+# production runs and are ignored if present.)
 #
 # Additional data quality checks (Check 6):
 #   - Weight must increase at some point (not monotonically decreasing)
@@ -35,8 +35,8 @@ source(here("src", "dirs.R"))
 expected_years <- as.character(2025:2099)
 expected_n_years <- length(expected_years) # 75
 
-expected_response_names <- c("weight", "dw", "T_response", "rel_feeding", "ing_act", "anab", "catab", "total_excr", "metab", "food_prov")
-expected_n_responses <- length(expected_response_names) # 10
+expected_response_names <- c("weight", "dw", "rel_feeding", "ing_act", "anab", "catab", "total_excr", "metab", "food_prov")
+expected_n_responses <- length(expected_response_names) # 9
 
 # ---------- Find production files ----------
 if (length(production_files) == 0) {

@@ -21,8 +21,7 @@ source(here("src", "other_functions.R"))
 
 # =========================================================================
 # ---- SET THE FARM TO INVESTIGATE HERE ----
-farm_ID_to_check <- 00010339
-
+farm_ID_to_check <- 00095648
 
 # Harvest years to plot in step 6. Default: 2025, 2099, and one per decade between.
 years_to_plot <- c(2025, seq(2030, 2090, by = 10), 2099)
@@ -33,12 +32,12 @@ years_to_plot <- c(2025, seq(2030, 2090, by = 10), 2099)
 
 production_file <- file.path(
   outs_path, "data", "farm_production",  
-  paste0("production_results_farmID_", fix_int(farm_ID_to_check, 8), "_MC5000.qs")
+  paste0("production_results_farmID_", fix_int(farm_ID_to_check, 8), "_MC500.qs")
 )
 if (!file.exists(production_file)) {
   production_file <- file.path(
     outs_path, "data", "farm_production", "excluded", 
-    paste0("production_results_farmID_", fix_int(farm_ID_to_check, 8), "_MC5000.qs")
+    paste0("production_results_farmID_", fix_int(farm_ID_to_check, 8), "_MC500.qs")
   )
 }
 
@@ -128,25 +127,25 @@ fp <- file.path(prepdata_path, "feed_parameters", paste0(farm_info$feed_name, ".
 
 gd <- sp[["gd"]] |> as.integer()
 
-# ---------- 3. Feed components ----------
-fp_df <- tibble(
-  Macronutrient = c("Protein", "Lipid", "Carbohydrate"),
-  Total = c(fp[["protein"]]$macro, fp[["lipid"]]$macro, fp[["carb"]]$macro),
-  Digestible = c(fp[["protein"]]$digestibility, fp[["lipid"]]$digestibility, fp[["carb"]]$digestibility)
-) %>% 
-  mutate(Digestible = Digestible * Total) %>% 
-  pivot_longer(cols = c(Total, Digestible), names_to = "component", values_to = "value")
+# # ---------- 3. Feed components ----------
+# fp_df <- tibble(
+#   Macronutrient = c("Protein", "Lipid", "Carbohydrate"),
+#   Total = c(fp[["protein"]]$macro, fp[["lipid"]]$macro, fp[["carb"]]$macro),
+#   Digestible = c(fp[["protein"]]$digestibility, fp[["lipid"]]$digestibility, fp[["carb"]]$digestibility)
+# ) %>% 
+#   mutate(Digestible = Digestible * Total) %>% 
+#   pivot_longer(cols = c(Total, Digestible), names_to = "component", values_to = "value")
 
-ggsave(
-  file.path(troubleshoot_path, "feed_components.png"),
-  ggplot(fp_df, aes(x = Macronutrient, y = value, fill = component)) +
-    geom_col(alpha = 0.5, colour = "black", position = "identity") +
-    prettyplot() +
-    theme(legend.position = "right") +
-    scale_fill_brewer(palette = "Set1"),
-  height = 6.5,
-  width = 7.5
-)
+# ggsave(
+#   file.path(troubleshoot_path, "feed_components.png"),
+#   ggplot(fp_df, aes(x = Macronutrient, y = value, fill = component)) +
+#     geom_col(alpha = 0.5, colour = "black", position = "identity") +
+#     prettyplot() +
+#     theme(legend.position = "right") +
+#     scale_fill_brewer(palette = "Set1"),
+#   height = 6.5,
+#   width = 7.5
+# )
 
 # ---------- 4. Daily temperatures ----------
 temp_file <- file.path(prepdata_path, "assigned_farms_alltemps", paste0("farm_", fix_int(farm_info$farm_ID, 8), ".qs"))
