@@ -86,3 +86,14 @@ source(here("scripts_for_outputs/04_feed_per_biomass_change.R"))
 # Step 6: Maps of change in habitat suitability at each GLW, per species and production-weighted
 source(here("scripts_for_outputs/05_habitat_suitability_change.R"))
 
+# Step 7: Tables of mean habitat suitability and % change at each GLW (whole EEZ and within 50 km of the coast)
+source(here("scripts_for_outputs/06_habitat_suitability_change_stats.R"))
+
+  # Step 7a: consolidate all the stats together so it's easier to transfer
+  file.path(outs_path, "for_report") %>% 
+    list.files(recursive = T, pattern = "HS_change_stats_", full.name = T) %>% 
+    str_subset("all.csv", negate = T) %>% 
+    map_dfr(read_csv, show_col_types = FALSE) %>% 
+    arrange(zone, ISO3_Code, model_name) %>% 
+    write.csv(file.path(outs_path, "for_report", "HS_change_stats_all.csv"), na = "", row.names = FALSE)
+

@@ -23,7 +23,8 @@ lyr_names <- c("ref_2015_2024", names(GLW_ls))
 fill_coastal_gaps <- function(r, coast_zone, w = 3) {
   if (is.null(coast_zone)) return(r)
   filled <- focal(r, w, "mean", na.rm = TRUE, na.policy = "only")
-  cover(r, mask(filled, coast_zone))
+  # terra::mask() needs a SpatVector, not an sf/sfc object
+  cover(r, mask(filled, vect(coast_zone)))
 }
 
 # Shift a -180..180 raster to 0..360 (terra::rotate() only goes the other way)
@@ -84,8 +85,9 @@ HS_change_maps <- function(this_iso, out_dir) {
   # Countries straddling 180° (e.g. FJI) need everything shifted to 0..360 to match the bbox
   shift_raster <- crosses_antimeridian(this_iso)
   these_farms  <- shift_for_bbox(these_farms, this_iso)
-  this_land    <- qs_read(land_file)
-  coast_zone   <- qs_read(coast_file)
+  # st_make_valid() first: the antimeridian split fails on invalid polygons (e.g. RUS coast)
+  this_land    <- qs_read(land_file)  %>% st_make_valid() %>% shift_for_bbox(this_iso)
+  coast_zone   <- qs_read(coast_file) %>% st_make_valid() %>% shift_for_bbox(this_iso)
 
   # One SpatRaster per species: layers = ref + each GLW, scaled to 0-1
   HS_rasts <- map(
@@ -109,9 +111,13 @@ HS_change_maps <- function(this_iso, out_dir) {
   HS_weights <- set_names(HS_weights$value, HS_weights$model_name)[HS_models]
   HS_change_weighted <- weighted_HS(HS_change, HS_weights)
 
-  # `farm_layer` is NULL for the weighted map, which has no farm markers
-  plot_HS_change <- function(r, farm_layer = NULL) {
-    lim <- max(abs(minmax(r)), na.rm = T)
+  # `farm_layer` is NULL for the weighted map, which has no farm markers.
+  # Colour limits are capped at the 95th percentile of |change| across all layers:
+  # a few cells with near-zero reference HS have huge relative changes (>10000%)
+  # that would otherwise flatten the colour scale. Values beyond the cap are
+  # squished to the end colours rather than dropped.
+  plot_HS_change <- function(r, farm_layer = NULL, cap_prob = 0.95) {
+    lim <- quantile(abs(values(r, na.rm = TRUE)), probs = cap_prob, names = FALSE)
     ggplot() +
       geom_spatraster(data = fill_coastal_gaps(r, coast_zone)) +
       geom_sf(data = this_land, fill = "grey85", colour = "grey55", linewidth = 0.2) +
@@ -121,7 +127,7 @@ HS_change_maps <- function(this_iso, out_dir) {
       scale_fill_gradientn(
         limits = c(-lim, lim), colours = rev(cmocean("balance")(256)),
         labels = scales::label_percent(), na.value = "transparent",
-        name = "Change in\nhabitat\nsuitability"
+        oob = scales::squish, name = "Change in\nhabitat\nsuitability"
       ) +
       do.call(coord_sf, bbox_lims(this_iso)) +
       labs(x = NULL, y = NULL) +
