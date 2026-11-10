@@ -1,0 +1,3 @@
+zone,ISO3_Code,country,model_name,production_weight,mean_HS_ref_2015_2024,mean_HS_GLW_1.5,mean_HS_GLW_2.0,mean_HS_GLW_3.0,mean_HS_GLW_4.0,change_pct_GLW_1.5,change_pct_GLW_2.0,change_pct_GLW_3.0,change_pct_GLW_4.0
+EEZ,MYT,Mayotte,drum_croaker,1,27676.277,25572.144,20386.885,7327.406,-4104.848,-7.603,-26.338,-73.525,-114.832
+EEZ,MYT,Mayotte,production_weighted,,27676.277,25572.144,20386.885,7327.406,-4104.848,-7.603,-26.338,-73.525,-114.832

@@ -1,0 +1,5 @@
+zone,ISO3_Code,country,model_name,production_weight,mean_HS_ref_2015_2024,mean_HS_GLW_1.5,mean_HS_GLW_2.0,mean_HS_GLW_3.0,mean_HS_GLW_4.0,change_pct_GLW_1.5,change_pct_GLW_2.0,change_pct_GLW_3.0,change_pct_GLW_4.0
+EEZ,KNA,Saint Kitts and Nevis,nile_tilapia,1,4226.108,4501.335,4999.87,5697.013,5454.441,6.513,18.309,34.805,29.065
+EEZ,KNA,Saint Kitts and Nevis,production_weighted,,4226.108,4501.335,4999.87,5697.013,5454.441,6.513,18.309,34.805,29.065
+coastal_50km,KNA,Saint Kitts and Nevis,nile_tilapia,1,4181.378,4461.908,4969.091,5684.019,5471.478,6.709,18.839,35.936,30.853
+coastal_50km,KNA,Saint Kitts and Nevis,production_weighted,,4181.378,4461.908,4969.091,5684.019,5471.478,6.709,18.839,35.936,30.853

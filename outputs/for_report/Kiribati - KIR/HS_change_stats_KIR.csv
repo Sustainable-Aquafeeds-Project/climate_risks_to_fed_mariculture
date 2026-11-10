@@ -1,0 +1,5 @@
+zone,ISO3_Code,country,model_name,production_weight,mean_HS_ref_2015_2024,mean_HS_GLW_1.5,mean_HS_GLW_2.0,mean_HS_GLW_3.0,mean_HS_GLW_4.0,change_pct_GLW_1.5,change_pct_GLW_2.0,change_pct_GLW_3.0,change_pct_GLW_4.0
+EEZ,KIR,Kiribati,milkfish,1,71185.646,71144.35,70759.65,69373.829,67177.656,-0.058,-0.598,-2.545,-5.63
+EEZ,KIR,Kiribati,production_weighted,,71185.646,71144.35,70759.65,69373.829,67177.656,-0.058,-0.598,-2.545,-5.63
+coastal_50km,KIR,Kiribati,milkfish,1,71184.039,71152.868,70670.128,69273.679,66896.806,-0.044,-0.722,-2.684,-6.023
+coastal_50km,KIR,Kiribati,production_weighted,,71184.039,71152.868,70670.128,69273.679,66896.806,-0.044,-0.722,-2.684,-6.023

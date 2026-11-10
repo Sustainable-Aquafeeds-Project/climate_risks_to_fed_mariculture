@@ -1,0 +1,3 @@
+zone,ISO3_Code,country,model_name,production_weight,mean_HS_ref_2015_2024,mean_HS_GLW_1.5,mean_HS_GLW_2.0,mean_HS_GLW_3.0,mean_HS_GLW_4.0,change_pct_GLW_1.5,change_pct_GLW_2.0,change_pct_GLW_3.0,change_pct_GLW_4.0
+EEZ,REU,Reunion,nile_tilapia,1,599.955,857.202,1706.65,2893.346,3817.378,42.878,184.463,382.261,536.277
+EEZ,REU,Reunion,production_weighted,,599.955,857.202,1706.65,2893.346,3817.378,42.878,184.463,382.261,536.277

@@ -1,0 +1,7 @@
+zone,ISO3_Code,country,model_name,production_weight,mean_HS_ref_2015_2024,mean_HS_GLW_1.5,mean_HS_GLW_2.0,mean_HS_GLW_3.0,mean_HS_GLW_4.0,change_pct_GLW_1.5,change_pct_GLW_2.0,change_pct_GLW_3.0,change_pct_GLW_4.0
+EEZ,MOZ,Mozambique,mud_crab,0.36,4766.125,4749.31,4701.946,4452.756,4019.134,-0.353,-1.347,-6.575,-15.673
+EEZ,MOZ,Mozambique,tiger_prawn,0.6399999999999999,2715.335,2725.037,2750.353,2708.976,2540.91,0.357,1.29,-0.234,-6.424
+EEZ,MOZ,Mozambique,production_weighted,,3453.619,3453.775,3452.927,3336.737,3073.071,0.005,-0.02,-3.384,-11.019
+coastal_50km,MOZ,Mozambique,mud_crab,0.36,4788.798,4768.905,4729.067,4470.619,4037.58,-0.415,-1.247,-6.644,-15.687
+coastal_50km,MOZ,Mozambique,tiger_prawn,0.6399999999999999,2740.289,2746.032,2776.604,2734.641,2564.943,0.21,1.325,-0.206,-6.399
+coastal_50km,MOZ,Mozambique,production_weighted,,3477.753,3474.267,3479.49,3359.593,3095.093,-0.1,0.05,-3.398,-11.003

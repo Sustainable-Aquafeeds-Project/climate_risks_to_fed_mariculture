@@ -1,0 +1,5 @@
+zone,ISO3_Code,country,model_name,production_weight,mean_HS_ref_2015_2024,mean_HS_GLW_1.5,mean_HS_GLW_2.0,mean_HS_GLW_3.0,mean_HS_GLW_4.0,change_pct_GLW_1.5,change_pct_GLW_2.0,change_pct_GLW_3.0,change_pct_GLW_4.0
+EEZ,TUV,Tuvalu,milkfish,1,70937.278,70779.293,70119.543,68514.755,65420.048,-0.223,-1.153,-3.415,-7.778
+EEZ,TUV,Tuvalu,production_weighted,,70937.278,70779.293,70119.543,68514.755,65420.048,-0.223,-1.153,-3.415,-7.778
+coastal_50km,TUV,Tuvalu,milkfish,1,70897.578,70746.197,70088.988,68485.554,65349.504,-0.214,-1.141,-3.402,-7.825
+coastal_50km,TUV,Tuvalu,production_weighted,,70897.578,70746.197,70088.988,68485.554,65349.504,-0.214,-1.141,-3.402,-7.825

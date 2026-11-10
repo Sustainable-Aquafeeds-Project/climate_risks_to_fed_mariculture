@@ -1,0 +1,5 @@
+zone,ISO3_Code,country,model_name,production_weight,mean_HS_ref_2015_2024,mean_HS_GLW_1.5,mean_HS_GLW_2.0,mean_HS_GLW_3.0,mean_HS_GLW_4.0,change_pct_GLW_1.5,change_pct_GLW_2.0,change_pct_GLW_3.0,change_pct_GLW_4.0
+EEZ,CAN,Canada,atlantic_salmon,1,-41112.848,-40239.352,-38681.266,-33117.781,-27046.621,-2.125,-5.914,-19.447,-34.214
+EEZ,CAN,Canada,production_weighted,,-41112.848,-40239.352,-38681.266,-33117.781,-27046.621,-2.125,-5.914,-19.447,-34.214
+coastal_50km,CAN,Canada,atlantic_salmon,1,-44893.456,-43415.407,-41368.743,-34402.946,-26538.106,-3.292,-7.851,-23.368,-40.886
+coastal_50km,CAN,Canada,production_weighted,,-44893.456,-43415.407,-41368.743,-34402.946,-26538.106,-3.292,-7.851,-23.368,-40.886

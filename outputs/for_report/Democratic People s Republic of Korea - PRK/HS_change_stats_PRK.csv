@@ -1,0 +1,5 @@
+zone,ISO3_Code,country,model_name,production_weight,mean_HS_ref_2015_2024,mean_HS_GLW_1.5,mean_HS_GLW_2.0,mean_HS_GLW_3.0,mean_HS_GLW_4.0,change_pct_GLW_1.5,change_pct_GLW_2.0,change_pct_GLW_3.0,change_pct_GLW_4.0
+EEZ,PRK,North Korea,atlantic_salmon,1,-25678.444,-34798.389,-45105.096,-70828.589,-90218.401,35.516,75.654,175.829,251.339
+EEZ,PRK,North Korea,production_weighted,,-25678.444,-34798.389,-45105.096,-70828.589,-90218.401,35.516,75.654,175.829,251.339
+coastal_50km,PRK,North Korea,atlantic_salmon,1,-28810.892,-38337.368,-49272.677,-74019.105,-90895.097,33.066,71.021,156.914,215.489
+coastal_50km,PRK,North Korea,production_weighted,,-28810.892,-38337.368,-49272.677,-74019.105,-90895.097,33.066,71.021,156.914,215.489

@@ -1,0 +1,5 @@
+zone,ISO3_Code,country,model_name,production_weight,mean_HS_ref_2015_2024,mean_HS_GLW_1.5,mean_HS_GLW_2.0,mean_HS_GLW_3.0,mean_HS_GLW_4.0,change_pct_GLW_1.5,change_pct_GLW_2.0,change_pct_GLW_3.0,change_pct_GLW_4.0
+EEZ,FRO,Faroe Islands,atlantic_salmon,1,41268.593,47656.843,58899.528,80139.647,90201.674,15.48,42.722,94.19,118.572
+EEZ,FRO,Faroe Islands,production_weighted,,41268.593,47656.843,58899.528,80139.647,90201.674,15.48,42.722,94.19,118.572
+coastal_50km,FRO,Faroe Islands,atlantic_salmon,1,46269.887,55874.487,65638.691,89329.794,99133.516,20.758,41.86,93.062,114.251
+coastal_50km,FRO,Faroe Islands,production_weighted,,46269.887,55874.487,65638.691,89329.794,99133.516,20.758,41.86,93.062,114.251

@@ -1,0 +1,7 @@
+zone,ISO3_Code,country,model_name,production_weight,mean_HS_ref_2015_2024,mean_HS_GLW_1.5,mean_HS_GLW_2.0,mean_HS_GLW_3.0,mean_HS_GLW_4.0,change_pct_GLW_1.5,change_pct_GLW_2.0,change_pct_GLW_3.0,change_pct_GLW_4.0
+EEZ,FIN,Finland,atlantic_salmon,0.01619681155771431,20397.755,19363.679,18812.297,10510.712,-4197.986,-5.07,-7.773,-48.471,-120.581
+EEZ,FIN,Finland,rainbow_trout,0.9838031884422856,4518.102,4233.177,4023.65,2240.762,-244.491,-6.306,-10.944,-50.405,-105.411
+EEZ,FIN,Finland,production_weighted,,4775.302,4478.243,4263.179,2374.708,-308.525,-6.221,-10.724,-50.271,-106.461
+coastal_50km,FIN,Finland,atlantic_salmon,0.01619681155771431,19373.499,18336.087,17655.027,10841.046,-3733.482,-5.355,-8.87,-44.042,-119.271
+coastal_50km,FIN,Finland,rainbow_trout,0.9838031884422856,4397.07,4119.212,3890.271,2333.421,-129.118,-6.319,-11.526,-46.932,-102.936
+coastal_50km,FIN,Finland,production_weighted,,4639.64,4349.48,4113.216,2471.217,-187.497,-6.254,-11.346,-46.737,-104.041

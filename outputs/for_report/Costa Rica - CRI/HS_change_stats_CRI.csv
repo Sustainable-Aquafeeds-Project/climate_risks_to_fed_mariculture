@@ -1,0 +1,5 @@
+zone,ISO3_Code,country,model_name,production_weight,mean_HS_ref_2015_2024,mean_HS_GLW_1.5,mean_HS_GLW_2.0,mean_HS_GLW_3.0,mean_HS_GLW_4.0,change_pct_GLW_1.5,change_pct_GLW_2.0,change_pct_GLW_3.0,change_pct_GLW_4.0
+EEZ,CRI,Costa Rica,whiteleg_shrimp,1,2492.23,2468.254,2419.826,2182.373,1919.897,-0.962,-2.905,-12.433,-22.965
+EEZ,CRI,Costa Rica,production_weighted,,2492.23,2468.254,2419.826,2182.373,1919.897,-0.962,-2.905,-12.433,-22.965
+coastal_50km,CRI,Costa Rica,whiteleg_shrimp,1,2473.505,2445.132,2389.314,2138.977,1859.586,-1.147,-3.404,-13.524,-24.82
+coastal_50km,CRI,Costa Rica,production_weighted,,2473.505,2445.132,2389.314,2138.977,1859.586,-1.147,-3.404,-13.524,-24.82

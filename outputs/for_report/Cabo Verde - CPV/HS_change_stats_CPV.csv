@@ -1,0 +1,5 @@
+zone,ISO3_Code,country,model_name,production_weight,mean_HS_ref_2015_2024,mean_HS_GLW_1.5,mean_HS_GLW_2.0,mean_HS_GLW_3.0,mean_HS_GLW_4.0,change_pct_GLW_1.5,change_pct_GLW_2.0,change_pct_GLW_3.0,change_pct_GLW_4.0
+EEZ,CPV,Cabo Verde,whiteleg_shrimp,1,2377.668,2383.68,2402.909,2432.061,2414.43,0.253,1.062,2.288,1.546
+EEZ,CPV,Cabo Verde,production_weighted,,2377.668,2383.68,2402.909,2432.061,2414.43,0.253,1.062,2.288,1.546
+coastal_50km,CPV,Cabo Verde,whiteleg_shrimp,1,2375.078,2381.969,2405.514,2444.396,2444.47,0.29,1.281,2.919,2.922
+coastal_50km,CPV,Cabo Verde,production_weighted,,2375.078,2381.969,2405.514,2444.396,2444.47,0.29,1.281,2.919,2.922

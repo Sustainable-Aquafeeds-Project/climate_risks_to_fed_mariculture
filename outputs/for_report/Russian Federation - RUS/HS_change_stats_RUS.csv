@@ -1,0 +1,7 @@
+zone,ISO3_Code,country,model_name,production_weight,mean_HS_ref_2015_2024,mean_HS_GLW_1.5,mean_HS_GLW_2.0,mean_HS_GLW_3.0,mean_HS_GLW_4.0,change_pct_GLW_1.5,change_pct_GLW_2.0,change_pct_GLW_3.0,change_pct_GLW_4.0
+EEZ,RUS,Russia,atlantic_salmon,0.8433820400056745,-40664.297,-39120.169,-34632.629,-24142.927,-15413.614,-3.797,-14.833,-40.629,-62.095
+EEZ,RUS,Russia,rainbow_trout,0.15661795999432543,-2440.561,-2260.03,-1720.052,-513.095,433.614,-7.397,-29.522,-78.976,-117.767
+EEZ,RUS,Russia,production_weighted,,-34677.773,-33347.209,-29477.928,-20442.071,-12931.653,-3.837,-14.995,-41.051,-62.709
+coastal_50km,RUS,Russia,atlantic_salmon,0.8433820400056745,-38768.177,-37371.608,-32572.156,-22345.402,-13766.268,-3.602,-15.982,-42.361,-64.491
+coastal_50km,RUS,Russia,rainbow_trout,0.15661795999432543,-2219.138,-2058.267,-1485.397,-333.897,579.22,-7.249,-33.064,-84.954,-126.101
+coastal_50km,RUS,Russia,production_weighted,,-33043.941,-31840.904,-27703.411,-18898.005,-11519.507,-3.641,-16.162,-42.809,-65.139

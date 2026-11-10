@@ -1,0 +1,5 @@
+zone,ISO3_Code,country,model_name,production_weight,mean_HS_ref_2015_2024,mean_HS_GLW_1.5,mean_HS_GLW_2.0,mean_HS_GLW_3.0,mean_HS_GLW_4.0,change_pct_GLW_1.5,change_pct_GLW_2.0,change_pct_GLW_3.0,change_pct_GLW_4.0
+EEZ,ECU,Ecuador,whiteleg_shrimp,1,2380.604,2381.483,2408.911,2362.194,2319.599,0.037,1.189,-0.773,-2.563
+EEZ,ECU,Ecuador,production_weighted,,2380.604,2381.483,2408.911,2362.194,2319.599,0.037,1.189,-0.773,-2.563
+coastal_50km,ECU,Ecuador,whiteleg_shrimp,1,2459.137,2455.238,2474.237,2388.664,2327.452,-0.159,0.614,-2.866,-5.355
+coastal_50km,ECU,Ecuador,production_weighted,,2459.137,2455.238,2474.237,2388.664,2327.452,-0.159,0.614,-2.866,-5.355

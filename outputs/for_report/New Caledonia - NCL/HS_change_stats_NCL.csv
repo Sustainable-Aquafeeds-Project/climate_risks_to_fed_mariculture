@@ -1,0 +1,5 @@
+zone,ISO3_Code,country,model_name,production_weight,mean_HS_ref_2015_2024,mean_HS_GLW_1.5,mean_HS_GLW_2.0,mean_HS_GLW_3.0,mean_HS_GLW_4.0,change_pct_GLW_1.5,change_pct_GLW_2.0,change_pct_GLW_3.0,change_pct_GLW_4.0
+EEZ,NCL,New Caledonia,whiteleg_shrimp,1,2441.159,2450.057,2458.617,2437.562,2361.524,0.364,0.715,-0.147,-3.262
+EEZ,NCL,New Caledonia,production_weighted,,2441.159,2450.057,2458.617,2437.562,2361.524,0.364,0.715,-0.147,-3.262
+coastal_50km,NCL,New Caledonia,whiteleg_shrimp,1,2458.054,2468.235,2475.509,2458.27,2382.043,0.414,0.71,0.009,-3.092
+coastal_50km,NCL,New Caledonia,production_weighted,,2458.054,2468.235,2475.509,2458.27,2382.043,0.414,0.71,0.009,-3.092

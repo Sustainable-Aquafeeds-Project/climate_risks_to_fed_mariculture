@@ -1,0 +1,5 @@
+zone,ISO3_Code,country,model_name,production_weight,mean_HS_ref_2015_2024,mean_HS_GLW_1.5,mean_HS_GLW_2.0,mean_HS_GLW_3.0,mean_HS_GLW_4.0,change_pct_GLW_1.5,change_pct_GLW_2.0,change_pct_GLW_3.0,change_pct_GLW_4.0
+EEZ,WSM,Samoa,mud_crab,1,4662.166,4516.369,4280.079,3645.007,2624.82,-3.127,-8.195,-21.817,-43.7
+EEZ,WSM,Samoa,production_weighted,,4662.166,4516.369,4280.079,3645.007,2624.82,-3.127,-8.195,-21.817,-43.7
+coastal_50km,WSM,Samoa,mud_crab,1,4694.873,4545.712,4321.818,3694.053,2713.405,-3.177,-7.946,-21.317,-42.205
+coastal_50km,WSM,Samoa,production_weighted,,4694.873,4545.712,4321.818,3694.053,2713.405,-3.177,-7.946,-21.317,-42.205

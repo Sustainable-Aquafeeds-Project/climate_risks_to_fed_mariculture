@@ -1,0 +1,5 @@
+zone,ISO3_Code,country,model_name,production_weight,mean_HS_ref_2015_2024,mean_HS_GLW_1.5,mean_HS_GLW_2.0,mean_HS_GLW_3.0,mean_HS_GLW_4.0,change_pct_GLW_1.5,change_pct_GLW_2.0,change_pct_GLW_3.0,change_pct_GLW_4.0
+EEZ,HND,Honduras,whiteleg_shrimp,1,2490.353,2469.982,2420.786,2238.113,1966.718,-0.818,-2.793,-10.129,-21.027
+EEZ,HND,Honduras,production_weighted,,2490.353,2469.982,2420.786,2238.113,1966.718,-0.818,-2.793,-10.129,-21.027
+coastal_50km,HND,Honduras,whiteleg_shrimp,1,2488.262,2468.083,2421.114,2247.031,1986.962,-0.811,-2.699,-9.695,-20.147
+coastal_50km,HND,Honduras,production_weighted,,2488.262,2468.083,2421.114,2247.031,1986.962,-0.811,-2.699,-9.695,-20.147

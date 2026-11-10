@@ -1,0 +1,7 @@
+zone,ISO3_Code,country,model_name,production_weight,mean_HS_ref_2015_2024,mean_HS_GLW_1.5,mean_HS_GLW_2.0,mean_HS_GLW_3.0,mean_HS_GLW_4.0,change_pct_GLW_1.5,change_pct_GLW_2.0,change_pct_GLW_3.0,change_pct_GLW_4.0
+EEZ,PNG,Papua New Guinea,milkfish,0.04761904761904762,70695.359,70434.212,69938.425,68227.654,65177.439,-0.369,-1.071,-3.491,-7.805
+EEZ,PNG,Papua New Guinea,mud_crab,0.9523809523809524,4408.172,4254.128,3995.727,3206.113,1943.108,-3.495,-9.356,-27.269,-55.92
+EEZ,PNG,Papua New Guinea,production_weighted,,7564.705,7405.56,7135.855,6302.377,4954.267,-2.104,-5.669,-16.687,-34.508
+coastal_50km,PNG,Papua New Guinea,milkfish,0.04761904761904762,70757.758,70455.733,69994.816,68242.028,65281.555,-0.427,-1.078,-3.555,-7.739
+coastal_50km,PNG,Papua New Guinea,mud_crab,0.9523809523809524,4443.864,4267.202,4026.832,3217.313,1990.296,-3.975,-9.384,-27.601,-55.212
+coastal_50km,PNG,Papua New Guinea,production_weighted,,7601.668,7419.037,7168.165,6313.728,5004.166,-2.403,-5.703,-16.943,-34.17

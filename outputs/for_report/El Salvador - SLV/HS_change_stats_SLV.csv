@@ -1,0 +1,5 @@
+zone,ISO3_Code,country,model_name,production_weight,mean_HS_ref_2015_2024,mean_HS_GLW_1.5,mean_HS_GLW_2.0,mean_HS_GLW_3.0,mean_HS_GLW_4.0,change_pct_GLW_1.5,change_pct_GLW_2.0,change_pct_GLW_3.0,change_pct_GLW_4.0
+EEZ,SLV,El Salvador,whiteleg_shrimp,1,2449.114,2411.95,2342.779,2058.672,1719.467,-1.517,-4.342,-15.942,-29.792
+EEZ,SLV,El Salvador,production_weighted,,2449.114,2411.95,2342.779,2058.672,1719.467,-1.517,-4.342,-15.942,-29.792
+coastal_50km,SLV,El Salvador,whiteleg_shrimp,1,2402.722,2358.703,2271.403,1944.417,1528.052,-1.832,-5.465,-19.074,-36.403
+coastal_50km,SLV,El Salvador,production_weighted,,2402.722,2358.703,2271.403,1944.417,1528.052,-1.832,-5.465,-19.074,-36.403

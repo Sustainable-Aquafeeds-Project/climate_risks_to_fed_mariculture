@@ -1,0 +1,5 @@
+zone,ISO3_Code,country,model_name,production_weight,mean_HS_ref_2015_2024,mean_HS_GLW_1.5,mean_HS_GLW_2.0,mean_HS_GLW_3.0,mean_HS_GLW_4.0,change_pct_GLW_1.5,change_pct_GLW_2.0,change_pct_GLW_3.0,change_pct_GLW_4.0
+EEZ,MNP,Northern Mariana Islands,whiteleg_shrimp,1,2455.12,2433.717,2361.542,2199.137,1895.992,-0.872,-3.812,-10.426,-22.774
+EEZ,MNP,Northern Mariana Islands,production_weighted,,2455.12,2433.717,2361.542,2199.137,1895.992,-0.872,-3.812,-10.426,-22.774
+coastal_50km,MNP,Northern Mariana Islands,whiteleg_shrimp,1,2455.775,2432.593,2358.259,2190.633,1875.243,-0.944,-3.971,-10.797,-23.639
+coastal_50km,MNP,Northern Mariana Islands,production_weighted,,2455.775,2432.593,2358.259,2190.633,1875.243,-0.944,-3.971,-10.797,-23.639

@@ -1,0 +1,7 @@
+zone,ISO3_Code,country,model_name,production_weight,mean_HS_ref_2015_2024,mean_HS_GLW_1.5,mean_HS_GLW_2.0,mean_HS_GLW_3.0,mean_HS_GLW_4.0,change_pct_GLW_1.5,change_pct_GLW_2.0,change_pct_GLW_3.0,change_pct_GLW_4.0
+EEZ,MDG,Madagascar,mud_crab,0.001513042425709617,4704.532,4690.162,4638.216,4459.065,4071.401,-0.305,-1.41,-5.218,-13.458
+EEZ,MDG,Madagascar,tiger_prawn,0.9984869575742904,2643.933,2656.235,2681.742,2669.982,2531.971,0.465,1.43,0.985,-4.235
+EEZ,MDG,Madagascar,production_weighted,,2647.051,2659.312,2684.702,2672.689,2534.3,0.463,1.422,0.969,-4.259
+coastal_50km,MDG,Madagascar,mud_crab,0.001513042425709617,4763.5,4724.421,4625.832,4321.636,3774.048,-0.82,-2.89,-9.276,-20.772
+coastal_50km,MDG,Madagascar,tiger_prawn,0.9984869575742904,2753.961,2753.74,2752.86,2666.762,2422.136,-0.008,-0.04,-3.166,-12.049
+coastal_50km,MDG,Madagascar,production_weighted,,2757.002,2756.721,2755.694,2669.266,2424.181,-0.01,-0.047,-3.182,-12.072

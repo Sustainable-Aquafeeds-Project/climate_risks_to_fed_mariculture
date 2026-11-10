@@ -1,0 +1,5 @@
+zone,ISO3_Code,country,model_name,production_weight,mean_HS_ref_2015_2024,mean_HS_GLW_1.5,mean_HS_GLW_2.0,mean_HS_GLW_3.0,mean_HS_GLW_4.0,change_pct_GLW_1.5,change_pct_GLW_2.0,change_pct_GLW_3.0,change_pct_GLW_4.0
+EEZ,IRN,Iran,whiteleg_shrimp,1,2056.687,2023.861,1944.686,1690.314,1369.194,-1.596,-5.446,-17.814,-33.427
+EEZ,IRN,Iran,production_weighted,,2056.687,2023.861,1944.686,1690.314,1369.194,-1.596,-5.446,-17.814,-33.427
+coastal_50km,IRN,Iran,whiteleg_shrimp,1,2023.482,1988.368,1905.817,1648.314,1328.953,-1.735,-5.815,-18.541,-34.323
+coastal_50km,IRN,Iran,production_weighted,,2023.482,1988.368,1905.817,1648.314,1328.953,-1.735,-5.815,-18.541,-34.323

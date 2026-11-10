@@ -1,0 +1,5 @@
+zone,ISO3_Code,country,model_name,production_weight,mean_HS_ref_2015_2024,mean_HS_GLW_1.5,mean_HS_GLW_2.0,mean_HS_GLW_3.0,mean_HS_GLW_4.0,change_pct_GLW_1.5,change_pct_GLW_2.0,change_pct_GLW_3.0,change_pct_GLW_4.0
+EEZ,NIC,Nicaragua,whiteleg_shrimp,1,2487.961,2461.925,2415.252,2211.787,1953.859,-1.046,-2.922,-11.1,-21.467
+EEZ,NIC,Nicaragua,production_weighted,,2487.961,2461.925,2415.252,2211.787,1953.859,-1.046,-2.922,-11.1,-21.467
+coastal_50km,NIC,Nicaragua,whiteleg_shrimp,1,2479.899,2453.788,2401.412,2189.32,1919.201,-1.053,-3.165,-11.717,-22.61
+coastal_50km,NIC,Nicaragua,production_weighted,,2479.899,2453.788,2401.412,2189.32,1919.201,-1.053,-3.165,-11.717,-22.61

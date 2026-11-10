@@ -1,0 +1,5 @@
+zone,ISO3_Code,country,model_name,production_weight,mean_HS_ref_2015_2024,mean_HS_GLW_1.5,mean_HS_GLW_2.0,mean_HS_GLW_3.0,mean_HS_GLW_4.0,change_pct_GLW_1.5,change_pct_GLW_2.0,change_pct_GLW_3.0,change_pct_GLW_4.0
+EEZ,PYF,French Polynesia,whiteleg_shrimp,1,2452.166,2453.813,2451.219,2400.639,2325.607,0.067,-0.039,-2.101,-5.161
+EEZ,PYF,French Polynesia,production_weighted,,2452.166,2453.813,2451.219,2400.639,2325.607,0.067,-0.039,-2.101,-5.161
+coastal_50km,PYF,French Polynesia,whiteleg_shrimp,1,2504.683,2497.814,2486.27,2418.873,2315.691,-0.274,-0.735,-3.426,-7.546
+coastal_50km,PYF,French Polynesia,production_weighted,,2504.683,2497.814,2486.27,2418.873,2315.691,-0.274,-0.735,-3.426,-7.546

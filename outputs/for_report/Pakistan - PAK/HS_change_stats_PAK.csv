@@ -1,0 +1,5 @@
+zone,ISO3_Code,country,model_name,production_weight,mean_HS_ref_2015_2024,mean_HS_GLW_1.5,mean_HS_GLW_2.0,mean_HS_GLW_3.0,mean_HS_GLW_4.0,change_pct_GLW_1.5,change_pct_GLW_2.0,change_pct_GLW_3.0,change_pct_GLW_4.0
+EEZ,PAK,Pakistan,whiteleg_shrimp,1,2457.017,2452.658,2433.792,2298.576,2066.165,-0.177,-0.945,-6.449,-15.908
+EEZ,PAK,Pakistan,production_weighted,,2457.017,2452.658,2433.792,2298.576,2066.165,-0.177,-0.945,-6.449,-15.908
+coastal_50km,PAK,Pakistan,whiteleg_shrimp,1,2440.74,2437.034,2424.081,2316.17,2122.746,-0.152,-0.683,-5.104,-13.029
+coastal_50km,PAK,Pakistan,production_weighted,,2440.74,2437.034,2424.081,2316.17,2122.746,-0.152,-0.683,-5.104,-13.029

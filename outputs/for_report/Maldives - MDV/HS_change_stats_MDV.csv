@@ -1,0 +1,5 @@
+zone,ISO3_Code,country,model_name,production_weight,mean_HS_ref_2015_2024,mean_HS_GLW_1.5,mean_HS_GLW_2.0,mean_HS_GLW_3.0,mean_HS_GLW_4.0,change_pct_GLW_1.5,change_pct_GLW_2.0,change_pct_GLW_3.0,change_pct_GLW_4.0
+EEZ,MDV,Maldives,grouper,1,51483.014,51569.572,51507.456,49099.582,44256.989,0.168,0.047,-4.63,-14.036
+EEZ,MDV,Maldives,production_weighted,,51483.014,51569.572,51507.456,49099.582,44256.989,0.168,0.047,-4.63,-14.036
+coastal_50km,MDV,Maldives,grouper,1,51447.312,51549.892,51552.306,49356.537,44580.28,0.199,0.204,-4.064,-13.348
+coastal_50km,MDV,Maldives,production_weighted,,51447.312,51549.892,51552.306,49356.537,44580.28,0.199,0.204,-4.064,-13.348

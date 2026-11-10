@@ -1,0 +1,5 @@
+zone,ISO3_Code,country,model_name,production_weight,mean_HS_ref_2015_2024,mean_HS_GLW_1.5,mean_HS_GLW_2.0,mean_HS_GLW_3.0,mean_HS_GLW_4.0,change_pct_GLW_1.5,change_pct_GLW_2.0,change_pct_GLW_3.0,change_pct_GLW_4.0
+EEZ,NZL,New Zealand,rainbow_trout,1,5788.875,5499.872,4495.453,2523.596,170.896,-4.992,-22.343,-56.406,-97.048
+EEZ,NZL,New Zealand,production_weighted,,5788.875,5499.872,4495.453,2523.596,170.896,-4.992,-22.343,-56.406,-97.048
+coastal_50km,NZL,New Zealand,rainbow_trout,1,9145.535,8738.008,7317.554,4963.3,1707.689,-4.456,-19.988,-45.73,-81.328
+coastal_50km,NZL,New Zealand,production_weighted,,9145.535,8738.008,7317.554,4963.3,1707.689,-4.456,-19.988,-45.73,-81.328

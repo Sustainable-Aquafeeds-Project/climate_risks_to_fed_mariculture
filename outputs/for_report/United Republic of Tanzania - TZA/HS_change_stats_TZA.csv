@@ -1,0 +1,9 @@
+zone,ISO3_Code,country,model_name,production_weight,mean_HS_ref_2015_2024,mean_HS_GLW_1.5,mean_HS_GLW_2.0,mean_HS_GLW_3.0,mean_HS_GLW_4.0,change_pct_GLW_1.5,change_pct_GLW_2.0,change_pct_GLW_3.0,change_pct_GLW_4.0
+EEZ,TZA,United Republic of Tanzania,milkfish,0.3393606377384368,70548.406,70461.184,70384.145,69518.341,67500.288,-0.124,-0.233,-1.46,-4.321
+EEZ,TZA,United Republic of Tanzania,mud_crab,0.009314508624383103,4804.406,4738.707,4554.962,3973.957,3019.527,-1.367,-5.192,-17.285,-37.151
+EEZ,TZA,United Republic of Tanzania,tiger_prawn,0.6513248536371801,2905.376,2883.983,2840.99,2593.34,2076.874,-0.736,-2.216,-10.74,-28.516
+EEZ,TZA,United Republic of Tanzania,production_weighted,,25878.446,25834.301,25778.443,25317.911,24287.786,-0.171,-0.386,-2.166,-6.147
+coastal_50km,TZA,United Republic of Tanzania,milkfish,0.3393606377384368,70625.042,70570.901,70559.868,69880.475,68152.445,-0.077,-0.092,-1.054,-3.501
+coastal_50km,TZA,United Republic of Tanzania,mud_crab,0.009314508624383103,4868.424,4810.628,4654.595,4132.903,3282.94,-1.187,-4.392,-15.108,-32.567
+coastal_50km,TZA,United Republic of Tanzania,tiger_prawn,0.6513248536371801,2922.649,2908.414,2882.428,2683.03,2236.603,-0.487,-1.376,-8.199,-23.473
+coastal_50km,TZA,United Republic of Tanzania,production_weighted,,25916.3,25888.117,25865.994,25500.702,24615.591,-0.109,-0.194,-1.604,-5.019

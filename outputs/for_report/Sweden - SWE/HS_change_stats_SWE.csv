@@ -1,0 +1,5 @@
+zone,ISO3_Code,country,model_name,production_weight,mean_HS_ref_2015_2024,mean_HS_GLW_1.5,mean_HS_GLW_2.0,mean_HS_GLW_3.0,mean_HS_GLW_4.0,change_pct_GLW_1.5,change_pct_GLW_2.0,change_pct_GLW_3.0,change_pct_GLW_4.0
+EEZ,SWE,Sweden,rainbow_trout,1,5225.074,4884.6,4515.524,2122.155,5.461,-6.516,-13.58,-59.385,-99.895
+EEZ,SWE,Sweden,production_weighted,,5225.074,4884.6,4515.524,2122.155,5.461,-6.516,-13.58,-59.385,-99.895
+coastal_50km,SWE,Sweden,rainbow_trout,1,5225.706,4897.522,4522.491,2178.606,103.397,-6.28,-13.457,-58.31,-98.021
+coastal_50km,SWE,Sweden,production_weighted,,5225.706,4897.522,4522.491,2178.606,103.397,-6.28,-13.457,-58.31,-98.021

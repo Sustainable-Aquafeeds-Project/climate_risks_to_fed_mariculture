@@ -1,0 +1,5 @@
+zone,ISO3_Code,country,model_name,production_weight,mean_HS_ref_2015_2024,mean_HS_GLW_1.5,mean_HS_GLW_2.0,mean_HS_GLW_3.0,mean_HS_GLW_4.0,change_pct_GLW_1.5,change_pct_GLW_2.0,change_pct_GLW_3.0,change_pct_GLW_4.0
+EEZ,BHR,Bahrain,seabream,1,3078.169,2915.224,2082.884,-49.537,-2153.431,-5.294,-32.334,-101.609,-169.958
+EEZ,BHR,Bahrain,production_weighted,,3078.169,2915.224,2082.884,-49.537,-2153.431,-5.294,-32.334,-101.609,-169.958
+coastal_50km,BHR,Bahrain,seabream,1,3056.65,2892.361,2075.97,-25.099,-2098.558,-5.375,-32.083,-100.821,-168.655
+coastal_50km,BHR,Bahrain,production_weighted,,3056.65,2892.361,2075.97,-25.099,-2098.558,-5.375,-32.083,-100.821,-168.655

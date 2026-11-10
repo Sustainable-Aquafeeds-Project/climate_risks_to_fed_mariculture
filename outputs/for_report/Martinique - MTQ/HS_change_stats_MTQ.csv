@@ -1,0 +1,3 @@
+zone,ISO3_Code,country,model_name,production_weight,mean_HS_ref_2015_2024,mean_HS_GLW_1.5,mean_HS_GLW_2.0,mean_HS_GLW_3.0,mean_HS_GLW_4.0,change_pct_GLW_1.5,change_pct_GLW_2.0,change_pct_GLW_3.0,change_pct_GLW_4.0
+EEZ,MTQ,Martinique,drum_croaker,1,30891.876,29110.405,25598.177,12203.087,-2076.685,-5.767,-17.136,-60.497,-106.722
+EEZ,MTQ,Martinique,production_weighted,,30891.876,29110.405,25598.177,12203.087,-2076.685,-5.767,-17.136,-60.497,-106.722

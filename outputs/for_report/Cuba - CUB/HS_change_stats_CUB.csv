@@ -1,0 +1,5 @@
+zone,ISO3_Code,country,model_name,production_weight,mean_HS_ref_2015_2024,mean_HS_GLW_1.5,mean_HS_GLW_2.0,mean_HS_GLW_3.0,mean_HS_GLW_4.0,change_pct_GLW_1.5,change_pct_GLW_2.0,change_pct_GLW_3.0,change_pct_GLW_4.0
+EEZ,CUB,Cuba,whiteleg_shrimp,1,2457.254,2436.077,2382.85,2184.743,1901.418,-0.862,-3.028,-11.09,-22.62
+EEZ,CUB,Cuba,production_weighted,,2457.254,2436.077,2382.85,2184.743,1901.418,-0.862,-3.028,-11.09,-22.62
+coastal_50km,CUB,Cuba,whiteleg_shrimp,1,2454.766,2432.753,2381.53,2187.561,1911.552,-0.897,-2.983,-10.885,-22.129
+coastal_50km,CUB,Cuba,production_weighted,,2454.766,2432.753,2381.53,2187.561,1911.552,-0.897,-2.983,-10.885,-22.129

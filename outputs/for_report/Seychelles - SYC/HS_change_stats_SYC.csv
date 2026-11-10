@@ -1,0 +1,5 @@
+zone,ISO3_Code,country,model_name,production_weight,mean_HS_ref_2015_2024,mean_HS_GLW_1.5,mean_HS_GLW_2.0,mean_HS_GLW_3.0,mean_HS_GLW_4.0,change_pct_GLW_1.5,change_pct_GLW_2.0,change_pct_GLW_3.0,change_pct_GLW_4.0
+EEZ,SYC,Seychelles,whiteleg_shrimp,1,2472.763,2461.13,2408.248,2225.538,1988.539,-0.47,-2.609,-9.998,-19.582
+EEZ,SYC,Seychelles,production_weighted,,2472.763,2461.13,2408.248,2225.538,1988.539,-0.47,-2.609,-9.998,-19.582
+coastal_50km,SYC,Seychelles,whiteleg_shrimp,1,2476.609,2465.12,2415.524,2234.971,2003.531,-0.464,-2.466,-9.757,-19.102
+coastal_50km,SYC,Seychelles,production_weighted,,2476.609,2465.12,2415.524,2234.971,2003.531,-0.464,-2.466,-9.757,-19.102

@@ -1,0 +1,5 @@
+zone,ISO3_Code,country,model_name,production_weight,mean_HS_ref_2015_2024,mean_HS_GLW_1.5,mean_HS_GLW_2.0,mean_HS_GLW_3.0,mean_HS_GLW_4.0,change_pct_GLW_1.5,change_pct_GLW_2.0,change_pct_GLW_3.0,change_pct_GLW_4.0
+EEZ,GEO,Georgia,rainbow_trout,1,-11912.762,-12597.577,-14260.577,-19451.792,-24614.116,5.749,19.708,63.285,106.62
+EEZ,GEO,Georgia,production_weighted,,-11912.762,-12597.577,-14260.577,-19451.792,-24614.116,5.749,19.708,63.285,106.62
+coastal_50km,GEO,Georgia,rainbow_trout,1,-11967.672,-12611.837,-14102.192,-19284.671,-24465.928,5.383,17.836,61.14,104.433
+coastal_50km,GEO,Georgia,production_weighted,,-11967.672,-12611.837,-14102.192,-19284.671,-24465.928,5.383,17.836,61.14,104.433

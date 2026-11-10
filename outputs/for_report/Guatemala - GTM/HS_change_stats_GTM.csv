@@ -1,0 +1,5 @@
+zone,ISO3_Code,country,model_name,production_weight,mean_HS_ref_2015_2024,mean_HS_GLW_1.5,mean_HS_GLW_2.0,mean_HS_GLW_3.0,mean_HS_GLW_4.0,change_pct_GLW_1.5,change_pct_GLW_2.0,change_pct_GLW_3.0,change_pct_GLW_4.0
+EEZ,GTM,Guatemala,whiteleg_shrimp,1,2398.727,2352.544,2252.783,1935.014,1520.558,-1.925,-6.084,-19.332,-36.61
+EEZ,GTM,Guatemala,production_weighted,,2398.727,2352.544,2252.783,1935.014,1520.558,-1.925,-6.084,-19.332,-36.61
+coastal_50km,GTM,Guatemala,whiteleg_shrimp,1,2362.129,2322.853,2217.943,1895.83,1451.059,-1.663,-6.104,-19.741,-38.57
+coastal_50km,GTM,Guatemala,production_weighted,,2362.129,2322.853,2217.943,1895.83,1451.059,-1.663,-6.104,-19.741,-38.57

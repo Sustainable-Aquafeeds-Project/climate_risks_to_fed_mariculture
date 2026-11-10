@@ -1,0 +1,5 @@
+zone,ISO3_Code,country,model_name,production_weight,mean_HS_ref_2015_2024,mean_HS_GLW_1.5,mean_HS_GLW_2.0,mean_HS_GLW_3.0,mean_HS_GLW_4.0,change_pct_GLW_1.5,change_pct_GLW_2.0,change_pct_GLW_3.0,change_pct_GLW_4.0
+EEZ,NGA,Nigeria,whiteleg_shrimp,1,2489.58,2476.468,2433.285,2294.684,2076.581,-0.527,-2.261,-7.828,-16.589
+EEZ,NGA,Nigeria,production_weighted,,2489.58,2476.468,2433.285,2294.684,2076.581,-0.527,-2.261,-7.828,-16.589
+coastal_50km,NGA,Nigeria,whiteleg_shrimp,1,2502.269,2488.551,2444.232,2311.71,2103.291,-0.548,-2.319,-7.615,-15.945
+coastal_50km,NGA,Nigeria,production_weighted,,2502.269,2488.551,2444.232,2311.71,2103.291,-0.548,-2.319,-7.615,-15.945

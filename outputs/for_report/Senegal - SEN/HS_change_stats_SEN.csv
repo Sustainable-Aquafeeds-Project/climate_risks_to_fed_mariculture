@@ -1,0 +1,5 @@
+zone,ISO3_Code,country,model_name,production_weight,mean_HS_ref_2015_2024,mean_HS_GLW_1.5,mean_HS_GLW_2.0,mean_HS_GLW_3.0,mean_HS_GLW_4.0,change_pct_GLW_1.5,change_pct_GLW_2.0,change_pct_GLW_3.0,change_pct_GLW_4.0
+EEZ,SEN,Senegal,nile_tilapia,1,-64.134,227.121,870.062,1886.291,2867.812,-454.137,-1456.637,-3041.184,-4571.613
+EEZ,SEN,Senegal,production_weighted,,-64.134,227.121,870.062,1886.291,2867.812,-454.137,-1456.637,-3041.184,-4571.613
+coastal_50km,SEN,Senegal,nile_tilapia,1,-1239.527,-962.205,-374.678,459.896,1430.209,-22.373,-69.772,-137.103,-215.384
+coastal_50km,SEN,Senegal,production_weighted,,-1239.527,-962.205,-374.678,459.896,1430.209,-22.373,-69.772,-137.103,-215.384

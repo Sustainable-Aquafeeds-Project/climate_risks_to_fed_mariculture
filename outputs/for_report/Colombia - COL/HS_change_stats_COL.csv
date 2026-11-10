@@ -1,0 +1,5 @@
+zone,ISO3_Code,country,model_name,production_weight,mean_HS_ref_2015_2024,mean_HS_GLW_1.5,mean_HS_GLW_2.0,mean_HS_GLW_3.0,mean_HS_GLW_4.0,change_pct_GLW_1.5,change_pct_GLW_2.0,change_pct_GLW_3.0,change_pct_GLW_4.0
+EEZ,COL,Colombia,whiteleg_shrimp,1,2517.37,2499.429,2470.112,2304.711,2111.908,-0.713,-1.877,-8.448,-16.107
+EEZ,COL,Colombia,production_weighted,,2517.37,2499.429,2470.112,2304.711,2111.908,-0.713,-1.877,-8.448,-16.107
+coastal_50km,COL,Colombia,whiteleg_shrimp,1,2509.279,2490.935,2460.582,2293.923,2098.211,-0.731,-1.941,-8.582,-16.382
+coastal_50km,COL,Colombia,production_weighted,,2509.279,2490.935,2460.582,2293.923,2098.211,-0.731,-1.941,-8.582,-16.382
