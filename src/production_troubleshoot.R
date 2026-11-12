@@ -21,12 +21,7 @@ source(here("src", "other_functions.R"))
 
 # =========================================================================
 # ---- SET THE FARM TO INVESTIGATE HERE ----
-farm_ID_to_check <- 00009849
-
-
-
-
-
+farm_ID_to_check <- 086501
 
 # Harvest years to plot in step 6. Default: 2025, 2099, and one per decade between.
 years_to_plot <- c(2025, seq(2030, 2090, by = 10), 2099)
