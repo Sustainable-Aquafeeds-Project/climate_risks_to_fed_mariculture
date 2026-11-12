@@ -28,6 +28,7 @@ library(qs2)
 library(units)
 library(future)
 library(furrr)
+library(readxl)
 ```
 
 ```{r source-scripts}
@@ -57,16 +58,15 @@ production_files <- prod_path %>%
   list.files(full.names = TRUE, recursive = TRUE, pattern = "MC500.qs$") %>% 
   str_subset("testing", negate = T) %>% 
   str_subset("SCALED", negate = T)
+farms_done <- as.integer(str_extract(basename(production_files), "(?<=farmID_)\\d+")) %>% unique()
 
-here("src", "check_production_files.R") %>% source(echo = T)
+# here("src", "check_production_files.R") %>% source(echo = T)
 ```
 
 And display how many farms are present/missing.
 
 ```{r check-farm-production-missing}
 #| code-summary: Check what files have been done
-
-farms_done <- as.integer(str_extract(basename(production_files), "(?<=farmID_)\\d+")) %>% unique()
 
 assigned_farms <- file.path(prepdata_path, "assigned_farms.qs") %>% 
   qs_read() %>% 
@@ -219,9 +219,6 @@ decisions <- file.path(outs_path, "production_check_high_error_files_decisions.x
   readxl::read_excel() %>% 
   mutate(farm_ID = as.integer(str_extract(file, "(?<=farmID_)\\d+")))
 
-excl_path <- file.path(outs_path, "data", "farm_production", "excluded")
-dir.create(excl_path, showWarnings = F)
-
 # The files that we're going to keep don't need any further action
 # to_keep <- decisions %>% filter(Conclusion == "Keep")
 
@@ -230,41 +227,24 @@ assigned_farms_ls <- assigned_farms %>%
   group_by(country, model_name) %>% 
   group_split()
 
-# afn <- assigned_farms_ls[[1]]
+# afn <- assigned_farms_ls[[2]]
 assigned_farms_final <- map_dfr(
   assigned_farms_ls,
   function(afn) {
-    # Go through each country x model
-    excl <- to_excl %>% 
+    # Go through each region x model
+    reg_excl <- to_excl %>% 
       filter(country == unique(afn$country) & model_name == unique(afn$model_name))
 
     # If there are any to exclude, adjust farm numbers
-    if (nrow(excl) > 0) {
+    if (nrow(reg_excl) > 0) {
       total_value      <- unique(afn$value)
-      afn              <- afn %>% filter(!farm_ID %in% excl$farm_ID)
+      afn              <- afn %>% filter(!farm_ID %in% reg_excl$farm_ID)
       afn$prod_perfarm <- total_value/nrow(afn)
       afn$n_farms      <- nrow(afn)
     }
     afn
   },
   .progress = T
-)
-
-# Now move all the files we're not keeping to a dedicated "excluded" folder
-base_prod_files <- file.path(outs_path, "data", "farm_production") %>% 
-  list.files(full.names = T, pattern = "MC5000.qs", recursive = F) %>% 
-  str_subset("RESCALED", negate = T)
-
-keep_files     <- file.path(
-  outs_path, "data", "farm_production", 
-  paste0("production_results_farmID_", fix_int(assigned_farms_final$farm_ID, 8), "_MC5000.qs")
-)
-to_move <- setdiff(base_prod_files, keep_files)
-
-# Move files
-file.rename(
-  to_move, 
-  file.path(outs_path, "data", "farm_production", "excluded", basename(to_move))
 )
 
 # Add the geometry column back to the new list of assigned farms
@@ -292,7 +272,7 @@ Next, we need to scale the production files of all farms.
 
 Note that the following code creates duplicates of farm production files rather than rewriting the old files. This is in case we decide to run this process again, or differently, we don't lose the original files. Because of this, there is no check here to skip existing filenames.
 
-```{r}
+```{r scale-data-to-production}
 #| code-summary: "Rescale the data generated for each farm"
 #| eval: false
 
@@ -314,28 +294,30 @@ future_walk(
     # Load consolidated (unscaled) data
     consolidated_data <- qs_read(af$filename)
 
-    # Get the representative individual weight
+    # Get the representative individual weight (g)
     rep_ind <- consolidated_data[["2025"]][["stats"]]$weight
-    rep_ind <- unname(rep_ind[nrow(rep_ind), 2]) # get harvest weight (g)
+    rep_ind <- unname(rep_ind[nrow(rep_ind), 1]) # harvest weight
 
     # Get scaling factor from harvest weight (g) and per-farm production (t)
-    final_pop <- (af$prod_perfarm * 10^6)/rep_ind
+    final_pop <- ceiling((af$prod_perfarm * 10^6)/rep_ind)
 
     # Get the growtimes from the "days" element
     days <- consolidated_data[["2025"]][["days"]]
     grow_times <- c(t_start = first(days), t_end = last(days), dt = 1L)
 
-    # Get population based on species mortality rate
+    # Calculate population timeseries based on species mortality rate
     sp <- file.path(prepdata_path, "species_parameters", paste0("species_parameters_", af$model_name, ".qs")) %>% qd_read()
     pop <- generate_pop(harvest_n = final_pop, mort = sp[["mortmyt"]], times = grow_times)
 
     # Finally, scale farm production each year
+    # cd <- consolidated_data[[1]]
     scaled_data <- map(
       consolidated_data,
       function(cd) {
         sd <- scale_farm_population(
-          cd, N_pop = pop, 
-          scaled_vars = c("weight", "dw", "food_prov", "ing_act", "total_excr") # "weight" "dw" "rel_feeding" "food_prov" "ing_act" "anab" "catab" "total_excr" "metab"
+          consolidated = cd, 
+          N_pop = pop, 
+          scaled_vars = c("weight", "dw", "food_prov", "ing_act", "total_excr") # available stats: "weight" "dw" "rel_feeding" "food_prov" "ing_act" "anab" "catab" "total_excr" "metab"
           )
         list(
           days = cd[["days"]],
@@ -351,11 +333,22 @@ future_walk(
 )
 
 plan(sequential) 
+
+# Move scaled files
+scaled_files <- file.path(outs_path, "data", "farm_production") %>% 
+  list.files(recursive = T, full.names = T, pattern = "SCALED.qs")
+
+file.rename(
+  scaled_files,
+  file.path(outs_path, "data", "farm_production", "scaled", basename(scaled_files))
+) %>% all()
 ```
 
 # Consolidated data
 
-```{r}
+```{r show-data-waiting}
+#| code-summary: "Show which production files are done and still waiting"
+
 assigned_farms_final %>% 
   mutate(done = case_when(farm_ID %in% farms_done ~ T, T ~ F)) %>% 
   group_by(model_name, feed_class, done) %>% 
@@ -367,33 +360,26 @@ assigned_farms_final %>%
   print(n = 50)
 ```
 
-```{r}
-#| code-summary: "Consolidate farm production data into data per country and per species"
+```{r consolidate-data}
+#| code-summary: "Consolidate farm production data into data per region and per species"
 
-# First modify the `production_files` list so that the RESCALED files take precedent over their older counterparts
-new_production_files <- file.path(outs_path, "data", "farm_production") %>% 
-  list.files(recursive = F, full.names = T, pattern = ".qs")
-new_production_files <- tibble(path = new_production_files) |>
-  mutate(
-    farm_id  = str_extract(path, "farmID_\\d+"),
-    rescaled = str_detect(path, "_RESCALED\\.qs$")
-  ) |>
-  arrange(farm_id, desc(rescaled)) |>
-  distinct(farm_id, .keep_all = TRUE) |>
-  pull(path)
+# First modify the `production_files` list so that the SCALED files take precedent over their older counterparts
+scaled_production_files <- file.path(outs_path, "data", "farm_production", "scaled") %>% 
+  list.files(full.names = T, pattern = ".qs") %>% 
+  str_subset(paste0(fix_int(assigned_farms_final$farm_ID, 8), collapse = "|"))
+farms_done <- as.integer(str_extract(basename(scaled_production_files), "(?<=farmID_)\\d+")) %>% unique()
 
 cons_path <- file.path(outs_path, "data", "farm_production_consolidated")
 dir.create(cons_path, showWarnings = F)
 
 cons_fnms <- assigned_farms_final %>% 
   distinct(ISO3_Code, model_name) %>% 
-  expand_grid(var = c("weight_scaled", "food_prov_scaled")) %>% 
   mutate(fname = file.path(cons_path, str_glue("{ISO3_Code}_{model_name}.qs"))) %>% 
   filter(!file.exists(fname))
 
-work_cores <- parallelly::availableCores() - 4
+work_cores <- parallelly::availableCores() - 2
 plan(multisession, workers = work_cores)
-
+# i <- 1
 walk(
   1:nrow(cons_fnms),
   function(i) {
@@ -402,8 +388,11 @@ walk(
       pull(farm_ID)
 
     if (all(farm_IDs %in% farms_done)) {
-      files   <- production_files[which(farms_done %in% farm_IDs)]
+      files   <- scaled_production_files[which(farms_done %in% farm_IDs)]
       fids    <- as.integer(str_extract(basename(files), "(?<=farmID_)\\d+"))
+
+      # fn <- files[1]
+      # id <- fids[1]
       df      <- map2_dfr(
         files, fids,
         function(fn, id) {
@@ -423,6 +412,8 @@ walk(
           bm <- split(bm, bm$year)
           fd <- split(fd, fd$year)
 
+          # b <- bm[[1]]
+          # f <- fd[[1]]
           map2_dfr(
             bm, fd,
             function(b, f) {
