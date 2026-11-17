@@ -128,13 +128,6 @@ FAO_aqua <- file.path(prepdata_path, "FAO_with_models_final_production.csv") %>%
     read.csv() %>% 
     mutate(across(where(is.character), str_trim))
 
-# For some reason yellowtail got seperated
-FAO_aqua <- FAO_aqua %>% 
-  mutate(model_name = case_when(
-    model_name == "yellowtail_kingfish" ~ "japanese_amberjack",
-    T ~ model_name
-  ))
-
 # Get FAO fishing region code keys and add to production data
 FAO_code_key <- file.path(prepdata_path, "FAO_code_key.csv") %>% 
     read.csv() %>% dplyr::select(-X)
@@ -143,28 +136,28 @@ FAO_aqua <- FAO_aqua %>%
 
 # Check that none were left blank
 # FAO_aqua %>% 
-#     filter(is.na(F_CODE)) %>% 
-#     pull(fao_fishing_area) %>% 
-#     unique()
+#   filter(is.na(F_CODE)) %>% 
+#   pull(fao_fishing_area) %>% 
+#   unique()
 
 # Add groups based on the location data groups
 FAO_aqua <- FAO_aqua %>% 
-    mutate(
-        location_group = case_when(
-            model_name %in% c("tuna") ~ "Bluefin tuna",
-            model_name %in% c("rainbow_trout", "atlantic_salmon") ~ "Salmonidae fish",
-            model_name %in% c("whiteleg_shrimp", "tiger_prawn") ~ "Shrimps and prawns",
-            model_name %in% c("mud_crab") ~ "Non-shrimp crustaceans",
-            model_name %in% c("japanese_sea_cucumber", "abalone") ~ "Unfed or algae fed bivalve molluscs",
-            TRUE ~ "General marine fish",
-        )
-    ) %>% 
-    dplyr::select(-c(fao_fishing_area, species_name, environment)) %>% 
-    filter(location_group != "Unfed or algae fed bivalve molluscs")
+  mutate(
+      location_group = case_when(
+          model_name %in% c("tuna") ~ "Bluefin tuna",
+          model_name %in% c("rainbow_trout", "atlantic_salmon") ~ "Salmonidae fish",
+          model_name %in% c("whiteleg_shrimp", "tiger_prawn") ~ "Shrimps and prawns",
+          model_name %in% c("mud_crab") ~ "Non-shrimp crustaceans",
+          model_name %in% c("japanese_sea_cucumber", "abalone") ~ "Unfed or algae fed bivalve molluscs",
+          TRUE ~ "General marine fish",
+      )
+  ) %>% 
+  dplyr::select(-c(fao_fishing_area, species_name, environment)) %>% 
+  filter(location_group != "Unfed or algae fed bivalve molluscs")
 
-# Somehow some 99% landlocked countries made it in here
-FAO_aqua <- FAO_aqua %>% 
-  filter(!country %in% c("Bosnia and Herzegovina", "Slovenia"))
+
+FAO_aqua <- FAO_aqua %>% filter(!ISO3_Code %in% c("BIH", "SVN")) # Somehow some 99% landlocked countries made it in here
+FAO_aqua <- FAO_aqua %>% filter(!ISO3_Code %in% c("NLD"))
 
 head(FAO_aqua)
 ```
@@ -204,13 +197,19 @@ FAO_aqua %>%
     )
 ```
 
+The "mean" production annually is a little hard to determine because many countries don't actually report annual stats consistently. Therefore, I'm using the mean of the number of years they did report, from 2015 onwards.
+
 ```{r production-summed}
-#| code-summary: "Sum production data from 2017-2023. This will be the production set used going forward."
+#| code-summary: "Sum production data from 2015 onwards. This will be the production set used going forward."
 
 FAO_aqua_means <- FAO_aqua %>% 
     filter(period >= 2015) %>% 
     group_by(ISO3_Code, country, F_CODE, location_group, model_name) %>% 
-    reframe(value = mean(value, na.rm = TRUE)) %>% 
+    reframe(
+      value = sum(value, na.rm = TRUE),
+      n_years = n(),
+      value = value/n_years
+    ) %>% 
     filter(value != 0)
 
 FAO_aqua_means <- FAO_aqua_means %>% 
@@ -277,7 +276,7 @@ mapped_farms <- aqua_locs %>%
   group_by(country, F_CODE, species_group) %>% 
   reframe(
     n_farms = n(), 
-    per_farm_prod_2017 = mean(tonnes_per_farm, na.rm = T)
+    per_farm_prod_2015 = mean(tonnes_per_farm, na.rm = T)
   )
 
 # Calculate required farms where there are already farms mapped
@@ -291,13 +290,13 @@ farms_required <- FAO_aqua_means %>%
   left_join(mapped_farms, by = c("country", "F_CODE", "location_group" = "species_group")) %>% 
   mutate(
     per_farm_prod_now = total_production/n_farms,
-    prod_ratio = per_farm_prod_now/per_farm_prod_2017,
+    prod_ratio = per_farm_prod_now/per_farm_prod_2015,
     total_farms_required = case_when(
       # special case for FI because their per-farm production is extremely high
-      country == "Faroe Islands" & location_group == "Salmonidae fish" & prod_ratio > 1 ~ total_production/(1*per_farm_prod_2017), 
+      country == "Faroe Islands" & location_group == "Salmonidae fish" & prod_ratio > 1 ~ total_production/(1*per_farm_prod_2015), 
       prod_ratio <= 2.5 & prod_ratio >= 0.95 ~ n_farms,
-      prod_ratio > 2.5 ~ total_production/(2.5*per_farm_prod_2017),
-      prod_ratio < 0.95 ~ total_production/(1*per_farm_prod_2017)
+      prod_ratio > 2.5 ~ total_production/(2.5*per_farm_prod_2015),
+      prod_ratio < 0.95 ~ total_production/(1*per_farm_prod_2015)
     ),
     total_farms_required = pmax(ceiling(total_farms_required), model_names),
     per_farm_prod_fixed = total_production/total_farms_required
@@ -306,7 +305,7 @@ farms_required <- FAO_aqua_means %>%
 # Estimate required farms where there are no farms mapped
 farms_required <- farms_required %>% 
   mutate(per_farm_prod_now = total_production/total_farms_required) %>% 
-  dplyr::select(-per_farm_prod_2017) %>% 
+  dplyr::select(-per_farm_prod_2015) %>% 
   group_by(location_group) %>% 
   mutate(typical_per_farm_prod = mean(per_farm_prod_now, na.rm = T)) %>% 
   ungroup() %>% 
@@ -418,6 +417,7 @@ for (i in 1:nrow(farms_required_1)) {
 In some regions, there are more than enough farms to assign to all the `model_names` required but some additional decisions need to be made based on farm temperatures. Farm temperatures are extracted from a "mean year" created by `data-prep-scripts\historical-sst.R`.
 
 ```{r temperature-extraction-function}
+#| cache: false
 #| code-summary: "Define a function that will extract a meanyear of temperatures from any location"
 
 farm_temp_path <- file.path(prepdata_path, "mapped_farms_meanyear")
@@ -634,36 +634,6 @@ ideal_temperatures <- unique(FAO_aqua_means$model_name) %>%
   })
 ```
 
-```{r manual-adjustments-2}
-#| code-summary: Manual adjustments - some of these assignments are impossible given the species temperature requirements
-
-# All farms in Malaysia are much too warm for abalone
-farms_required_2$farm_temps_needed[farms_required_2$country == "Malaysia" & farms_required_2$F_CODE == 71 & farms_required_2$location_group == "Unfed or algae fed bivalve molluscs"] <- FALSE
-farms_required_2$cell_temps_needed[farms_required_2$country == "Malaysia" & farms_required_2$F_CODE == 71 & farms_required_2$location_group == "Unfed or algae fed bivalve molluscs"] <- TRUE
-
-# Same with Thailand
-farms_required_2$farm_temps_needed[farms_required_2$country == "Thailand" & farms_required_2$F_CODE == 71 & farms_required_2$location_group == "Unfed or algae fed bivalve molluscs"] <- FALSE
-farms_required_2$cell_temps_needed[farms_required_2$country == "Thailand" & farms_required_2$F_CODE == 71 & farms_required_2$location_group == "Unfed or algae fed bivalve molluscs"] <- TRUE
-
-# Re-filter after manual adjustments (any rows that moved to group 3 are removed)
-farms_required_2 <- farms_required_2 %>% filter(farm_temps_needed & !cell_temps_needed)
-
-# Move the affected rows into group 3 so they get habitat-based extraction
-farms_required_3 <- bind_rows(
-  farms_required_3,
-  farms_required %>%
-    filter(
-      (country == "Malaysia"  & F_CODE == 71 & location_group == "Unfed or algae fed bivalve molluscs") |
-      (country == "Thailand"  & F_CODE == 71 & location_group == "Unfed or algae fed bivalve molluscs")
-    ) %>%
-    mutate(
-      farm_temps_needed = FALSE,
-      cell_temps_needed = TRUE,
-      ISO3_Code = countrycode(country, origin = "country.name", destination = "iso3c")
-    )
-)
-```
-
 ```{r assign-group-2}
 #| code-summary: "Assign farms using temperature-based optimisation for mapped regions"
 
@@ -767,10 +737,9 @@ This group has no farms available to assign. We will need to create new farms wi
 * Be within the preferred temperature ranges for their model_names
 
 ```{r load-EEZ-data}
-#| code-summary: Load previously-saved EEZ data, restricted to 50km of the coast and divided by FAO region
+#| code-summary: Load previously-saved EEZ data, restricted to 50km of the coast and divided by FAO fishing region
 
 old_s2 <- sf_use_s2(FALSE)
-on.exit(sf_use_s2(old_s2), add = TRUE)  # restore afterwards
 
 land_hires <- ne_countries(scale = 10, returnclass = "sf") %>%
   st_geometry() %>%
@@ -788,6 +757,8 @@ EEZ_by_FAO_full <- file.path(prepdata_path, "EEZ_data_with_FAO_regions.qs") %>%
   
 EEZ_by_FAO <- EEZ_by_FAO_full %>%
   st_intersection(coastal_buffer)
+
+sf_use_s2(old_s2)
 ```
 
 ```{r assign-farms-3}
@@ -798,9 +769,7 @@ assigned_farms <- qs_read(
 ) %>% 
   st_make_valid()
 
-# Accumulate assigned raster cell numbers across iterations so that the same
-# cell cannot be selected twice (which would place two farms at identical
-# coordinates, violating the >=0.25 degree separation guarantee).
+# Accumulate assigned raster cell numbers across iterations so that the same cell cannot be selected twice (which would place two farms at identical coordinates, violating the >=0.25 degree separation guarantee).
 assigned_cells <- integer(0)
 
 for (i in 1:nrow(farms_required_3)) {
@@ -1252,6 +1221,7 @@ walk(
 #| fig-height: 6
 #| fig-width: 10
 #| fig-cap: "Map of all assigned farms, coloured by model name."
+#| eval: false
 
 assigned_farms <- file.path(prepdata_path, "assigned_farms.qs") %>% 
   qs_read() %>% 
@@ -1268,6 +1238,7 @@ p_bigmap_robinson +
 
 ```{r save-plots-per-country}
 #| code-summary: Plot the extracted farm locations by country
+#| eval: false
 
 assigned_farms <- qs_read(file.path(prepdata_path, "assigned_farms.qs"))
 lands <- ne_countries(scale = "large", return = "sf")
@@ -1306,6 +1277,7 @@ walk(
 
 ```{r save-data-bymodel}
 #| code-summary: Load saved data for summarising
+#| eval: false
 
 all_temps_fnms <- file.path(prepdata_path, "assigned_farms_meanyear") %>% 
   list.files(full.names = T)
@@ -1348,6 +1320,7 @@ walk(
 ## Means of assigned meanyear temperatures
 
 ```{r get-assigned-meanyear-temeratures}
+#| eval: false
 
 files_bymodel <- file.path(prepdata_path, "farm_temps_bymodel") %>% 
   list.files(full.names = T)
@@ -1371,7 +1344,8 @@ num_models <- length(levels(model_name_temps$model_name))
 #| fig-cap: "Distribution of SST (°C) experienced by assigned farms across the mean year, grouped by model name."
 #| fig-height: 7
 #| fig-width: 9.5
-  
+#| eval: false
+
 model_name_temps %>% 
   ggplot(aes(x = model_name, y = sst, fill = model_name)) +
   geom_boxplot(outlier.size = 0.8, outlier.alpha = 0.5) +
@@ -1392,6 +1366,7 @@ model_name_temps %>%
 #| code-summary: "Map of assigned farms coloured by model name"
 #| fig-cap: "Spatial distribution of assigned farms coloured by mean annual SST (°C). Black crosses indicate farms where temperature extraction returned NA."
 #| fig-height: 15
+#| eval: false
 
 assigned_farms <- qs_read(file.path(prepdata_path, "assigned_farms.qs"))
 
@@ -1415,6 +1390,7 @@ p_bigmap_robinson +
 ```{r fig-prod-perfarm}
 #| code-summary: "Map of assigned farms coloured by model name"
 #| fig-cap: "Spatial distribution of assigned farms coloured by mean annual SST (°C). Black crosses indicate farms where temperature extraction returned NA."
+#| eval: false
 
 assigned_farms <- qs_read(file.path(prepdata_path, "assigned_farms.qs"))
 

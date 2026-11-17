@@ -287,6 +287,9 @@ period,value,environment,species_name,country,ISO3_Code,fao_fishing_area,model_n
 2019,13,Brackishwater,drums,Chile,CHL,"Pacific, Southeast",drum_croaker
 2021,3,Brackishwater,drums,Chile,CHL,"Pacific, Southeast",drum_croaker
 2023,1,Brackishwater,drums,Chile,CHL,"Pacific, Southeast",drum_croaker
+2018,8.49,Brackishwater,yellowtails,Chile,CHL,"Pacific, Southeast",japanese_amberjack
+2020,11,Brackishwater,yellowtails,Chile,CHL,"Pacific, Southeast",japanese_amberjack
+2022,15,Brackishwater,yellowtails,Chile,CHL,"Pacific, Southeast",japanese_amberjack
 2011,42365,Brackishwater,flatfish,China,CHN,"Pacific, Northwest",olive_flounder
 2013,44342,Brackishwater,flatfish,China,CHN,"Pacific, Northwest",olive_flounder
 2015,67279,Brackishwater,flatfish,China,CHN,"Pacific, Northwest",olive_flounder
@@ -470,6 +473,13 @@ period,value,environment,species_name,country,ISO3_Code,fao_fishing_area,model_n
 2014,0,Marine,porgies,Taiwan Province of China,TWN,"Pacific, Northwest",seabream
 2011,0.5,Brackishwater,porgies,Taiwan Province of China,TWN,"Pacific, Northwest",seabream
 2011,208.8,Marine,porgies,Taiwan Province of China,TWN,"Pacific, Northwest",seabream
+2011,654,Brackishwater,yellowtails,Taiwan Province of China,TWN,"Pacific, Northwest",japanese_amberjack
+2013,702.59,Brackishwater,yellowtails,Taiwan Province of China,TWN,"Pacific, Northwest",japanese_amberjack
+2015,554,Brackishwater,yellowtails,Taiwan Province of China,TWN,"Pacific, Northwest",japanese_amberjack
+2017,512.542,Brackishwater,yellowtails,Taiwan Province of China,TWN,"Pacific, Northwest",japanese_amberjack
+2019,675.16,Brackishwater,yellowtails,Taiwan Province of China,TWN,"Pacific, Northwest",japanese_amberjack
+2021,580.421,Brackishwater,yellowtails,Taiwan Province of China,TWN,"Pacific, Northwest",japanese_amberjack
+2023,191.7,Brackishwater,yellowtails,Taiwan Province of China,TWN,"Pacific, Northwest",japanese_amberjack
 2012,575,Marine,yellowtails,Taiwan Province of China,TWN,"Pacific, Northwest",japanese_amberjack
 2014,526.65,Marine,yellowtails,Taiwan Province of China,TWN,"Pacific, Northwest",japanese_amberjack
 2016,360.262,Marine,yellowtails,Taiwan Province of China,TWN,"Pacific, Northwest",japanese_amberjack
@@ -626,6 +636,9 @@ period,value,environment,species_name,country,ISO3_Code,fao_fishing_area,model_n
 2014,77,Brackishwater,general_salmonid,Denmark,DNK,"Atlantic, Northeast",atlantic_salmon
 2014,4,Marine,flounder,Denmark,DNK,"Atlantic, Northeast",olive_flounder
 2018,0,Marine,flounder,Denmark,DNK,"Atlantic, Northeast",olive_flounder
+2018,64,Brackishwater,yellowtails,Denmark,DNK,"Atlantic, Northeast",japanese_amberjack
+2020,274,Brackishwater,yellowtails,Denmark,DNK,"Atlantic, Northeast",japanese_amberjack
+2022,377.4,Brackishwater,yellowtails,Denmark,DNK,"Atlantic, Northeast",japanese_amberjack
 2017,20,Marine,tilapia,Dominican Republic,DOM,"Atlantic, Western Central",nile_tilapia
 2019,20,Marine,tilapia,Dominican Republic,DOM,"Atlantic, Western Central",nile_tilapia
 2021,20,Marine,tilapia,Dominican Republic,DOM,"Atlantic, Western Central",nile_tilapia
@@ -1702,6 +1715,10 @@ period,value,environment,species_name,country,ISO3_Code,fao_fishing_area,model_n
 2018,0.5,Brackishwater,milkfish,Nauru,NRU,"Pacific, Western Central",milkfish
 2020,0.5,Brackishwater,milkfish,Nauru,NRU,"Pacific, Western Central",milkfish
 2022,0.5,Brackishwater,milkfish,Nauru,NRU,"Pacific, Western Central",milkfish
+2016,50,Brackishwater,yellowtails,Netherlands (Kingdom of the),NLD,"Atlantic, Northeast",japanese_amberjack
+2018,50,Brackishwater,yellowtails,Netherlands (Kingdom of the),NLD,"Atlantic, Northeast",japanese_amberjack
+2020,460,Brackishwater,yellowtails,Netherlands (Kingdom of the),NLD,"Atlantic, Northeast",japanese_amberjack
+2022,1350,Brackishwater,yellowtails,Netherlands (Kingdom of the),NLD,"Atlantic, Northeast",japanese_amberjack
 2012,1643,Brackishwater,shrimp,New Caledonia,NCL,"Pacific, Western Central",whiteleg_shrimp
 2014,1636,Brackishwater,shrimp,New Caledonia,NCL,"Pacific, Western Central",whiteleg_shrimp
 2016,1587,Brackishwater,shrimp,New Caledonia,NCL,"Pacific, Western Central",whiteleg_shrimp
@@ -2290,6 +2307,8 @@ period,value,environment,species_name,country,ISO3_Code,fao_fishing_area,model_n
 2013,123,Brackishwater,meagres,South Africa,ZAF,"Atlantic, Southeast",drum_croaker
 2015,77,Brackishwater,meagres,South Africa,ZAF,"Atlantic, Southeast",drum_croaker
 2022,26.84,Brackishwater,meagres,South Africa,ZAF,"Atlantic, Southeast",drum_croaker
+2021,8.1,Brackishwater,yellowtails,South Africa,ZAF,"Atlantic, Southeast",japanese_amberjack
+2023,1.17,Brackishwater,yellowtails,South Africa,ZAF,"Atlantic, Southeast",japanese_amberjack
 2011,0,Brackishwater,shrimp,South Africa,ZAF,"Atlantic, Southeast",whiteleg_shrimp
 2013,0,Brackishwater,shrimp,South Africa,ZAF,"Atlantic, Southeast",whiteleg_shrimp
 2011,0,Brackishwater,shrimp,South Africa,ZAF,"Atlantic, Southeast",tiger_prawn
@@ -2737,6 +2756,11 @@ period,value,environment,species_name,country,ISO3_Code,fao_fishing_area,model_n
 2018,1800,Marine,porgies,United Arab Emirates,ARE,"Indian Ocean, Western",seabream
 2020,1527.779,Marine,porgies,United Arab Emirates,ARE,"Indian Ocean, Western",seabream
 2022,2027.221,Marine,porgies,United Arab Emirates,ARE,"Indian Ocean, Western",seabream
+2011,0,Brackishwater,yellowtails,United Arab Emirates,ARE,"Indian Ocean, Western",japanese_amberjack
+2013,0,Brackishwater,yellowtails,United Arab Emirates,ARE,"Indian Ocean, Western",japanese_amberjack
+2015,0,Brackishwater,yellowtails,United Arab Emirates,ARE,"Indian Ocean, Western",japanese_amberjack
+2017,70,Brackishwater,yellowtails,United Arab Emirates,ARE,"Indian Ocean, Western",japanese_amberjack
+2019,70,Brackishwater,yellowtails,United Arab Emirates,ARE,"Indian Ocean, Western",japanese_amberjack
 2022,100,Marine,yellowtails,United Arab Emirates,ARE,"Indian Ocean, Western",japanese_amberjack
 2011,223,Brackishwater,shrimp,United Arab Emirates,ARE,"Indian Ocean, Western",whiteleg_shrimp
 2013,280,Brackishwater,shrimp,United Arab Emirates,ARE,"Indian Ocean, Western",whiteleg_shrimp
