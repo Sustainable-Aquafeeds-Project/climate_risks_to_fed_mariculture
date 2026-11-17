@@ -477,19 +477,21 @@ get_growing_window <- function(temperatures, grow_days, species_params) {
 country_summary <- function(iso, digits = 1) {
   d <- file.path(prepdata_path, "FAO_with_models.qs") %>% 
     qs_read() %>% 
-    filter(period %in% 2014:2023 & ISO3_Code == iso) %>%
+    filter(period >= 2015 & ISO3_Code == iso) %>%
     mutate(model_name = case_when(
       model_name %in% c("drum", "large_yellow_croaker", "whitemouth_croaker", "meagre") ~ "drum_croaker", 
       model_name %in% c("red_seabream", "gilthead_seabream", "blackhead_seabream") ~ "seabream", 
-      TRUE ~ model_name)
-    ) %>% 
-    group_by(ISO3_Code, country, model_name, Scientific_Name, period) %>% 
-    reframe(value = sum(value)) %>% 
+      is.na(model_name) ~ paste0("no_model_assigned_", species_name),
+      TRUE ~ model_name
+    )) %>% 
     group_by(ISO3_Code, country, model_name, Scientific_Name) %>% 
-    reframe(value = mean(value))
-
-  d <- d |>
-    mutate(value = units::drop_units(value))  # drop [t] units
+    reframe(
+      value = sum(value),
+      years = n_distinct(period)
+    ) %>% 
+    mutate(value = units::drop_units(value/years)) %>% 
+    filter(value != 0) %>% 
+    dplyr::select(-years)
 
   if (nrow(d) == 0) stop("No rows found for ISO3_Code '", iso, "'")
 
@@ -511,7 +513,7 @@ country_summary <- function(iso, digits = 1) {
   fmt_p <- \(x) sprintf("%.*f%%", digits, x)
 
   cat(sprintf("%s (%s)\n", d$country[1], iso))
-  cat(sprintf("Total production: %s t\n", fmt_t(total)))
+  cat(sprintf("Total annual production (2015-): %s t\n", fmt_t(total)))
   cat(sprintf("Number of models: %d\n", nrow(models)))
 
   for (i in seq_len(nrow(models))) {
@@ -527,7 +529,7 @@ country_summary <- function(iso, digits = 1) {
   invisible(list(total = total, models = models, species = species))
 }
 
-# country_summary("DZA")
+# country_summary("GRC")
 
 get_country_data <- function(fnms, ids) {
   annual_biomass <- map2_dfr(
