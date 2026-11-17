@@ -18,12 +18,12 @@ assigned_farms_new <- file.path(prepdata_path, "assigned_farms.qs") %>% qs_read(
 # Get all existing production files - if you want to re-do production files for any reason other than assignment changes, make sure they're deleted (or moved) before this step.
 existing_prod_files <- file.path(outs_path, "data", "farm_production") %>% 
   list.files(recursive = T, full.names = T) %>% 
-  str_subset("MC5000.qs") %>% 
-  str_subset("temp_hold|excluded", negate = T)
+  str_subset("MC500.qs") %>% 
+  str_subset("temp_hold|excluded|scaled", negate = T)
 
 existing_prod_IDs <- existing_prod_files %>% 
   basename() %>% 
-  str_extract("\\d+(?=\\_MC5000.qs$)") %>% 
+  str_extract("\\d+(?=\\_MC500.qs$)") %>% 
   as.integer()
 
 # Do "mapped" locations first
