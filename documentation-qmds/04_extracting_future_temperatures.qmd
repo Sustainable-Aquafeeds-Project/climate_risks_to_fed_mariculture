@@ -7,7 +7,7 @@ date: last-modified
 ---
 
 ::: {style="display: flex; justify-content: space-between;"}
-[← Previous: Assigning locations](02_assigning_locations.qmd)
+[← Previous: All species parameters](03_00_all_species_parameters.qmd)
 
 [Next: Test production →](05_00_test_production.qmd)
 :::
@@ -544,7 +544,7 @@ walk(
 ```
 
 ::: {style="display: flex; justify-content: space-between;"}
-[← Previous: Assigning locations](02_assigning_locations.qmd)
+[← Previous: All species parameters](03_00_all_species_parameters.qmd)
 
 [Next: Test production →](05_00_test_production.qmd)
 :::
