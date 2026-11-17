@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Tormey Reimer">
-<meta name="dcterms.date" content="2026-09-21">
+<meta name="dcterms.date" content="2026-11-17">
 
 <title>4: Extracting future farm temperatures – FAO Climate Change Risks to Fed Mariculture</title>
 <style>
@@ -4102,7 +4102,7 @@ font-family: inherit;
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">21 September 2026</p>
+      <p class="date">17 November 2026</p>
     </div>
   </div>
   
@@ -4274,7 +4274,7 @@ font-family: inherit;
 <pre><code>There are 132 farm_IDs still remaining.</code></pre>
 </div>
 </div>
-<p>After 4 rounds of searching progressively wider areas, there are still 132 farms missing temperatures. Where are they?</p>
+<p>After 4 rounds of searching progressively wider areas, there are still 85 farms missing temperatures. Where are they?</p>
 <div class="cell" data-layout-align="center">
 <details class="code-fold">
 <summary>Show the missing farms and their nearest neighbour</summary>
@@ -4324,7 +4324,7 @@ Figure 1
 </div>
 </div>
 </div>
-<p>The missing farms are mostly in Chile, with a few in Norway. They’re generally a little bit inland of the coast (up estuaries, etc) so they’re not being well-captured by SST changes. However, they’re extremely close to non-missing points of data, so we’ll be copying those temperatures for those features.</p>
+<p>The missing farms are all in Chile. They’re generally a little bit inland of the coast (up estuaries, etc) so they’re not being well-captured by SST changes. However, they’re extremely close to non-missing points of data, so we’ll be copying those temperatures for those features.</p>
 <div class="cell" data-layout-align="center">
 <details class="code-fold">
 <summary>Combine cell assignments</summary>
@@ -4434,153 +4434,230 @@ Vcells 9594481  73.3   34320708 261.9 34320708 261.9</code></pre>
 <span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>tos_rast_fnms_ls <span class="ot">&lt;-</span> <span class="fu">split</span>(tos_rast_fnms_ls, tos_rast_fnms_ls<span class="sc">$</span>year)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-<p>This next cell extracts all temperatures in each year for every focal cell. This avoids having to do multiple extracts of the surface temperature rasters.</p>
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>Split focal cells by farm source (mapped vs extracted)</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>lookup_dir <span class="ot">&lt;-</span> <span class="fu">file.path</span>(data_path, <span class="st">&quot;intermediates&quot;</span>, <span class="st">&quot;farm_focal_lookup_files&quot;</span>)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>(lookup_dir, <span class="at">showWarnings =</span> F, <span class="at">recursive =</span> T)</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="co"># &quot;mapped&quot; farms have fixed locations and only change in whether they&#39;re included.</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="co"># &quot;extracted&quot; farms can move at any time, so their cells are always re-extracted.</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>mapped_cells <span class="ot">&lt;-</span> assigned_farms_cells <span class="sc">%&gt;%</span> </span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(source <span class="sc">==</span> <span class="st">&quot;mapped&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(focal_cells) <span class="sc">%&gt;%</span> </span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unlist</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>()</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>extracted_cells <span class="ot">&lt;-</span> assigned_farms_cells <span class="sc">%&gt;%</span> </span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(source <span class="sc">==</span> <span class="st">&quot;extracted&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(focal_cells) <span class="sc">%&gt;%</span> </span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unlist</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>()</span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Helper: extract a set of cells from one year&#39;s raster stack and save as a lookup table</span></span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a>extract_year_cells <span class="ot">&lt;-</span> <span class="cf">function</span>(yr_fnms, cells, out_file) {</span>
+<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a>  tos_stack <span class="ot">&lt;-</span> <span class="fu">rast</span>(yr_fnms<span class="sc">$</span>path)</span>
+<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">names</span>(tos_stack) <span class="ot">&lt;-</span> yr_fnms<span class="sc">$</span>date</span>
+<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a>  extracted <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">extract</span>(tos_stack, cells)</span>
+<span id="cb21-23"><a href="#cb21-23" aria-hidden="true" tabindex="-1"></a>  extracted<span class="sc">$</span>cell <span class="ot">&lt;-</span> cells</span>
+<span id="cb21-24"><a href="#cb21-24" aria-hidden="true" tabindex="-1"></a>  qs2<span class="sc">::</span><span class="fu">qs_save</span>(extracted, out_file)</span>
+<span id="cb21-25"><a href="#cb21-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">invisible</span>(out_file)</span>
+<span id="cb21-26"><a href="#cb21-26" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>This next cell extracts all temperatures in each year for every focal cell. This avoids having to do multiple extracts of the surface temperature rasters. Each year ends up with up to three lookup files:</p>
+<ul>
+<li><code>extracted_&lt;year&gt;.qs</code> – the main file, created from all mapped farm cells the first time the year is processed.</li>
+<li><code>extracted_&lt;year&gt;_EXTRA.qs</code> – mapped farm cells that are needed but aren’t covered by the main file (rewritten each run).</li>
+<li><code>extracted_&lt;year&gt;_EXTRACTED.qs</code> – all cells for “extracted” farms (always rewritten, since those farms may move).</li>
+</ul>
 <div class="cell" data-layout-align="center">
 <details class="code-fold">
 <summary>Extract all farm focal cells for each year, accumulating results into some lookup files</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get all focal cells we need to extract for all farms</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>all_cells <span class="ot">&lt;-</span> <span class="fu">unique</span>(<span class="fu">unlist</span>(assigned_farms_cells<span class="sc">$</span>focal_cells))</span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="co"># yr_fnms &lt;- tos_rast_fnms_ls[[1]]</span></span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="fu">walk</span>(</span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  tos_rast_fnms_ls,</span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">function</span>(yr_fnms) {</span>
-<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>    tos_stack <span class="ot">&lt;-</span> <span class="fu">rast</span>(yr_fnms<span class="sc">$</span>path)</span>
-<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">names</span>(tos_stack) <span class="ot">&lt;-</span> yr_fnms<span class="sc">$</span>date</span>
-<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Extract ALL cells needed across all farms in one call</span></span>
-<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>    extracted <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">extract</span>(tos_stack, all_cells)</span>
-<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Label rows with cell number and save as a lookup table</span></span>
-<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>    extracted<span class="sc">$</span>cell <span class="ot">&lt;-</span> all_cells</span>
-<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>    qs2<span class="sc">::</span><span class="fu">qs_save</span>(</span>
-<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>      extracted, </span>
-<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>      <span class="fu">file.path</span>(data_path, <span class="st">&quot;intermediates&quot;</span>, <span class="st">&quot;farm_focal_lookup_files&quot;</span>, <span class="fu">paste0</span>(<span class="st">&quot;extracted_&quot;</span>, <span class="fu">unique</span>(yr_fnms<span class="sc">$</span>year), <span class="st">&quot;.qs&quot;</span>))</span>
-<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a>  },</span>
-<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">.progress =</span> T</span>
-<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># yr_fnms &lt;- tos_rast_fnms_ls[[1]]</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">walk</span>(</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  tos_rast_fnms_ls,</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">function</span>(yr_fnms) {</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>    yr <span class="ot">&lt;-</span> <span class="fu">unique</span>(yr_fnms<span class="sc">$</span>year)</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>    main_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(lookup_dir, <span class="fu">paste0</span>(<span class="st">&quot;extracted_&quot;</span>, yr, <span class="st">&quot;.qs&quot;</span>))</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>    extra_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(lookup_dir, <span class="fu">paste0</span>(<span class="st">&quot;extracted_&quot;</span>, yr, <span class="st">&quot;_EXTRA.qs&quot;</span>))</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>    extracted_file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(lookup_dir, <span class="fu">paste0</span>(<span class="st">&quot;extracted_&quot;</span>, yr, <span class="st">&quot;_EXTRACTED.qs&quot;</span>))</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># --- Mapped farms ---</span></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="sc">!</span><span class="fu">file.exists</span>(main_file)) {</span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>      <span class="co"># No main file yet: extract all mapped cells</span></span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>      <span class="fu">extract_year_cells</span>(yr_fnms, mapped_cells, main_file)</span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (<span class="fu">file.exists</span>(extra_file)) <span class="fu">file.remove</span>(extra_file)</span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Main file exists: only extract mapped cells it doesn&#39;t already cover</span></span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>      covered <span class="ot">&lt;-</span> <span class="fu">qs_read</span>(main_file)<span class="sc">$</span>cell</span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>      missing_cells <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(mapped_cells, covered)</span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (<span class="fu">length</span>(missing_cells) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a>        <span class="fu">extract_year_cells</span>(yr_fnms, missing_cells, extra_file)</span>
+<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a>      } <span class="cf">else</span> <span class="cf">if</span> (<span class="fu">file.exists</span>(extra_file)) {</span>
+<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a>        <span class="fu">file.remove</span>(extra_file)</span>
+<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb22-26"><a href="#cb22-26" aria-hidden="true" tabindex="-1"></a>    <span class="co"># --- Extracted farms: always re-extract ---</span></span>
+<span id="cb22-27"><a href="#cb22-27" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">length</span>(extracted_cells) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb22-28"><a href="#cb22-28" aria-hidden="true" tabindex="-1"></a>      <span class="fu">extract_year_cells</span>(yr_fnms, extracted_cells, extracted_file)</span>
+<span id="cb22-29"><a href="#cb22-29" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> <span class="cf">if</span> (<span class="fu">file.exists</span>(extracted_file)) {</span>
+<span id="cb22-30"><a href="#cb22-30" aria-hidden="true" tabindex="-1"></a>      <span class="fu">file.remove</span>(extracted_file)</span>
+<span id="cb22-31"><a href="#cb22-31" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb22-32"><a href="#cb22-32" aria-hidden="true" tabindex="-1"></a>  },</span>
+<span id="cb22-33"><a href="#cb22-33" aria-hidden="true" tabindex="-1"></a>  <span class="at">.progress =</span> T</span>
+<span id="cb22-34"><a href="#cb22-34" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-<p>The focal cell temperatures are then combined according to the focal cell lookup table to form the farm temperatures.</p>
+<p>The focal cell temperatures are then combined according to the focal cell lookup table to form the farm temperatures. For each year, the main, EXTRA and EXTRACTED lookup files are read and combined (de-duplicated by cell) before the per-farm means are calculated.</p>
 <div class="cell" data-layout-align="center">
 <details class="code-fold">
 <summary>Assemble per-farm files from the extracted temperatures in the lookup tables</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>assigned_farms_cells <span class="ot">&lt;-</span> <span class="fu">file.path</span>(prepdata_path, <span class="st">&quot;assigned_farms_focal_cells.qs&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">qs_read</span>()</span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>subset_farms <span class="ot">&lt;-</span> assigned_farms_cells <span class="sc">%&gt;%</span> </span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">out_file =</span> <span class="fu">file.path</span>(farm_temp_outputs, <span class="fu">paste0</span>(<span class="st">&quot;farm_&quot;</span>, <span class="fu">fix_int</span>(farm_ID, <span class="at">digits =</span> <span class="dv">8</span>), <span class="st">&quot;.qs&quot;</span>)),</span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">file_exists =</span> <span class="fu">file.exists</span>(out_file)</span>
-<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span> </span>
-<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>file_exists) <span class="sc">%&gt;%</span> <span class="co"># comment out if overwriting</span></span>
-<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(farm_ID) <span class="sc">%&gt;%</span> </span>
-<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>()</span>
-<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>lookup_files <span class="ot">&lt;-</span> <span class="fu">file.path</span>(data_path, <span class="st">&quot;intermediates&quot;</span>, <span class="st">&quot;farm_focal_lookup_files&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list.files</span>(<span class="at">pattern =</span> <span class="st">&quot;extracted_</span><span class="sc">\\</span><span class="st">d{4}</span><span class="sc">\\</span><span class="st">.qs&quot;</span>, <span class="at">full.names =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a><span class="co"># id &lt;- subset_farms[1]</span></span>
-<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a><span class="fu">walk</span>(</span>
-<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>  subset_farms,</span>
-<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>  <span class="cf">function</span>(id) {</span>
-<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a>      cells <span class="ot">&lt;-</span> assigned_farms_cells<span class="sc">$</span>focal_cells[assigned_farms_cells<span class="sc">$</span>farm_ID <span class="sc">==</span> id][[<span class="dv">1</span>]]</span>
-<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a>      </span>
-<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a>      temps <span class="ot">&lt;-</span> lookup_files <span class="sc">%&gt;%</span> </span>
-<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a>        <span class="fu">map_dfr</span>(<span class="cf">function</span>(fnm) {</span>
-<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a>          tmp <span class="ot">&lt;-</span> <span class="fu">qs_read</span>(fnm) <span class="sc">%&gt;%</span> </span>
-<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a>            <span class="fu">filter</span>(cell <span class="sc">%in%</span> cells) <span class="sc">%&gt;%</span> </span>
-<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a>            <span class="fu">select</span>(<span class="sc">-</span>cell)</span>
-<span id="cb22-26"><a href="#cb22-26" aria-hidden="true" tabindex="-1"></a>          vals <span class="ot">&lt;-</span> <span class="fu">colMeans</span>(<span class="fu">as.matrix</span>(tmp), <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb22-27"><a href="#cb22-27" aria-hidden="true" tabindex="-1"></a>          <span class="fu">data.frame</span>(</span>
-<span id="cb22-28"><a href="#cb22-28" aria-hidden="true" tabindex="-1"></a>            <span class="at">date =</span> <span class="fu">as.Date</span>(<span class="fu">names</span>(tmp)),</span>
-<span id="cb22-29"><a href="#cb22-29" aria-hidden="true" tabindex="-1"></a>            <span class="at">sst =</span> <span class="fu">unname</span>(vals)</span>
-<span id="cb22-30"><a href="#cb22-30" aria-hidden="true" tabindex="-1"></a>          )</span>
-<span id="cb22-31"><a href="#cb22-31" aria-hidden="true" tabindex="-1"></a>        }) <span class="sc">%&gt;%</span> </span>
-<span id="cb22-32"><a href="#cb22-32" aria-hidden="true" tabindex="-1"></a>          <span class="fu">mutate</span>(<span class="at">farm_ID =</span> id)</span>
-<span id="cb22-33"><a href="#cb22-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-34"><a href="#cb22-34" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (<span class="fu">any</span>(<span class="fu">is.na</span>(temps<span class="sc">$</span>sst))) {</span>
-<span id="cb22-35"><a href="#cb22-35" aria-hidden="true" tabindex="-1"></a>        cli<span class="sc">::</span><span class="fu">cli_alert_warning</span>(<span class="fu">sprintf</span>(<span class="st">&quot;Warning! Cell %s has missing temperatures!&quot;</span>, id))</span>
-<span id="cb22-36"><a href="#cb22-36" aria-hidden="true" tabindex="-1"></a>      }</span>
-<span id="cb22-37"><a href="#cb22-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-38"><a href="#cb22-38" aria-hidden="true" tabindex="-1"></a>      qs2<span class="sc">::</span><span class="fu">qs_save</span>(temps, <span class="fu">file.path</span>(farm_temp_outputs, <span class="fu">paste0</span>(<span class="st">&quot;farm_&quot;</span>, <span class="fu">fix_int</span>(id, <span class="at">digits =</span> <span class="dv">8</span>), <span class="st">&quot;.qs&quot;</span>)))</span>
-<span id="cb22-39"><a href="#cb22-39" aria-hidden="true" tabindex="-1"></a>  },</span>
-<span id="cb22-40"><a href="#cb22-40" aria-hidden="true" tabindex="-1"></a>  <span class="at">.progress =</span> T</span>
-<span id="cb22-41"><a href="#cb22-41" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb22-42"><a href="#cb22-42" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-43"><a href="#cb22-43" aria-hidden="true" tabindex="-1"></a><span class="co"># ! Warning! Cell 87416 has missing temperatures!   </span></span>
-<span id="cb22-44"><a href="#cb22-44" aria-hidden="true" tabindex="-1"></a><span class="co"># ! Warning! Cell 87479 has missing temperatures!   </span></span>
-<span id="cb22-45"><a href="#cb22-45" aria-hidden="true" tabindex="-1"></a><span class="co"># ! Warning! Cell 87520 has missing temperatures!   </span></span>
-<span id="cb22-46"><a href="#cb22-46" aria-hidden="true" tabindex="-1"></a><span class="co"># ! Warning! Cell 87521 has missing temperatures!   </span></span>
-<span id="cb22-47"><a href="#cb22-47" aria-hidden="true" tabindex="-1"></a><span class="co"># ! Warning! Cell 87525 has missing temperatures!   </span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>assigned_farms_cells <span class="ot">&lt;-</span> <span class="fu">file.path</span>(prepdata_path, <span class="st">&quot;assigned_farms_focal_cells.qs&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">qs_read</span>()</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>subset_farms <span class="ot">&lt;-</span> assigned_farms_cells <span class="sc">%&gt;%</span> </span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  sf<span class="sc">::</span><span class="fu">st_drop_geometry</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">out_file =</span> <span class="fu">file.path</span>(farm_temp_outputs, <span class="fu">paste0</span>(<span class="st">&quot;farm_&quot;</span>, <span class="fu">fix_int</span>(farm_ID, <span class="at">digits =</span> <span class="dv">8</span>), <span class="st">&quot;.qs&quot;</span>)),</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">file_exists =</span> <span class="fu">file.exists</span>(out_file)</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Extracted farms may have moved, so always redo them; mapped farms only if no output yet</span></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(source <span class="sc">==</span> <span class="st">&quot;extracted&quot;</span> <span class="sc">|</span> <span class="sc">!</span>file_exists) <span class="sc">%&gt;%</span> <span class="co"># comment out if overwriting everything</span></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(farm_ID) <span class="sc">%&gt;%</span> </span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>()</span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Group the main / EXTRA / EXTRACTED lookup files by year</span></span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a>lookup_files_by_year <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">path =</span> <span class="fu">list.files</span>(lookup_dir, <span class="at">pattern =</span> <span class="st">&quot;^extracted_</span><span class="sc">\\</span><span class="st">d{4}(_EXTRA|_EXTRACTED)?</span><span class="sc">\\</span><span class="st">.qs$&quot;</span>, <span class="at">full.names =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span> </span>
+<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">year =</span> <span class="fu">str_extract</span>(<span class="fu">basename</span>(path), <span class="st">&quot;</span><span class="sc">\\</span><span class="st">d{4}&quot;</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(year) <span class="sc">%&gt;%</span> </span>
+<span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">paths =</span> <span class="fu">list</span>(path), <span class="at">.groups =</span> <span class="st">&quot;drop&quot;</span>)</span>
+<span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-22"><a href="#cb23-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Read and combine all lookup files for one year, de-duplicating by cell</span></span>
+<span id="cb23-23"><a href="#cb23-23" aria-hidden="true" tabindex="-1"></a>read_year_lookup <span class="ot">&lt;-</span> <span class="cf">function</span>(paths) {</span>
+<span id="cb23-24"><a href="#cb23-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(paths, qs_read) <span class="sc">%&gt;%</span> </span>
+<span id="cb23-25"><a href="#cb23-25" aria-hidden="true" tabindex="-1"></a>    <span class="fu">bind_rows</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb23-26"><a href="#cb23-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">distinct</span>(cell, <span class="at">.keep_all =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb23-27"><a href="#cb23-27" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb23-28"><a href="#cb23-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-29"><a href="#cb23-29" aria-hidden="true" tabindex="-1"></a><span class="co"># Sanity check: every focal cell should be covered by the lookup files (checks the first year only)</span></span>
+<span id="cb23-30"><a href="#cb23-30" aria-hidden="true" tabindex="-1"></a>covered_cells <span class="ot">&lt;-</span> <span class="fu">read_year_lookup</span>(lookup_files_by_year<span class="sc">$</span>paths[[<span class="dv">1</span>]])<span class="sc">$</span>cell</span>
+<span id="cb23-31"><a href="#cb23-31" aria-hidden="true" tabindex="-1"></a>uncovered <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(<span class="fu">unlist</span>(assigned_farms_cells<span class="sc">$</span>focal_cells[assigned_farms_cells<span class="sc">$</span>farm_ID <span class="sc">%in%</span> subset_farms]), covered_cells)</span>
+<span id="cb23-32"><a href="#cb23-32" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">length</span>(uncovered) <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="fu">stop</span>(<span class="fu">sprintf</span>(<span class="st">&quot;%i focal cells are not covered by the lookup files - rerun the extraction chunk.&quot;</span>, <span class="fu">length</span>(uncovered)))</span>
+<span id="cb23-33"><a href="#cb23-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-34"><a href="#cb23-34" aria-hidden="true" tabindex="-1"></a><span class="co"># id &lt;- subset_farms[1]</span></span>
+<span id="cb23-35"><a href="#cb23-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-36"><a href="#cb23-36" aria-hidden="true" tabindex="-1"></a>work_cores <span class="ot">&lt;-</span> parallelly<span class="sc">::</span><span class="fu">availableCores</span>() <span class="sc">-</span> <span class="dv">2</span></span>
+<span id="cb23-37"><a href="#cb23-37" aria-hidden="true" tabindex="-1"></a><span class="fu">plan</span>(multisession, <span class="at">workers =</span> work_cores)</span>
+<span id="cb23-38"><a href="#cb23-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-39"><a href="#cb23-39" aria-hidden="true" tabindex="-1"></a><span class="fu">future_walk</span>(</span>
+<span id="cb23-40"><a href="#cb23-40" aria-hidden="true" tabindex="-1"></a>  subset_farms,</span>
+<span id="cb23-41"><a href="#cb23-41" aria-hidden="true" tabindex="-1"></a>  <span class="cf">function</span>(id) {</span>
+<span id="cb23-42"><a href="#cb23-42" aria-hidden="true" tabindex="-1"></a>      cells <span class="ot">&lt;-</span> assigned_farms_cells<span class="sc">$</span>focal_cells[assigned_farms_cells<span class="sc">$</span>farm_ID <span class="sc">==</span> id][[<span class="dv">1</span>]]</span>
+<span id="cb23-43"><a href="#cb23-43" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb23-44"><a href="#cb23-44" aria-hidden="true" tabindex="-1"></a>      temps <span class="ot">&lt;-</span> lookup_files_by_year<span class="sc">$</span>paths <span class="sc">%&gt;%</span> </span>
+<span id="cb23-45"><a href="#cb23-45" aria-hidden="true" tabindex="-1"></a>        <span class="fu">map_dfr</span>(<span class="cf">function</span>(paths) {</span>
+<span id="cb23-46"><a href="#cb23-46" aria-hidden="true" tabindex="-1"></a>          tmp <span class="ot">&lt;-</span> <span class="fu">read_year_lookup</span>(paths) <span class="sc">%&gt;%</span> </span>
+<span id="cb23-47"><a href="#cb23-47" aria-hidden="true" tabindex="-1"></a>            <span class="fu">filter</span>(cell <span class="sc">%in%</span> cells) <span class="sc">%&gt;%</span> </span>
+<span id="cb23-48"><a href="#cb23-48" aria-hidden="true" tabindex="-1"></a>            <span class="fu">select</span>(<span class="sc">-</span>cell)</span>
+<span id="cb23-49"><a href="#cb23-49" aria-hidden="true" tabindex="-1"></a>          vals <span class="ot">&lt;-</span> <span class="fu">colMeans</span>(<span class="fu">as.matrix</span>(tmp), <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb23-50"><a href="#cb23-50" aria-hidden="true" tabindex="-1"></a>          <span class="fu">data.frame</span>(</span>
+<span id="cb23-51"><a href="#cb23-51" aria-hidden="true" tabindex="-1"></a>            <span class="at">date =</span> <span class="fu">as.Date</span>(<span class="fu">names</span>(tmp)),</span>
+<span id="cb23-52"><a href="#cb23-52" aria-hidden="true" tabindex="-1"></a>            <span class="at">sst =</span> <span class="fu">unname</span>(vals)</span>
+<span id="cb23-53"><a href="#cb23-53" aria-hidden="true" tabindex="-1"></a>          )</span>
+<span id="cb23-54"><a href="#cb23-54" aria-hidden="true" tabindex="-1"></a>        }) <span class="sc">%&gt;%</span> </span>
+<span id="cb23-55"><a href="#cb23-55" aria-hidden="true" tabindex="-1"></a>          <span class="fu">mutate</span>(<span class="at">farm_ID =</span> id)</span>
+<span id="cb23-56"><a href="#cb23-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-57"><a href="#cb23-57" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (<span class="fu">any</span>(<span class="fu">is.na</span>(temps<span class="sc">$</span>sst))) {</span>
+<span id="cb23-58"><a href="#cb23-58" aria-hidden="true" tabindex="-1"></a>        cli<span class="sc">::</span><span class="fu">cli_alert_warning</span>(<span class="fu">sprintf</span>(<span class="st">&quot;Warning! Cell %s has missing temperatures!&quot;</span>, id))</span>
+<span id="cb23-59"><a href="#cb23-59" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb23-60"><a href="#cb23-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-61"><a href="#cb23-61" aria-hidden="true" tabindex="-1"></a>      qs2<span class="sc">::</span><span class="fu">qs_save</span>(temps, <span class="fu">file.path</span>(farm_temp_outputs, <span class="fu">paste0</span>(<span class="st">&quot;farm_&quot;</span>, <span class="fu">fix_int</span>(id, <span class="at">digits =</span> <span class="dv">8</span>), <span class="st">&quot;.qs&quot;</span>)))</span>
+<span id="cb23-62"><a href="#cb23-62" aria-hidden="true" tabindex="-1"></a>  },</span>
+<span id="cb23-63"><a href="#cb23-63" aria-hidden="true" tabindex="-1"></a>  <span class="at">.progress =</span> T</span>
+<span id="cb23-64"><a href="#cb23-64" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb23-65"><a href="#cb23-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-66"><a href="#cb23-66" aria-hidden="true" tabindex="-1"></a><span class="fu">plan</span>(sequential)</span>
+<span id="cb23-67"><a href="#cb23-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-68"><a href="#cb23-68" aria-hidden="true" tabindex="-1"></a><span class="co"># ! Warning! Cell 87416 has missing temperatures!   </span></span>
+<span id="cb23-69"><a href="#cb23-69" aria-hidden="true" tabindex="-1"></a><span class="co"># ! Warning! Cell 87479 has missing temperatures!   </span></span>
+<span id="cb23-70"><a href="#cb23-70" aria-hidden="true" tabindex="-1"></a><span class="co"># ! Warning! Cell 87520 has missing temperatures!   </span></span>
+<span id="cb23-71"><a href="#cb23-71" aria-hidden="true" tabindex="-1"></a><span class="co"># ! Warning! Cell 87521 has missing temperatures!   </span></span>
+<span id="cb23-72"><a href="#cb23-72" aria-hidden="true" tabindex="-1"></a><span class="co"># ! Warning! Cell 87525 has missing temperatures!   </span></span>
+<span id="cb23-73"><a href="#cb23-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-74"><a href="#cb23-74" aria-hidden="true" tabindex="-1"></a>farms_needed <span class="ot">&lt;-</span> assigned_farms <span class="sc">%&gt;%</span> <span class="fu">pull</span>(farm_ID) <span class="sc">%&gt;%</span> <span class="fu">unique</span>()</span>
+<span id="cb23-75"><a href="#cb23-75" aria-hidden="true" tabindex="-1"></a>farms_done   <span class="ot">&lt;-</span> <span class="fu">file.path</span>(farm_temp_outputs) <span class="sc">%&gt;%</span> <span class="fu">list.files</span>() <span class="sc">%&gt;%</span> <span class="fu">str_remove_all</span>(<span class="st">&quot;farm_|.qs&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">as.integer</span>()</span>
+<span id="cb23-76"><a href="#cb23-76" aria-hidden="true" tabindex="-1"></a><span class="fu">setdiff</span>(farms_needed, farms_done)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <p>Saving temperatures by model_name is just a convenience measure for future analyses and visualisation.</p>
 <div class="cell" data-layout-align="center">
 <details class="code-fold">
 <summary>Save farm temperatures by model names</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>model_names <span class="ot">&lt;-</span> <span class="fu">unique</span>(assigned_farms<span class="sc">$</span>model_name)</span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="co"># mn &lt;- model_names[11]</span></span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="fu">walk</span>(</span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  model_names,</span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">function</span> (mn) {</span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>    model_farms <span class="ot">&lt;-</span> assigned_farms <span class="sc">%&gt;%</span> </span>
-<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(model_name <span class="sc">==</span> mn)</span>
-<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>    temps <span class="ot">&lt;-</span> <span class="fu">file.path</span>(farm_temp_outputs) <span class="sc">%&gt;%</span> </span>
-<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>      <span class="fu">list.files</span>(<span class="at">full.names =</span> T) <span class="sc">%&gt;%</span> </span>
-<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>      <span class="fu">str_subset</span>(<span class="fu">paste0</span>(<span class="fu">fix_int</span>(model_farms<span class="sc">$</span>farm_ID, <span class="dv">8</span>), <span class="at">collapse =</span> <span class="st">&quot;|&quot;</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>      <span class="fu">map_dfr</span>(qs_read)</span>
-<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a>    model_farms <span class="ot">&lt;-</span> model_farms <span class="sc">%&gt;%</span> </span>
-<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a>      <span class="fu">left_join</span>(temps, <span class="at">by =</span> <span class="fu">join_by</span>(farm_ID)) <span class="sc">%&gt;%</span> </span>
-<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="at">year =</span> <span class="fu">year</span>(date) <span class="sc">%&gt;%</span> <span class="fu">as.factor</span>())</span>
-<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a>    qs2<span class="sc">::</span><span class="fu">qs_save</span>(model_farms, <span class="fu">file.path</span>(prepdata_path, <span class="st">&quot;farm_temps_bymodel&quot;</span>, <span class="fu">paste0</span>(<span class="st">&quot;farm_temps_&quot;</span>, mn, <span class="st">&quot;.qs&quot;</span>)))</span>
-<span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a>  },</span>
-<span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">.progress =</span> T</span>
-<span id="cb23-22"><a href="#cb23-22" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>model_names <span class="ot">&lt;-</span> <span class="fu">unique</span>(assigned_farms<span class="sc">$</span>model_name)</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="co"># mn &lt;- model_names[11]</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="fu">walk</span>(</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>  model_names,</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">function</span> (mn) {</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>    model_farms <span class="ot">&lt;-</span> assigned_farms <span class="sc">%&gt;%</span> </span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(model_name <span class="sc">==</span> mn)</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>    temps <span class="ot">&lt;-</span> <span class="fu">file.path</span>(farm_temp_outputs) <span class="sc">%&gt;%</span> </span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>      <span class="fu">list.files</span>(<span class="at">full.names =</span> T) <span class="sc">%&gt;%</span> </span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>      <span class="fu">str_subset</span>(<span class="fu">paste0</span>(<span class="fu">fix_int</span>(model_farms<span class="sc">$</span>farm_ID, <span class="dv">8</span>), <span class="at">collapse =</span> <span class="st">&quot;|&quot;</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>      <span class="fu">map_dfr</span>(qs_read)</span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a>    model_farms <span class="ot">&lt;-</span> model_farms <span class="sc">%&gt;%</span> </span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a>      <span class="fu">left_join</span>(temps, <span class="at">by =</span> <span class="fu">join_by</span>(farm_ID)) <span class="sc">%&gt;%</span> </span>
+<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="at">year =</span> <span class="fu">year</span>(date) <span class="sc">%&gt;%</span> <span class="fu">as.factor</span>())</span>
+<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a>    qs2<span class="sc">::</span><span class="fu">qs_save</span>(model_farms, <span class="fu">file.path</span>(prepdata_path, <span class="st">&quot;farm_temps_bymodel&quot;</span>, <span class="fu">paste0</span>(<span class="st">&quot;farm_temps_&quot;</span>, mn, <span class="st">&quot;.qs&quot;</span>)))</span>
+<span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a>  },</span>
+<span id="cb24-21"><a href="#cb24-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">.progress =</span> T</span>
+<span id="cb24-22"><a href="#cb24-22" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <p>Plot temperatures by country to give an overview of how temperatures at the assigned farms change over time.</p>
 <div class="cell" data-layout-align="center">
 <details class="code-fold">
 <summary>Plot farm temperatures by country</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>ISO_Codes <span class="ot">&lt;-</span> <span class="fu">unique</span>(assigned_farms<span class="sc">$</span>ISO3_Code)</span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="co"># iso &lt;- ISO_Codes[11]</span></span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="fu">walk</span>(</span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>  ISO_Codes,</span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">function</span> (iso) {</span>
-<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>    country_farms <span class="ot">&lt;-</span> assigned_farms <span class="sc">%&gt;%</span> </span>
-<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(ISO3_Code <span class="sc">==</span> iso)</span>
-<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>    temps <span class="ot">&lt;-</span> <span class="fu">file.path</span>(farm_temp_outputs) <span class="sc">%&gt;%</span> </span>
-<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>      <span class="fu">list.files</span>(<span class="at">full.names =</span> T) <span class="sc">%&gt;%</span> </span>
-<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>      <span class="fu">str_subset</span>(<span class="fu">paste0</span>(<span class="fu">fix_int</span>(country_farms<span class="sc">$</span>farm_ID, <span class="dv">8</span>), <span class="at">collapse =</span> <span class="st">&quot;|&quot;</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>      <span class="fu">map_dfr</span>(qs_read)</span>
-<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a>    country_farms <span class="ot">&lt;-</span> country_farms <span class="sc">%&gt;%</span> </span>
-<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a>      <span class="fu">left_join</span>(temps, <span class="at">by =</span> <span class="fu">join_by</span>(farm_ID)) <span class="sc">%&gt;%</span> </span>
-<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="at">year =</span> <span class="fu">year</span>(date) <span class="sc">%&gt;%</span> <span class="fu">as.factor</span>())</span>
-<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a>    p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(country_farms, <span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> sst, <span class="at">fill =</span> model_name)) <span class="sc">+</span></span>
-<span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
-<span id="cb24-21"><a href="#cb24-21" aria-hidden="true" tabindex="-1"></a>      <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
-<span id="cb24-22"><a href="#cb24-22" aria-hidden="true" tabindex="-1"></a>      <span class="fu">facet_wrap</span>(<span class="sc">~</span>model_name, <span class="at">ncol =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb24-23"><a href="#cb24-23" aria-hidden="true" tabindex="-1"></a>      <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">90</span>))</span>
-<span id="cb24-24"><a href="#cb24-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-25"><a href="#cb24-25" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggsave</span>(</span>
-<span id="cb24-26"><a href="#cb24-26" aria-hidden="true" tabindex="-1"></a>      <span class="at">plot =</span> p,</span>
-<span id="cb24-27"><a href="#cb24-27" aria-hidden="true" tabindex="-1"></a>      <span class="at">filename =</span> <span class="fu">file.path</span>(outs_path, <span class="st">&quot;plots&quot;</span>, <span class="st">&quot;farm_temperatures&quot;</span>, <span class="fu">paste0</span>(<span class="st">&quot;farm_temps_&quot;</span>, iso, <span class="st">&quot;.png&quot;</span>)),</span>
-<span id="cb24-28"><a href="#cb24-28" aria-hidden="true" tabindex="-1"></a>      <span class="at">dpi =</span> <span class="dv">300</span>,</span>
-<span id="cb24-29"><a href="#cb24-29" aria-hidden="true" tabindex="-1"></a>      <span class="at">width =</span> <span class="dv">10</span>,</span>
-<span id="cb24-30"><a href="#cb24-30" aria-hidden="true" tabindex="-1"></a>      <span class="at">height =</span> <span class="fl">2.5</span> <span class="sc">*</span> <span class="fu">max</span>(<span class="fu">ggplot_build</span>(p)<span class="sc">$</span>layout<span class="sc">$</span>layout<span class="sc">$</span>ROW) <span class="sc">+</span> <span class="dv">1</span></span>
-<span id="cb24-31"><a href="#cb24-31" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb24-32"><a href="#cb24-32" aria-hidden="true" tabindex="-1"></a>  },</span>
-<span id="cb24-33"><a href="#cb24-33" aria-hidden="true" tabindex="-1"></a>  <span class="at">.progress =</span> T</span>
-<span id="cb24-34"><a href="#cb24-34" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>ISO_Codes <span class="ot">&lt;-</span> <span class="fu">unique</span>(assigned_farms<span class="sc">$</span>ISO3_Code)</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="co"># iso &lt;- ISO_Codes[11]</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="fu">walk</span>(</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>  ISO_Codes,</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">function</span> (iso) {</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>    country_farms <span class="ot">&lt;-</span> assigned_farms <span class="sc">%&gt;%</span> </span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(ISO3_Code <span class="sc">==</span> iso)</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>    temps <span class="ot">&lt;-</span> <span class="fu">file.path</span>(farm_temp_outputs) <span class="sc">%&gt;%</span> </span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>      <span class="fu">list.files</span>(<span class="at">full.names =</span> T) <span class="sc">%&gt;%</span> </span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>      <span class="fu">str_subset</span>(<span class="fu">paste0</span>(<span class="fu">fix_int</span>(country_farms<span class="sc">$</span>farm_ID, <span class="dv">8</span>), <span class="at">collapse =</span> <span class="st">&quot;|&quot;</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>      <span class="fu">map_dfr</span>(qs_read)</span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>    country_farms <span class="ot">&lt;-</span> country_farms <span class="sc">%&gt;%</span> </span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a>      <span class="fu">left_join</span>(temps, <span class="at">by =</span> <span class="fu">join_by</span>(farm_ID)) <span class="sc">%&gt;%</span> </span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="at">year =</span> <span class="fu">year</span>(date) <span class="sc">%&gt;%</span> <span class="fu">as.factor</span>())</span>
+<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a>    p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(country_farms, <span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> sst, <span class="at">fill =</span> model_name)) <span class="sc">+</span></span>
+<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a>      <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
+<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a>      <span class="fu">facet_wrap</span>(<span class="sc">~</span>model_name, <span class="at">ncol =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb25-23"><a href="#cb25-23" aria-hidden="true" tabindex="-1"></a>      <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">90</span>))</span>
+<span id="cb25-24"><a href="#cb25-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-25"><a href="#cb25-25" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggsave</span>(</span>
+<span id="cb25-26"><a href="#cb25-26" aria-hidden="true" tabindex="-1"></a>      <span class="at">plot =</span> p,</span>
+<span id="cb25-27"><a href="#cb25-27" aria-hidden="true" tabindex="-1"></a>      <span class="at">filename =</span> <span class="fu">file.path</span>(outs_path, <span class="st">&quot;plots&quot;</span>, <span class="st">&quot;farm_temperatures&quot;</span>, <span class="fu">paste0</span>(<span class="st">&quot;farm_temps_&quot;</span>, iso, <span class="st">&quot;.png&quot;</span>)),</span>
+<span id="cb25-28"><a href="#cb25-28" aria-hidden="true" tabindex="-1"></a>      <span class="at">dpi =</span> <span class="dv">300</span>,</span>
+<span id="cb25-29"><a href="#cb25-29" aria-hidden="true" tabindex="-1"></a>      <span class="at">width =</span> <span class="dv">10</span>,</span>
+<span id="cb25-30"><a href="#cb25-30" aria-hidden="true" tabindex="-1"></a>      <span class="at">height =</span> <span class="fl">2.5</span> <span class="sc">*</span> <span class="fu">max</span>(<span class="fu">ggplot_build</span>(p)<span class="sc">$</span>layout<span class="sc">$</span>layout<span class="sc">$</span>ROW) <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb25-31"><a href="#cb25-31" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb25-32"><a href="#cb25-32" aria-hidden="true" tabindex="-1"></a>  },</span>
+<span id="cb25-33"><a href="#cb25-33" aria-hidden="true" tabindex="-1"></a>  <span class="at">.progress =</span> T</span>
+<span id="cb25-34"><a href="#cb25-34" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <div style="display: flex; justify-content: space-between;">

@@ -311,6 +311,7 @@ tos_rast_fnms_ls <- split(tos_rast_fnms_ls, tos_rast_fnms_ls$year)
 
 ```{r split-mapped-extracted}
 #| code-summary: "Split focal cells by farm source (mapped vs extracted)"
+#| eval: false
 
 lookup_dir <- file.path(data_path, "intermediates", "farm_focal_lookup_files")
 dir.create(lookup_dir, showWarnings = F, recursive = T)
@@ -348,6 +349,7 @@ This next cell extracts all temperatures in each year for every focal cell. This
 
 ```{r extract-temps-lookup-cells}
 #| code-summary: Extract all farm focal cells for each year, accumulating results into some lookup files
+#| eval: false
 
 # yr_fnms <- tos_rast_fnms_ls[[1]]
 walk(
@@ -389,6 +391,7 @@ The focal cell temperatures are then combined according to the focal cell lookup
 
 ```{r per-farm-projected-temperatures}
 #| code-summary: Assemble per-farm files from the extracted temperatures in the lookup tables
+#| eval: false
 
 assigned_farms_cells <- file.path(prepdata_path, "assigned_farms_focal_cells.qs") %>% qs_read()
 
@@ -462,6 +465,10 @@ plan(sequential)
 # ! Warning! Cell 87520 has missing temperatures!   
 # ! Warning! Cell 87521 has missing temperatures!   
 # ! Warning! Cell 87525 has missing temperatures!   
+
+farms_needed <- assigned_farms %>% pull(farm_ID) %>% unique()
+farms_done   <- file.path(farm_temp_outputs) %>% list.files() %>% str_remove_all("farm_|.qs") %>% as.integer()
+setdiff(farms_needed, farms_done)
 ```
 
 Saving temperatures by model_name is just a convenience measure for future analyses and visualisation.
