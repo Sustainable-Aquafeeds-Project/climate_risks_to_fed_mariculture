@@ -42,6 +42,7 @@ library(ggtext)
 
 here("src", "dirs.R") %>% source()
 here("src", "other_functions.R") %>% source()
+here("src", "mapping_vars.R") %>% source()
 ```
 
 The goal of this document is to identify the most commercially important marine and brackishwater aquaculture species worldwide, based on FAO production data from 2011 to the most recent available year. We focus on post-2010 data to reflect modern production trends, and rank species by their total reported production volume (tonnes live weight) over this period.
@@ -54,6 +55,7 @@ The previous data processing script () has already matched the scientific name r
 #| code-summary: "Load FAO aquaculture production dataset"
 
 # here("data-prep-scripts", "aquaculture-production-data.R") %>% source()
+
 FAO_aqua <- file.path(prepdata_path, "FAO_aquaculture_quantity_MA_BR.qs") %>% 
   qd_read() %>% 
   select(-status_nm) %>% 
@@ -77,7 +79,7 @@ FAO_modern_fed <- FAO_aqua %>%
   filter(
     period > 2010 & 
       !group_name == "seaweed_plants" & 
-      !species_name %in% c("clams", "oysters", "mussels", "scallops", "general_bivalves", "general_molluscs", "jellyfish")
+      !species_name %in% c("clams", "oysters", "mussels", "scallops", "general_bivalves", "general_molluscs", "jellyfish", "abalone")
     )
 
 cat("Years included:", min(FAO_modern_fed$period), "–", max(FAO_modern_fed$period), "\n")
@@ -280,10 +282,10 @@ investigating <- FAO_aqua %>%
 ```{r marine-species-detail}
 #| code-summary: "Show major species in 'marine' categories"
 
-# investigating %>% 
-#   filter(environment == "Marine") %>% 
-#   select(-environment) %>% 
-#   print(n = 75)
+investigating %>% 
+  filter(environment == "Marine") %>% 
+  select(-environment) %>% 
+  print()
 
 # write.csv(investigating, "investigating.csv")
 ```
@@ -291,10 +293,10 @@ investigating <- FAO_aqua %>%
 ```{r brackish-species-detail}
 #| code-summary: "Show major species in 'brackishwater' categories"
 
-# investigating %>% 
-#   filter(environment != "Marine") %>% 
-#   select(-environment) %>% 
-#   print(n = 75)
+investigating %>% 
+  filter(environment != "Marine") %>% 
+  select(-environment) %>% 
+  print()
 ```
 
 Most FAO species records do not map one-to-one onto a single species for easy model parameterisation: many FAO entries report genus only (e.g. "*Pennaeus* spp") or broadly-defined groups (e.g. "Actinopterygii"). To handle this, we load a manually curated lookup table (`top_species_model_keys.csv`) that assigns each FAO record a **model name** — the name of the bioenergetic model that will represent it in subsequent analyses.
@@ -337,6 +339,14 @@ FAO_with_models <- FAO_modern_fed %>%
 FAO_with_models %>% 
   filter(is.na(model_name)) %>% 
   distinct(environment, Scientific_Name)
+
+# Quick change to the model names - combine drums and croakers, and the seabreams
+FAO_with_models <- FAO_with_models %>% 
+  mutate(model_name = case_when(
+    model_name %in% c("blackhead_seabream", "gilthead_seabream", "red_seabream") ~ "seabream",
+    model_name %in% c("drum", "croaker") ~ "drum_croaker",
+    T ~ model_name
+  ))
 
 qs_save(FAO_with_models, file.path(prepdata_path, "FAO_with_models.qs"))
 ```
@@ -598,8 +608,6 @@ The compromised list is based entirely on live-weight production, but we want to
 ```{r geo-coverage-setup}
 #| code-summary: "Source mapping variables and calculate per-model % coverage by country"
 
-here("src", "mapping_vars.R") %>% source()
-
 # Distinct model names selected under the compromise ranking
 chosen_models <- coverage_compromise_rank %>%
   distinct(model_name) %>%
@@ -626,14 +634,14 @@ model_prod_country <- FAO_with_models %>%
 #  being absent from the data, which would make them appear white instead of grey)
 model_prod_country_complete <- model_prod_country %>%
   complete(
-    ISO3_Code = unique(worldmap_robinson$iso_a3),
+    ISO3_Code = unique(worldmap_robinson$ISO3_Code),
     model_name
   )
 
 # Join each model's coverage onto the Robinson world map
 map_model_coverage <- worldmap_robinson %>%
-  left_join(model_prod_country_complete, by = c("iso_a3" = "ISO3_Code")) %>%
-  select(iso_a3, model_name, model_prod, total_prod, pct_coverage, name, geometry)
+  left_join(model_prod_country_complete, by = c("ISO3_Code")) %>%
+  select(ISO3_Code, model_name, model_prod, total_prod, pct_coverage, name, geometry)
 ```
 
 ```{r fig-geo-coverage-by-model}
@@ -684,8 +692,8 @@ total_coverage_country <- FAO_with_models %>%
     )
 
 map_total_coverage <- worldmap_robinson %>%
-  left_join(total_coverage_country, by = c("iso_a3" = "ISO3_Code")) %>% 
-  select(iso_a3, chosen_prod, total_prod, pct_total_coverage, name, geometry)
+  left_join(total_coverage_country, by = c("ISO3_Code")) %>% 
+  select(ISO3_Code, chosen_prod, total_prod, pct_total_coverage, name, geometry)
 ```
 
 ```{r fig-geo-coverage-total}
@@ -707,16 +715,18 @@ p_bigmap_robinson +
     na.value  = "grey85",
     labels    = scales::label_percent(scale = 1),
     limits    = c(0, 100),
-    name      = "% of national\nfed production"
+    name      = "% of national fed production"
   ) +
   labs(
     title    = "Total coverage of national fed aquaculture production by all chosen models",
     subtitle = paste0("FAO data, 2011–", max(FAO_modern_fed$period), " (all periods combined)")
   ) +
   theme(
-    legend.position  = "bottom",
-    legend.key.width = unit(2, "cm"),
-    plot.title       = element_text(face = "bold")
+    legend.title.position = "top",
+    legend.title          = element_text(hjust = 0.5),
+    legend.position       = "bottom",
+    legend.key.width      = unit(2, "cm"),
+    plot.title            = element_text(face = "bold")
   )
 ```
 
@@ -734,8 +744,8 @@ country_species <- FAO_modern_fed %>%
 missed_countries <- map_total_coverage %>% 
   st_drop_geometry() %>% 
   filter(pct_total_coverage < 50 & !is.na(total_prod) & total_prod != 0) %>% 
-  distinct(iso_a3, pct_total_coverage, total_prod) %>% 
-  left_join(country_species, by = c("iso_a3" = "ISO3_Code")) %>% 
+  distinct(ISO3_Code, pct_total_coverage, total_prod) %>% 
+  left_join(country_species, by = c("ISO3_Code")) %>% 
   filter(species_total > 0) %>% 
   arrange(pct_total_coverage, -species_total)
 
@@ -768,7 +778,7 @@ missed_countries %>%
       TRUE ~ " "
     )
     ) %>% 
-  select(-iso_a3, -pct_total_coverage, -covered_pct) %>% 
+  select(-ISO3_Code, -pct_total_coverage, -covered_pct) %>% 
   group_by(country) %>% 
   slice_head(n = 5) %>% 
   ungroup() %>% 
@@ -826,13 +836,12 @@ choosing_ranks_manual <- FAO_with_models %>%
       "mud_crab", 
       "nile_tilapia", 
       "tiger_prawn", 
-      "gilthead_seabream", "red_seabream", 
+      "seabream",
       "european_seabass", 
-      # "japanese_sea_cucumber", 
-      # "abalone", 
       "golden_pompano", 
       "grouper", 
-      "large_yellow_croaker", "whitemouth_croaker", "meagre", "drum", 
+      "drum_croaker", 
+      "meagre", 
       "japanese_amberjack", 
       "asian_seabass", 
       "tuna", 
@@ -840,8 +849,7 @@ choosing_ranks_manual <- FAO_with_models %>%
       )
     ) %>%
   mutate(model_name = case_when(
-    model_name %in% c("drum", "large_yellow_croaker", "whitemouth_croaker", "meagre") ~ "drum_croaker", 
-    model_name %in% c("red_seabream", "gilthead_seabream") ~ "seabream", 
+    model_name %in% c("drum_croaker", "meagre") ~ "drum_croaker", 
     TRUE ~ model_name)
     ) %>% 
   group_by(model_name) %>%
@@ -860,8 +868,7 @@ choosing_ranks_manual <- FAO_with_models %>%
 
 model_production <- FAO_with_models %>%
   mutate(model_name = case_when(
-    model_name %in% c("drum", "large_yellow_croaker", "whitemouth_croaker", "meagre") ~ "drum_croaker", 
-    model_name %in% c("red_seabream", "gilthead_seabream") ~ "seabream", 
+    model_name %in% c("drum_croaker", "meagre") ~ "drum_croaker", 
     TRUE ~ model_name)
   ) %>% 
   group_by(model_name) %>%
@@ -957,8 +964,7 @@ total_prod_country <- FAO_modern_fed %>%
 # Numerator: production per model_name × country combination
 model_prod_country <- FAO_with_models %>%
   mutate(model_name = case_when(
-    model_name %in% c("drum", "large_yellow_croaker", "whitemouth_croaker", "meagre") ~ "drum_croaker", 
-    model_name %in% c("red_seabream", "gilthead_seabream") ~ "seabream", 
+    model_name %in% c("drum_croaker", "meagre") ~ "drum_croaker", 
     TRUE ~ model_name)
     ) %>% 
   filter(model_name %in% chosen_models) %>% 
@@ -975,14 +981,14 @@ model_prod_country <- FAO_with_models %>%
 #  being absent from the data, which would make them appear white instead of grey)
 model_prod_country_complete <- model_prod_country %>%
   complete(
-    ISO3_Code = unique(worldmap_robinson$iso_a3),
+    ISO3_Code = unique(worldmap_robinson$ISO3_Code),
     model_name
   )
 
 # Join each model's coverage onto the Robinson world map
 map_model_coverage <- worldmap_robinson %>%
-  left_join(model_prod_country_complete, by = c("iso_a3" = "ISO3_Code"), relationship = "many-to-many") %>%
-  select(iso_a3, model_name, model_prod, total_prod, pct_coverage, name, geometry)
+  left_join(model_prod_country_complete, by = c("ISO3_Code"), relationship = "many-to-many") %>%
+  select(ISO3_Code, model_name, model_prod, total_prod, pct_coverage, name, geometry)
 ```
 
 @fig-geo-coverage-by-model-manual shows the share of each country's total fed aquaculture production that is attributed to each chosen model name.
@@ -1026,7 +1032,7 @@ p_bigmap_robinson +
 
 total_coverage_country <- FAO_with_models %>%
   mutate(model_name = case_when(
-    model_name %in% c("drum", "large_yellow_croaker") ~ "drum_croaker", 
+    model_name %in% c("drum_croaker", "meagre") ~ "drum_croaker", 
     TRUE ~ model_name)
     ) %>% 
   filter(model_name %in% chosen_models) %>% 
@@ -1039,8 +1045,8 @@ total_coverage_country <- FAO_with_models %>%
     )
 
 map_total_coverage <- worldmap_robinson %>%
-  left_join(total_coverage_country, by = c("iso_a3" = "ISO3_Code")) %>% 
-  select(iso_a3, chosen_prod, total_prod, pct_total_coverage, name, geometry)
+  left_join(total_coverage_country, by = c("ISO3_Code")) %>% 
+  select(ISO3_Code, chosen_prod, total_prod, pct_total_coverage, name, geometry)
 ```
 
 @fig-geo-coverage-total-manual shows the combined share of each country's total fed aquaculture production that is covered when all chosen model names are considered together.
@@ -1078,6 +1084,17 @@ p_bigmap_robinson +
 ```
 
 # Summary of chosen models {#sec-model-summary}
+
+```{r save-models-again}
+
+FAO_with_models %>% 
+  mutate(
+    model_name = case_when(
+      model_name %in% c("drum_croaker", "meagre") ~ "drum_croaker", 
+      TRUE ~ model_name)
+    ) %>% 
+    qs_save(file.path(prepdata_path, "FAO_with_models.qs"))
+```
 
 The 17 manually chosen model names and a representative (typically most-commonly farmed) species for each are listed in @tbl-model-summary. 
 
@@ -1127,8 +1144,7 @@ FAO_with_models_final <- FAO_with_models %>%
   mutate(model_name = case_when(
     model_name %in% c("arctic_char") ~ "rainbow_trout",
     model_name %in% c("banana_prawn") ~ "tiger_prawn",
-    model_name %in% c("drum", "large_yellow_croaker", "whitemouth_croaker", "meagre") ~ "drum_croaker", 
-    model_name %in% c("red_seabream", "gilthead_seabream", "blackhead_seabream") ~ "seabream", 
+    model_name %in% c("drum_croaker", "large_yellow_croaker", "whitemouth_croaker", "meagre") ~ "drum_croaker",
     TRUE ~ model_name
     )
   ) %>%

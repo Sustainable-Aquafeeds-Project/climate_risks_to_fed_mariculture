@@ -1,6 +1,7 @@
 project:
   title: "FAO Climate Change Risks to Fed Mariculture"
   type: website
+  execute-dir: project
   output-dir: documentation-htmls
   render: 
     - index.qmd
