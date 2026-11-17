@@ -14,9 +14,11 @@ here("src/country_bboxes.R") %>% source()
 land_path <- file.path(prepdata_path, "detailed_land_polys")
 coast_path <- file.path(prepdata_path, "coastal_zone_polys")
 coast2_path <- file.path(prepdata_path, "coastal_zone_50_polys")
+plot_land_path <- file.path(prepdata_path, "plot_land_polys")
 dir.create(land_path, showWarnings = F)
 dir.create(coast_path, showWarnings = F)
 dir.create(coast2_path, showWarnings = F)
+dir.create(plot_land_path, showWarnings = F)
 
 assigned_farms_final <- file.path(prepdata_path, "assigned_farms_final.qs") %>% qs_read()
 isos <- assigned_farms_final %>% pull(ISO3_Code) %>% unique() %>% sort()
@@ -24,11 +26,13 @@ isos <- assigned_farms_final %>% pull(ISO3_Code) %>% unique() %>% sort()
 land_files <- file.path(land_path, paste0(isos, ".qs"))
 coast_files <- file.path(coast_path, paste0(isos, ".qs"))
 coast2_files <- file.path(coast2_path, paste0(isos, ".qs"))
+plot_land_files <- file.path(plot_land_path, paste0(isos, ".qs"))
 
 # Only create files that don't already exist (delete the files to regenerate)
 land_isos <- isos[!file.exists(land_files)]
 coast_isos <- isos[!file.exists(coast_files)]
 coast2_isos <- isos[!file.exists(coast2_files)]
+plot_land_isos <- isos[!file.exists(plot_land_files)]
 
 rm(assigned_farms_final)
 gc()
@@ -212,4 +216,41 @@ big2_isos  <- coast2_isos[coast2_isos %in% big_lands]
 
 purrr::walk(big2_isos, make_coast_m, .progress = TRUE)
 future_walk(setdiff(coast2_isos, big2_isos), make_coast_m, .progress = TRUE)
+
+# 4. Simplified land polygons for plotting ----
+# The detailed polygons have far more vertices than a report map can show, and anything
+# that touches their geometry (st_make_valid(), st_break_antimeridian(), even rendering)
+# takes hours for the biggest countries. Simplify to about one pixel of the report maps
+# (6.5 in wide at 300 dpi ~ 2000 px across the country's bbox), then validate the much
+# smaller result so the output scripts can shift/split it without doing that themselves.
+make_plot_land <- function(this_iso, px_across = 2000) {
+  sf_use_s2(FALSE)
+  on.exit(sf_use_s2(TRUE), add = TRUE)
+
+  tol <- diff(bbox_lims(this_iso)$xlim) / px_across
+
+  this_land <- file.path(land_path, paste0(this_iso, ".qs")) |>
+    qs_read() |>
+    st_geometry() |>
+    st_collection_extract("POLYGON") |>
+    st_cast("POLYGON")
+
+  # Drop islands smaller than a pixel outright, they would simplify to slivers
+  bbs  <- t(vapply(this_land, \(p) as.numeric(st_bbox(p)), numeric(4)))
+  diag <- sqrt((bbs[, 3] - bbs[, 1])^2 + (bbs[, 4] - bbs[, 2])^2)
+  this_land <- this_land[diag >= tol]
+
+  this_land <- this_land |>
+    st_simplify(dTolerance = tol, preserveTopology = TRUE) |>
+    st_union() |>
+    st_make_valid()
+
+  qs_save(this_land, file.path(plot_land_path, paste0(this_iso, ".qs")))
+  invisible(NULL)
+}
+
+big3_isos <- plot_land_isos[plot_land_isos %in% big_lands]
+
+purrr::walk(big3_isos, make_plot_land, .progress = TRUE)
+future_walk(setdiff(plot_land_isos, big3_isos), make_plot_land, .progress = TRUE)
 plan(sequential)
