@@ -7,7 +7,7 @@ date: last-modified
 ---
 
 ::: {style="display: flex; justify-content: space-between;"}
-[← Previous: Testing production](05_01_run_production.qmd)
+[← Previous: Run production](05_01_run_production.qmd)
 
 [Next: Exploring production →](06_explore_production.qmd)
 :::
@@ -53,11 +53,10 @@ First check that all the files in the folder are complete.
 ```{r check-production}
 #| code-summary: Check that the files in the production folder are complete and correct structure
 
-prod_path <- file.path(outs_path, "data", "farm_production")
+prod_path <- file.path(outs_path, "data", "farm_production", "MC500")
 production_files <- prod_path %>% 
-  list.files(full.names = TRUE, recursive = TRUE, pattern = "MC500.qs$") %>% 
-  str_subset("testing", negate = T) %>% 
-  str_subset("SCALED", negate = T)
+  list.files(full.names = TRUE, pattern = "MC500.qs$") %>% 
+  str_subset("scaled", negate = T)
 farms_done <- as.integer(str_extract(basename(production_files), "(?<=farmID_)\\d+")) %>% unique()
 
 # here("src", "check_production_files.R") %>% source(echo = T)
@@ -214,6 +213,7 @@ walk(prod_files_subset, function(fnm) {
 After running the production, we need to modify assigned_farms to exclude those ones that we've decided to drop, and adjust prod_perfarm to fit.
 
 ```{r get-decisions}
+#| code-summary: "Apply decisions from manual error checking"
 
 decisions <- file.path(outs_path, "production_check_high_error_files_decisions.xlsx") %>% 
   readxl::read_excel() %>% 
@@ -250,6 +250,13 @@ assigned_farms_final <- map_dfr(
 # Add the geometry column back to the new list of assigned farms
 assigned_farms_old <- file.path(prepdata_path, "assigned_farms.qs") %>% 
   qs_read() %>% 
+  mutate(
+    model_name = case_when(
+      model_name == "tuna" & country == "Japan" ~ "tuna_full",
+      model_name == "tuna" & country != "Japan" ~ "tuna_ranch",
+      T ~ model_name
+    )
+  ) %>% 
   left_join(feed_assignments, by = join_by(model_name, country))
   
 assigned_farms <- assigned_farms_old %>% 
@@ -263,7 +270,7 @@ assigned_farms <- assigned_farms %>%
   sf::st_set_geometry(col_geom)
 
 assigned_farms_final <- assigned_farms
-rm(assigned_farms)
+rm(assigned_farms, assigned_farms_old)
 
 qs_save(assigned_farms_final, file.path(prepdata_path, "assigned_farms_final.qs"))
 ```
@@ -279,9 +286,11 @@ Note that the following code creates duplicates of farm production files rather 
 assigned_farms_final <- qs_read(file.path(prepdata_path, "assigned_farms_final.qs"))
 assigned_farms_final_ls <- assigned_farms_final %>% 
   sf::st_drop_geometry() %>% 
-  mutate(filename = file.path(outs_path, "data", "farm_production", paste0("production_results_farmID_", fix_int(farm_ID, 8), "_MC500.qs")), 
-  exists = file.exists(filename)) %>% 
-    filter(exists) %>% 
+  mutate(
+    filename = file.path(outs_path, "data", "farm_production", "MC500", paste0("production_results_farmID_", fix_int(farm_ID, 8), "_MC500.qs")), 
+    exists = file.exists(filename)
+  ) %>% 
+  filter(exists) %>% 
   group_by(farm_ID) %>% 
   group_split()
 
@@ -327,21 +336,13 @@ future_walk(
     )
 
     # Save scaled data
-    qs_save(scaled_data, str_replace(af$filename, ".qs", "_SCALED.qs"))
+    new_filename <- file.path(outs_path, "data", "farm_production", "MC500", "scaled", str_replace(basename(af$filename), ".qs", "_SCALED.qs"))
+    qs_save(scaled_data, new_filename)
   },
   .progress = T
 )
 
-plan(sequential) 
-
-# Move scaled files
-scaled_files <- file.path(outs_path, "data", "farm_production") %>% 
-  list.files(recursive = T, full.names = T, pattern = "SCALED.qs")
-
-file.rename(
-  scaled_files,
-  file.path(outs_path, "data", "farm_production", "scaled", basename(scaled_files))
-) %>% all()
+plan(sequential)
 ```
 
 # Consolidated data
@@ -364,12 +365,12 @@ assigned_farms_final %>%
 #| code-summary: "Consolidate farm production data into data per region and per species"
 
 # First modify the `production_files` list so that the SCALED files take precedent over their older counterparts
-scaled_production_files <- file.path(outs_path, "data", "farm_production", "scaled") %>% 
+scaled_production_files <- file.path(outs_path, "data", "farm_production", "MC500", "scaled") %>% 
   list.files(full.names = T, pattern = ".qs") %>% 
   str_subset(paste0(fix_int(assigned_farms_final$farm_ID, 8), collapse = "|"))
 farms_done <- as.integer(str_extract(basename(scaled_production_files), "(?<=farmID_)\\d+")) %>% unique()
 
-cons_path <- file.path(outs_path, "data", "farm_production_consolidated")
+cons_path <- file.path(outs_path, "data", "farm_production_consolidated", "MC500")
 dir.create(cons_path, showWarnings = F)
 
 cons_fnms <- assigned_farms_final %>% 
@@ -439,7 +440,7 @@ plan(sequential)
 ```
 
 ::: {style="display: flex; justify-content: space-between;"}
-[← Previous: Testing production](05_01_run_production.qmd)
+[← Previous: Run production](05_01_run_production.qmd)
 
 [Next: Exploring production →](06_explore_production.qmd)
 :::

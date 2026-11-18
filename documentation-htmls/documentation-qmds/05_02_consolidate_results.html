@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Tormey Reimer">
-<meta name="dcterms.date" content="2026-11-12">
+<meta name="dcterms.date" content="2026-11-18">
 
 <title>5.2: Consolidate results – FAO Climate Change Risks to Fed Mariculture</title>
 <style>
@@ -4073,7 +4073,7 @@ vertical-align: -.125em;
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">12 November 2026</p>
+      <p class="date">18 November 2026</p>
     </div>
   </div>
   
@@ -4086,7 +4086,7 @@ vertical-align: -.125em;
 
 
 <div style="display: flex; justify-content: space-between;">
-<p><a href="../documentation-qmds/05_01_run_production.html">← Previous: Testing production</a></p>
+<p><a href="../documentation-qmds/05_01_run_production.html">← Previous: Run production</a></p>
 <p><a href="../documentation-qmds/06_explore_production.html">Next: Exploring production →</a></p>
 </div>
 <section id="sec-overview" class="level1">
@@ -4099,14 +4099,13 @@ vertical-align: -.125em;
 <div class="cell" data-layout-align="center">
 <details class="code-fold">
 <summary>Check that the files in the production folder are complete and correct structure</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>prod_path <span class="ot">&lt;-</span> <span class="fu">file.path</span>(outs_path, <span class="st">&quot;data&quot;</span>, <span class="st">&quot;farm_production&quot;</span>)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>prod_path <span class="ot">&lt;-</span> <span class="fu">file.path</span>(outs_path, <span class="st">&quot;data&quot;</span>, <span class="st">&quot;farm_production&quot;</span>, <span class="st">&quot;MC500&quot;</span>)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>production_files <span class="ot">&lt;-</span> prod_path <span class="sc">%&gt;%</span> </span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list.files</span>(<span class="at">full.names =</span> <span class="cn">TRUE</span>, <span class="at">recursive =</span> <span class="cn">TRUE</span>, <span class="at">pattern =</span> <span class="st">&quot;MC500.qs$&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">str_subset</span>(<span class="st">&quot;testing&quot;</span>, <span class="at">negate =</span> T) <span class="sc">%&gt;%</span> </span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">str_subset</span>(<span class="st">&quot;SCALED&quot;</span>, <span class="at">negate =</span> T)</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>farms_done <span class="ot">&lt;-</span> <span class="fu">as.integer</span>(<span class="fu">str_extract</span>(<span class="fu">basename</span>(production_files), <span class="st">&quot;(?&lt;=farmID_)</span><span class="sc">\\</span><span class="st">d+&quot;</span>)) <span class="sc">%&gt;%</span> <span class="fu">unique</span>()</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># here(&quot;src&quot;, &quot;check_production_files.R&quot;) %&gt;% source(echo = T)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list.files</span>(<span class="at">full.names =</span> <span class="cn">TRUE</span>, <span class="at">pattern =</span> <span class="st">&quot;MC500.qs$&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">str_subset</span>(<span class="st">&quot;scaled&quot;</span>, <span class="at">negate =</span> T)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>farms_done <span class="ot">&lt;-</span> <span class="fu">as.integer</span>(<span class="fu">str_extract</span>(<span class="fu">basename</span>(production_files), <span class="st">&quot;(?&lt;=farmID_)</span><span class="sc">\\</span><span class="st">d+&quot;</span>)) <span class="sc">%&gt;%</span> <span class="fu">unique</span>()</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># here(&quot;src&quot;, &quot;check_production_files.R&quot;) %&gt;% source(echo = T)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <p>And display how many farms are present/missing.</p>
@@ -4266,7 +4265,7 @@ vertical-align: -.125em;
 <p>After running the production, we need to modify assigned_farms to exclude those ones that we’ve decided to drop, and adjust prod_perfarm to fit.</p>
 <div class="cell" data-layout-align="center">
 <details class="code-fold">
-<summary>Code</summary>
+<summary>Apply decisions from manual error checking</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>decisions <span class="ot">&lt;-</span> <span class="fu">file.path</span>(outs_path, <span class="st">&quot;production_check_high_error_files_decisions.xlsx&quot;</span>) <span class="sc">%&gt;%</span> </span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  readxl<span class="sc">::</span><span class="fu">read_excel</span>() <span class="sc">%&gt;%</span> </span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">farm_ID =</span> <span class="fu">as.integer</span>(<span class="fu">str_extract</span>(file, <span class="st">&quot;(?&lt;=farmID_)</span><span class="sc">\\</span><span class="st">d+&quot;</span>)))</span>
@@ -4302,22 +4301,29 @@ vertical-align: -.125em;
 <span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a><span class="co"># Add the geometry column back to the new list of assigned farms</span></span>
 <span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>assigned_farms_old <span class="ot">&lt;-</span> <span class="fu">file.path</span>(prepdata_path, <span class="st">&quot;assigned_farms.qs&quot;</span>) <span class="sc">%&gt;%</span> </span>
 <span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">qs_read</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(feed_assignments, <span class="at">by =</span> <span class="fu">join_by</span>(model_name, country))</span>
-<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>assigned_farms <span class="ot">&lt;-</span> assigned_farms_old <span class="sc">%&gt;%</span> </span>
-<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(farm_ID <span class="sc">%in%</span> assigned_farms_final<span class="sc">$</span>farm_ID) </span>
-<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a>col_geom <span class="ot">&lt;-</span> sf<span class="sc">::</span><span class="fu">st_geometry</span>(assigned_farms)</span>
-<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>assigned_farms <span class="ot">&lt;-</span> assigned_farms <span class="sc">%&gt;%</span> </span>
-<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a>  sf<span class="sc">::</span><span class="fu">st_drop_geometry</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rows_update</span>(assigned_farms_final, <span class="at">by =</span> <span class="st">&quot;farm_ID&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a>  <span class="co"># st_drop_geometry() strips the sf class, so restore it along with the geometry</span></span>
-<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a>  sf<span class="sc">::</span><span class="fu">st_set_geometry</span>(col_geom)</span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">model_name =</span> <span class="fu">case_when</span>(</span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>      model_name <span class="sc">==</span> <span class="st">&quot;tuna&quot;</span> <span class="sc">&amp;</span> country <span class="sc">==</span> <span class="st">&quot;Japan&quot;</span> <span class="sc">~</span> <span class="st">&quot;tuna_full&quot;</span>,</span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>      model_name <span class="sc">==</span> <span class="st">&quot;tuna&quot;</span> <span class="sc">&amp;</span> country <span class="sc">!=</span> <span class="st">&quot;Japan&quot;</span> <span class="sc">~</span> <span class="st">&quot;tuna_ranch&quot;</span>,</span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>      T <span class="sc">~</span> model_name</span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(feed_assignments, <span class="at">by =</span> <span class="fu">join_by</span>(model_name, country))</span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a>assigned_farms <span class="ot">&lt;-</span> assigned_farms_old <span class="sc">%&gt;%</span> </span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(farm_ID <span class="sc">%in%</span> assigned_farms_final<span class="sc">$</span>farm_ID) </span>
 <span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a>assigned_farms_final <span class="ot">&lt;-</span> assigned_farms</span>
-<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(assigned_farms)</span>
-<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a><span class="fu">qs_save</span>(assigned_farms_final, <span class="fu">file.path</span>(prepdata_path, <span class="st">&quot;assigned_farms_final.qs&quot;</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a>col_geom <span class="ot">&lt;-</span> sf<span class="sc">::</span><span class="fu">st_geometry</span>(assigned_farms)</span>
+<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a>assigned_farms <span class="ot">&lt;-</span> assigned_farms <span class="sc">%&gt;%</span> </span>
+<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a>  sf<span class="sc">::</span><span class="fu">st_drop_geometry</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rows_update</span>(assigned_farms_final, <span class="at">by =</span> <span class="st">&quot;farm_ID&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a>  <span class="co"># st_drop_geometry() strips the sf class, so restore it along with the geometry</span></span>
+<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a>  sf<span class="sc">::</span><span class="fu">st_set_geometry</span>(col_geom)</span>
+<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-55"><a href="#cb5-55" aria-hidden="true" tabindex="-1"></a>assigned_farms_final <span class="ot">&lt;-</span> assigned_farms</span>
+<span id="cb5-56"><a href="#cb5-56" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(assigned_farms, assigned_farms_old)</span>
+<span id="cb5-57"><a href="#cb5-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-58"><a href="#cb5-58" aria-hidden="true" tabindex="-1"></a><span class="fu">qs_save</span>(assigned_farms_final, <span class="fu">file.path</span>(prepdata_path, <span class="st">&quot;assigned_farms_final.qs&quot;</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <p>Next, we need to scale the production files of all farms.</p>
@@ -4328,69 +4334,63 @@ vertical-align: -.125em;
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>assigned_farms_final <span class="ot">&lt;-</span> <span class="fu">qs_read</span>(<span class="fu">file.path</span>(prepdata_path, <span class="st">&quot;assigned_farms_final.qs&quot;</span>))</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>assigned_farms_final_ls <span class="ot">&lt;-</span> assigned_farms_final <span class="sc">%&gt;%</span> </span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  sf<span class="sc">::</span><span class="fu">st_drop_geometry</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">filename =</span> <span class="fu">file.path</span>(outs_path, <span class="st">&quot;data&quot;</span>, <span class="st">&quot;farm_production&quot;</span>, <span class="fu">paste0</span>(<span class="st">&quot;production_results_farmID_&quot;</span>, <span class="fu">fix_int</span>(farm_ID, <span class="dv">8</span>), <span class="st">&quot;_MC500.qs&quot;</span>)), </span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">exists =</span> <span class="fu">file.exists</span>(filename)) <span class="sc">%&gt;%</span> </span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(exists) <span class="sc">%&gt;%</span> </span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(farm_ID) <span class="sc">%&gt;%</span> </span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_split</span>()</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="fu">plan</span>(multisession, <span class="at">workers =</span> parallelly<span class="sc">::</span><span class="fu">availableCores</span>() <span class="sc">-</span> <span class="dv">2</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">filename =</span> <span class="fu">file.path</span>(outs_path, <span class="st">&quot;data&quot;</span>, <span class="st">&quot;farm_production&quot;</span>, <span class="st">&quot;MC500&quot;</span>, <span class="fu">paste0</span>(<span class="st">&quot;production_results_farmID_&quot;</span>, <span class="fu">fix_int</span>(farm_ID, <span class="dv">8</span>), <span class="st">&quot;_MC500.qs&quot;</span>)), </span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">exists =</span> <span class="fu">file.exists</span>(filename)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(exists) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(farm_ID) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_split</span>()</span>
 <span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="co"># af &lt;- assigned_farms_final_ls[[1]]</span></span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="fu">future_walk</span>(</span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>  assigned_farms_final_ls,</span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>  <span class="cf">function</span>(af) {</span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Load consolidated (unscaled) data</span></span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    consolidated_data <span class="ot">&lt;-</span> <span class="fu">qs_read</span>(af<span class="sc">$</span>filename)</span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Get the representative individual weight (g)</span></span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>    rep_ind <span class="ot">&lt;-</span> consolidated_data[[<span class="st">&quot;2025&quot;</span>]][[<span class="st">&quot;stats&quot;</span>]]<span class="sc">$</span>weight</span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>    rep_ind <span class="ot">&lt;-</span> <span class="fu">unname</span>(rep_ind[<span class="fu">nrow</span>(rep_ind), <span class="dv">1</span>]) <span class="co"># harvest weight</span></span>
-<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Get scaling factor from harvest weight (g) and per-farm production (t)</span></span>
-<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>    final_pop <span class="ot">&lt;-</span> <span class="fu">ceiling</span>((af<span class="sc">$</span>prod_perfarm <span class="sc">*</span> <span class="dv">10</span><span class="sc">^</span><span class="dv">6</span>)<span class="sc">/</span>rep_ind)</span>
-<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Get the growtimes from the &quot;days&quot; element</span></span>
-<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>    days <span class="ot">&lt;-</span> consolidated_data[[<span class="st">&quot;2025&quot;</span>]][[<span class="st">&quot;days&quot;</span>]]</span>
-<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>    grow_times <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="at">t_start =</span> <span class="fu">first</span>(days), <span class="at">t_end =</span> <span class="fu">last</span>(days), <span class="at">dt =</span> <span class="dv">1</span>L)</span>
-<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Calculate population timeseries based on species mortality rate</span></span>
-<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>    sp <span class="ot">&lt;-</span> <span class="fu">file.path</span>(prepdata_path, <span class="st">&quot;species_parameters&quot;</span>, <span class="fu">paste0</span>(<span class="st">&quot;species_parameters_&quot;</span>, af<span class="sc">$</span>model_name, <span class="st">&quot;.qs&quot;</span>)) <span class="sc">%&gt;%</span> <span class="fu">qd_read</span>()</span>
-<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>    pop <span class="ot">&lt;-</span> <span class="fu">generate_pop</span>(<span class="at">harvest_n =</span> final_pop, <span class="at">mort =</span> sp[[<span class="st">&quot;mortmyt&quot;</span>]], <span class="at">times =</span> grow_times)</span>
-<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Finally, scale farm production each year</span></span>
-<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>    <span class="co"># cd &lt;- consolidated_data[[1]]</span></span>
-<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>    scaled_data <span class="ot">&lt;-</span> <span class="fu">map</span>(</span>
-<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>      consolidated_data,</span>
-<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>      <span class="cf">function</span>(cd) {</span>
-<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>        sd <span class="ot">&lt;-</span> <span class="fu">scale_farm_population</span>(</span>
-<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>          <span class="at">consolidated =</span> cd, </span>
-<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>          <span class="at">N_pop =</span> pop, </span>
-<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>          <span class="at">scaled_vars =</span> <span class="fu">c</span>(<span class="st">&quot;weight&quot;</span>, <span class="st">&quot;dw&quot;</span>, <span class="st">&quot;food_prov&quot;</span>, <span class="st">&quot;ing_act&quot;</span>, <span class="st">&quot;total_excr&quot;</span>) <span class="co"># available stats: &quot;weight&quot; &quot;dw&quot; &quot;rel_feeding&quot; &quot;food_prov&quot; &quot;ing_act&quot; &quot;anab&quot; &quot;catab&quot; &quot;total_excr&quot; &quot;metab&quot;</span></span>
-<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a>          )</span>
-<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a>        <span class="fu">list</span>(</span>
-<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a>          <span class="at">days =</span> cd[[<span class="st">&quot;days&quot;</span>]],</span>
-<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a>          <span class="at">stats =</span> <span class="fu">c</span>(cd[[<span class="st">&quot;stats&quot;</span>]], sd[[<span class="st">&quot;stats&quot;</span>]])</span>
-<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a>      }</span>
-<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-51"><a href="#cb6-51" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Save scaled data</span></span>
-<span id="cb6-52"><a href="#cb6-52" aria-hidden="true" tabindex="-1"></a>    <span class="fu">qs_save</span>(scaled_data, <span class="fu">str_replace</span>(af<span class="sc">$</span>filename, <span class="st">&quot;.qs&quot;</span>, <span class="st">&quot;_SCALED.qs&quot;</span>))</span>
-<span id="cb6-53"><a href="#cb6-53" aria-hidden="true" tabindex="-1"></a>  },</span>
-<span id="cb6-54"><a href="#cb6-54" aria-hidden="true" tabindex="-1"></a>  <span class="at">.progress =</span> T</span>
-<span id="cb6-55"><a href="#cb6-55" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb6-56"><a href="#cb6-56" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-57"><a href="#cb6-57" aria-hidden="true" tabindex="-1"></a><span class="fu">plan</span>(sequential) </span>
-<span id="cb6-58"><a href="#cb6-58" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-59"><a href="#cb6-59" aria-hidden="true" tabindex="-1"></a><span class="co"># Move scaled files</span></span>
-<span id="cb6-60"><a href="#cb6-60" aria-hidden="true" tabindex="-1"></a>scaled_files <span class="ot">&lt;-</span> <span class="fu">file.path</span>(outs_path, <span class="st">&quot;data&quot;</span>, <span class="st">&quot;farm_production&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb6-61"><a href="#cb6-61" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list.files</span>(<span class="at">recursive =</span> T, <span class="at">full.names =</span> T, <span class="at">pattern =</span> <span class="st">&quot;SCALED.qs&quot;</span>)</span>
-<span id="cb6-62"><a href="#cb6-62" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-63"><a href="#cb6-63" aria-hidden="true" tabindex="-1"></a><span class="fu">file.rename</span>(</span>
-<span id="cb6-64"><a href="#cb6-64" aria-hidden="true" tabindex="-1"></a>  scaled_files,</span>
-<span id="cb6-65"><a href="#cb6-65" aria-hidden="true" tabindex="-1"></a>  <span class="fu">file.path</span>(outs_path, <span class="st">&quot;data&quot;</span>, <span class="st">&quot;farm_production&quot;</span>, <span class="st">&quot;scaled&quot;</span>, <span class="fu">basename</span>(scaled_files))</span>
-<span id="cb6-66"><a href="#cb6-66" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span> <span class="fu">all</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="fu">plan</span>(multisession, <span class="at">workers =</span> parallelly<span class="sc">::</span><span class="fu">availableCores</span>() <span class="sc">-</span> <span class="dv">2</span>)</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="co"># af &lt;- assigned_farms_final_ls[[1]]</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="fu">future_walk</span>(</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>  assigned_farms_final_ls,</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>  <span class="cf">function</span>(af) {</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Load consolidated (unscaled) data</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    consolidated_data <span class="ot">&lt;-</span> <span class="fu">qs_read</span>(af<span class="sc">$</span>filename)</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Get the representative individual weight (g)</span></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>    rep_ind <span class="ot">&lt;-</span> consolidated_data[[<span class="st">&quot;2025&quot;</span>]][[<span class="st">&quot;stats&quot;</span>]]<span class="sc">$</span>weight</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>    rep_ind <span class="ot">&lt;-</span> <span class="fu">unname</span>(rep_ind[<span class="fu">nrow</span>(rep_ind), <span class="dv">1</span>]) <span class="co"># harvest weight</span></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Get scaling factor from harvest weight (g) and per-farm production (t)</span></span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>    final_pop <span class="ot">&lt;-</span> <span class="fu">ceiling</span>((af<span class="sc">$</span>prod_perfarm <span class="sc">*</span> <span class="dv">10</span><span class="sc">^</span><span class="dv">6</span>)<span class="sc">/</span>rep_ind)</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Get the growtimes from the &quot;days&quot; element</span></span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>    days <span class="ot">&lt;-</span> consolidated_data[[<span class="st">&quot;2025&quot;</span>]][[<span class="st">&quot;days&quot;</span>]]</span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>    grow_times <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="at">t_start =</span> <span class="fu">first</span>(days), <span class="at">t_end =</span> <span class="fu">last</span>(days), <span class="at">dt =</span> <span class="dv">1</span>L)</span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Calculate population timeseries based on species mortality rate</span></span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>    sp <span class="ot">&lt;-</span> <span class="fu">file.path</span>(prepdata_path, <span class="st">&quot;species_parameters&quot;</span>, <span class="fu">paste0</span>(<span class="st">&quot;species_parameters_&quot;</span>, af<span class="sc">$</span>model_name, <span class="st">&quot;.qs&quot;</span>)) <span class="sc">%&gt;%</span> <span class="fu">qd_read</span>()</span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>    pop <span class="ot">&lt;-</span> <span class="fu">generate_pop</span>(<span class="at">harvest_n =</span> final_pop, <span class="at">mort =</span> sp[[<span class="st">&quot;mortmyt&quot;</span>]], <span class="at">times =</span> grow_times)</span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Finally, scale farm production each year</span></span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>    <span class="co"># cd &lt;- consolidated_data[[1]]</span></span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>    scaled_data <span class="ot">&lt;-</span> <span class="fu">map</span>(</span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>      consolidated_data,</span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>      <span class="cf">function</span>(cd) {</span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>        sd <span class="ot">&lt;-</span> <span class="fu">scale_farm_population</span>(</span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>          <span class="at">consolidated =</span> cd, </span>
+<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a>          <span class="at">N_pop =</span> pop, </span>
+<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a>          <span class="at">scaled_vars =</span> <span class="fu">c</span>(<span class="st">&quot;weight&quot;</span>, <span class="st">&quot;dw&quot;</span>, <span class="st">&quot;food_prov&quot;</span>, <span class="st">&quot;ing_act&quot;</span>, <span class="st">&quot;total_excr&quot;</span>) <span class="co"># available stats: &quot;weight&quot; &quot;dw&quot; &quot;rel_feeding&quot; &quot;food_prov&quot; &quot;ing_act&quot; &quot;anab&quot; &quot;catab&quot; &quot;total_excr&quot; &quot;metab&quot;</span></span>
+<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a>          )</span>
+<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a>        <span class="fu">list</span>(</span>
+<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a>          <span class="at">days =</span> cd[[<span class="st">&quot;days&quot;</span>]],</span>
+<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a>          <span class="at">stats =</span> <span class="fu">c</span>(cd[[<span class="st">&quot;stats&quot;</span>]], sd[[<span class="st">&quot;stats&quot;</span>]])</span>
+<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb6-51"><a href="#cb6-51" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb6-52"><a href="#cb6-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-53"><a href="#cb6-53" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Save scaled data</span></span>
+<span id="cb6-54"><a href="#cb6-54" aria-hidden="true" tabindex="-1"></a>    new_filename <span class="ot">&lt;-</span> <span class="fu">file.path</span>(outs_path, <span class="st">&quot;data&quot;</span>, <span class="st">&quot;farm_production&quot;</span>, <span class="st">&quot;MC500&quot;</span>, <span class="st">&quot;scaled&quot;</span>, <span class="fu">str_replace</span>(<span class="fu">basename</span>(af<span class="sc">$</span>filename), <span class="st">&quot;.qs&quot;</span>, <span class="st">&quot;_SCALED.qs&quot;</span>))</span>
+<span id="cb6-55"><a href="#cb6-55" aria-hidden="true" tabindex="-1"></a>    <span class="fu">qs_save</span>(scaled_data, new_filename)</span>
+<span id="cb6-56"><a href="#cb6-56" aria-hidden="true" tabindex="-1"></a>  },</span>
+<span id="cb6-57"><a href="#cb6-57" aria-hidden="true" tabindex="-1"></a>  <span class="at">.progress =</span> T</span>
+<span id="cb6-58"><a href="#cb6-58" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-59"><a href="#cb6-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-60"><a href="#cb6-60" aria-hidden="true" tabindex="-1"></a><span class="fu">plan</span>(sequential)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 </section>
@@ -4445,12 +4445,12 @@ vertical-align: -.125em;
 <details class="code-fold">
 <summary>Consolidate farm production data into data per region and per species</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># First modify the `production_files` list so that the SCALED files take precedent over their older counterparts</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>scaled_production_files <span class="ot">&lt;-</span> <span class="fu">file.path</span>(outs_path, <span class="st">&quot;data&quot;</span>, <span class="st">&quot;farm_production&quot;</span>, <span class="st">&quot;scaled&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>scaled_production_files <span class="ot">&lt;-</span> <span class="fu">file.path</span>(outs_path, <span class="st">&quot;data&quot;</span>, <span class="st">&quot;farm_production&quot;</span>, <span class="st">&quot;MC500&quot;</span>, <span class="st">&quot;scaled&quot;</span>) <span class="sc">%&gt;%</span> </span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list.files</span>(<span class="at">full.names =</span> T, <span class="at">pattern =</span> <span class="st">&quot;.qs&quot;</span>) <span class="sc">%&gt;%</span> </span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">str_subset</span>(<span class="fu">paste0</span>(<span class="fu">fix_int</span>(assigned_farms_final<span class="sc">$</span>farm_ID, <span class="dv">8</span>), <span class="at">collapse =</span> <span class="st">&quot;|&quot;</span>))</span>
 <span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>farms_done <span class="ot">&lt;-</span> <span class="fu">as.integer</span>(<span class="fu">str_extract</span>(<span class="fu">basename</span>(scaled_production_files), <span class="st">&quot;(?&lt;=farmID_)</span><span class="sc">\\</span><span class="st">d+&quot;</span>)) <span class="sc">%&gt;%</span> <span class="fu">unique</span>()</span>
 <span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>cons_path <span class="ot">&lt;-</span> <span class="fu">file.path</span>(outs_path, <span class="st">&quot;data&quot;</span>, <span class="st">&quot;farm_production_consolidated&quot;</span>)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>cons_path <span class="ot">&lt;-</span> <span class="fu">file.path</span>(outs_path, <span class="st">&quot;data&quot;</span>, <span class="st">&quot;farm_production_consolidated&quot;</span>, <span class="st">&quot;MC500&quot;</span>)</span>
 <span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>(cons_path, <span class="at">showWarnings =</span> F)</span>
 <span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>cons_fnms <span class="ot">&lt;-</span> assigned_farms_final <span class="sc">%&gt;%</span> </span>
@@ -4514,395 +4514,13 @@ vertical-align: -.125em;
 <span id="cb9-68"><a href="#cb9-68" aria-hidden="true" tabindex="-1"></a>    }</span>
 <span id="cb9-69"><a href="#cb9-69" aria-hidden="true" tabindex="-1"></a>  },</span>
 <span id="cb9-70"><a href="#cb9-70" aria-hidden="true" tabindex="-1"></a>  <span class="at">.progress =</span> T</span>
-<span id="cb9-71"><a href="#cb9-71" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■                                  0% |  ETA:  7h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■                                  1% |  ETA:  2h
- ■                                  1% |  ETA:  2h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■                                 2% |  ETA: 11h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■                                 2% |  ETA: 10h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■                                 2% |  ETA:  8h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■                                 3% |  ETA:  8h
- ■■                                 3% |  ETA:  8h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■                                 3% |  ETA:  7h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■                                 4% |  ETA:  6h
- ■■                                 4% |  ETA:  6h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■                                 5% |  ETA:  6h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■                                5% |  ETA:  5h
- ■■■                                5% |  ETA:  5h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■                                6% |  ETA:  5h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■                                6% |  ETA:  4h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■                                7% |  ETA:  4h
- ■■■                                7% |  ETA:  4h
- ■■■                                7% |  ETA:  4h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■                                8% |  ETA:  4h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■                               8% |  ETA:  4h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■                               9% |  ETA:  4h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■                               9% |  ETA:  3h
- ■■■■                               9% |  ETA:  3h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■                              10% |  ETA:  3h
- ■■■■                              10% |  ETA:  3h
- ■■■■                              10% |  ETA:  3h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■                              11% |  ETA:  3h
- ■■■■                              11% |  ETA:  3h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■                             12% |  ETA:  5h
- ■■■■■                             12% |  ETA:  5h
- ■■■■■                             12% |  ETA:  5h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■                             13% |  ETA:  5h
- ■■■■■                             13% |  ETA:  5h
- ■■■■■                             13% |  ETA:  5h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■                             14% |  ETA:  5h
- ■■■■■                             14% |  ETA:  5h
- ■■■■■                             14% |  ETA:  5h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■                             15% |  ETA:  5h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■                            15% |  ETA:  5h
- ■■■■■■                            15% |  ETA:  5h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■                            16% |  ETA:  5h
- ■■■■■■                            16% |  ETA:  5h
- ■■■■■■                            16% |  ETA:  5h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■                            17% |  ETA:  5h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■                            18% |  ETA:  5h
- ■■■■■■                            18% |  ETA:  5h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■                           19% |  ETA:  4h
- ■■■■■■■                           19% |  ETA:  4h
- ■■■■■■■                           19% |  ETA:  4h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■                           20% |  ETA:  4h
- ■■■■■■■                           20% |  ETA:  4h
- ■■■■■■■                           20% |  ETA:  4h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■                           21% |  ETA:  4h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■                           22% |  ETA:  4h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■                          22% |  ETA:  4h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■                          23% |  ETA:  4h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■                          24% |  ETA:  3h
- ■■■■■■■■                          24% |  ETA:  3h
- ■■■■■■■■                          24% |  ETA:  3h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■                          25% |  ETA:  3h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■                          25% |  ETA:  4h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■                         25% |  ETA:  4h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■                         26% |  ETA:  4h
- ■■■■■■■■■                         26% |  ETA:  4h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■                         27% |  ETA:  3h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■                         27% |  ETA:  4h
- ■■■■■■■■■                         27% |  ETA:  4h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■                         28% |  ETA:  4h
- ■■■■■■■■■                         28% |  ETA:  4h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■                        29% |  ETA:  3h
- ■■■■■■■■■■                        29% |  ETA:  3h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■                        30% |  ETA:  3h
- ■■■■■■■■■■                        30% |  ETA:  3h
- ■■■■■■■■■■                        30% |  ETA:  3h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■                        31% |  ETA:  3h
- ■■■■■■■■■■                        31% |  ETA:  3h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■                        32% |  ETA:  3h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■                       32% |  ETA:  3h
- ■■■■■■■■■■■                       32% |  ETA:  3h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■                       33% |  ETA:  3h
- ■■■■■■■■■■■                       33% |  ETA:  3h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■                       34% |  ETA:  3h
- ■■■■■■■■■■■                       34% |  ETA:  3h
- ■■■■■■■■■■■                       34% |  ETA:  3h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■                       35% |  ETA:  3h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■                      35% |  ETA:  3h
- ■■■■■■■■■■■■                      35% |  ETA:  3h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■                      36% |  ETA:  3h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■                      37% |  ETA:  3h
- ■■■■■■■■■■■■                      37% |  ETA:  3h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■                      38% |  ETA:  3h
- ■■■■■■■■■■■■                      38% |  ETA:  3h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■                     38% |  ETA:  3h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■                     39% |  ETA:  3h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■                     40% |  ETA:  3h
- ■■■■■■■■■■■■■                     40% |  ETA:  3h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■                     41% |  ETA:  3h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■                     41% |  ETA:  2h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■                    42% |  ETA:  2h
- ■■■■■■■■■■■■■■                    42% |  ETA:  2h
- ■■■■■■■■■■■■■■                    42% |  ETA:  2h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■                    43% |  ETA:  2h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■                    44% |  ETA:  2h
- ■■■■■■■■■■■■■■                    44% |  ETA:  2h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■                    45% |  ETA:  2h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■                   45% |  ETA:  2h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■                   46% |  ETA:  2h
- ■■■■■■■■■■■■■■■                   46% |  ETA:  2h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■                   47% |  ETA:  2h
- ■■■■■■■■■■■■■■■                   47% |  ETA:  2h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■                   48% |  ETA:  2h
- ■■■■■■■■■■■■■■■                   48% |  ETA:  2h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■                  49% |  ETA:  2h
- ■■■■■■■■■■■■■■■■                  49% |  ETA:  2h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■                  50% |  ETA:  2h
- ■■■■■■■■■■■■■■■■                  50% |  ETA:  2h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■                  51% |  ETA:  2h
- ■■■■■■■■■■■■■■■■                  51% |  ETA:  2h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■                  52% |  ETA:  2h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■                 52% |  ETA:  2h
- ■■■■■■■■■■■■■■■■■                 52% |  ETA:  2h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■                 53% |  ETA:  2h
- ■■■■■■■■■■■■■■■■■                 53% |  ETA:  2h
- ■■■■■■■■■■■■■■■■■                 53% |  ETA:  2h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■                 54% |  ETA:  2h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■                55% |  ETA:  2h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■                57% |  ETA:  2h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■               59% |  ETA:  1h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■               61% |  ETA:  1h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■              62% |  ETA:  1h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■              64% |  ETA:  1h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■             66% |  ETA:  1h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■             67% |  ETA:  1h
- ■■■■■■■■■■■■■■■■■■■■■             67% |  ETA:  1h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■            69% |  ETA:  1h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■            70% |  ETA:  1h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■           72% |  ETA: 48m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■           74% |  ETA: 44m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■          76% |  ETA: 40m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■          76% |  ETA: 39m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■          78% |  ETA: 35m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■         80% |  ETA: 31m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■        82% |  ETA: 28m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■        84% |  ETA: 24m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■       85% |  ETA: 22m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■       87% |  ETA: 18m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■       88% |  ETA: 18m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■      89% |  ETA: 16m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■      91% |  ETA: 13m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■      92% |  ETA: 11m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■     92% |  ETA: 10m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■     93% |  ETA: 10m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■     93% |  ETA: 10m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■     93% |  ETA:  9m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■     94% |  ETA:  9m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■     95% |  ETA:  7m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■    95% |  ETA:  6m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■    96% |  ETA:  5m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■    97% |  ETA:  3m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■    98% |  ETA:  3m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■    98% |  ETA:  3m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■    98% |  ETA:  2m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■   99% |  ETA:  2m</code></pre>
-</div>
-<details class="code-fold">
-<summary>Consolidate farm production data into data per region and per species</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb118"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb118-1"><a href="#cb118-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plan</span>(sequential)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb9-71"><a href="#cb9-71" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb9-72"><a href="#cb9-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-73"><a href="#cb9-73" aria-hidden="true" tabindex="-1"></a><span class="fu">plan</span>(sequential)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <div style="display: flex; justify-content: space-between;">
-<p><a href="../documentation-qmds/05_01_run_production.html">← Previous: Testing production</a></p>
+<p><a href="../documentation-qmds/05_01_run_production.html">← Previous: Run production</a></p>
 <p><a href="../documentation-qmds/06_explore_production.html">Next: Exploring production →</a></p>
 </div>
 
