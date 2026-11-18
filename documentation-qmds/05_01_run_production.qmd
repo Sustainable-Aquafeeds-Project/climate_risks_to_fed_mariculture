@@ -74,11 +74,11 @@ Load the feeds still stored in the raw data and store them as feed objects.
 # Get raw data
 raw_feed_data <- file.path(rawdata_path, "feed_profiles_and_composition.xlsx") %>% 
   read_excel(sheet = "feed_formulations") %>% 
-  select(feed, ingredient, proportion)
+  dplyr::select(feed, ingredient, proportion)
 
 ingredients_df <- file.path(rawdata_path, "all_ingredients.xlsx") %>% 
   read_excel(sheet = "all_ingredients") %>% 
-  select(ingredient, protein, lipid, carb)
+  dplyr::select(ingredient, protein, lipid, carb)
 
 digestibility_df <- file.path(rawdata_path, "all_ingredients.xlsx") %>% 
   read_excel(sheet = "all_ingredients") %>% 
@@ -88,7 +88,7 @@ digestibility_df <- file.path(rawdata_path, "all_ingredients.xlsx") %>%
     lipid_digestibility = mean_lipid_digestibility, 
     carb_digestibility = mean_carb_digestibility
   ) %>% 
-  select(ingredient, protein_digestibility, lipid_digestibility, carb_digestibility)
+  dplyr::select(ingredient, protein_digestibility, lipid_digestibility, carb_digestibility)
 
 # Combine feed and ingredient data and save as feed objects
 feeds_for_now <- unique(raw_feed_data$feed)
@@ -157,7 +157,7 @@ assigned_farms %>% filter(is.na(filename))
 
 feed_assignments <- file.path(rawdata_path, "feed_profiles_and_composition.xlsx") %>% 
   read_excel(sheet = "feed_assignments") %>% 
-  select(model_name, country, feed_class) %>% 
+  dplyr::select(model_name, country, feed_class) %>% 
   mutate(country = case_when(country == "Reunion" ~ "Réunion", T ~ country))
 
 assigned_farms <- assigned_farms %>% 
@@ -173,18 +173,21 @@ assigned_farms <- assigned_farms %>%
 
 # Choose what subset(s) you're going to run this time
 assigned_farms <- assigned_farms %>%
-  filter(model_name %in% c("tuna_full", "tuna_ranch", "whiteleg_shrimp", "nile_tilapia", "olive_flounder", "atlantic_salmon", "rainbow_trout", "european_seabass")) %>% 
-  filter(!is.na(filename))
+  # filter(!model_name %in% c("tuna_full", "tuna_ ranch", "whiteleg_shrimp", "atlantic_salmon", "rainbow_trout", "japanese_amberjack")) %>% 
+  filter(!is.na(filename)) %>% 
+  arrange(farm_ID)
 
 # Set the path of any files that might exclude production runs
 existing_files <- list.files(file.path(outs_path, "data", "farm_production"), recursive = T, full.names = T) %>% 
-  str_subset("testing", negate = T) %>% 
+  str_subset("testing|temp_hold|scaled", negate = T) %>% 
   basename()
 new_files <- paste0("production_results_farmID_", fix_int(assigned_farms$farm_ID, 8), "_MC500.qs")
 
 files_to_do <- setdiff(new_files, existing_files)
 
-assigned_farms_todo <- assigned_farms %>% filter(farm_ID %in% as.integer(str_extract(files_to_do, "(?<=farmID_)\\d+")))
+assigned_farms_todo <- assigned_farms %>% 
+  filter(farm_ID %in% as.integer(str_extract(files_to_do, "(?<=farmID_)\\d+"))) |> 
+  arrange(farm_ID)
 assigned_farms_todo <- split(assigned_farms_todo, assigned_farms_todo$farm_ID)
 
 sprintf("Files to do: %d", length(assigned_farms_todo))
@@ -192,14 +195,17 @@ sprintf("Files to do: %d", length(assigned_farms_todo))
 
 Before running production, we need to establish the following per-farm parameters:
 
-* Grow times (day of start/harvest) - these will be based on 2025 temeprature timeseries
+* Grow times (day of start/harvest) - these will be based on 2025 temperature timeseries
 * Farm population (scaling factor) - based on 2025 temperatures and harvest sizes, and per-farm production
 
 ```{r set-per-farm-parameters}
 #| code-summary: Set the grow-times and get the representative harvest size for each farm
 
+work_cores <- parallelly::availableCores() - 2
+plan(multisession, workers = work_cores)
+
 # af <- assigned_farms_todo[[1]]
-assigned_farms_todo <- map(
+assigned_farms_todo <- future_map(
   assigned_farms_todo,
   function(af) {
     sp <- species_params[[af$model_name]]
@@ -255,8 +261,11 @@ assigned_farms_todo <- map(
         final_pop = pop
       )
   },
-  .progress = T
+  .progress = T,
+  .options = furrr_options(seed = TRUE)
 )
+
+plan(sequential)
 ```
 
 ```{r check-2025}
@@ -317,7 +326,7 @@ There are several important metrics to get out of this process. At each farm and
 
 # These are the variables that will be reported from the growth model at the fish level (mean across the farm +- SD)
 # "days" is always included in the output variables
-output_vars <- c("weight", "dw", "T_response", "rel_feeding", "food_prov", "ing_act", "anab", "catab", "total_excr", "metab")
+output_vars <- c("weight", "dw", "rel_feeding", "food_prov", "ing_act", "anab", "catab", "total_excr", "metab")
 # These are the variables that will be scaled up to give farm-level responses
 scaled_vars <- NULL # c("weight", "dw", "ing_act", "total_excr", "food_prov")
 
@@ -345,7 +354,7 @@ temps_all <- af$filename %>%
     doy = as.integer(format(date, "%j")),
     year = year(date)
   ) %>% 
-  select(-date)
+  dplyr::select(-date)
 
 # Fill in 2024 to reconcile multi-year growing periods
 temps_all <- rbind(
@@ -402,8 +411,8 @@ check_farm_growth_inputs(
 ``` {r run-production}
 #| code-summary: Run the main production and save the outputs at each farm
 
-# work_cores <- parallelly::availableCores() - 2
-# plan(multisession, workers = work_cores)
+work_cores <- parallelly::availableCores() - 2
+plan(multisession, workers = work_cores)
 
 # af <- assigned_farms_todo[[1]]
 # fnm <- prod_files[1]
@@ -422,7 +431,7 @@ future_walk2(
         doy = as.integer(format(date, "%j")),
         year = year(date)
       ) %>% 
-      select(-date)
+      dplyr::select(-date)
 
     # Fill in 2024 and 2023 to reconcile multi-year growing periods
     temps_all <- rbind(
@@ -492,7 +501,7 @@ future_walk2(
   .progress = T
 )
 
-# plan(sequential)
+plan(sequential)
 ```
 
 Check the production files directory to make sure they ran and saved correctly.
