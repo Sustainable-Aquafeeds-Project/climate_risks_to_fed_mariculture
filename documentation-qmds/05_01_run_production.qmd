@@ -9,7 +9,7 @@ date: last-modified
 ::: {style="display: flex; justify-content: space-between;"}
 [← Previous: Testing production](05_00_test_production.qmd)
 
-[Next: Home →](../index.qmd)
+[Next: Consolidate results →](05_02_consolidate_results.qmd)
 :::
 
 # Overview {#sec-overview}
@@ -164,6 +164,10 @@ assigned_farms <- assigned_farms %>%
   left_join(feed_assignments, by = join_by(model_name, country)) %>% 
   filter(!is.na(feed_class)) %>% 
   mutate(feed_name = paste(model_name, feed_class, sep = "-"))
+
+# Any missing?
+assigned_farms %>% 
+  filter(is.na(feed_class))
 ```
 
 # CHOOSE SUBSET for this run
@@ -504,20 +508,8 @@ future_walk2(
 plan(sequential)
 ```
 
-Check the production files directory to make sure they ran and saved correctly.
-
-```{r check-production}
-prod_path <- file.path(outs_path, "data", "farm_production")
-production_files <- list.files(prod_path, full.names = TRUE, pattern = "MC500\\.qs$")
-
-here("src", "check_production_files.R") %>% source(echo = T)
-
-production_files_2 <- file.path(outs_path, "data", "farm_production", basename(production_files))
-file.rename(production_files, production_files_2)
-```
-
 ::: {style="display: flex; justify-content: space-between;"}
 [← Previous: Testing production](05_00_test_production.qmd)
 
-[Next: Home →](../index.qmd)
+[Next: Consolidate results →](05_02_consolidate_results.qmd)
 :::

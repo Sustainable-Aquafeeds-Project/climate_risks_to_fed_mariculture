@@ -21,7 +21,7 @@ source(here("src", "other_functions.R"))
 
 # =========================================================================
 # ---- SET THE FARM TO INVESTIGATE HERE ----
-farm_ID_to_check <- 086501
+farm_ID_to_check <- 095734
 
 # Harvest years to plot in step 6. Default: 2025, 2099, and one per decade between.
 years_to_plot <- c(2025, seq(2030, 2090, by = 10), 2099)
@@ -31,15 +31,9 @@ years_to_plot <- c(2025, seq(2030, 2090, by = 10), 2099)
 #   str_subset(fix_int(farm_ID_to_check, 8))
 
 production_file <- file.path(
-  outs_path, "data", "farm_production",  
+  outs_path, "data", "farm_production", "MC500",
   paste0("production_results_farmID_", fix_int(farm_ID_to_check, 8), "_MC500.qs")
 )
-if (!file.exists(production_file)) {
-  production_file <- file.path(
-    outs_path, "data", "farm_production", "excluded", 
-    paste0("production_results_farmID_", fix_int(farm_ID_to_check, 8), "_MC500.qs")
-  )
-}
 
 # =========================================================================
 troubleshoot_path <- file.path(outs_path, "production_troubleshooting")
