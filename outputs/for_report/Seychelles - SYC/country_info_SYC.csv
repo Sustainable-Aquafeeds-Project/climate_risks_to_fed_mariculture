@@ -1,5 +1,0 @@
-table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_included,pct_of_model,included,reason
-farms_per_model,SYC,Seychelles,whiteleg_shrimp,,1,28.8,28.8,,,,
-fao_production_by_country,SYC,Seychelles,,,,28.8,,100,,,
-fao_production_by_species,SYC,Seychelles,tiger_prawn,Penaeus monodon,,0,,,,FALSE,
-fao_production_by_species,SYC,Seychelles,whiteleg_shrimp,Penaeus vannamei,,28.8,,,100,TRUE,

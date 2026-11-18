@@ -1,9 +1,0 @@
-table,ISO3_Code,country,model_name,species,n_farms,production_t,production_perfarm_t,pct_included,pct_of_model,included,reason
-farms_per_model,IRN,Iran,whiteleg_shrimp,,205,47811.2,233.2,,,,
-excluded_farms,IRN,Iran,seabream,,1,,,,,,Farm too hot in 2025
-fao_production_by_country,IRN,Iran,,,,53188.4,,78.6,,,
-fao_production_by_species,IRN,Iran,barramundi,Lates calcarifer,,5673.7,,,100,FALSE,
-fao_production_by_species,IRN,Iran,general_fish,Actinopterygii,,4206.8,,,100,FALSE,
-fao_production_by_species,IRN,Iran,seabream,Acanthopagrus bifasciatus,,1500,,,100,FALSE,
-fao_production_by_species,IRN,Iran,whiteleg_shrimp,Penaeus vannamei,,41808,,,100,TRUE,
-fao_production_by_species,IRN,Iran,whiteleg_shrimp,Penaeus indicus,,0,,,0,TRUE,
