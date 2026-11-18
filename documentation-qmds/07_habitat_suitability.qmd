@@ -90,6 +90,21 @@ EEZ_by_FAO_full <- file.path(prepdata_path, "EEZ_data_with_FAO_regions.qs") %>%
   st_transform(crs = 4326) %>%
   st_make_valid()
 
+# ── Hong Kong exception ───────────────────────────────────────────────────
+# HKG has no EEZ of its own in the source data (its waters are part of CHN), but it is
+# a focus country with farms. Give it the portion of China's EEZ that falls within the
+# HKG map limits from country_info(). The CHN polygon is left unchanged, so these cells
+# appear in both countries' rasters.
+sf_use_s2(FALSE)
+hkg_eez <- EEZ_by_FAO_full %>%
+  filter(ISO3_Code == "CHN") %>%
+  st_crop(st_bbox(country_info("HKG")$bbox, crs = 4326)) %>%
+  summarise(ISO3_Code = "HKG", country = "Hong Kong", F_CODE = first(F_CODE))
+sf_use_s2(TRUE)
+
+EEZ_by_FAO_full <- bind_rows(EEZ_by_FAO_full, hkg_eez)
+rm(hkg_eez)
+
 data_source <- if (str_detect(here(), "/mnt/rdsi")) {file.path(rdsi_path, "raw_data")} else {bigdata_path}
 
 tos_rast_fnms <- file.path(data_source, "ESGF", "EC-Earth3P-HR", "projected_adjusted") %>% 
@@ -197,7 +212,7 @@ for (d in unique(dirname(files_HS_global$filename))) dir.create(d, recursive = T
 files_HS_global <- split(files_HS_global, files_HS_global$harvest_years)
 
 # ── Feed parameters used for metabolism ───────────────────────────────────
-# Several species have more than one feed; the first listed feed is used here.
+# Several species have more than one feed; the first listed feed is documentation-qmds\07_habitat_suitability.qmdused here.
 feed_for_species <- map(
   set_names(model_names),
   function(sp) {

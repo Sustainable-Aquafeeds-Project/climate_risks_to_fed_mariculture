@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Tormey Reimer">
-<meta name="dcterms.date" content="2026-11-17">
+<meta name="dcterms.date" content="2026-11-18">
 
 <title>7: Habitat suitability – FAO Climate Change Risks to Fed Mariculture</title>
 <style>
@@ -4071,7 +4071,7 @@ vertical-align: -.125em;
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">17 November 2026</p>
+      <p class="date">18 November 2026</p>
     </div>
   </div>
   
@@ -4131,45 +4131,86 @@ vertical-align: -.125em;
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(<span class="at">crs =</span> <span class="dv">4326</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_make_valid</span>()</span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>data_source <span class="ot">&lt;-</span> <span class="cf">if</span> (<span class="fu">str_detect</span>(<span class="fu">here</span>(), <span class="st">&quot;/mnt/rdsi&quot;</span>)) {<span class="fu">file.path</span>(rdsi_path, <span class="st">&quot;raw_data&quot;</span>)} <span class="cf">else</span> {bigdata_path}</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>tos_rast_fnms <span class="ot">&lt;-</span> <span class="fu">file.path</span>(data_source, <span class="st">&quot;ESGF&quot;</span>, <span class="st">&quot;EC-Earth3P-HR&quot;</span>, <span class="st">&quot;projected_adjusted&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list.files</span>(<span class="at">full.names =</span> T) <span class="sc">%&gt;%</span> <span class="fu">sort</span>()</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>tos_dates <span class="ot">&lt;-</span> <span class="fu">str_extract</span>(<span class="fu">basename</span>(tos_rast_fnms), <span class="st">&quot;</span><span class="sc">\\</span><span class="st">d{4}-</span><span class="sc">\\</span><span class="st">d{2}-</span><span class="sc">\\</span><span class="st">d{2}&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co"># ── Hong Kong exception ───────────────────────────────────────────────────</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># HKG has no EEZ of its own in the source data (its waters are part of CHN), but it is</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># a focus country with farms. Give it the portion of China&#39;s EEZ that falls within the</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co"># HKG map limits from country_info(). The CHN polygon is left unchanged, so these cells</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co"># appear in both countries&#39; rasters.</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="fu">sf_use_s2</span>(<span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Spherical geometry (s2) switched off</code></pre>
+</div>
+<details class="code-fold">
+<summary>Get all the necessary data</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>hkg_eez <span class="ot">&lt;-</span> EEZ_by_FAO_full <span class="sc">%&gt;%</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(ISO3_Code <span class="sc">==</span> <span class="st">&quot;CHN&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_crop</span>(<span class="fu">st_bbox</span>(<span class="fu">country_info</span>(<span class="st">&quot;HKG&quot;</span>)<span class="sc">$</span>bbox, <span class="at">crs =</span> <span class="dv">4326</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">ISO3_Code =</span> <span class="st">&quot;HKG&quot;</span>, <span class="at">country =</span> <span class="st">&quot;Hong Kong&quot;</span>, <span class="at">F_CODE =</span> <span class="fu">first</span>(F_CODE))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>although coordinates are longitude/latitude, st_intersection assumes that they
+are planar</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: attribute variables are assumed to be spatially constant throughout
+all geometries</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>although coordinates are longitude/latitude, st_union assumes that they are
+planar</code></pre>
+</div>
+<details class="code-fold">
+<summary>Get all the necessary data</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sf_use_s2</span>(<span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Spherical geometry (s2) switched on</code></pre>
+</div>
+<details class="code-fold">
+<summary>Get all the necessary data</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>EEZ_by_FAO_full <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(EEZ_by_FAO_full, hkg_eez)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(hkg_eez)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>data_source <span class="ot">&lt;-</span> <span class="cf">if</span> (<span class="fu">str_detect</span>(<span class="fu">here</span>(), <span class="st">&quot;/mnt/rdsi&quot;</span>)) {<span class="fu">file.path</span>(rdsi_path, <span class="st">&quot;raw_data&quot;</span>)} <span class="cf">else</span> {bigdata_path}</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>tos_rast_fnms <span class="ot">&lt;-</span> <span class="fu">file.path</span>(data_source, <span class="st">&quot;ESGF&quot;</span>, <span class="st">&quot;EC-Earth3P-HR&quot;</span>, <span class="st">&quot;projected_adjusted&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list.files</span>(<span class="at">full.names =</span> T) <span class="sc">%&gt;%</span> <span class="fu">sort</span>()</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>tos_dates <span class="ot">&lt;-</span> <span class="fu">str_extract</span>(<span class="fu">basename</span>(tos_rast_fnms), <span class="st">&quot;</span><span class="sc">\\</span><span class="st">d{4}-</span><span class="sc">\\</span><span class="st">d{2}-</span><span class="sc">\\</span><span class="st">d{2}&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <p>HS is calculated per country (EEZ), per species (model_name), per harvest year, and per day. The annual habitat suitability is then calculated as the sum of all days.</p>
 <div class="cell" data-layout-align="center">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>country_dirs  <span class="ot">&lt;-</span> <span class="fu">unique</span>(EEZ_by_FAO_full<span class="sc">$</span>ISO3_Code)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>harvest_years <span class="ot">&lt;-</span> <span class="dv">2015</span><span class="sc">:</span><span class="dv">2099</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>inds          <span class="ot">&lt;-</span> <span class="fu">str_detect</span>(tos_dates, <span class="fu">paste0</span>(harvest_years, <span class="at">collapse =</span> <span class="st">&quot;|&quot;</span>))</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>tos_rast_fnms <span class="ot">&lt;-</span> tos_rast_fnms[inds]</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>tos_dates     <span class="ot">&lt;-</span> tos_dates[inds]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>country_dirs  <span class="ot">&lt;-</span> <span class="fu">unique</span>(EEZ_by_FAO_full<span class="sc">$</span>ISO3_Code)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>harvest_years <span class="ot">&lt;-</span> <span class="dv">2015</span><span class="sc">:</span><span class="dv">2099</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>inds          <span class="ot">&lt;-</span> <span class="fu">str_detect</span>(tos_dates, <span class="fu">paste0</span>(harvest_years, <span class="at">collapse =</span> <span class="st">&quot;|&quot;</span>))</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>tos_rast_fnms <span class="ot">&lt;-</span> tos_rast_fnms[inds]</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>tos_dates     <span class="ot">&lt;-</span> tos_dates[inds]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <p>Habitat suitability is calculated for all species in all countries, even if that species is not currently farmed there. This is in case we want to go back to that - in the consolidation phase, only species actually grown in each country will count towards the overall habitat suitability score.</p>
 <div class="cell" data-layout-align="center">
 <details class="code-fold">
 <summary>Create a binary EEZ-union mask raster</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Rasterise the union of all EEZs onto the SST grid so we can mask ocean cells outside any EEZ to NA before running the model.</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>ref_rast <span class="ot">&lt;-</span> <span class="fu">rast</span>(tos_rast_fnms[<span class="dv">1</span>])</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>ref_crs  <span class="ot">&lt;-</span> <span class="fu">crs</span>(ref_rast)</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">sf_use_s2</span>(<span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Rasterise the union of all EEZs onto the SST grid so we can mask ocean cells outside any EEZ to NA before running the model.</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>ref_rast <span class="ot">&lt;-</span> <span class="fu">rast</span>(tos_rast_fnms[<span class="dv">1</span>])</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>ref_crs  <span class="ot">&lt;-</span> <span class="fu">crs</span>(ref_rast)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="fu">sf_use_s2</span>(<span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stderr">
 <pre><code>Spherical geometry (s2) switched off</code></pre>
 </div>
 <details class="code-fold">
 <summary>Create a binary EEZ-union mask raster</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>eez_union <span class="ot">&lt;-</span> EEZ_by_FAO_full <span class="sc">%&gt;%</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_make_valid</span>() <span class="sc">%&gt;%</span>      <span class="co"># GEOS make_valid can handle the crossing rings</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_union</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_as_sf</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>eez_union <span class="ot">&lt;-</span> EEZ_by_FAO_full <span class="sc">%&gt;%</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_make_valid</span>() <span class="sc">%&gt;%</span>      <span class="co"># GEOS make_valid can handle the crossing rings</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_union</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_as_sf</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stderr">
 <pre><code>although coordinates are longitude/latitude, st_union assumes that they are
@@ -4177,90 +4218,93 @@ planar</code></pre>
 </div>
 <details class="code-fold">
 <summary>Create a binary EEZ-union mask raster</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sf_use_s2</span>(<span class="cn">TRUE</span>)            <span class="co"># restore the default for later operations</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sf_use_s2</span>(<span class="cn">TRUE</span>)            <span class="co"># restore the default for later operations</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stderr">
 <pre><code>Spherical geometry (s2) switched on</code></pre>
 </div>
 <details class="code-fold">
 <summary>Create a binary EEZ-union mask raster</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>eez_union_v <span class="ot">&lt;-</span> <span class="fu">project</span>(<span class="fu">vect</span>(eez_union), ref_crs)</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co"># touches = TRUE keeps every cell the EEZ union overlaps, not just cells whose</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># centre is inside it; the default drops coastal fringe cells where many farms sit</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>eez_mask    <span class="ot">&lt;-</span> <span class="fu">rasterize</span>(eez_union_v, ref_rast, <span class="at">field =</span> <span class="dv">1</span>, <span class="at">touches =</span> <span class="cn">TRUE</span>)  <span class="co"># 1 inside EEZ, NA outside</span></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(ref_rast, eez_union, eez_union_v); <span class="fu">gc</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>eez_union_v <span class="ot">&lt;-</span> <span class="fu">project</span>(<span class="fu">vect</span>(eez_union), ref_crs)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="co"># touches = TRUE keeps every cell the EEZ union overlaps, not just cells whose</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="co"># centre is inside it; the default drops coastal fringe cells where many farms sit</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>eez_mask    <span class="ot">&lt;-</span> <span class="fu">rasterize</span>(eez_union_v, ref_rast, <span class="at">field =</span> <span class="dv">1</span>, <span class="at">touches =</span> <span class="cn">TRUE</span>)  <span class="co"># 1 inside EEZ, NA outside</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(ref_rast, eez_union, eez_union_v); <span class="fu">gc</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>          used  (Mb) gc trigger  (Mb) max used  (Mb)
-Ncells 4812357 257.1    8751681 467.4  6464228 345.3
-Vcells 9376628  71.6   20663658 157.7 17435625 133.1</code></pre>
+Ncells 4841917 258.6    8739258 466.8  6479627 346.1
+Vcells 9441476  72.1   17153250 130.9 17152702 130.9</code></pre>
 </div>
 </div>
 <p>Some farms sit in cells where the TOS rasters have no temperature data (the 0.25° SST grid treats the cell as land). Every farm was given a daily SST series earlier (<code>data/prepped_data/assigned_farms_alltemps</code>, one file per <code>farm_ID</code>), so those series are used to fill the cells. Where more than one farm falls in the same cell, the cell’s temperature on each day is the mean across those farms.</p>
 <div class="cell" data-layout-align="center">
 <details class="code-fold">
 <summary>Daily SST for raster cells with no TOS data but containing farms</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>alltemps_dir   <span class="ot">&lt;-</span> <span class="fu">file.path</span>(prepdata_path, <span class="st">&quot;assigned_farms_alltemps&quot;</span>)</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>assigned_farms <span class="ot">&lt;-</span> <span class="fu">qs_read</span>(<span class="fu">file.path</span>(prepdata_path, <span class="st">&quot;assigned_farms_final.qs&quot;</span>))</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co"># ── Which farms sit in cells with no TOS data? ────────────────────────────</span></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="co"># The SST land mask is constant through time, so one masked day is enough to find the cells.</span></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>ref_masked <span class="ot">&lt;-</span> <span class="fu">rast</span>(tos_rast_fnms[<span class="dv">1</span>]) <span class="sc">*</span> eez_mask</span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>farm_cells <span class="ot">&lt;-</span> assigned_farms <span class="sc">%&gt;%</span></span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(ref_crs) <span class="sc">%&gt;%</span></span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">vect</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">extract</span>(ref_masked, ., <span class="at">cells =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">setNames</span>(<span class="fu">c</span>(<span class="st">&quot;ID&quot;</span>, <span class="st">&quot;tos&quot;</span>, <span class="st">&quot;cell&quot;</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">farm_ID =</span> assigned_farms<span class="sc">$</span>farm_ID) <span class="sc">%&gt;%</span></span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">is.na</span>(tos))</span>
-<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>fill_cells <span class="ot">&lt;-</span> <span class="fu">sort</span>(<span class="fu">unique</span>(farm_cells<span class="sc">$</span>cell))</span>
-<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="fu">nrow</span>(farm_cells), <span class="st">&quot; farms sit in &quot;</span>, <span class="fu">length</span>(fill_cells), <span class="st">&quot; cells with no TOS data&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>alltemps_dir   <span class="ot">&lt;-</span> <span class="fu">file.path</span>(prepdata_path, <span class="st">&quot;assigned_farms_alltemps&quot;</span>)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>assigned_farms <span class="ot">&lt;-</span> <span class="fu">qs_read</span>(<span class="fu">file.path</span>(prepdata_path, <span class="st">&quot;assigned_farms_final.qs&quot;</span>))</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="co"># ── Which farms sit in cells with no TOS data? ────────────────────────────</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="co"># The SST land mask is constant through time, so one masked day is enough to find the cells.</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>ref_masked <span class="ot">&lt;-</span> <span class="fu">rast</span>(tos_rast_fnms[<span class="dv">1</span>]) <span class="sc">*</span> eez_mask</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>farm_cells <span class="ot">&lt;-</span> assigned_farms <span class="sc">%&gt;%</span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(ref_crs) <span class="sc">%&gt;%</span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">vect</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">extract</span>(ref_masked, ., <span class="at">cells =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">setNames</span>(<span class="fu">c</span>(<span class="st">&quot;ID&quot;</span>, <span class="st">&quot;tos&quot;</span>, <span class="st">&quot;cell&quot;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">farm_ID =</span> assigned_farms<span class="sc">$</span>farm_ID) <span class="sc">%&gt;%</span></span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">is.na</span>(tos))</span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>fill_cells <span class="ot">&lt;-</span> <span class="fu">sort</span>(<span class="fu">unique</span>(farm_cells<span class="sc">$</span>cell))</span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="fu">nrow</span>(farm_cells), <span class="st">&quot; farms sit in &quot;</span>, <span class="fu">length</span>(fill_cells), <span class="st">&quot; cells with no TOS data&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stderr">
 <pre><code>3970 farms sit in 798 cells with no TOS data</code></pre>
 </div>
 <details class="code-fold">
 <summary>Daily SST for raster cells with no TOS data but containing farms</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ── Cell × day matrix of mean farm SST ────────────────────────────────────</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Running sum and count per cell so the per-farm series never need to be held together in memory.</span></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Columns follow tos_dates so the matrix can be subset by year in the main loop.</span></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>fill_sum <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="dv">0</span>, <span class="at">nrow =</span> <span class="fu">length</span>(fill_cells), <span class="at">ncol =</span> <span class="fu">length</span>(tos_dates), <span class="at">dimnames =</span> <span class="fu">list</span>(fill_cells, tos_dates))</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>fill_n   <span class="ot">&lt;-</span> fill_sum</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="fu">walk2</span>(</span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  farm_cells<span class="sc">$</span>farm_ID, farm_cells<span class="sc">$</span>cell,</span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">function</span>(id, cell) {</span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>    s   <span class="ot">&lt;-</span> qs2<span class="sc">::</span><span class="fu">qs_read</span>(<span class="fu">file.path</span>(alltemps_dir, <span class="fu">sprintf</span>(<span class="st">&quot;farm_%08d.qs&quot;</span>, id)))</span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>    sst <span class="ot">&lt;-</span> s<span class="sc">$</span>sst[<span class="fu">match</span>(tos_dates, <span class="fu">as.character</span>(s<span class="sc">$</span>date))]</span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>    ok  <span class="ot">&lt;-</span> <span class="sc">!</span><span class="fu">is.na</span>(sst)</span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>    row <span class="ot">&lt;-</span> <span class="fu">match</span>(cell, fill_cells)</span>
-<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>    fill_sum[row, ok] <span class="ot">&lt;&lt;-</span> fill_sum[row, ok] <span class="sc">+</span> sst[ok]</span>
-<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>    fill_n[row, ok]   <span class="ot">&lt;&lt;-</span> fill_n[row, ok] <span class="sc">+</span> <span class="dv">1</span></span>
-<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>  },</span>
-<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">.progress =</span> <span class="cn">TRUE</span></span>
-<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ── Cell × day matrix of mean farm SST ────────────────────────────────────</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Running sum and count per cell so the per-farm series never need to be held together in memory.</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Columns follow tos_dates so the matrix can be subset by year in the main loop.</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>fill_sum <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="dv">0</span>, <span class="at">nrow =</span> <span class="fu">length</span>(fill_cells), <span class="at">ncol =</span> <span class="fu">length</span>(tos_dates), <span class="at">dimnames =</span> <span class="fu">list</span>(fill_cells, tos_dates))</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>fill_n   <span class="ot">&lt;-</span> fill_sum</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="fu">walk2</span>(</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>  farm_cells<span class="sc">$</span>farm_ID, farm_cells<span class="sc">$</span>cell,</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">function</span>(id, cell) {</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>    s   <span class="ot">&lt;-</span> qs2<span class="sc">::</span><span class="fu">qs_read</span>(<span class="fu">file.path</span>(alltemps_dir, <span class="fu">sprintf</span>(<span class="st">&quot;farm_%08d.qs&quot;</span>, id)))</span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>    sst <span class="ot">&lt;-</span> s<span class="sc">$</span>sst[<span class="fu">match</span>(tos_dates, <span class="fu">as.character</span>(s<span class="sc">$</span>date))]</span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>    ok  <span class="ot">&lt;-</span> <span class="sc">!</span><span class="fu">is.na</span>(sst)</span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>    row <span class="ot">&lt;-</span> <span class="fu">match</span>(cell, fill_cells)</span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>    fill_sum[row, ok] <span class="ot">&lt;&lt;-</span> fill_sum[row, ok] <span class="sc">+</span> sst[ok]</span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>    fill_n[row, ok]   <span class="ot">&lt;&lt;-</span> fill_n[row, ok] <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>  },</span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">.progress =</span> <span class="cn">TRUE</span></span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stderr">
-<pre><code> ■                                  2% |  ETA:  3m</code></pre>
+<pre><code> ■                                  2% |  ETA:  4m</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code> ■■                                 4% |  ETA:  3m</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code> ■■■                                6% |  ETA:  2m</code></pre>
+<pre><code> ■■■                                6% |  ETA:  3m</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code> ■■■                                8% |  ETA:  2m</code></pre>
+<pre><code> ■■■                                8% |  ETA:  3m</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code> ■■■■                              11% |  ETA:  2m</code></pre>
+<pre><code> ■■■■                              10% |  ETA:  2m</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■                             13% |  ETA:  2m</code></pre>
+<pre><code> ■■■■                              12% |  ETA:  2m</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■                            15% |  ETA:  2m</code></pre>
+<pre><code> ■■■■■                             14% |  ETA:  2m</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■■■                            16% |  ETA:  2m</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code> ■■■■■■                            17% |  ETA:  2m</code></pre>
@@ -4275,28 +4319,31 @@ Vcells 9376628  71.6   20663658 157.7 17435625 133.1</code></pre>
 <pre><code> ■■■■■■■■                          24% |  ETA:  2m</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■                         26% |  ETA:  2m</code></pre>
+<pre><code> ■■■■■■■■■                         25% |  ETA:  2m</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■                         28% |  ETA:  2m</code></pre>
+<pre><code> ■■■■■■■■■                         27% |  ETA:  2m</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■                        30% |  ETA:  2m</code></pre>
+<pre><code> ■■■■■■■■■■                        29% |  ETA:  2m</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■■■■■■■                        31% |  ETA:  2m</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code> ■■■■■■■■■■■                       33% |  ETA:  2m</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■                       35% |  ETA:  2m</code></pre>
+<pre><code> ■■■■■■■■■■■■                      35% |  ETA:  2m</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■                      37% |  ETA:  1m</code></pre>
+<pre><code> ■■■■■■■■■■■■                      37% |  ETA:  2m</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■                     39% |  ETA:  1m</code></pre>
+<pre><code> ■■■■■■■■■■■■■                     39% |  ETA:  2m</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■                     41% |  ETA:  1m</code></pre>
+<pre><code> ■■■■■■■■■■■■■                     41% |  ETA:  2m</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code> ■■■■■■■■■■■■■■                    43% |  ETA:  1m</code></pre>
@@ -4305,19 +4352,22 @@ Vcells 9376628  71.6   20663658 157.7 17435625 133.1</code></pre>
 <pre><code> ■■■■■■■■■■■■■■■                   45% |  ETA:  1m</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■                   48% |  ETA:  1m</code></pre>
+<pre><code> ■■■■■■■■■■■■■■■                   47% |  ETA:  1m</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■                  50% |  ETA:  1m</code></pre>
+<pre><code> ■■■■■■■■■■■■■■■■                  49% |  ETA:  1m</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■                 52% |  ETA:  1m</code></pre>
+<pre><code> ■■■■■■■■■■■■■■■■                  51% |  ETA:  1m</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■                 54% |  ETA:  1m</code></pre>
+<pre><code> ■■■■■■■■■■■■■■■■■                 53% |  ETA:  1m</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■                56% |  ETA:  1m</code></pre>
+<pre><code> ■■■■■■■■■■■■■■■■■                 55% |  ETA:  1m</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■■■■■■■■■■■■■■■                57% |  ETA:  1m</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code> ■■■■■■■■■■■■■■■■■■■               59% |  ETA:  1m</code></pre>
@@ -4329,1545 +4379,373 @@ Vcells 9376628  71.6   20663658 157.7 17435625 133.1</code></pre>
 <pre><code> ■■■■■■■■■■■■■■■■■■■■              63% |  ETA:  1m</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■              65% |  ETA: 49s</code></pre>
+<pre><code> ■■■■■■■■■■■■■■■■■■■■■             65% |  ETA:  1m</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■             67% |  ETA: 46s</code></pre>
+<pre><code> ■■■■■■■■■■■■■■■■■■■■■             67% |  ETA:  1m</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■            69% |  ETA: 44s</code></pre>
+<pre><code> ■■■■■■■■■■■■■■■■■■■■■■            69% |  ETA: 47s</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■            71% |  ETA: 41s</code></pre>
+<pre><code> ■■■■■■■■■■■■■■■■■■■■■■            71% |  ETA: 44s</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■           73% |  ETA: 38s</code></pre>
+<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■           73% |  ETA: 41s</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■           75% |  ETA: 35s</code></pre>
+<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■          75% |  ETA: 38s</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■          77% |  ETA: 32s</code></pre>
+<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■          77% |  ETA: 35s</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■         79% |  ETA: 29s</code></pre>
+<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■         79% |  ETA: 32s</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■         81% |  ETA: 26s</code></pre>
+<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■         81% |  ETA: 28s</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■        83% |  ETA: 23s</code></pre>
+<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■        83% |  ETA: 25s</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■       86% |  ETA: 20s</code></pre>
+<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■       85% |  ETA: 22s</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■       88% |  ETA: 17s</code></pre>
+<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■       88% |  ETA: 19s</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■      90% |  ETA: 15s</code></pre>
+<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■      90% |  ETA: 16s</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■      92% |  ETA: 12s</code></pre>
+<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■      91% |  ETA: 13s</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■     94% |  ETA:  9s</code></pre>
+<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■     94% |  ETA: 10s</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■    96% |  ETA:  6s</code></pre>
+<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■    95% |  ETA:  7s</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■    98% |  ETA:  3s</code></pre>
+<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■    97% |  ETA:  4s</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  100% |  ETA:  0s</code></pre>
+<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■   99% |  ETA:  1s</code></pre>
 </div>
 <details class="code-fold">
 <summary>Daily SST for raster cells with no TOS data but containing farms</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a>gap_fill <span class="ot">&lt;-</span> fill_sum <span class="sc">/</span> fill_n   <span class="co"># NaN where no farm had a value for that cell/day</span></span>
-<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(fill_sum, fill_n, ref_masked); <span class="fu">gc</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a>gap_fill <span class="ot">&lt;-</span> fill_sum <span class="sc">/</span> fill_n   <span class="co"># NaN where no farm had a value for that cell/day</span></span>
+<span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(fill_sum, fill_n, ref_masked); <span class="fu">gc</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger   (Mb)  max used   (Mb)
-Ncells  4893770 261.4    8751681  467.4   6638903  354.6
-Vcells 34513231 263.4  356024120 2716.3 445025540 3395.3</code></pre>
+Ncells  4903618 261.9    8739258  466.8   6784421  362.4
+Vcells 34546472 263.6  356161056 2717.3 445195316 3396.6</code></pre>
 </div>
 </div>
 <div class="cell" data-layout-align="center">
 <details class="code-fold">
 <summary>Main harvest year → species global habitat suitability loop</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>HS_global_dir <span class="ot">&lt;-</span> <span class="fu">here</span>(<span class="st">&quot;outputs/data/habitat_suitability/global&quot;</span>)</span>
-<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ── Create all filenames &amp; directories ─────────────────────────────────────</span></span>
-<span id="cb64-4"><a href="#cb64-4" aria-hidden="true" tabindex="-1"></a><span class="co"># One row per species × year (MR = metabolic rate); only rows whose file is</span></span>
-<span id="cb64-5"><a href="#cb64-5" aria-hidden="true" tabindex="-1"></a><span class="co"># missing are kept, so a year is skipped entirely if all its files exist.</span></span>
-<span id="cb64-6"><a href="#cb64-6" aria-hidden="true" tabindex="-1"></a>files_HS_global <span class="ot">&lt;-</span> <span class="fu">expand_grid</span>(model_names, harvest_years) <span class="sc">%&gt;%</span></span>
-<span id="cb64-7"><a href="#cb64-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb64-8"><a href="#cb64-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">filename =</span> <span class="fu">file.path</span>(HS_global_dir, model_names, <span class="fu">paste0</span>(<span class="st">&quot;MR_&quot;</span>, harvest_years, <span class="st">&quot;.tif&quot;</span>)),</span>
-<span id="cb64-9"><a href="#cb64-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">exists   =</span> <span class="fu">file.exists</span>(filename)</span>
-<span id="cb64-10"><a href="#cb64-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb64-11"><a href="#cb64-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>exists)</span>
-<span id="cb64-12"><a href="#cb64-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-13"><a href="#cb64-13" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (d <span class="cf">in</span> <span class="fu">unique</span>(<span class="fu">dirname</span>(files_HS_global<span class="sc">$</span>filename))) <span class="fu">dir.create</span>(d, <span class="at">recursive =</span> <span class="cn">TRUE</span>, <span class="at">showWarnings =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb64-14"><a href="#cb64-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-15"><a href="#cb64-15" aria-hidden="true" tabindex="-1"></a>files_HS_global <span class="ot">&lt;-</span> <span class="fu">split</span>(files_HS_global, files_HS_global<span class="sc">$</span>harvest_years)</span>
-<span id="cb64-16"><a href="#cb64-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-17"><a href="#cb64-17" aria-hidden="true" tabindex="-1"></a><span class="co"># ── Feed parameters used for metabolism ───────────────────────────────────</span></span>
-<span id="cb64-18"><a href="#cb64-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Several species have more than one feed; the first listed feed is used here.</span></span>
-<span id="cb64-19"><a href="#cb64-19" aria-hidden="true" tabindex="-1"></a>feed_for_species <span class="ot">&lt;-</span> <span class="fu">map</span>(</span>
-<span id="cb64-20"><a href="#cb64-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_names</span>(model_names),</span>
-<span id="cb64-21"><a href="#cb64-21" aria-hidden="true" tabindex="-1"></a>  <span class="cf">function</span>(sp) {</span>
-<span id="cb64-22"><a href="#cb64-22" aria-hidden="true" tabindex="-1"></a>    nm <span class="ot">&lt;-</span> <span class="fu">str_subset</span>(feed_names, <span class="fu">paste0</span>(<span class="st">&quot;^&quot;</span>, sp, <span class="st">&quot;-&quot;</span>))[<span class="dv">1</span>]</span>
-<span id="cb64-23"><a href="#cb64-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">is.na</span>(nm)) <span class="fu">stop</span>(<span class="st">&quot;No feed parameters found for &quot;</span>, sp)</span>
-<span id="cb64-24"><a href="#cb64-24" aria-hidden="true" tabindex="-1"></a>    feed_params[[nm]]</span>
-<span id="cb64-25"><a href="#cb64-25" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb64-26"><a href="#cb64-26" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb64-27"><a href="#cb64-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-28"><a href="#cb64-28" aria-hidden="true" tabindex="-1"></a><span class="co"># ── Raster wrapper for get_metabolism() ───────────────────────────────────</span></span>
-<span id="cb64-29"><a href="#cb64-29" aria-hidden="true" tabindex="-1"></a><span class="co"># get_metabolism() is scalar (uses if()/min()), so it is evaluated once per</span></span>
-<span id="cb64-30"><a href="#cb64-30" aria-hidden="true" tabindex="-1"></a><span class="co"># unique temperature (rounded to `digits`) and the results are looked up for</span></span>
-<span id="cb64-31"><a href="#cb64-31" aria-hidden="true" tabindex="-1"></a><span class="co"># every cell/day, rather than calling it per cell.</span></span>
-<span id="cb64-32"><a href="#cb64-32" aria-hidden="true" tabindex="-1"></a><span class="co"># The overfeeding draw in food_prov_rate() is made deterministic for this</span></span>
-<span id="cb64-33"><a href="#cb64-33" aria-hidden="true" tabindex="-1"></a><span class="co"># application by setting overFdelta = 0, so rnorm() returns overFmean exactly.</span></span>
-<span id="cb64-34"><a href="#cb64-34" aria-hidden="true" tabindex="-1"></a>get_metabolism_r <span class="ot">&lt;-</span> <span class="cf">function</span>(temp_stack, species_params, feed_params, <span class="at">digits =</span> <span class="dv">2</span>) {</span>
-<span id="cb64-35"><a href="#cb64-35" aria-hidden="true" tabindex="-1"></a>  species_params[<span class="st">&quot;overFdelta&quot;</span>] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
-<span id="cb64-36"><a href="#cb64-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-37"><a href="#cb64-37" aria-hidden="true" tabindex="-1"></a>  temp_vec <span class="ot">&lt;-</span> <span class="fu">as.vector</span>(terra<span class="sc">::</span><span class="fu">values</span>(temp_stack))</span>
-<span id="cb64-38"><a href="#cb64-38" aria-hidden="true" tabindex="-1"></a>  ok       <span class="ot">&lt;-</span> <span class="fu">is.finite</span>(temp_vec)</span>
-<span id="cb64-39"><a href="#cb64-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-40"><a href="#cb64-40" aria-hidden="true" tabindex="-1"></a>  temp_round  <span class="ot">&lt;-</span> <span class="fu">round</span>(temp_vec[ok], digits)</span>
-<span id="cb64-41"><a href="#cb64-41" aria-hidden="true" tabindex="-1"></a>  temp_unique <span class="ot">&lt;-</span> <span class="fu">sort</span>(<span class="fu">unique</span>(temp_round))</span>
-<span id="cb64-42"><a href="#cb64-42" aria-hidden="true" tabindex="-1"></a>  mr_unique   <span class="ot">&lt;-</span> <span class="fu">vapply</span>(</span>
-<span id="cb64-43"><a href="#cb64-43" aria-hidden="true" tabindex="-1"></a>    temp_unique,</span>
-<span id="cb64-44"><a href="#cb64-44" aria-hidden="true" tabindex="-1"></a>    <span class="cf">function</span>(tt) <span class="fu">unname</span>(<span class="fu">get_metabolism</span>(</span>
-<span id="cb64-45"><a href="#cb64-45" aria-hidden="true" tabindex="-1"></a>      <span class="at">water_temp     =</span> tt,</span>
-<span id="cb64-46"><a href="#cb64-46" aria-hidden="true" tabindex="-1"></a>      <span class="at">species_params =</span> species_params,</span>
-<span id="cb64-47"><a href="#cb64-47" aria-hidden="true" tabindex="-1"></a>      <span class="at">feed_params    =</span> feed_params,</span>
-<span id="cb64-48"><a href="#cb64-48" aria-hidden="true" tabindex="-1"></a>      <span class="at">rep_size       =</span> species_params[[<span class="st">&quot;CS&quot;</span>]]</span>
-<span id="cb64-49"><a href="#cb64-49" aria-hidden="true" tabindex="-1"></a>    )),</span>
-<span id="cb64-50"><a href="#cb64-50" aria-hidden="true" tabindex="-1"></a>    <span class="fu">numeric</span>(<span class="dv">1</span>)</span>
-<span id="cb64-51"><a href="#cb64-51" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb64-52"><a href="#cb64-52" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-53"><a href="#cb64-53" aria-hidden="true" tabindex="-1"></a>  full     <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="cn">NA_real_</span>, <span class="fu">length</span>(temp_vec))</span>
-<span id="cb64-54"><a href="#cb64-54" aria-hidden="true" tabindex="-1"></a>  full[ok] <span class="ot">&lt;-</span> mr_unique[<span class="fu">match</span>(temp_round, temp_unique)]</span>
-<span id="cb64-55"><a href="#cb64-55" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-56"><a href="#cb64-56" aria-hidden="true" tabindex="-1"></a>  r <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">setValues</span>(temp_stack, <span class="fu">matrix</span>(full, <span class="at">nrow =</span> terra<span class="sc">::</span><span class="fu">ncell</span>(temp_stack), <span class="at">ncol =</span> terra<span class="sc">::</span><span class="fu">nlyr</span>(temp_stack)))</span>
-<span id="cb64-57"><a href="#cb64-57" aria-hidden="true" tabindex="-1"></a>  <span class="fu">names</span>(r) <span class="ot">&lt;-</span> <span class="fu">names</span>(temp_stack)</span>
-<span id="cb64-58"><a href="#cb64-58" aria-hidden="true" tabindex="-1"></a>  r</span>
-<span id="cb64-59"><a href="#cb64-59" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb64-60"><a href="#cb64-60" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-61"><a href="#cb64-61" aria-hidden="true" tabindex="-1"></a><span class="co"># ── MAIN LOOP ─────────────────────────────────────────────────────────────</span></span>
-<span id="cb64-62"><a href="#cb64-62" aria-hidden="true" tabindex="-1"></a><span class="co"># files &lt;- files_HS_global[[1]]</span></span>
-<span id="cb64-63"><a href="#cb64-63" aria-hidden="true" tabindex="-1"></a><span class="co"># yr_char &lt;- names(files_HS_global)[1]</span></span>
-<span id="cb64-64"><a href="#cb64-64" aria-hidden="true" tabindex="-1"></a><span class="fu">walk2</span>(</span>
-<span id="cb64-65"><a href="#cb64-65" aria-hidden="true" tabindex="-1"></a>  files_HS_global,</span>
-<span id="cb64-66"><a href="#cb64-66" aria-hidden="true" tabindex="-1"></a>  <span class="fu">names</span>(files_HS_global),</span>
-<span id="cb64-67"><a href="#cb64-67" aria-hidden="true" tabindex="-1"></a>  <span class="cf">function</span>(files, yr_char) {</span>
-<span id="cb64-68"><a href="#cb64-68" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">nrow</span>(files) <span class="sc">==</span> <span class="dv">0</span>) <span class="fu">return</span>(<span class="fu">invisible</span>(<span class="cn">NULL</span>))</span>
-<span id="cb64-69"><a href="#cb64-69" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-70"><a href="#cb64-70" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 1. Read SST for this year (only now that we know at least one file is missing)</span></span>
-<span id="cb64-71"><a href="#cb64-71" aria-hidden="true" tabindex="-1"></a>    this_days        <span class="ot">&lt;-</span> <span class="fu">str_detect</span>(tos_dates, yr_char)</span>
-<span id="cb64-72"><a href="#cb64-72" aria-hidden="true" tabindex="-1"></a>    tos_stack_global <span class="ot">&lt;-</span> <span class="fu">rast</span>(tos_rast_fnms[this_days])</span>
-<span id="cb64-73"><a href="#cb64-73" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-74"><a href="#cb64-74" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Apply the EEZ-union mask so that open ocean == NA</span></span>
-<span id="cb64-75"><a href="#cb64-75" aria-hidden="true" tabindex="-1"></a>    <span class="fu">suppressWarnings</span>(tos_stack_global <span class="ot">&lt;-</span> tos_stack_global <span class="sc">*</span> eez_mask)</span>
-<span id="cb64-76"><a href="#cb64-76" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-77"><a href="#cb64-77" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Fill cells with no TOS data but containing farms, using the farm-level SST series (see farm-gap-fill chunk)</span></span>
-<span id="cb64-78"><a href="#cb64-78" aria-hidden="true" tabindex="-1"></a>    tos_stack_global[fill_cells] <span class="ot">&lt;-</span> gap_fill[, this_days, drop <span class="ot">=</span> <span class="cn">FALSE</span>]</span>
-<span id="cb64-79"><a href="#cb64-79" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-80"><a href="#cb64-80" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 2. Calculate and save only the missing species files</span></span>
-<span id="cb64-81"><a href="#cb64-81" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pwalk</span>(</span>
-<span id="cb64-82"><a href="#cb64-82" aria-hidden="true" tabindex="-1"></a>      files,</span>
-<span id="cb64-83"><a href="#cb64-83" aria-hidden="true" tabindex="-1"></a>      <span class="cf">function</span>(model_names, filename, ...) {</span>
-<span id="cb64-84"><a href="#cb64-84" aria-hidden="true" tabindex="-1"></a>        resp_global <span class="ot">&lt;-</span> <span class="fu">get_metabolism_r</span>(</span>
-<span id="cb64-85"><a href="#cb64-85" aria-hidden="true" tabindex="-1"></a>          <span class="at">temp_stack     =</span> tos_stack_global,</span>
-<span id="cb64-86"><a href="#cb64-86" aria-hidden="true" tabindex="-1"></a>          <span class="at">species_params =</span> parameters_species[[model_names]],</span>
-<span id="cb64-87"><a href="#cb64-87" aria-hidden="true" tabindex="-1"></a>          <span class="at">feed_params    =</span> feed_for_species[[model_names]]</span>
-<span id="cb64-88"><a href="#cb64-88" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb64-89"><a href="#cb64-89" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-90"><a href="#cb64-90" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 3. Sum across days to get a single-layer global raster and save</span></span>
-<span id="cb64-91"><a href="#cb64-91" aria-hidden="true" tabindex="-1"></a>        resp_global <span class="ot">&lt;-</span> <span class="fu">app</span>(resp_global, sum, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb64-92"><a href="#cb64-92" aria-hidden="true" tabindex="-1"></a>        <span class="fu">writeRaster</span>(resp_global, filename, <span class="at">overwrite =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb64-93"><a href="#cb64-93" aria-hidden="true" tabindex="-1"></a>        <span class="fu">rm</span>(resp_global); <span class="fu">gc</span>()</span>
-<span id="cb64-94"><a href="#cb64-94" aria-hidden="true" tabindex="-1"></a>      }</span>
-<span id="cb64-95"><a href="#cb64-95" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb64-96"><a href="#cb64-96" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rm</span>(tos_stack_global); <span class="fu">gc</span>()</span>
-<span id="cb64-97"><a href="#cb64-97" aria-hidden="true" tabindex="-1"></a>  },</span>
-<span id="cb64-98"><a href="#cb64-98" aria-hidden="true" tabindex="-1"></a>  <span class="at">.progress =</span> T</span>
-<span id="cb64-99"><a href="#cb64-99" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a>HS_global_dir <span class="ot">&lt;-</span> <span class="fu">here</span>(<span class="st">&quot;outputs/data/habitat_suitability/global&quot;</span>)</span>
+<span id="cb75-2"><a href="#cb75-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb75-3"><a href="#cb75-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ── Create all filenames &amp; directories ─────────────────────────────────────</span></span>
+<span id="cb75-4"><a href="#cb75-4" aria-hidden="true" tabindex="-1"></a><span class="co"># One row per species × year (MR = metabolic rate); only rows whose file is</span></span>
+<span id="cb75-5"><a href="#cb75-5" aria-hidden="true" tabindex="-1"></a><span class="co"># missing are kept, so a year is skipped entirely if all its files exist.</span></span>
+<span id="cb75-6"><a href="#cb75-6" aria-hidden="true" tabindex="-1"></a>files_HS_global <span class="ot">&lt;-</span> <span class="fu">expand_grid</span>(model_names, harvest_years) <span class="sc">%&gt;%</span></span>
+<span id="cb75-7"><a href="#cb75-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb75-8"><a href="#cb75-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">filename =</span> <span class="fu">file.path</span>(HS_global_dir, model_names, <span class="fu">paste0</span>(<span class="st">&quot;MR_&quot;</span>, harvest_years, <span class="st">&quot;.tif&quot;</span>)),</span>
+<span id="cb75-9"><a href="#cb75-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">exists   =</span> <span class="fu">file.exists</span>(filename)</span>
+<span id="cb75-10"><a href="#cb75-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb75-11"><a href="#cb75-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>exists)</span>
+<span id="cb75-12"><a href="#cb75-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb75-13"><a href="#cb75-13" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (d <span class="cf">in</span> <span class="fu">unique</span>(<span class="fu">dirname</span>(files_HS_global<span class="sc">$</span>filename))) <span class="fu">dir.create</span>(d, <span class="at">recursive =</span> <span class="cn">TRUE</span>, <span class="at">showWarnings =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb75-14"><a href="#cb75-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb75-15"><a href="#cb75-15" aria-hidden="true" tabindex="-1"></a>files_HS_global <span class="ot">&lt;-</span> <span class="fu">split</span>(files_HS_global, files_HS_global<span class="sc">$</span>harvest_years)</span>
+<span id="cb75-16"><a href="#cb75-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb75-17"><a href="#cb75-17" aria-hidden="true" tabindex="-1"></a><span class="co"># ── Feed parameters used for metabolism ───────────────────────────────────</span></span>
+<span id="cb75-18"><a href="#cb75-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Several species have more than one feed; the first listed feed is documentation-qmds\07_habitat_suitability.qmdused here.</span></span>
+<span id="cb75-19"><a href="#cb75-19" aria-hidden="true" tabindex="-1"></a>feed_for_species <span class="ot">&lt;-</span> <span class="fu">map</span>(</span>
+<span id="cb75-20"><a href="#cb75-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_names</span>(model_names),</span>
+<span id="cb75-21"><a href="#cb75-21" aria-hidden="true" tabindex="-1"></a>  <span class="cf">function</span>(sp) {</span>
+<span id="cb75-22"><a href="#cb75-22" aria-hidden="true" tabindex="-1"></a>    nm <span class="ot">&lt;-</span> <span class="fu">str_subset</span>(feed_names, <span class="fu">paste0</span>(<span class="st">&quot;^&quot;</span>, sp, <span class="st">&quot;-&quot;</span>))[<span class="dv">1</span>]</span>
+<span id="cb75-23"><a href="#cb75-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">is.na</span>(nm)) <span class="fu">stop</span>(<span class="st">&quot;No feed parameters found for &quot;</span>, sp)</span>
+<span id="cb75-24"><a href="#cb75-24" aria-hidden="true" tabindex="-1"></a>    feed_params[[nm]]</span>
+<span id="cb75-25"><a href="#cb75-25" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb75-26"><a href="#cb75-26" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb75-27"><a href="#cb75-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb75-28"><a href="#cb75-28" aria-hidden="true" tabindex="-1"></a><span class="co"># ── Raster wrapper for get_metabolism() ───────────────────────────────────</span></span>
+<span id="cb75-29"><a href="#cb75-29" aria-hidden="true" tabindex="-1"></a><span class="co"># get_metabolism() is scalar (uses if()/min()), so it is evaluated once per</span></span>
+<span id="cb75-30"><a href="#cb75-30" aria-hidden="true" tabindex="-1"></a><span class="co"># unique temperature (rounded to `digits`) and the results are looked up for</span></span>
+<span id="cb75-31"><a href="#cb75-31" aria-hidden="true" tabindex="-1"></a><span class="co"># every cell/day, rather than calling it per cell.</span></span>
+<span id="cb75-32"><a href="#cb75-32" aria-hidden="true" tabindex="-1"></a><span class="co"># The overfeeding draw in food_prov_rate() is made deterministic for this</span></span>
+<span id="cb75-33"><a href="#cb75-33" aria-hidden="true" tabindex="-1"></a><span class="co"># application by setting overFdelta = 0, so rnorm() returns overFmean exactly.</span></span>
+<span id="cb75-34"><a href="#cb75-34" aria-hidden="true" tabindex="-1"></a>get_metabolism_r <span class="ot">&lt;-</span> <span class="cf">function</span>(temp_stack, species_params, feed_params, <span class="at">digits =</span> <span class="dv">2</span>) {</span>
+<span id="cb75-35"><a href="#cb75-35" aria-hidden="true" tabindex="-1"></a>  species_params[<span class="st">&quot;overFdelta&quot;</span>] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb75-36"><a href="#cb75-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb75-37"><a href="#cb75-37" aria-hidden="true" tabindex="-1"></a>  temp_vec <span class="ot">&lt;-</span> <span class="fu">as.vector</span>(terra<span class="sc">::</span><span class="fu">values</span>(temp_stack))</span>
+<span id="cb75-38"><a href="#cb75-38" aria-hidden="true" tabindex="-1"></a>  ok       <span class="ot">&lt;-</span> <span class="fu">is.finite</span>(temp_vec)</span>
+<span id="cb75-39"><a href="#cb75-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb75-40"><a href="#cb75-40" aria-hidden="true" tabindex="-1"></a>  temp_round  <span class="ot">&lt;-</span> <span class="fu">round</span>(temp_vec[ok], digits)</span>
+<span id="cb75-41"><a href="#cb75-41" aria-hidden="true" tabindex="-1"></a>  temp_unique <span class="ot">&lt;-</span> <span class="fu">sort</span>(<span class="fu">unique</span>(temp_round))</span>
+<span id="cb75-42"><a href="#cb75-42" aria-hidden="true" tabindex="-1"></a>  mr_unique   <span class="ot">&lt;-</span> <span class="fu">vapply</span>(</span>
+<span id="cb75-43"><a href="#cb75-43" aria-hidden="true" tabindex="-1"></a>    temp_unique,</span>
+<span id="cb75-44"><a href="#cb75-44" aria-hidden="true" tabindex="-1"></a>    <span class="cf">function</span>(tt) <span class="fu">unname</span>(<span class="fu">get_metabolism</span>(</span>
+<span id="cb75-45"><a href="#cb75-45" aria-hidden="true" tabindex="-1"></a>      <span class="at">water_temp     =</span> tt,</span>
+<span id="cb75-46"><a href="#cb75-46" aria-hidden="true" tabindex="-1"></a>      <span class="at">species_params =</span> species_params,</span>
+<span id="cb75-47"><a href="#cb75-47" aria-hidden="true" tabindex="-1"></a>      <span class="at">feed_params    =</span> feed_params,</span>
+<span id="cb75-48"><a href="#cb75-48" aria-hidden="true" tabindex="-1"></a>      <span class="at">rep_size       =</span> species_params[[<span class="st">&quot;CS&quot;</span>]]</span>
+<span id="cb75-49"><a href="#cb75-49" aria-hidden="true" tabindex="-1"></a>    )),</span>
+<span id="cb75-50"><a href="#cb75-50" aria-hidden="true" tabindex="-1"></a>    <span class="fu">numeric</span>(<span class="dv">1</span>)</span>
+<span id="cb75-51"><a href="#cb75-51" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb75-52"><a href="#cb75-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb75-53"><a href="#cb75-53" aria-hidden="true" tabindex="-1"></a>  full     <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="cn">NA_real_</span>, <span class="fu">length</span>(temp_vec))</span>
+<span id="cb75-54"><a href="#cb75-54" aria-hidden="true" tabindex="-1"></a>  full[ok] <span class="ot">&lt;-</span> mr_unique[<span class="fu">match</span>(temp_round, temp_unique)]</span>
+<span id="cb75-55"><a href="#cb75-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb75-56"><a href="#cb75-56" aria-hidden="true" tabindex="-1"></a>  r <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">setValues</span>(temp_stack, <span class="fu">matrix</span>(full, <span class="at">nrow =</span> terra<span class="sc">::</span><span class="fu">ncell</span>(temp_stack), <span class="at">ncol =</span> terra<span class="sc">::</span><span class="fu">nlyr</span>(temp_stack)))</span>
+<span id="cb75-57"><a href="#cb75-57" aria-hidden="true" tabindex="-1"></a>  <span class="fu">names</span>(r) <span class="ot">&lt;-</span> <span class="fu">names</span>(temp_stack)</span>
+<span id="cb75-58"><a href="#cb75-58" aria-hidden="true" tabindex="-1"></a>  r</span>
+<span id="cb75-59"><a href="#cb75-59" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb75-60"><a href="#cb75-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb75-61"><a href="#cb75-61" aria-hidden="true" tabindex="-1"></a><span class="co"># ── MAIN LOOP ─────────────────────────────────────────────────────────────</span></span>
+<span id="cb75-62"><a href="#cb75-62" aria-hidden="true" tabindex="-1"></a><span class="co"># files &lt;- files_HS_global[[1]]</span></span>
+<span id="cb75-63"><a href="#cb75-63" aria-hidden="true" tabindex="-1"></a><span class="co"># yr_char &lt;- names(files_HS_global)[1]</span></span>
+<span id="cb75-64"><a href="#cb75-64" aria-hidden="true" tabindex="-1"></a><span class="fu">walk2</span>(</span>
+<span id="cb75-65"><a href="#cb75-65" aria-hidden="true" tabindex="-1"></a>  files_HS_global,</span>
+<span id="cb75-66"><a href="#cb75-66" aria-hidden="true" tabindex="-1"></a>  <span class="fu">names</span>(files_HS_global),</span>
+<span id="cb75-67"><a href="#cb75-67" aria-hidden="true" tabindex="-1"></a>  <span class="cf">function</span>(files, yr_char) {</span>
+<span id="cb75-68"><a href="#cb75-68" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">nrow</span>(files) <span class="sc">==</span> <span class="dv">0</span>) <span class="fu">return</span>(<span class="fu">invisible</span>(<span class="cn">NULL</span>))</span>
+<span id="cb75-69"><a href="#cb75-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb75-70"><a href="#cb75-70" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 1. Read SST for this year (only now that we know at least one file is missing)</span></span>
+<span id="cb75-71"><a href="#cb75-71" aria-hidden="true" tabindex="-1"></a>    this_days        <span class="ot">&lt;-</span> <span class="fu">str_detect</span>(tos_dates, yr_char)</span>
+<span id="cb75-72"><a href="#cb75-72" aria-hidden="true" tabindex="-1"></a>    tos_stack_global <span class="ot">&lt;-</span> <span class="fu">rast</span>(tos_rast_fnms[this_days])</span>
+<span id="cb75-73"><a href="#cb75-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb75-74"><a href="#cb75-74" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Apply the EEZ-union mask so that open ocean == NA</span></span>
+<span id="cb75-75"><a href="#cb75-75" aria-hidden="true" tabindex="-1"></a>    <span class="fu">suppressWarnings</span>(tos_stack_global <span class="ot">&lt;-</span> tos_stack_global <span class="sc">*</span> eez_mask)</span>
+<span id="cb75-76"><a href="#cb75-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb75-77"><a href="#cb75-77" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Fill cells with no TOS data but containing farms, using the farm-level SST series (see farm-gap-fill chunk)</span></span>
+<span id="cb75-78"><a href="#cb75-78" aria-hidden="true" tabindex="-1"></a>    tos_stack_global[fill_cells] <span class="ot">&lt;-</span> gap_fill[, this_days, drop <span class="ot">=</span> <span class="cn">FALSE</span>]</span>
+<span id="cb75-79"><a href="#cb75-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb75-80"><a href="#cb75-80" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 2. Calculate and save only the missing species files</span></span>
+<span id="cb75-81"><a href="#cb75-81" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pwalk</span>(</span>
+<span id="cb75-82"><a href="#cb75-82" aria-hidden="true" tabindex="-1"></a>      files,</span>
+<span id="cb75-83"><a href="#cb75-83" aria-hidden="true" tabindex="-1"></a>      <span class="cf">function</span>(model_names, filename, ...) {</span>
+<span id="cb75-84"><a href="#cb75-84" aria-hidden="true" tabindex="-1"></a>        resp_global <span class="ot">&lt;-</span> <span class="fu">get_metabolism_r</span>(</span>
+<span id="cb75-85"><a href="#cb75-85" aria-hidden="true" tabindex="-1"></a>          <span class="at">temp_stack     =</span> tos_stack_global,</span>
+<span id="cb75-86"><a href="#cb75-86" aria-hidden="true" tabindex="-1"></a>          <span class="at">species_params =</span> parameters_species[[model_names]],</span>
+<span id="cb75-87"><a href="#cb75-87" aria-hidden="true" tabindex="-1"></a>          <span class="at">feed_params    =</span> feed_for_species[[model_names]]</span>
+<span id="cb75-88"><a href="#cb75-88" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb75-89"><a href="#cb75-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb75-90"><a href="#cb75-90" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 3. Sum across days to get a single-layer global raster and save</span></span>
+<span id="cb75-91"><a href="#cb75-91" aria-hidden="true" tabindex="-1"></a>        resp_global <span class="ot">&lt;-</span> <span class="fu">app</span>(resp_global, sum, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb75-92"><a href="#cb75-92" aria-hidden="true" tabindex="-1"></a>        <span class="fu">writeRaster</span>(resp_global, filename, <span class="at">overwrite =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb75-93"><a href="#cb75-93" aria-hidden="true" tabindex="-1"></a>        <span class="fu">rm</span>(resp_global); <span class="fu">gc</span>()</span>
+<span id="cb75-94"><a href="#cb75-94" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb75-95"><a href="#cb75-95" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb75-96"><a href="#cb75-96" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rm</span>(tos_stack_global); <span class="fu">gc</span>()</span>
+<span id="cb75-97"><a href="#cb75-97" aria-hidden="true" tabindex="-1"></a>  },</span>
+<span id="cb75-98"><a href="#cb75-98" aria-hidden="true" tabindex="-1"></a>  <span class="at">.progress =</span> T</span>
+<span id="cb75-99"><a href="#cb75-99" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <p>The global rasters are then cropped and masked to each country’s EEZ.</p>
 <div class="cell" data-layout-align="center">
 <details class="code-fold">
 <summary>Split global habitat suitability rasters into per-country files</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a>HS_global_dir <span class="ot">&lt;-</span> <span class="fu">here</span>(<span class="st">&quot;outputs/data/habitat_suitability/global&quot;</span>)</span>
-<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a>HS_dir        <span class="ot">&lt;-</span> <span class="fu">here</span>(<span class="st">&quot;outputs/data/habitat_suitability&quot;</span>)</span>
-<span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb65-4"><a href="#cb65-4" aria-hidden="true" tabindex="-1"></a><span class="co"># ── Pre-project EEZ polygons to raster CRS ────────────────────────────────</span></span>
-<span id="cb65-5"><a href="#cb65-5" aria-hidden="true" tabindex="-1"></a>ref_crs   <span class="ot">&lt;-</span> <span class="fu">list.files</span>(HS_global_dir, <span class="at">pattern =</span> <span class="st">&quot;</span><span class="sc">\\</span><span class="st">.tif$&quot;</span>, <span class="at">recursive =</span> <span class="cn">TRUE</span>, <span class="at">full.names =</span> <span class="cn">TRUE</span>)[<span class="dv">1</span>] <span class="sc">%&gt;%</span> <span class="fu">rast</span>() <span class="sc">%&gt;%</span> <span class="fu">crs</span>()</span>
-<span id="cb65-6"><a href="#cb65-6" aria-hidden="true" tabindex="-1"></a>EEZ_vects <span class="ot">&lt;-</span> EEZ_by_FAO_full <span class="sc">%&gt;%</span></span>
-<span id="cb65-7"><a href="#cb65-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">split</span>(.<span class="sc">$</span>ISO3_Code) <span class="sc">%&gt;%</span></span>
-<span id="cb65-8"><a href="#cb65-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(<span class="sc">~</span> <span class="fu">vect</span>(.x) <span class="sc">%&gt;%</span></span>
-<span id="cb65-9"><a href="#cb65-9" aria-hidden="true" tabindex="-1"></a>        <span class="fu">aggregate</span>(<span class="at">by =</span> <span class="st">&quot;ISO3_Code&quot;</span>) <span class="sc">%&gt;%</span> <span class="co"># combine all fishing regions into a single EEZ per country</span></span>
-<span id="cb65-10"><a href="#cb65-10" aria-hidden="true" tabindex="-1"></a>        <span class="fu">project</span>(ref_crs))</span>
-<span id="cb65-11"><a href="#cb65-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb65-12"><a href="#cb65-12" aria-hidden="true" tabindex="-1"></a><span class="co"># ── Build job table: one row per global file × country ────────────────────</span></span>
-<span id="cb65-13"><a href="#cb65-13" aria-hidden="true" tabindex="-1"></a>jobs <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb65-14"><a href="#cb65-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">global_file =</span> <span class="fu">list.files</span>(HS_global_dir, <span class="at">pattern =</span> <span class="st">&quot;^MR_</span><span class="sc">\\</span><span class="st">d{4}</span><span class="sc">\\</span><span class="st">.tif$&quot;</span>, <span class="at">recursive =</span> <span class="cn">TRUE</span>, <span class="at">full.names =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb65-15"><a href="#cb65-15" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
-<span id="cb65-16"><a href="#cb65-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb65-17"><a href="#cb65-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">model =</span> <span class="fu">basename</span>(<span class="fu">dirname</span>(global_file)),</span>
-<span id="cb65-18"><a href="#cb65-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">fname =</span> <span class="fu">basename</span>(global_file)</span>
-<span id="cb65-19"><a href="#cb65-19" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb65-20"><a href="#cb65-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(model <span class="sc">%in%</span> model_names) <span class="sc">%&gt;%</span></span>
-<span id="cb65-21"><a href="#cb65-21" aria-hidden="true" tabindex="-1"></a>  tidyr<span class="sc">::</span><span class="fu">crossing</span>(<span class="at">iso =</span> country_dirs) <span class="sc">%&gt;%</span></span>
-<span id="cb65-22"><a href="#cb65-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">country_file =</span> <span class="fu">file.path</span>(HS_dir, iso, model, fname))</span>
-<span id="cb65-23"><a href="#cb65-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb65-24"><a href="#cb65-24" aria-hidden="true" tabindex="-1"></a>todo <span class="ot">&lt;-</span> <span class="fu">filter</span>(jobs, <span class="sc">!</span><span class="fu">file.exists</span>(country_file))</span>
-<span id="cb65-25"><a href="#cb65-25" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="fu">nrow</span>(todo), <span class="st">&quot; of &quot;</span>, <span class="fu">nrow</span>(jobs), <span class="st">&quot; country files to create&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a>HS_global_dir <span class="ot">&lt;-</span> <span class="fu">here</span>(<span class="st">&quot;outputs/data/habitat_suitability/global&quot;</span>)</span>
+<span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a>HS_dir        <span class="ot">&lt;-</span> <span class="fu">here</span>(<span class="st">&quot;outputs/data/habitat_suitability&quot;</span>)</span>
+<span id="cb76-3"><a href="#cb76-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb76-4"><a href="#cb76-4" aria-hidden="true" tabindex="-1"></a><span class="co"># ── Pre-project EEZ polygons to raster CRS ────────────────────────────────</span></span>
+<span id="cb76-5"><a href="#cb76-5" aria-hidden="true" tabindex="-1"></a>ref_crs   <span class="ot">&lt;-</span> <span class="fu">list.files</span>(HS_global_dir, <span class="at">pattern =</span> <span class="st">&quot;</span><span class="sc">\\</span><span class="st">.tif$&quot;</span>, <span class="at">recursive =</span> <span class="cn">TRUE</span>, <span class="at">full.names =</span> <span class="cn">TRUE</span>)[<span class="dv">1</span>] <span class="sc">%&gt;%</span> <span class="fu">rast</span>() <span class="sc">%&gt;%</span> <span class="fu">crs</span>()</span>
+<span id="cb76-6"><a href="#cb76-6" aria-hidden="true" tabindex="-1"></a>EEZ_vects <span class="ot">&lt;-</span> EEZ_by_FAO_full <span class="sc">%&gt;%</span></span>
+<span id="cb76-7"><a href="#cb76-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">split</span>(.<span class="sc">$</span>ISO3_Code) <span class="sc">%&gt;%</span></span>
+<span id="cb76-8"><a href="#cb76-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(<span class="sc">~</span> <span class="fu">vect</span>(.x) <span class="sc">%&gt;%</span></span>
+<span id="cb76-9"><a href="#cb76-9" aria-hidden="true" tabindex="-1"></a>        <span class="fu">aggregate</span>(<span class="at">by =</span> <span class="st">&quot;ISO3_Code&quot;</span>) <span class="sc">%&gt;%</span> <span class="co"># combine all fishing regions into a single EEZ per country</span></span>
+<span id="cb76-10"><a href="#cb76-10" aria-hidden="true" tabindex="-1"></a>        <span class="fu">project</span>(ref_crs))</span>
+<span id="cb76-11"><a href="#cb76-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb76-12"><a href="#cb76-12" aria-hidden="true" tabindex="-1"></a><span class="co"># ── Build job table: one row per global file × country ────────────────────</span></span>
+<span id="cb76-13"><a href="#cb76-13" aria-hidden="true" tabindex="-1"></a>jobs <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb76-14"><a href="#cb76-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">global_file =</span> <span class="fu">list.files</span>(HS_global_dir, <span class="at">pattern =</span> <span class="st">&quot;^MR_</span><span class="sc">\\</span><span class="st">d{4}</span><span class="sc">\\</span><span class="st">.tif$&quot;</span>, <span class="at">recursive =</span> <span class="cn">TRUE</span>, <span class="at">full.names =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb76-15"><a href="#cb76-15" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb76-16"><a href="#cb76-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb76-17"><a href="#cb76-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">model =</span> <span class="fu">basename</span>(<span class="fu">dirname</span>(global_file)),</span>
+<span id="cb76-18"><a href="#cb76-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">fname =</span> <span class="fu">basename</span>(global_file)</span>
+<span id="cb76-19"><a href="#cb76-19" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb76-20"><a href="#cb76-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(model <span class="sc">%in%</span> model_names) <span class="sc">%&gt;%</span></span>
+<span id="cb76-21"><a href="#cb76-21" aria-hidden="true" tabindex="-1"></a>  tidyr<span class="sc">::</span><span class="fu">crossing</span>(<span class="at">iso =</span> country_dirs) <span class="sc">%&gt;%</span></span>
+<span id="cb76-22"><a href="#cb76-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">country_file =</span> <span class="fu">file.path</span>(HS_dir, iso, model, fname))</span>
+<span id="cb76-23"><a href="#cb76-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb76-24"><a href="#cb76-24" aria-hidden="true" tabindex="-1"></a>todo <span class="ot">&lt;-</span> <span class="fu">filter</span>(jobs, <span class="sc">!</span><span class="fu">file.exists</span>(country_file))</span>
+<span id="cb76-25"><a href="#cb76-25" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="fu">nrow</span>(todo), <span class="st">&quot; of &quot;</span>, <span class="fu">nrow</span>(jobs), <span class="st">&quot; country files to create&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stderr">
-<pre><code>0 of 156060 country files to create</code></pre>
+<pre><code>1445 of 157505 country files to create</code></pre>
 </div>
 <details class="code-fold">
 <summary>Split global habitat suitability rasters into per-country files</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a><span class="fu">walk</span>(<span class="fu">unique</span>(<span class="fu">dirname</span>(todo<span class="sc">$</span>country_file)), dir.create, <span class="at">recursive =</span> <span class="cn">TRUE</span>, <span class="at">showWarnings =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb67-3"><a href="#cb67-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ── Read each global file once, then crop/mask per country ────────────────</span></span>
-<span id="cb67-4"><a href="#cb67-4" aria-hidden="true" tabindex="-1"></a>todo_grp <span class="ot">&lt;-</span> todo <span class="sc">%&gt;%</span></span>
-<span id="cb67-5"><a href="#cb67-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">iso =</span> <span class="fu">list</span>(iso), <span class="at">country_file =</span> <span class="fu">list</span>(country_file), <span class="at">.by =</span> global_file)</span>
-<span id="cb67-6"><a href="#cb67-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb67-7"><a href="#cb67-7" aria-hidden="true" tabindex="-1"></a><span class="fu">pwalk</span>(</span>
-<span id="cb67-8"><a href="#cb67-8" aria-hidden="true" tabindex="-1"></a>  todo_grp,</span>
-<span id="cb67-9"><a href="#cb67-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">function</span>(global_file, iso, country_file) {</span>
-<span id="cb67-10"><a href="#cb67-10" aria-hidden="true" tabindex="-1"></a>    HS_global <span class="ot">&lt;-</span> <span class="fu">rast</span>(global_file)</span>
-<span id="cb67-11"><a href="#cb67-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">walk2</span>(iso, country_file, <span class="cf">function</span>(i, fnm) {</span>
-<span id="cb67-12"><a href="#cb67-12" aria-hidden="true" tabindex="-1"></a>      eez_v <span class="ot">&lt;-</span> EEZ_vects[[i]]</span>
-<span id="cb67-13"><a href="#cb67-13" aria-hidden="true" tabindex="-1"></a>      <span class="co"># snap = &quot;out&quot; keeps every cell the EEZ touches; the default snap = &quot;near&quot;</span></span>
-<span id="cb67-14"><a href="#cb67-14" aria-hidden="true" tabindex="-1"></a>      <span class="co"># rounds the extent to the nearest cell edge and can drop edge cells for</span></span>
-<span id="cb67-15"><a href="#cb67-15" aria-hidden="true" tabindex="-1"></a>      <span class="co"># EEZs that are small relative to the 0.25° grid (e.g. SGP -&gt; all NaN)</span></span>
-<span id="cb67-16"><a href="#cb67-16" aria-hidden="true" tabindex="-1"></a>      <span class="fu">crop</span>(HS_global, eez_v, <span class="at">snap =</span> <span class="st">&quot;out&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb67-17"><a href="#cb67-17" aria-hidden="true" tabindex="-1"></a>        <span class="fu">mask</span>(eez_v, <span class="at">touches =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb67-18"><a href="#cb67-18" aria-hidden="true" tabindex="-1"></a>        <span class="fu">writeRaster</span>(fnm, <span class="at">overwrite =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb67-19"><a href="#cb67-19" aria-hidden="true" tabindex="-1"></a>    })</span>
-<span id="cb67-20"><a href="#cb67-20" aria-hidden="true" tabindex="-1"></a>  },</span>
-<span id="cb67-21"><a href="#cb67-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">.progress =</span> T</span>
-<span id="cb67-22"><a href="#cb67-22" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb78"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a><span class="fu">walk</span>(<span class="fu">unique</span>(<span class="fu">dirname</span>(todo<span class="sc">$</span>country_file)), dir.create, <span class="at">recursive =</span> <span class="cn">TRUE</span>, <span class="at">showWarnings =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb78-2"><a href="#cb78-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb78-3"><a href="#cb78-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ── Read each global file once, then crop/mask per country ────────────────</span></span>
+<span id="cb78-4"><a href="#cb78-4" aria-hidden="true" tabindex="-1"></a>todo_grp <span class="ot">&lt;-</span> todo <span class="sc">%&gt;%</span></span>
+<span id="cb78-5"><a href="#cb78-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">iso =</span> <span class="fu">list</span>(iso), <span class="at">country_file =</span> <span class="fu">list</span>(country_file), <span class="at">.by =</span> global_file)</span>
+<span id="cb78-6"><a href="#cb78-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb78-7"><a href="#cb78-7" aria-hidden="true" tabindex="-1"></a><span class="fu">pwalk</span>(</span>
+<span id="cb78-8"><a href="#cb78-8" aria-hidden="true" tabindex="-1"></a>  todo_grp,</span>
+<span id="cb78-9"><a href="#cb78-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">function</span>(global_file, iso, country_file) {</span>
+<span id="cb78-10"><a href="#cb78-10" aria-hidden="true" tabindex="-1"></a>    HS_global <span class="ot">&lt;-</span> <span class="fu">rast</span>(global_file)</span>
+<span id="cb78-11"><a href="#cb78-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">walk2</span>(iso, country_file, <span class="cf">function</span>(i, fnm) {</span>
+<span id="cb78-12"><a href="#cb78-12" aria-hidden="true" tabindex="-1"></a>      eez_v <span class="ot">&lt;-</span> EEZ_vects[[i]]</span>
+<span id="cb78-13"><a href="#cb78-13" aria-hidden="true" tabindex="-1"></a>      <span class="co"># snap = &quot;out&quot; keeps every cell the EEZ touches; the default snap = &quot;near&quot;</span></span>
+<span id="cb78-14"><a href="#cb78-14" aria-hidden="true" tabindex="-1"></a>      <span class="co"># rounds the extent to the nearest cell edge and can drop edge cells for</span></span>
+<span id="cb78-15"><a href="#cb78-15" aria-hidden="true" tabindex="-1"></a>      <span class="co"># EEZs that are small relative to the 0.25° grid (e.g. SGP -&gt; all NaN)</span></span>
+<span id="cb78-16"><a href="#cb78-16" aria-hidden="true" tabindex="-1"></a>      <span class="fu">crop</span>(HS_global, eez_v, <span class="at">snap =</span> <span class="st">&quot;out&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb78-17"><a href="#cb78-17" aria-hidden="true" tabindex="-1"></a>        <span class="fu">mask</span>(eez_v, <span class="at">touches =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb78-18"><a href="#cb78-18" aria-hidden="true" tabindex="-1"></a>        <span class="fu">writeRaster</span>(fnm, <span class="at">overwrite =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb78-19"><a href="#cb78-19" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb78-20"><a href="#cb78-20" aria-hidden="true" tabindex="-1"></a>  },</span>
+<span id="cb78-21"><a href="#cb78-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">.progress =</span> T</span>
+<span id="cb78-22"><a href="#cb78-22" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■                                7% |  ETA: 49s</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■■                             12% |  ETA: 47s</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■■■                            18% |  ETA: 45s</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■■■■■                          23% |  ETA: 42s</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■■■■■■                         28% |  ETA: 40s</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■■■■■■■■                       33% |  ETA: 37s</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■■■■■■■■■■                     39% |  ETA: 34s</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■■■■■■■■■■■                    44% |  ETA: 31s</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■■■■■■■■■■■■■                  50% |  ETA: 28s</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■■■■■■■■■■■■■■■                55% |  ETA: 25s</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■■■■■■■■■■■■■■■■               61% |  ETA: 22s</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■■■■■■■■■■■■■■■■■■             66% |  ETA: 19s</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■■■■■■■■■■■■■■■■■■■            71% |  ETA: 16s</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■          76% |  ETA: 14s</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■         81% |  ETA: 11s</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■       87% |  ETA:  8s</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■     92% |  ETA:  4s</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■    98% |  ETA:  1s</code></pre>
+</div>
 </div>
 <p>Habitat suitability is then saved per country EEZ, per species, and per decade (manually defined). We also decided to save HS in “global warming levels” using the corresponding periods defined in <a href="https://climatedata.ca/resource/introduction-to-global-warming-levels/">Table 1 here</a>.</p>
 <div class="cell" data-layout-align="center">
 <details class="code-fold">
 <summary>Calculate (absolute) decadal mean HS rasters per country and species</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a>decades <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
-<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;ref_2015_2024&quot;</span> <span class="ot">=</span> <span class="dv">2015</span><span class="sc">:</span><span class="dv">2024</span>,</span>
-<span id="cb68-3"><a href="#cb68-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;dec_2020_2029&quot;</span> <span class="ot">=</span> <span class="dv">2020</span><span class="sc">:</span><span class="dv">2029</span>,</span>
-<span id="cb68-4"><a href="#cb68-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;dec_2030_2039&quot;</span> <span class="ot">=</span> <span class="dv">2030</span><span class="sc">:</span><span class="dv">2039</span>,</span>
-<span id="cb68-5"><a href="#cb68-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;dec_2040_2049&quot;</span> <span class="ot">=</span> <span class="dv">2040</span><span class="sc">:</span><span class="dv">2049</span>,</span>
-<span id="cb68-6"><a href="#cb68-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;dec_2050_2059&quot;</span> <span class="ot">=</span> <span class="dv">2050</span><span class="sc">:</span><span class="dv">2059</span>,</span>
-<span id="cb68-7"><a href="#cb68-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;dec_2060_2069&quot;</span> <span class="ot">=</span> <span class="dv">2060</span><span class="sc">:</span><span class="dv">2069</span>,</span>
-<span id="cb68-8"><a href="#cb68-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;dec_2070_2079&quot;</span> <span class="ot">=</span> <span class="dv">2070</span><span class="sc">:</span><span class="dv">2079</span>,</span>
-<span id="cb68-9"><a href="#cb68-9" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;dec_2080_2089&quot;</span> <span class="ot">=</span> <span class="dv">2080</span><span class="sc">:</span><span class="dv">2089</span>,</span>
-<span id="cb68-10"><a href="#cb68-10" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;dec_2090_2099&quot;</span> <span class="ot">=</span> <span class="dv">2090</span><span class="sc">:</span><span class="dv">2099</span>,</span>
-<span id="cb68-11"><a href="#cb68-11" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;GLW_1.5&quot;</span> <span class="ot">=</span> <span class="dv">2018</span><span class="sc">:</span><span class="dv">2037</span>,</span>
-<span id="cb68-12"><a href="#cb68-12" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;GLW_2.0&quot;</span> <span class="ot">=</span> <span class="dv">2032</span><span class="sc">:</span><span class="dv">2051</span>,</span>
-<span id="cb68-13"><a href="#cb68-13" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;GLW_3.0&quot;</span> <span class="ot">=</span> <span class="dv">2055</span><span class="sc">:</span><span class="dv">2074</span>,</span>
-<span id="cb68-14"><a href="#cb68-14" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;GLW_4.0&quot;</span> <span class="ot">=</span> <span class="dv">2075</span><span class="sc">:</span><span class="dv">2094</span></span>
-<span id="cb68-15"><a href="#cb68-15" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb68-16"><a href="#cb68-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb68-17"><a href="#cb68-17" aria-hidden="true" tabindex="-1"></a>HS_dir     <span class="ot">&lt;-</span> <span class="fu">file.path</span>(outs_path, <span class="st">&quot;data&quot;</span>, <span class="st">&quot;habitat_suitability&quot;</span>)</span>
-<span id="cb68-18"><a href="#cb68-18" aria-hidden="true" tabindex="-1"></a>HS_dec_dir <span class="ot">&lt;-</span> <span class="fu">file.path</span>(outs_path, <span class="st">&quot;data&quot;</span>, <span class="st">&quot;habitat_suitability_decadal&quot;</span>)</span>
-<span id="cb68-19"><a href="#cb68-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb68-20"><a href="#cb68-20" aria-hidden="true" tabindex="-1"></a><span class="co"># One job per country × model × decade</span></span>
-<span id="cb68-21"><a href="#cb68-21" aria-hidden="true" tabindex="-1"></a>jobs <span class="ot">&lt;-</span> <span class="fu">map</span>(</span>
-<span id="cb68-22"><a href="#cb68-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_names</span>(country_dirs),</span>
-<span id="cb68-23"><a href="#cb68-23" aria-hidden="true" tabindex="-1"></a>  <span class="cf">function</span>(iso) {</span>
-<span id="cb68-24"><a href="#cb68-24" aria-hidden="true" tabindex="-1"></a>    HS_files <span class="ot">&lt;-</span> <span class="fu">list.files</span>(<span class="fu">file.path</span>(HS_dir, iso), <span class="at">full.names =</span> <span class="cn">TRUE</span>, <span class="at">recursive =</span> <span class="cn">TRUE</span>, <span class="at">pattern =</span> <span class="st">&quot;^MR_</span><span class="sc">\\</span><span class="st">d{4}</span><span class="sc">\\</span><span class="st">.tif$&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">sort</span>()</span>
-<span id="cb68-25"><a href="#cb68-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">length</span>(HS_files) <span class="sc">==</span> <span class="dv">0</span>) <span class="fu">return</span>(<span class="cn">NULL</span>)</span>
-<span id="cb68-26"><a href="#cb68-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb68-27"><a href="#cb68-27" aria-hidden="true" tabindex="-1"></a>    by_group <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb68-28"><a href="#cb68-28" aria-hidden="true" tabindex="-1"></a>      <span class="at">file  =</span> HS_files,</span>
-<span id="cb68-29"><a href="#cb68-29" aria-hidden="true" tabindex="-1"></a>      <span class="at">model =</span> <span class="fu">basename</span>(<span class="fu">dirname</span>(HS_files)),</span>
-<span id="cb68-30"><a href="#cb68-30" aria-hidden="true" tabindex="-1"></a>      <span class="at">year  =</span> <span class="fu">as.integer</span>(<span class="fu">str_extract</span>(<span class="fu">basename</span>(HS_files), <span class="st">&quot;</span><span class="sc">\\</span><span class="st">d{4}(?=</span><span class="sc">\\</span><span class="st">.tif$)&quot;</span>))</span>
-<span id="cb68-31"><a href="#cb68-31" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
-<span id="cb68-32"><a href="#cb68-32" aria-hidden="true" tabindex="-1"></a>      <span class="fu">group_split</span>(model)</span>
-<span id="cb68-33"><a href="#cb68-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb68-34"><a href="#cb68-34" aria-hidden="true" tabindex="-1"></a>    <span class="fu">map</span>(by_group, <span class="cf">function</span>(g) {</span>
-<span id="cb68-35"><a href="#cb68-35" aria-hidden="true" tabindex="-1"></a>      <span class="fu">tibble</span>(</span>
-<span id="cb68-36"><a href="#cb68-36" aria-hidden="true" tabindex="-1"></a>        <span class="at">iso      =</span> iso,</span>
-<span id="cb68-37"><a href="#cb68-37" aria-hidden="true" tabindex="-1"></a>        <span class="at">model    =</span> g<span class="sc">$</span>model[<span class="dv">1</span>],</span>
-<span id="cb68-38"><a href="#cb68-38" aria-hidden="true" tabindex="-1"></a>        <span class="at">dec_name =</span> <span class="fu">names</span>(decades),</span>
-<span id="cb68-39"><a href="#cb68-39" aria-hidden="true" tabindex="-1"></a>        <span class="at">in_files =</span> <span class="fu">map</span>(decades, \(d) g<span class="sc">$</span>file[g<span class="sc">$</span>year <span class="sc">%in%</span> d])</span>
-<span id="cb68-40"><a href="#cb68-40" aria-hidden="true" tabindex="-1"></a>      )</span>
-<span id="cb68-41"><a href="#cb68-41" aria-hidden="true" tabindex="-1"></a>    }) <span class="sc">%&gt;%</span> <span class="fu">list_rbind</span>()</span>
-<span id="cb68-42"><a href="#cb68-42" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb68-43"><a href="#cb68-43" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
-<span id="cb68-44"><a href="#cb68-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list_rbind</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb68-45"><a href="#cb68-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">files_req  =</span> <span class="fu">case_when</span>(</span>
-<span id="cb68-46"><a href="#cb68-46" aria-hidden="true" tabindex="-1"></a>    dec_name <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;GLW_1.5&quot;</span>, <span class="st">&quot;GLW_2.0&quot;</span>, <span class="st">&quot;GLW_3.0&quot;</span>, <span class="st">&quot;GLW_4.0&quot;</span>) <span class="sc">~</span> <span class="dv">20</span>,</span>
-<span id="cb68-47"><a href="#cb68-47" aria-hidden="true" tabindex="-1"></a>    T <span class="sc">~</span> <span class="dv">10</span></span>
-<span id="cb68-48"><a href="#cb68-48" aria-hidden="true" tabindex="-1"></a>  )) <span class="sc">%&gt;%</span> </span>
-<span id="cb68-49"><a href="#cb68-49" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">lengths</span>(in_files) <span class="sc">==</span> files_req) <span class="sc">%&gt;%</span>   <span class="co"># drop decades with missing input files</span></span>
-<span id="cb68-50"><a href="#cb68-50" aria-hidden="true" tabindex="-1"></a>  <span class="co"># mutate(out_file = file.path(HS_dec_dir, model, paste0(&quot;MR_&quot;, dec_name, &quot;.tif&quot;))) # TEMPORARY - put them all in the same dir so I can see them</span></span>
-<span id="cb68-51"><a href="#cb68-51" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">out_file =</span> <span class="fu">file.path</span>(HS_dec_dir, iso, model, <span class="fu">paste0</span>(<span class="st">&quot;MR_&quot;</span>, dec_name, <span class="st">&quot;.tif&quot;</span>))) </span>
-<span id="cb68-52"><a href="#cb68-52" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb68-53"><a href="#cb68-53" aria-hidden="true" tabindex="-1"></a>todo <span class="ot">&lt;-</span> <span class="fu">filter</span>(jobs, <span class="sc">!</span><span class="fu">file.exists</span>(out_file))</span>
-<span id="cb68-54"><a href="#cb68-54" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="fu">nrow</span>(todo), <span class="st">&quot; of &quot;</span>, <span class="fu">nrow</span>(jobs), <span class="st">&quot; decadal files to create&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb97"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb97-1"><a href="#cb97-1" aria-hidden="true" tabindex="-1"></a>decades <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb97-2"><a href="#cb97-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;ref_2015_2024&quot;</span> <span class="ot">=</span> <span class="dv">2015</span><span class="sc">:</span><span class="dv">2024</span>,</span>
+<span id="cb97-3"><a href="#cb97-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;dec_2020_2029&quot;</span> <span class="ot">=</span> <span class="dv">2020</span><span class="sc">:</span><span class="dv">2029</span>,</span>
+<span id="cb97-4"><a href="#cb97-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;dec_2030_2039&quot;</span> <span class="ot">=</span> <span class="dv">2030</span><span class="sc">:</span><span class="dv">2039</span>,</span>
+<span id="cb97-5"><a href="#cb97-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;dec_2040_2049&quot;</span> <span class="ot">=</span> <span class="dv">2040</span><span class="sc">:</span><span class="dv">2049</span>,</span>
+<span id="cb97-6"><a href="#cb97-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;dec_2050_2059&quot;</span> <span class="ot">=</span> <span class="dv">2050</span><span class="sc">:</span><span class="dv">2059</span>,</span>
+<span id="cb97-7"><a href="#cb97-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;dec_2060_2069&quot;</span> <span class="ot">=</span> <span class="dv">2060</span><span class="sc">:</span><span class="dv">2069</span>,</span>
+<span id="cb97-8"><a href="#cb97-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;dec_2070_2079&quot;</span> <span class="ot">=</span> <span class="dv">2070</span><span class="sc">:</span><span class="dv">2079</span>,</span>
+<span id="cb97-9"><a href="#cb97-9" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;dec_2080_2089&quot;</span> <span class="ot">=</span> <span class="dv">2080</span><span class="sc">:</span><span class="dv">2089</span>,</span>
+<span id="cb97-10"><a href="#cb97-10" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;dec_2090_2099&quot;</span> <span class="ot">=</span> <span class="dv">2090</span><span class="sc">:</span><span class="dv">2099</span>,</span>
+<span id="cb97-11"><a href="#cb97-11" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;GLW_1.5&quot;</span> <span class="ot">=</span> <span class="dv">2018</span><span class="sc">:</span><span class="dv">2037</span>,</span>
+<span id="cb97-12"><a href="#cb97-12" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;GLW_2.0&quot;</span> <span class="ot">=</span> <span class="dv">2032</span><span class="sc">:</span><span class="dv">2051</span>,</span>
+<span id="cb97-13"><a href="#cb97-13" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;GLW_3.0&quot;</span> <span class="ot">=</span> <span class="dv">2055</span><span class="sc">:</span><span class="dv">2074</span>,</span>
+<span id="cb97-14"><a href="#cb97-14" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;GLW_4.0&quot;</span> <span class="ot">=</span> <span class="dv">2075</span><span class="sc">:</span><span class="dv">2094</span></span>
+<span id="cb97-15"><a href="#cb97-15" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb97-16"><a href="#cb97-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb97-17"><a href="#cb97-17" aria-hidden="true" tabindex="-1"></a>HS_dir     <span class="ot">&lt;-</span> <span class="fu">file.path</span>(outs_path, <span class="st">&quot;data&quot;</span>, <span class="st">&quot;habitat_suitability&quot;</span>)</span>
+<span id="cb97-18"><a href="#cb97-18" aria-hidden="true" tabindex="-1"></a>HS_dec_dir <span class="ot">&lt;-</span> <span class="fu">file.path</span>(outs_path, <span class="st">&quot;data&quot;</span>, <span class="st">&quot;habitat_suitability_decadal&quot;</span>)</span>
+<span id="cb97-19"><a href="#cb97-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb97-20"><a href="#cb97-20" aria-hidden="true" tabindex="-1"></a><span class="co"># One job per country × model × decade</span></span>
+<span id="cb97-21"><a href="#cb97-21" aria-hidden="true" tabindex="-1"></a>jobs <span class="ot">&lt;-</span> <span class="fu">map</span>(</span>
+<span id="cb97-22"><a href="#cb97-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_names</span>(country_dirs),</span>
+<span id="cb97-23"><a href="#cb97-23" aria-hidden="true" tabindex="-1"></a>  <span class="cf">function</span>(iso) {</span>
+<span id="cb97-24"><a href="#cb97-24" aria-hidden="true" tabindex="-1"></a>    HS_files <span class="ot">&lt;-</span> <span class="fu">list.files</span>(<span class="fu">file.path</span>(HS_dir, iso), <span class="at">full.names =</span> <span class="cn">TRUE</span>, <span class="at">recursive =</span> <span class="cn">TRUE</span>, <span class="at">pattern =</span> <span class="st">&quot;^MR_</span><span class="sc">\\</span><span class="st">d{4}</span><span class="sc">\\</span><span class="st">.tif$&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">sort</span>()</span>
+<span id="cb97-25"><a href="#cb97-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">length</span>(HS_files) <span class="sc">==</span> <span class="dv">0</span>) <span class="fu">return</span>(<span class="cn">NULL</span>)</span>
+<span id="cb97-26"><a href="#cb97-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb97-27"><a href="#cb97-27" aria-hidden="true" tabindex="-1"></a>    by_group <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb97-28"><a href="#cb97-28" aria-hidden="true" tabindex="-1"></a>      <span class="at">file  =</span> HS_files,</span>
+<span id="cb97-29"><a href="#cb97-29" aria-hidden="true" tabindex="-1"></a>      <span class="at">model =</span> <span class="fu">basename</span>(<span class="fu">dirname</span>(HS_files)),</span>
+<span id="cb97-30"><a href="#cb97-30" aria-hidden="true" tabindex="-1"></a>      <span class="at">year  =</span> <span class="fu">as.integer</span>(<span class="fu">str_extract</span>(<span class="fu">basename</span>(HS_files), <span class="st">&quot;</span><span class="sc">\\</span><span class="st">d{4}(?=</span><span class="sc">\\</span><span class="st">.tif$)&quot;</span>))</span>
+<span id="cb97-31"><a href="#cb97-31" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
+<span id="cb97-32"><a href="#cb97-32" aria-hidden="true" tabindex="-1"></a>      <span class="fu">group_split</span>(model)</span>
+<span id="cb97-33"><a href="#cb97-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb97-34"><a href="#cb97-34" aria-hidden="true" tabindex="-1"></a>    <span class="fu">map</span>(by_group, <span class="cf">function</span>(g) {</span>
+<span id="cb97-35"><a href="#cb97-35" aria-hidden="true" tabindex="-1"></a>      <span class="fu">tibble</span>(</span>
+<span id="cb97-36"><a href="#cb97-36" aria-hidden="true" tabindex="-1"></a>        <span class="at">iso      =</span> iso,</span>
+<span id="cb97-37"><a href="#cb97-37" aria-hidden="true" tabindex="-1"></a>        <span class="at">model    =</span> g<span class="sc">$</span>model[<span class="dv">1</span>],</span>
+<span id="cb97-38"><a href="#cb97-38" aria-hidden="true" tabindex="-1"></a>        <span class="at">dec_name =</span> <span class="fu">names</span>(decades),</span>
+<span id="cb97-39"><a href="#cb97-39" aria-hidden="true" tabindex="-1"></a>        <span class="at">in_files =</span> <span class="fu">map</span>(decades, \(d) g<span class="sc">$</span>file[g<span class="sc">$</span>year <span class="sc">%in%</span> d])</span>
+<span id="cb97-40"><a href="#cb97-40" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb97-41"><a href="#cb97-41" aria-hidden="true" tabindex="-1"></a>    }) <span class="sc">%&gt;%</span> <span class="fu">list_rbind</span>()</span>
+<span id="cb97-42"><a href="#cb97-42" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb97-43"><a href="#cb97-43" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb97-44"><a href="#cb97-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list_rbind</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb97-45"><a href="#cb97-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">files_req  =</span> <span class="fu">case_when</span>(</span>
+<span id="cb97-46"><a href="#cb97-46" aria-hidden="true" tabindex="-1"></a>    dec_name <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;GLW_1.5&quot;</span>, <span class="st">&quot;GLW_2.0&quot;</span>, <span class="st">&quot;GLW_3.0&quot;</span>, <span class="st">&quot;GLW_4.0&quot;</span>) <span class="sc">~</span> <span class="dv">20</span>,</span>
+<span id="cb97-47"><a href="#cb97-47" aria-hidden="true" tabindex="-1"></a>    T <span class="sc">~</span> <span class="dv">10</span></span>
+<span id="cb97-48"><a href="#cb97-48" aria-hidden="true" tabindex="-1"></a>  )) <span class="sc">%&gt;%</span> </span>
+<span id="cb97-49"><a href="#cb97-49" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">lengths</span>(in_files) <span class="sc">==</span> files_req) <span class="sc">%&gt;%</span>   <span class="co"># drop decades with missing input files</span></span>
+<span id="cb97-50"><a href="#cb97-50" aria-hidden="true" tabindex="-1"></a>  <span class="co"># mutate(out_file = file.path(HS_dec_dir, model, paste0(&quot;MR_&quot;, dec_name, &quot;.tif&quot;))) # TEMPORARY - put them all in the same dir so I can see them</span></span>
+<span id="cb97-51"><a href="#cb97-51" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">out_file =</span> <span class="fu">file.path</span>(HS_dec_dir, iso, model, <span class="fu">paste0</span>(<span class="st">&quot;MR_&quot;</span>, dec_name, <span class="st">&quot;.tif&quot;</span>))) </span>
+<span id="cb97-52"><a href="#cb97-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb97-53"><a href="#cb97-53" aria-hidden="true" tabindex="-1"></a>todo <span class="ot">&lt;-</span> <span class="fu">filter</span>(jobs, <span class="sc">!</span><span class="fu">file.exists</span>(out_file))</span>
+<span id="cb97-54"><a href="#cb97-54" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="fu">nrow</span>(todo), <span class="st">&quot; of &quot;</span>, <span class="fu">nrow</span>(jobs), <span class="st">&quot; decadal files to create&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stderr">
-<pre><code>23868 of 23868 decadal files to create</code></pre>
+<pre><code>221 of 24089 decadal files to create</code></pre>
 </div>
 <details class="code-fold">
 <summary>Calculate (absolute) decadal mean HS rasters per country and species</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="fu">walk</span>(<span class="fu">unique</span>(<span class="fu">dirname</span>(todo<span class="sc">$</span>out_file)), dir.create, <span class="at">recursive =</span> <span class="cn">TRUE</span>, <span class="at">showWarnings =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb70-3"><a href="#cb70-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Decadal mean MR is the annual surplus energy available to an individual at harvest size (kJ). This has no maximum, and may be negative.</span></span>
-<span id="cb70-4"><a href="#cb70-4" aria-hidden="true" tabindex="-1"></a><span class="fu">walk2</span>(</span>
-<span id="cb70-5"><a href="#cb70-5" aria-hidden="true" tabindex="-1"></a>  todo<span class="sc">$</span>in_files,</span>
-<span id="cb70-6"><a href="#cb70-6" aria-hidden="true" tabindex="-1"></a>  todo<span class="sc">$</span>out_file,</span>
-<span id="cb70-7"><a href="#cb70-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">function</span>(in_files, out_file) {</span>
-<span id="cb70-8"><a href="#cb70-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rast</span>(in_files) <span class="sc">%&gt;%</span></span>
-<span id="cb70-9"><a href="#cb70-9" aria-hidden="true" tabindex="-1"></a>      <span class="fu">app</span>(<span class="st">&quot;mean&quot;</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb70-10"><a href="#cb70-10" aria-hidden="true" tabindex="-1"></a>      <span class="fu">writeRaster</span>(<span class="at">filename =</span> out_file, <span class="at">overwrite =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb70-11"><a href="#cb70-11" aria-hidden="true" tabindex="-1"></a>  },</span>
-<span id="cb70-12"><a href="#cb70-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">.progress =</span> T</span>
-<span id="cb70-13"><a href="#cb70-13" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb99"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb99-1"><a href="#cb99-1" aria-hidden="true" tabindex="-1"></a><span class="fu">walk</span>(<span class="fu">unique</span>(<span class="fu">dirname</span>(todo<span class="sc">$</span>out_file)), dir.create, <span class="at">recursive =</span> <span class="cn">TRUE</span>, <span class="at">showWarnings =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb99-2"><a href="#cb99-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-3"><a href="#cb99-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Decadal mean MR is the annual surplus energy available to an individual at harvest size (kJ). This has no maximum, and may be negative.</span></span>
+<span id="cb99-4"><a href="#cb99-4" aria-hidden="true" tabindex="-1"></a><span class="fu">walk2</span>(</span>
+<span id="cb99-5"><a href="#cb99-5" aria-hidden="true" tabindex="-1"></a>  todo<span class="sc">$</span>in_files,</span>
+<span id="cb99-6"><a href="#cb99-6" aria-hidden="true" tabindex="-1"></a>  todo<span class="sc">$</span>out_file,</span>
+<span id="cb99-7"><a href="#cb99-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">function</span>(in_files, out_file) {</span>
+<span id="cb99-8"><a href="#cb99-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rast</span>(in_files) <span class="sc">%&gt;%</span></span>
+<span id="cb99-9"><a href="#cb99-9" aria-hidden="true" tabindex="-1"></a>      <span class="fu">app</span>(<span class="st">&quot;mean&quot;</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb99-10"><a href="#cb99-10" aria-hidden="true" tabindex="-1"></a>      <span class="fu">writeRaster</span>(<span class="at">filename =</span> out_file, <span class="at">overwrite =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb99-11"><a href="#cb99-11" aria-hidden="true" tabindex="-1"></a>  },</span>
+<span id="cb99-12"><a href="#cb99-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">.progress =</span> T</span>
+<span id="cb99-13"><a href="#cb99-13" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stderr">
-<pre><code> ■                                  0% |  ETA:  1h</code></pre>
+<pre><code> ■■■■■■■■                          24% |  ETA:  8s</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code> ■                                  0% |  ETA:  1h
- ■                                  0% |  ETA:  1h</code></pre>
+<pre><code> ■■■■■■■■■■■■■■■■■                 52% |  ETA:  5s</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code> ■                                  0% |  ETA: 50m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■                                  0% |  ETA: 49m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■                                  1% |  ETA: 49m
- ■                                  1% |  ETA: 49m
- ■                                  1% |  ETA: 49m
- ■                                  1% |  ETA: 49m
- ■                                  1% |  ETA: 49m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■                                  1% |  ETA:  1h
- ■                                  1% |  ETA:  1h
- ■                                  1% |  ETA:  1h
- ■                                  1% |  ETA:  1h
- ■                                  1% |  ETA:  1h
- ■                                  1% |  ETA:  1h
- ■                                  1% |  ETA:  1h
- ■                                  1% |  ETA:  1h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■                                  2% |  ETA:  1h
- ■                                  2% |  ETA:  1h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■                                 2% |  ETA:  1h
- ■■                                 2% |  ETA:  1h
- ■■                                 2% |  ETA:  1h
- ■■                                 2% |  ETA:  1h
- ■■                                 2% |  ETA:  1h
- ■■                                 2% |  ETA:  1h
- ■■                                 2% |  ETA:  1h
- ■■                                 2% |  ETA:  1h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■                                 3% |  ETA:  1h
- ■■                                 3% |  ETA:  1h
- ■■                                 3% |  ETA:  1h
- ■■                                 3% |  ETA:  1h
- ■■                                 3% |  ETA:  1h
- ■■                                 3% |  ETA:  1h
- ■■                                 3% |  ETA:  1h
- ■■                                 3% |  ETA:  1h
- ■■                                 3% |  ETA:  1h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■                                 4% |  ETA:  1h</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■                                 4% |  ETA: 50m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■                                 4% |  ETA: 49m
- ■■                                 4% |  ETA: 49m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■                                 4% |  ETA: 48m
- ■■                                 4% |  ETA: 48m
- ■■                                 4% |  ETA: 48m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■                                 4% |  ETA: 47m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■                                 5% |  ETA: 47m
- ■■                                 5% |  ETA: 47m
- ■■                                 5% |  ETA: 47m
- ■■                                 5% |  ETA: 47m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■                                5% |  ETA: 46m
- ■■■                                5% |  ETA: 46m
- ■■■                                5% |  ETA: 46m
- ■■■                                5% |  ETA: 46m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■                                6% |  ETA: 45m
- ■■■                                6% |  ETA: 45m
- ■■■                                6% |  ETA: 45m
- ■■■                                6% |  ETA: 45m
- ■■■                                6% |  ETA: 45m
- ■■■                                6% |  ETA: 45m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■                                6% |  ETA: 44m
- ■■■                                6% |  ETA: 44m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■                                7% |  ETA: 44m
- ■■■                                7% |  ETA: 44m
- ■■■                                7% |  ETA: 44m
- ■■■                                7% |  ETA: 44m
- ■■■                                7% |  ETA: 44m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■                                7% |  ETA: 43m
- ■■■                                7% |  ETA: 43m
- ■■■                                7% |  ETA: 43m
- ■■■                                7% |  ETA: 43m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■                                8% |  ETA: 43m
- ■■■                                8% |  ETA: 43m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■                                8% |  ETA: 42m
- ■■■                                8% |  ETA: 42m
- ■■■                                8% |  ETA: 42m
- ■■■                                8% |  ETA: 42m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■                               8% |  ETA: 42m
- ■■■■                               8% |  ETA: 42m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■                               9% |  ETA: 42m
- ■■■■                               9% |  ETA: 42m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■                               9% |  ETA: 41m
- ■■■■                               9% |  ETA: 41m
- ■■■■                               9% |  ETA: 41m
- ■■■■                               9% |  ETA: 41m
- ■■■■                               9% |  ETA: 41m
- ■■■■                               9% |  ETA: 41m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■                              10% |  ETA: 41m
- ■■■■                              10% |  ETA: 41m
- ■■■■                              10% |  ETA: 41m
- ■■■■                              10% |  ETA: 41m
- ■■■■                              10% |  ETA: 41m
- ■■■■                              10% |  ETA: 41m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■                              10% |  ETA: 40m
- ■■■■                              10% |  ETA: 40m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■                              11% |  ETA: 40m
- ■■■■                              11% |  ETA: 40m
- ■■■■                              11% |  ETA: 40m
- ■■■■                              11% |  ETA: 40m
- ■■■■                              11% |  ETA: 40m
- ■■■■                              11% |  ETA: 40m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■                              11% |  ETA: 39m
- ■■■■                              11% |  ETA: 39m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■                              12% |  ETA: 39m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■                             12% |  ETA: 39m
- ■■■■■                             12% |  ETA: 39m
- ■■■■■                             12% |  ETA: 39m
- ■■■■■                             12% |  ETA: 39m
- ■■■■■                             12% |  ETA: 39m
- ■■■■■                             12% |  ETA: 39m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■                             12% |  ETA: 38m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■                             13% |  ETA: 38m
- ■■■■■                             13% |  ETA: 38m
- ■■■■■                             13% |  ETA: 38m
- ■■■■■                             13% |  ETA: 38m
- ■■■■■                             13% |  ETA: 38m
- ■■■■■                             13% |  ETA: 38m
- ■■■■■                             13% |  ETA: 38m
- ■■■■■                             13% |  ETA: 38m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■                             14% |  ETA: 38m
- ■■■■■                             14% |  ETA: 38m
- ■■■■■                             14% |  ETA: 38m
- ■■■■■                             14% |  ETA: 38m
- ■■■■■                             14% |  ETA: 38m
- ■■■■■                             14% |  ETA: 38m
- ■■■■■                             14% |  ETA: 38m
- ■■■■■                             14% |  ETA: 38m
- ■■■■■                             14% |  ETA: 38m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■                             15% |  ETA: 37m
- ■■■■■                             15% |  ETA: 37m
- ■■■■■                             15% |  ETA: 37m
- ■■■■■                             15% |  ETA: 37m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■                            15% |  ETA: 37m
- ■■■■■■                            15% |  ETA: 37m
- ■■■■■■                            15% |  ETA: 37m
- ■■■■■■                            15% |  ETA: 37m
- ■■■■■■                            15% |  ETA: 37m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■                            16% |  ETA: 37m
- ■■■■■■                            16% |  ETA: 37m
- ■■■■■■                            16% |  ETA: 37m
- ■■■■■■                            16% |  ETA: 37m
- ■■■■■■                            16% |  ETA: 37m
- ■■■■■■                            16% |  ETA: 37m
- ■■■■■■                            16% |  ETA: 37m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■                            16% |  ETA: 36m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■                            17% |  ETA: 36m
- ■■■■■■                            17% |  ETA: 36m
- ■■■■■■                            17% |  ETA: 36m
- ■■■■■■                            17% |  ETA: 36m
- ■■■■■■                            17% |  ETA: 36m
- ■■■■■■                            17% |  ETA: 36m
- ■■■■■■                            17% |  ETA: 36m
- ■■■■■■                            17% |  ETA: 36m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■                            18% |  ETA: 36m
- ■■■■■■                            18% |  ETA: 36m
- ■■■■■■                            18% |  ETA: 36m
- ■■■■■■                            18% |  ETA: 36m
- ■■■■■■                            18% |  ETA: 36m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■                            18% |  ETA: 35m
- ■■■■■■                            18% |  ETA: 35m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■                           18% |  ETA: 35m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■                           19% |  ETA: 35m
- ■■■■■■■                           19% |  ETA: 35m
- ■■■■■■■                           19% |  ETA: 35m
- ■■■■■■■                           19% |  ETA: 35m
- ■■■■■■■                           19% |  ETA: 35m
- ■■■■■■■                           19% |  ETA: 35m
- ■■■■■■■                           19% |  ETA: 35m
- ■■■■■■■                           19% |  ETA: 35m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■                           20% |  ETA: 35m
- ■■■■■■■                           20% |  ETA: 35m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■                           20% |  ETA: 34m
- ■■■■■■■                           20% |  ETA: 34m
- ■■■■■■■                           20% |  ETA: 34m
- ■■■■■■■                           20% |  ETA: 34m
- ■■■■■■■                           20% |  ETA: 34m
- ■■■■■■■                           20% |  ETA: 34m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■                           21% |  ETA: 34m
- ■■■■■■■                           21% |  ETA: 34m
- ■■■■■■■                           21% |  ETA: 34m
- ■■■■■■■                           21% |  ETA: 34m
- ■■■■■■■                           21% |  ETA: 34m
- ■■■■■■■                           21% |  ETA: 34m
- ■■■■■■■                           21% |  ETA: 34m
- ■■■■■■■                           21% |  ETA: 34m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■                           22% |  ETA: 34m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■                          22% |  ETA: 34m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■                          22% |  ETA: 33m
- ■■■■■■■■                          22% |  ETA: 33m
- ■■■■■■■■                          22% |  ETA: 33m
- ■■■■■■■■                          22% |  ETA: 33m
- ■■■■■■■■                          22% |  ETA: 33m
- ■■■■■■■■                          22% |  ETA: 33m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■                          23% |  ETA: 33m
- ■■■■■■■■                          23% |  ETA: 33m
- ■■■■■■■■                          23% |  ETA: 33m
- ■■■■■■■■                          23% |  ETA: 33m
- ■■■■■■■■                          23% |  ETA: 33m
- ■■■■■■■■                          23% |  ETA: 33m
- ■■■■■■■■                          23% |  ETA: 33m
- ■■■■■■■■                          23% |  ETA: 33m
- ■■■■■■■■                          23% |  ETA: 33m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■                          24% |  ETA: 33m
- ■■■■■■■■                          24% |  ETA: 33m
- ■■■■■■■■                          24% |  ETA: 33m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■                          24% |  ETA: 32m
- ■■■■■■■■                          24% |  ETA: 32m
- ■■■■■■■■                          24% |  ETA: 32m
- ■■■■■■■■                          24% |  ETA: 32m
- ■■■■■■■■                          24% |  ETA: 32m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■                          25% |  ETA: 32m
- ■■■■■■■■                          25% |  ETA: 32m
- ■■■■■■■■                          25% |  ETA: 32m
- ■■■■■■■■                          25% |  ETA: 32m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■                         25% |  ETA: 32m
- ■■■■■■■■■                         25% |  ETA: 32m
- ■■■■■■■■■                         25% |  ETA: 32m
- ■■■■■■■■■                         25% |  ETA: 32m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■                         26% |  ETA: 32m
- ■■■■■■■■■                         26% |  ETA: 32m
- ■■■■■■■■■                         26% |  ETA: 32m
- ■■■■■■■■■                         26% |  ETA: 32m
- ■■■■■■■■■                         26% |  ETA: 32m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■                         26% |  ETA: 31m
- ■■■■■■■■■                         26% |  ETA: 31m
- ■■■■■■■■■                         26% |  ETA: 31m
- ■■■■■■■■■                         26% |  ETA: 31m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■                         27% |  ETA: 31m
- ■■■■■■■■■                         27% |  ETA: 31m
- ■■■■■■■■■                         27% |  ETA: 31m
- ■■■■■■■■■                         27% |  ETA: 31m
- ■■■■■■■■■                         27% |  ETA: 31m
- ■■■■■■■■■                         27% |  ETA: 31m
- ■■■■■■■■■                         27% |  ETA: 31m
- ■■■■■■■■■                         27% |  ETA: 31m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■                         28% |  ETA: 31m
- ■■■■■■■■■                         28% |  ETA: 31m
- ■■■■■■■■■                         28% |  ETA: 31m
- ■■■■■■■■■                         28% |  ETA: 31m
- ■■■■■■■■■                         28% |  ETA: 31m
- ■■■■■■■■■                         28% |  ETA: 31m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■                         28% |  ETA: 30m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■                        28% |  ETA: 30m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■                        29% |  ETA: 30m
- ■■■■■■■■■■                        29% |  ETA: 30m
- ■■■■■■■■■■                        29% |  ETA: 30m
- ■■■■■■■■■■                        29% |  ETA: 30m
- ■■■■■■■■■■                        29% |  ETA: 30m
- ■■■■■■■■■■                        29% |  ETA: 30m
- ■■■■■■■■■■                        29% |  ETA: 30m
- ■■■■■■■■■■                        29% |  ETA: 30m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■                        30% |  ETA: 30m
- ■■■■■■■■■■                        30% |  ETA: 30m
- ■■■■■■■■■■                        30% |  ETA: 30m
- ■■■■■■■■■■                        30% |  ETA: 30m
- ■■■■■■■■■■                        30% |  ETA: 30m
- ■■■■■■■■■■                        30% |  ETA: 30m
- ■■■■■■■■■■                        30% |  ETA: 30m
- ■■■■■■■■■■                        30% |  ETA: 30m
- ■■■■■■■■■■                        30% |  ETA: 30m
- ■■■■■■■■■■                        30% |  ETA: 30m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■                        31% |  ETA: 30m
- ■■■■■■■■■■                        31% |  ETA: 30m
- ■■■■■■■■■■                        31% |  ETA: 30m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■                        31% |  ETA: 29m
- ■■■■■■■■■■                        31% |  ETA: 29m
- ■■■■■■■■■■                        31% |  ETA: 29m
- ■■■■■■■■■■                        31% |  ETA: 29m
- ■■■■■■■■■■                        31% |  ETA: 29m
- ■■■■■■■■■■                        31% |  ETA: 29m
- ■■■■■■■■■■                        31% |  ETA: 29m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■                        32% |  ETA: 29m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■                       32% |  ETA: 29m
- ■■■■■■■■■■■                       32% |  ETA: 29m
- ■■■■■■■■■■■                       32% |  ETA: 29m
- ■■■■■■■■■■■                       32% |  ETA: 29m
- ■■■■■■■■■■■                       32% |  ETA: 29m
- ■■■■■■■■■■■                       32% |  ETA: 29m
- ■■■■■■■■■■■                       32% |  ETA: 29m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■                       33% |  ETA: 29m
- ■■■■■■■■■■■                       33% |  ETA: 29m
- ■■■■■■■■■■■                       33% |  ETA: 29m
- ■■■■■■■■■■■                       33% |  ETA: 29m
- ■■■■■■■■■■■                       33% |  ETA: 29m
- ■■■■■■■■■■■                       33% |  ETA: 29m
- ■■■■■■■■■■■                       33% |  ETA: 29m
- ■■■■■■■■■■■                       33% |  ETA: 29m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■                       33% |  ETA: 28m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■                       34% |  ETA: 28m
- ■■■■■■■■■■■                       34% |  ETA: 28m
- ■■■■■■■■■■■                       34% |  ETA: 28m
- ■■■■■■■■■■■                       34% |  ETA: 28m
- ■■■■■■■■■■■                       34% |  ETA: 28m
- ■■■■■■■■■■■                       34% |  ETA: 28m
- ■■■■■■■■■■■                       34% |  ETA: 28m
- ■■■■■■■■■■■                       34% |  ETA: 28m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■                       35% |  ETA: 28m
- ■■■■■■■■■■■                       35% |  ETA: 28m
- ■■■■■■■■■■■                       35% |  ETA: 28m
- ■■■■■■■■■■■                       35% |  ETA: 28m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■                      35% |  ETA: 28m
- ■■■■■■■■■■■■                      35% |  ETA: 28m
- ■■■■■■■■■■■■                      35% |  ETA: 28m
- ■■■■■■■■■■■■                      35% |  ETA: 28m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■                      36% |  ETA: 28m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■                      36% |  ETA: 27m
- ■■■■■■■■■■■■                      36% |  ETA: 27m
- ■■■■■■■■■■■■                      36% |  ETA: 27m
- ■■■■■■■■■■■■                      36% |  ETA: 27m
- ■■■■■■■■■■■■                      36% |  ETA: 27m
- ■■■■■■■■■■■■                      36% |  ETA: 27m
- ■■■■■■■■■■■■                      36% |  ETA: 27m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■                      37% |  ETA: 27m
- ■■■■■■■■■■■■                      37% |  ETA: 27m
- ■■■■■■■■■■■■                      37% |  ETA: 27m
- ■■■■■■■■■■■■                      37% |  ETA: 27m
- ■■■■■■■■■■■■                      37% |  ETA: 27m
- ■■■■■■■■■■■■                      37% |  ETA: 27m
- ■■■■■■■■■■■■                      37% |  ETA: 27m
- ■■■■■■■■■■■■                      37% |  ETA: 27m
- ■■■■■■■■■■■■                      37% |  ETA: 27m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■                      38% |  ETA: 27m
- ■■■■■■■■■■■■                      38% |  ETA: 27m
- ■■■■■■■■■■■■                      38% |  ETA: 27m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■                      38% |  ETA: 26m
- ■■■■■■■■■■■■                      38% |  ETA: 26m
- ■■■■■■■■■■■■                      38% |  ETA: 26m
- ■■■■■■■■■■■■                      38% |  ETA: 26m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■                     38% |  ETA: 26m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■                     39% |  ETA: 26m
- ■■■■■■■■■■■■■                     39% |  ETA: 26m
- ■■■■■■■■■■■■■                     39% |  ETA: 26m
- ■■■■■■■■■■■■■                     39% |  ETA: 26m
- ■■■■■■■■■■■■■                     39% |  ETA: 26m
- ■■■■■■■■■■■■■                     39% |  ETA: 26m
- ■■■■■■■■■■■■■                     39% |  ETA: 26m
- ■■■■■■■■■■■■■                     39% |  ETA: 26m
- ■■■■■■■■■■■■■                     39% |  ETA: 26m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■                     40% |  ETA: 26m
- ■■■■■■■■■■■■■                     40% |  ETA: 26m
- ■■■■■■■■■■■■■                     40% |  ETA: 26m
- ■■■■■■■■■■■■■                     40% |  ETA: 26m
- ■■■■■■■■■■■■■                     40% |  ETA: 26m
- ■■■■■■■■■■■■■                     40% |  ETA: 26m
- ■■■■■■■■■■■■■                     40% |  ETA: 26m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■                     40% |  ETA: 25m
- ■■■■■■■■■■■■■                     40% |  ETA: 25m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■                     41% |  ETA: 25m
- ■■■■■■■■■■■■■                     41% |  ETA: 25m
- ■■■■■■■■■■■■■                     41% |  ETA: 25m
- ■■■■■■■■■■■■■                     41% |  ETA: 25m
- ■■■■■■■■■■■■■                     41% |  ETA: 25m
- ■■■■■■■■■■■■■                     41% |  ETA: 25m
- ■■■■■■■■■■■■■                     41% |  ETA: 25m
- ■■■■■■■■■■■■■                     41% |  ETA: 25m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■                     42% |  ETA: 25m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■                    42% |  ETA: 25m
- ■■■■■■■■■■■■■■                    42% |  ETA: 25m
- ■■■■■■■■■■■■■■                    42% |  ETA: 25m
- ■■■■■■■■■■■■■■                    42% |  ETA: 25m
- ■■■■■■■■■■■■■■                    42% |  ETA: 25m
- ■■■■■■■■■■■■■■                    42% |  ETA: 25m
- ■■■■■■■■■■■■■■                    42% |  ETA: 25m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■                    43% |  ETA: 24m
- ■■■■■■■■■■■■■■                    43% |  ETA: 24m
- ■■■■■■■■■■■■■■                    43% |  ETA: 24m
- ■■■■■■■■■■■■■■                    43% |  ETA: 24m
- ■■■■■■■■■■■■■■                    43% |  ETA: 24m
- ■■■■■■■■■■■■■■                    43% |  ETA: 24m
- ■■■■■■■■■■■■■■                    43% |  ETA: 24m
- ■■■■■■■■■■■■■■                    43% |  ETA: 24m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■                    44% |  ETA: 24m
- ■■■■■■■■■■■■■■                    44% |  ETA: 24m
- ■■■■■■■■■■■■■■                    44% |  ETA: 24m
- ■■■■■■■■■■■■■■                    44% |  ETA: 24m
- ■■■■■■■■■■■■■■                    44% |  ETA: 24m
- ■■■■■■■■■■■■■■                    44% |  ETA: 24m
- ■■■■■■■■■■■■■■                    44% |  ETA: 24m
- ■■■■■■■■■■■■■■                    44% |  ETA: 24m
- ■■■■■■■■■■■■■■                    44% |  ETA: 24m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■                    45% |  ETA: 24m
- ■■■■■■■■■■■■■■                    45% |  ETA: 24m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■                    45% |  ETA: 23m
- ■■■■■■■■■■■■■■                    45% |  ETA: 23m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■                   45% |  ETA: 23m
- ■■■■■■■■■■■■■■■                   45% |  ETA: 23m
- ■■■■■■■■■■■■■■■                   45% |  ETA: 23m
- ■■■■■■■■■■■■■■■                   45% |  ETA: 23m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■                   46% |  ETA: 23m
- ■■■■■■■■■■■■■■■                   46% |  ETA: 23m
- ■■■■■■■■■■■■■■■                   46% |  ETA: 23m
- ■■■■■■■■■■■■■■■                   46% |  ETA: 23m
- ■■■■■■■■■■■■■■■                   46% |  ETA: 23m
- ■■■■■■■■■■■■■■■                   46% |  ETA: 23m
- ■■■■■■■■■■■■■■■                   46% |  ETA: 23m
- ■■■■■■■■■■■■■■■                   46% |  ETA: 23m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■                   47% |  ETA: 23m
- ■■■■■■■■■■■■■■■                   47% |  ETA: 23m
- ■■■■■■■■■■■■■■■                   47% |  ETA: 23m
- ■■■■■■■■■■■■■■■                   47% |  ETA: 23m
- ■■■■■■■■■■■■■■■                   47% |  ETA: 23m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■                   47% |  ETA: 22m
- ■■■■■■■■■■■■■■■                   47% |  ETA: 22m
- ■■■■■■■■■■■■■■■                   47% |  ETA: 22m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■                   48% |  ETA: 22m
- ■■■■■■■■■■■■■■■                   48% |  ETA: 22m
- ■■■■■■■■■■■■■■■                   48% |  ETA: 22m
- ■■■■■■■■■■■■■■■                   48% |  ETA: 22m
- ■■■■■■■■■■■■■■■                   48% |  ETA: 22m
- ■■■■■■■■■■■■■■■                   48% |  ETA: 22m
- ■■■■■■■■■■■■■■■                   48% |  ETA: 22m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■                  48% |  ETA: 22m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■                  49% |  ETA: 22m
- ■■■■■■■■■■■■■■■■                  49% |  ETA: 22m
- ■■■■■■■■■■■■■■■■                  49% |  ETA: 22m
- ■■■■■■■■■■■■■■■■                  49% |  ETA: 22m
- ■■■■■■■■■■■■■■■■                  49% |  ETA: 22m
- ■■■■■■■■■■■■■■■■                  49% |  ETA: 22m
- ■■■■■■■■■■■■■■■■                  49% |  ETA: 22m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■                  49% |  ETA: 21m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■                  50% |  ETA: 21m
- ■■■■■■■■■■■■■■■■                  50% |  ETA: 21m
- ■■■■■■■■■■■■■■■■                  50% |  ETA: 21m
- ■■■■■■■■■■■■■■■■                  50% |  ETA: 21m
- ■■■■■■■■■■■■■■■■                  50% |  ETA: 21m
- ■■■■■■■■■■■■■■■■                  50% |  ETA: 21m
- ■■■■■■■■■■■■■■■■                  50% |  ETA: 21m
- ■■■■■■■■■■■■■■■■                  50% |  ETA: 21m
- ■■■■■■■■■■■■■■■■                  50% |  ETA: 21m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■                  51% |  ETA: 21m
- ■■■■■■■■■■■■■■■■                  51% |  ETA: 21m
- ■■■■■■■■■■■■■■■■                  51% |  ETA: 21m
- ■■■■■■■■■■■■■■■■                  51% |  ETA: 21m
- ■■■■■■■■■■■■■■■■                  51% |  ETA: 21m
- ■■■■■■■■■■■■■■■■                  51% |  ETA: 21m
- ■■■■■■■■■■■■■■■■                  51% |  ETA: 21m
- ■■■■■■■■■■■■■■■■                  51% |  ETA: 21m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■                  52% |  ETA: 20m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■                 52% |  ETA: 20m
- ■■■■■■■■■■■■■■■■■                 52% |  ETA: 20m
- ■■■■■■■■■■■■■■■■■                 52% |  ETA: 20m
- ■■■■■■■■■■■■■■■■■                 52% |  ETA: 20m
- ■■■■■■■■■■■■■■■■■                 52% |  ETA: 20m
- ■■■■■■■■■■■■■■■■■                 52% |  ETA: 20m
- ■■■■■■■■■■■■■■■■■                 52% |  ETA: 20m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■                 53% |  ETA: 20m
- ■■■■■■■■■■■■■■■■■                 53% |  ETA: 20m
- ■■■■■■■■■■■■■■■■■                 53% |  ETA: 20m
- ■■■■■■■■■■■■■■■■■                 53% |  ETA: 20m
- ■■■■■■■■■■■■■■■■■                 53% |  ETA: 20m
- ■■■■■■■■■■■■■■■■■                 53% |  ETA: 20m
- ■■■■■■■■■■■■■■■■■                 53% |  ETA: 20m
- ■■■■■■■■■■■■■■■■■                 53% |  ETA: 20m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■                 54% |  ETA: 20m
- ■■■■■■■■■■■■■■■■■                 54% |  ETA: 20m
- ■■■■■■■■■■■■■■■■■                 54% |  ETA: 20m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■                 54% |  ETA: 19m
- ■■■■■■■■■■■■■■■■■                 54% |  ETA: 19m
- ■■■■■■■■■■■■■■■■■                 54% |  ETA: 19m
- ■■■■■■■■■■■■■■■■■                 54% |  ETA: 19m
- ■■■■■■■■■■■■■■■■■                 54% |  ETA: 19m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■                 55% |  ETA: 19m
- ■■■■■■■■■■■■■■■■■                 55% |  ETA: 19m
- ■■■■■■■■■■■■■■■■■                 55% |  ETA: 19m
- ■■■■■■■■■■■■■■■■■                 55% |  ETA: 19m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■                55% |  ETA: 19m
- ■■■■■■■■■■■■■■■■■■                55% |  ETA: 19m
- ■■■■■■■■■■■■■■■■■■                55% |  ETA: 19m
- ■■■■■■■■■■■■■■■■■■                55% |  ETA: 19m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■                56% |  ETA: 19m
- ■■■■■■■■■■■■■■■■■■                56% |  ETA: 19m
- ■■■■■■■■■■■■■■■■■■                56% |  ETA: 19m
- ■■■■■■■■■■■■■■■■■■                56% |  ETA: 19m
- ■■■■■■■■■■■■■■■■■■                56% |  ETA: 19m
- ■■■■■■■■■■■■■■■■■■                56% |  ETA: 19m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■                56% |  ETA: 18m
- ■■■■■■■■■■■■■■■■■■                56% |  ETA: 18m
- ■■■■■■■■■■■■■■■■■■                56% |  ETA: 18m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■                57% |  ETA: 18m
- ■■■■■■■■■■■■■■■■■■                57% |  ETA: 18m
- ■■■■■■■■■■■■■■■■■■                57% |  ETA: 18m
- ■■■■■■■■■■■■■■■■■■                57% |  ETA: 18m
- ■■■■■■■■■■■■■■■■■■                57% |  ETA: 18m
- ■■■■■■■■■■■■■■■■■■                57% |  ETA: 18m
- ■■■■■■■■■■■■■■■■■■                57% |  ETA: 18m
- ■■■■■■■■■■■■■■■■■■                57% |  ETA: 18m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■                58% |  ETA: 18m
- ■■■■■■■■■■■■■■■■■■                58% |  ETA: 18m
- ■■■■■■■■■■■■■■■■■■                58% |  ETA: 18m
- ■■■■■■■■■■■■■■■■■■                58% |  ETA: 18m
- ■■■■■■■■■■■■■■■■■■                58% |  ETA: 18m
- ■■■■■■■■■■■■■■■■■■                58% |  ETA: 18m
- ■■■■■■■■■■■■■■■■■■                58% |  ETA: 18m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■               58% |  ETA: 18m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■               59% |  ETA: 18m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■               59% |  ETA: 17m
- ■■■■■■■■■■■■■■■■■■■               59% |  ETA: 17m
- ■■■■■■■■■■■■■■■■■■■               59% |  ETA: 17m
- ■■■■■■■■■■■■■■■■■■■               59% |  ETA: 17m
- ■■■■■■■■■■■■■■■■■■■               59% |  ETA: 17m
- ■■■■■■■■■■■■■■■■■■■               59% |  ETA: 17m
- ■■■■■■■■■■■■■■■■■■■               59% |  ETA: 17m
- ■■■■■■■■■■■■■■■■■■■               59% |  ETA: 17m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■               60% |  ETA: 17m
- ■■■■■■■■■■■■■■■■■■■               60% |  ETA: 17m
- ■■■■■■■■■■■■■■■■■■■               60% |  ETA: 17m
- ■■■■■■■■■■■■■■■■■■■               60% |  ETA: 17m
- ■■■■■■■■■■■■■■■■■■■               60% |  ETA: 17m
- ■■■■■■■■■■■■■■■■■■■               60% |  ETA: 17m
- ■■■■■■■■■■■■■■■■■■■               60% |  ETA: 17m
- ■■■■■■■■■■■■■■■■■■■               60% |  ETA: 17m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■               61% |  ETA: 17m
- ■■■■■■■■■■■■■■■■■■■               61% |  ETA: 17m
- ■■■■■■■■■■■■■■■■■■■               61% |  ETA: 17m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■               61% |  ETA: 16m
- ■■■■■■■■■■■■■■■■■■■               61% |  ETA: 16m
- ■■■■■■■■■■■■■■■■■■■               61% |  ETA: 16m
- ■■■■■■■■■■■■■■■■■■■               61% |  ETA: 16m
- ■■■■■■■■■■■■■■■■■■■               61% |  ETA: 16m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■               62% |  ETA: 16m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■              62% |  ETA: 16m
- ■■■■■■■■■■■■■■■■■■■■              62% |  ETA: 16m
- ■■■■■■■■■■■■■■■■■■■■              62% |  ETA: 16m
- ■■■■■■■■■■■■■■■■■■■■              62% |  ETA: 16m
- ■■■■■■■■■■■■■■■■■■■■              62% |  ETA: 16m
- ■■■■■■■■■■■■■■■■■■■■              62% |  ETA: 16m
- ■■■■■■■■■■■■■■■■■■■■              62% |  ETA: 16m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■              63% |  ETA: 16m
- ■■■■■■■■■■■■■■■■■■■■              63% |  ETA: 16m
- ■■■■■■■■■■■■■■■■■■■■              63% |  ETA: 16m
- ■■■■■■■■■■■■■■■■■■■■              63% |  ETA: 16m
- ■■■■■■■■■■■■■■■■■■■■              63% |  ETA: 16m
- ■■■■■■■■■■■■■■■■■■■■              63% |  ETA: 16m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■              63% |  ETA: 15m
- ■■■■■■■■■■■■■■■■■■■■              63% |  ETA: 15m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■              64% |  ETA: 15m
- ■■■■■■■■■■■■■■■■■■■■              64% |  ETA: 15m
- ■■■■■■■■■■■■■■■■■■■■              64% |  ETA: 15m
- ■■■■■■■■■■■■■■■■■■■■              64% |  ETA: 15m
- ■■■■■■■■■■■■■■■■■■■■              64% |  ETA: 15m
- ■■■■■■■■■■■■■■■■■■■■              64% |  ETA: 15m
- ■■■■■■■■■■■■■■■■■■■■              64% |  ETA: 15m
- ■■■■■■■■■■■■■■■■■■■■              64% |  ETA: 15m
- ■■■■■■■■■■■■■■■■■■■■              64% |  ETA: 15m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■              65% |  ETA: 15m
- ■■■■■■■■■■■■■■■■■■■■              65% |  ETA: 15m
- ■■■■■■■■■■■■■■■■■■■■              65% |  ETA: 15m
- ■■■■■■■■■■■■■■■■■■■■              65% |  ETA: 15m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■             65% |  ETA: 15m
- ■■■■■■■■■■■■■■■■■■■■■             65% |  ETA: 15m
- ■■■■■■■■■■■■■■■■■■■■■             65% |  ETA: 15m
- ■■■■■■■■■■■■■■■■■■■■■             65% |  ETA: 15m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■             66% |  ETA: 15m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■             66% |  ETA: 14m
- ■■■■■■■■■■■■■■■■■■■■■             66% |  ETA: 14m
- ■■■■■■■■■■■■■■■■■■■■■             66% |  ETA: 14m
- ■■■■■■■■■■■■■■■■■■■■■             66% |  ETA: 14m
- ■■■■■■■■■■■■■■■■■■■■■             66% |  ETA: 14m
- ■■■■■■■■■■■■■■■■■■■■■             66% |  ETA: 14m
- ■■■■■■■■■■■■■■■■■■■■■             66% |  ETA: 14m
- ■■■■■■■■■■■■■■■■■■■■■             66% |  ETA: 14m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■             67% |  ETA: 14m
- ■■■■■■■■■■■■■■■■■■■■■             67% |  ETA: 14m
- ■■■■■■■■■■■■■■■■■■■■■             67% |  ETA: 14m
- ■■■■■■■■■■■■■■■■■■■■■             67% |  ETA: 14m
- ■■■■■■■■■■■■■■■■■■■■■             67% |  ETA: 14m
- ■■■■■■■■■■■■■■■■■■■■■             67% |  ETA: 14m
- ■■■■■■■■■■■■■■■■■■■■■             67% |  ETA: 14m
- ■■■■■■■■■■■■■■■■■■■■■             67% |  ETA: 14m
- ■■■■■■■■■■■■■■■■■■■■■             67% |  ETA: 14m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■             68% |  ETA: 14m
- ■■■■■■■■■■■■■■■■■■■■■             68% |  ETA: 14m
- ■■■■■■■■■■■■■■■■■■■■■             68% |  ETA: 14m
- ■■■■■■■■■■■■■■■■■■■■■             68% |  ETA: 14m
- ■■■■■■■■■■■■■■■■■■■■■             68% |  ETA: 14m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■             68% |  ETA: 13m
- ■■■■■■■■■■■■■■■■■■■■■             68% |  ETA: 13m
- ■■■■■■■■■■■■■■■■■■■■■             68% |  ETA: 13m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■            68% |  ETA: 13m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■            69% |  ETA: 13m
- ■■■■■■■■■■■■■■■■■■■■■■            69% |  ETA: 13m
- ■■■■■■■■■■■■■■■■■■■■■■            69% |  ETA: 13m
- ■■■■■■■■■■■■■■■■■■■■■■            69% |  ETA: 13m
- ■■■■■■■■■■■■■■■■■■■■■■            69% |  ETA: 13m
- ■■■■■■■■■■■■■■■■■■■■■■            69% |  ETA: 13m
- ■■■■■■■■■■■■■■■■■■■■■■            69% |  ETA: 13m
- ■■■■■■■■■■■■■■■■■■■■■■            69% |  ETA: 13m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■            70% |  ETA: 13m
- ■■■■■■■■■■■■■■■■■■■■■■            70% |  ETA: 13m
- ■■■■■■■■■■■■■■■■■■■■■■            70% |  ETA: 13m
- ■■■■■■■■■■■■■■■■■■■■■■            70% |  ETA: 13m
- ■■■■■■■■■■■■■■■■■■■■■■            70% |  ETA: 13m
- ■■■■■■■■■■■■■■■■■■■■■■            70% |  ETA: 13m
- ■■■■■■■■■■■■■■■■■■■■■■            70% |  ETA: 13m
- ■■■■■■■■■■■■■■■■■■■■■■            70% |  ETA: 13m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■            70% |  ETA: 12m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■            71% |  ETA: 12m
- ■■■■■■■■■■■■■■■■■■■■■■            71% |  ETA: 12m
- ■■■■■■■■■■■■■■■■■■■■■■            71% |  ETA: 12m
- ■■■■■■■■■■■■■■■■■■■■■■            71% |  ETA: 12m
- ■■■■■■■■■■■■■■■■■■■■■■            71% |  ETA: 12m
- ■■■■■■■■■■■■■■■■■■■■■■            71% |  ETA: 12m
- ■■■■■■■■■■■■■■■■■■■■■■            71% |  ETA: 12m
- ■■■■■■■■■■■■■■■■■■■■■■            71% |  ETA: 12m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■            72% |  ETA: 12m
- ■■■■■■■■■■■■■■■■■■■■■■            72% |  ETA: 12m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■           72% |  ETA: 12m
- ■■■■■■■■■■■■■■■■■■■■■■■           72% |  ETA: 12m
- ■■■■■■■■■■■■■■■■■■■■■■■           72% |  ETA: 12m
- ■■■■■■■■■■■■■■■■■■■■■■■           72% |  ETA: 12m
- ■■■■■■■■■■■■■■■■■■■■■■■           72% |  ETA: 12m
- ■■■■■■■■■■■■■■■■■■■■■■■           72% |  ETA: 12m
- ■■■■■■■■■■■■■■■■■■■■■■■           72% |  ETA: 12m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■           73% |  ETA: 12m
- ■■■■■■■■■■■■■■■■■■■■■■■           73% |  ETA: 12m
- ■■■■■■■■■■■■■■■■■■■■■■■           73% |  ETA: 12m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■           73% |  ETA: 11m
- ■■■■■■■■■■■■■■■■■■■■■■■           73% |  ETA: 11m
- ■■■■■■■■■■■■■■■■■■■■■■■           73% |  ETA: 11m
- ■■■■■■■■■■■■■■■■■■■■■■■           73% |  ETA: 11m
- ■■■■■■■■■■■■■■■■■■■■■■■           73% |  ETA: 11m
- ■■■■■■■■■■■■■■■■■■■■■■■           73% |  ETA: 11m
- ■■■■■■■■■■■■■■■■■■■■■■■           73% |  ETA: 11m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■           74% |  ETA: 11m
- ■■■■■■■■■■■■■■■■■■■■■■■           74% |  ETA: 11m
- ■■■■■■■■■■■■■■■■■■■■■■■           74% |  ETA: 11m
- ■■■■■■■■■■■■■■■■■■■■■■■           74% |  ETA: 11m
- ■■■■■■■■■■■■■■■■■■■■■■■           74% |  ETA: 11m
- ■■■■■■■■■■■■■■■■■■■■■■■           74% |  ETA: 11m
- ■■■■■■■■■■■■■■■■■■■■■■■           74% |  ETA: 11m
- ■■■■■■■■■■■■■■■■■■■■■■■           74% |  ETA: 11m
- ■■■■■■■■■■■■■■■■■■■■■■■           74% |  ETA: 11m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■           75% |  ETA: 11m
- ■■■■■■■■■■■■■■■■■■■■■■■           75% |  ETA: 11m
- ■■■■■■■■■■■■■■■■■■■■■■■           75% |  ETA: 11m
- ■■■■■■■■■■■■■■■■■■■■■■■           75% |  ETA: 11m
- ■■■■■■■■■■■■■■■■■■■■■■■           75% |  ETA: 11m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■          75% |  ETA: 11m
- ■■■■■■■■■■■■■■■■■■■■■■■■          75% |  ETA: 11m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■          75% |  ETA: 10m
- ■■■■■■■■■■■■■■■■■■■■■■■■          75% |  ETA: 10m
- ■■■■■■■■■■■■■■■■■■■■■■■■          75% |  ETA: 10m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■          76% |  ETA: 10m
- ■■■■■■■■■■■■■■■■■■■■■■■■          76% |  ETA: 10m
- ■■■■■■■■■■■■■■■■■■■■■■■■          76% |  ETA: 10m
- ■■■■■■■■■■■■■■■■■■■■■■■■          76% |  ETA: 10m
- ■■■■■■■■■■■■■■■■■■■■■■■■          76% |  ETA: 10m
- ■■■■■■■■■■■■■■■■■■■■■■■■          76% |  ETA: 10m
- ■■■■■■■■■■■■■■■■■■■■■■■■          76% |  ETA: 10m
- ■■■■■■■■■■■■■■■■■■■■■■■■          76% |  ETA: 10m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■          77% |  ETA: 10m
- ■■■■■■■■■■■■■■■■■■■■■■■■          77% |  ETA: 10m
- ■■■■■■■■■■■■■■■■■■■■■■■■          77% |  ETA: 10m
- ■■■■■■■■■■■■■■■■■■■■■■■■          77% |  ETA: 10m
- ■■■■■■■■■■■■■■■■■■■■■■■■          77% |  ETA: 10m
- ■■■■■■■■■■■■■■■■■■■■■■■■          77% |  ETA: 10m
- ■■■■■■■■■■■■■■■■■■■■■■■■          77% |  ETA: 10m
- ■■■■■■■■■■■■■■■■■■■■■■■■          77% |  ETA: 10m
- ■■■■■■■■■■■■■■■■■■■■■■■■          77% |  ETA: 10m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■          78% |  ETA: 10m
- ■■■■■■■■■■■■■■■■■■■■■■■■          78% |  ETA: 10m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■          78% |  ETA:  9m
- ■■■■■■■■■■■■■■■■■■■■■■■■          78% |  ETA:  9m
- ■■■■■■■■■■■■■■■■■■■■■■■■          78% |  ETA:  9m
- ■■■■■■■■■■■■■■■■■■■■■■■■          78% |  ETA:  9m
- ■■■■■■■■■■■■■■■■■■■■■■■■          78% |  ETA:  9m
- ■■■■■■■■■■■■■■■■■■■■■■■■          78% |  ETA:  9m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■         78% |  ETA:  9m
- ■■■■■■■■■■■■■■■■■■■■■■■■■         78% |  ETA:  9m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■         79% |  ETA:  9m
- ■■■■■■■■■■■■■■■■■■■■■■■■■         79% |  ETA:  9m
- ■■■■■■■■■■■■■■■■■■■■■■■■■         79% |  ETA:  9m
- ■■■■■■■■■■■■■■■■■■■■■■■■■         79% |  ETA:  9m
- ■■■■■■■■■■■■■■■■■■■■■■■■■         79% |  ETA:  9m
- ■■■■■■■■■■■■■■■■■■■■■■■■■         79% |  ETA:  9m
- ■■■■■■■■■■■■■■■■■■■■■■■■■         79% |  ETA:  9m
- ■■■■■■■■■■■■■■■■■■■■■■■■■         79% |  ETA:  9m
- ■■■■■■■■■■■■■■■■■■■■■■■■■         79% |  ETA:  9m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■         80% |  ETA:  9m
- ■■■■■■■■■■■■■■■■■■■■■■■■■         80% |  ETA:  9m
- ■■■■■■■■■■■■■■■■■■■■■■■■■         80% |  ETA:  9m
- ■■■■■■■■■■■■■■■■■■■■■■■■■         80% |  ETA:  9m
- ■■■■■■■■■■■■■■■■■■■■■■■■■         80% |  ETA:  9m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■         80% |  ETA:  8m
- ■■■■■■■■■■■■■■■■■■■■■■■■■         80% |  ETA:  8m
- ■■■■■■■■■■■■■■■■■■■■■■■■■         80% |  ETA:  8m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■         81% |  ETA:  8m
- ■■■■■■■■■■■■■■■■■■■■■■■■■         81% |  ETA:  8m
- ■■■■■■■■■■■■■■■■■■■■■■■■■         81% |  ETA:  8m
- ■■■■■■■■■■■■■■■■■■■■■■■■■         81% |  ETA:  8m
- ■■■■■■■■■■■■■■■■■■■■■■■■■         81% |  ETA:  8m
- ■■■■■■■■■■■■■■■■■■■■■■■■■         81% |  ETA:  8m
- ■■■■■■■■■■■■■■■■■■■■■■■■■         81% |  ETA:  8m
- ■■■■■■■■■■■■■■■■■■■■■■■■■         81% |  ETA:  8m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■         82% |  ETA:  8m
- ■■■■■■■■■■■■■■■■■■■■■■■■■         82% |  ETA:  8m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■        82% |  ETA:  8m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■        82% |  ETA:  8m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■        82% |  ETA:  8m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■        82% |  ETA:  8m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■        82% |  ETA:  8m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■        82% |  ETA:  8m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■        82% |  ETA:  8m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■        82% |  ETA:  8m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■        83% |  ETA:  7m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■        83% |  ETA:  7m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■        83% |  ETA:  7m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■        83% |  ETA:  7m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■        83% |  ETA:  7m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■        83% |  ETA:  7m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■        83% |  ETA:  7m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■        83% |  ETA:  7m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■        83% |  ETA:  7m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■        84% |  ETA:  7m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■        84% |  ETA:  7m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■        84% |  ETA:  7m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■        84% |  ETA:  7m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■        84% |  ETA:  7m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■        84% |  ETA:  7m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■        84% |  ETA:  7m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■        84% |  ETA:  7m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■        85% |  ETA:  7m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■        85% |  ETA:  7m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■        85% |  ETA:  7m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■        85% |  ETA:  7m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■        85% |  ETA:  6m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■        85% |  ETA:  6m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■       85% |  ETA:  6m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■       85% |  ETA:  6m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■       85% |  ETA:  6m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■       85% |  ETA:  6m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■       85% |  ETA:  6m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■       86% |  ETA:  6m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■       86% |  ETA:  6m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■       86% |  ETA:  6m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■       86% |  ETA:  6m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■       86% |  ETA:  6m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■       86% |  ETA:  6m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■       86% |  ETA:  6m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■       86% |  ETA:  6m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■       87% |  ETA:  6m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■       87% |  ETA:  6m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■       87% |  ETA:  6m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■       87% |  ETA:  6m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■       87% |  ETA:  6m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■       87% |  ETA:  5m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■       87% |  ETA:  5m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■       87% |  ETA:  5m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■       88% |  ETA:  5m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■       88% |  ETA:  5m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■       88% |  ETA:  5m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■       88% |  ETA:  5m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■       88% |  ETA:  5m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■       88% |  ETA:  5m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■       88% |  ETA:  5m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■      88% |  ETA:  5m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■      88% |  ETA:  5m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■      89% |  ETA:  5m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■      89% |  ETA:  5m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■      89% |  ETA:  5m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■      89% |  ETA:  5m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■      89% |  ETA:  5m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■      89% |  ETA:  5m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■      89% |  ETA:  5m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■      89% |  ETA:  5m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■      90% |  ETA:  4m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■      90% |  ETA:  4m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■      90% |  ETA:  4m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■      90% |  ETA:  4m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■      90% |  ETA:  4m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■      90% |  ETA:  4m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■      90% |  ETA:  4m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■      90% |  ETA:  4m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■      91% |  ETA:  4m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■      91% |  ETA:  4m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■      91% |  ETA:  4m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■      91% |  ETA:  4m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■      91% |  ETA:  4m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■      91% |  ETA:  4m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■      91% |  ETA:  4m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■      91% |  ETA:  4m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■      91% |  ETA:  4m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■      92% |  ETA:  4m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■      92% |  ETA:  4m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■     92% |  ETA:  4m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■     92% |  ETA:  3m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■     92% |  ETA:  3m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■     92% |  ETA:  3m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■     92% |  ETA:  3m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■     92% |  ETA:  3m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■     93% |  ETA:  3m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■     93% |  ETA:  3m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■     93% |  ETA:  3m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■     93% |  ETA:  3m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■     93% |  ETA:  3m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■     93% |  ETA:  3m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■     93% |  ETA:  3m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■     93% |  ETA:  3m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■     93% |  ETA:  3m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■     94% |  ETA:  3m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■     94% |  ETA:  3m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■     94% |  ETA:  3m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■     94% |  ETA:  3m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■     94% |  ETA:  3m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■     94% |  ETA:  2m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■     94% |  ETA:  2m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■     94% |  ETA:  2m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■     95% |  ETA:  2m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■     95% |  ETA:  2m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■     95% |  ETA:  2m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■     95% |  ETA:  2m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■    95% |  ETA:  2m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■    95% |  ETA:  2m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■    95% |  ETA:  2m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■    95% |  ETA:  2m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■    96% |  ETA:  2m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■    96% |  ETA:  2m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■    96% |  ETA:  2m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■    96% |  ETA:  2m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■    96% |  ETA:  2m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■    96% |  ETA:  2m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■    96% |  ETA:  2m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■    96% |  ETA:  2m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■    96% |  ETA:  2m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■    97% |  ETA:  1m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■    97% |  ETA:  1m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■    97% |  ETA:  1m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■    97% |  ETA:  1m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■    97% |  ETA:  1m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■    97% |  ETA:  1m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■    97% |  ETA:  1m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■    97% |  ETA:  1m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■    97% |  ETA:  1m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■    97% |  ETA:  1m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■    97% |  ETA:  1m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■    98% |  ETA:  1m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■    98% |  ETA:  1m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■    98% |  ETA:  1m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■    98% |  ETA:  1m
- ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■    98% |  ETA:  1m</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■    98% |  ETA: 48s</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■    98% |  ETA: 45s</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■   98% |  ETA: 42s</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■   98% |  ETA: 39s</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■   99% |  ETA: 36s</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■   99% |  ETA: 33s</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■   99% |  ETA: 29s</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■   99% |  ETA: 26s</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■   99% |  ETA: 23s</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■   99% |  ETA: 20s</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■   99% |  ETA: 17s</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■   99% |  ETA: 14s</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  100% |  ETA: 11s</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  100% |  ETA:  8s</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  100% |  ETA:  4s</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  100% |  ETA:  1s</code></pre>
+<pre><code> ■■■■■■■■■■■■■■■■■■■■■■■■■         80% |  ETA:  2s</code></pre>
 </div>
 </div>
 <div style="display: flex; justify-content: space-between;">
