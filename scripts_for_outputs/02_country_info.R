@@ -10,8 +10,7 @@ library(here)
 here("src", "other_functions.R") %>% source()    # country_summary()
 here("src", "country_bboxes.R")  %>% source()    # country_info()
 
-# Farms excluded after the production run error check. These are no longer in
-# `assigned_farms` (the final set), so map farm_ID -> ISO via the pre-exclusion file.
+# Farms excluded after the production run error check. These are no longer in `assigned_farms` (the final set), so map farm_ID -> ISO via the pre-exclusion file.
 farm_iso_lookup <- file.path(prepdata_path, "assigned_farms.qs") %>%
   qs_read() %>%
   st_drop_geometry() %>%
@@ -23,7 +22,7 @@ excluded_farms <- file.path(outs_path, "production_check_high_error_files_decisi
   mutate(farm_ID = as.numeric(farmID)) %>%
   left_join(farm_iso_lookup, by = join_by(farm_ID))
 
-country_info_table <- function(this_iso = "JPN", out_dir) {
+country_info_table <- function(this_iso, out_dir) {
   these_farms <- assigned_farms %>%
     st_drop_geometry() %>%
     filter(ISO3_Code == this_iso)
@@ -97,11 +96,16 @@ country_info_table <- function(this_iso = "JPN", out_dir) {
   out %>% 
     arrange(
       -included, 
-      factor(model_name, levels = m_order), 
-      pct_of_model
+      match(model_name, m_order), 
+      -pct_of_model
     )
 
-  write_csv(out, file.path(out_dir, paste0("country_info_", this_iso, ".csv")), na = "")
+  # write_csv(out, file.path(out_dir, paste0("country_info_", this_iso, ".csv")), na = "")
 }
 
-walk2(focus_countries$ISO3_Code, focus_countries$dir_name, country_info_table, .progress = T)
+# this_iso <- focus_countries$ISO3_Code[109]
+# out_dir <- focus_countries$dir_name[109]
+map2_dfr(focus_countries$ISO3_Code, focus_countries$dir_name, country_info_table, .progress = T) %>% 
+  relocate(country, .before = production_t) %>% 
+  relocate(ISO3_Code, .before = country) %>% 
+  write.csv(file.path(outs_path, "for_report", "country_info_all.csv"), na = "", row.names = FALSE)

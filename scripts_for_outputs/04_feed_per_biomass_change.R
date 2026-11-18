@@ -101,4 +101,4 @@ feed_per_biomass_change_plot <- function(this_iso, out_dir) {
   )
 }
 
-walk2(focus_countries$ISO3_Code, focus_countries$dir_name, feed_per_biomass_change_plot)
+walk2(focus_countries$ISO3_Code, focus_countries$dir_name, feed_per_biomass_change_plot, .progress = T)

@@ -3,26 +3,25 @@
 # the % change from the reference period, per species model and production-weighted.
 # Two zones per country, one csv per country (for copying into report tables):
 #   - "EEZ":          every cell of the country's HS rasters
-#   - "coastal_50km": sea cells within ~50 km of the country's coastline. Cells are kept
-#                     if their centre falls inside a 62.5 km (50 + 25/2) buffer around the
-#                     country's land polygon, so cells near other countries' coasts are excluded.
+#   - "coastal_50km": sea cells within ~50 km of the country's coastline, using the
+#                     precomputed polygons in prepped_data/coastal_zone_50_polys
+#                     (data-prep-scripts/detailed_land.R). Those are a 62.5 km buffer
+#                     (50 km + half a 0.25-degree cell) around the detailed land polygons,
+#                     so cells whose edge touches the 50 km zone but whose centre does not
+#                     are still included. Cells near other countries' coasts are excluded.
 # Stats are calculated on the raw rasters (no coastal gap-filling, which extrapolates).
 # Assumes scripts_for_outputs/00_run_all.R has already been run (provides
 # `assigned_farms`, `focus_countries`, `GLW_ls`, and paths from src/dirs.R).
 
 library(sf)
 library(terra)
-library(rnaturalearth)
 library(here)
 
 here("src", "country_bboxes.R") %>% source()    # country_info()
 
 HS_dir    <- file.path(outs_path, "data", "habitat_suitability_decadal")
 lyr_names <- c("ref_2015_2024", names(GLW_ls))
-coast_buffer_m <- 62500
-
-# Country polygons used to define the coastal zone (same source as the documentation qmds)
-world <- ne_countries(scale = "large", returnclass = "sf")
+coast_dir <- file.path(prepdata_path, "coastal_zone_50_polys")
 
 # Mean across species rasters, weighted by each model's current production
 weighted_HS <- function(rasts, weights) {
@@ -81,13 +80,13 @@ HS_change_stats <- function(this_iso, out_dir) {
 
   # One SpatRaster per species: layers = ref + each GLW, scaled to 0-1
   HS_rasts <- map(
-    set_names(HS_models),
+    HS_models,
     function(m) {
       r <- rast(file.path(HS_path, m, paste0("MR_", lyr_names, ".tif"))) / 365
       names(r) <- lyr_names
       r
     }
-  )
+  ) %>% setNames(HS_models)
 
   HS_weights <- these_farms %>%
     distinct(model_name, value) %>%
@@ -100,15 +99,15 @@ HS_change_stats <- function(this_iso, out_dir) {
     mutate(zone = "EEZ")
 
   # 2. Within ~50 km of this country's coast
-  this_land <- world %>% filter(iso_a3 == this_iso | adm0_a3 == this_iso)
-  coastal_stats <- if (nrow(this_land) == 0) {
-    warning(this_iso, ": no country polygon found, coastal stats not calculated")
+  coast_file <- file.path(coast_dir, paste0(this_iso, ".qs"))
+  coastal_stats <- if (!file.exists(coast_file)) {
+    warning(this_iso, ": no coastal_zone_50 polygon found, coastal stats not calculated")
     tibble()
   } else {
-    coast_zone <- this_land %>%
+    # terra::mask() needs a SpatVector, not an sf/sfc object
+    coast_zone <- qs_read(coast_file) %>%
       vect() %>%
-      project(crs(HS_weighted)) %>%
-      buffer(coast_buffer_m)
+      project(crs(HS_weighted))
 
     summarise_HS(
       map(HS_rasts, \(r) mask(r, coast_zone)),
@@ -128,8 +127,11 @@ HS_change_stats <- function(this_iso, out_dir) {
       zone, ISO3_Code, country, model_name, production_weight,
       starts_with("mean_HS"), starts_with("change_pct")
     )
-
-  write_csv(out, file.path(out_dir, paste0("HS_change_stats_", this_iso, ".csv")), na = "")
+  
+  out %>% 
+    arrange(zone, -production_weight)
 }
 
-walk2(focus_countries$ISO3_Code, focus_countries$dir_name, HS_change_stats)
+map2_dfr(focus_countries$ISO3_Code, focus_countries$dir_name, HS_change_stats, .progress = T) %>% 
+  relocate(zone, .after = country) %>% 
+  write.csv(file.path(outs_path, "for_report", "HS_change_stats_all.csv"), na = "", row.names = FALSE)

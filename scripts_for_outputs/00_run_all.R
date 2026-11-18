@@ -7,6 +7,8 @@ source(here("src/dirs.R"))
 
 # General data shared across all scripts
 reports_dir    <- file.path(outs_path, "for_report")
+dir.create(reports_dir, showWarnings = FALSE)
+
 assigned_farms <- file.path(prepdata_path, "assigned_farms_final.qs") %>% 
   qs_read() %>% 
   arrange(ISO3_Code)
@@ -23,7 +25,7 @@ GLW_labels <- c("GLW_1.5" = "1.5°C", "GLW_2.0" = "2°C", "GLW_3.0" = "3°C", "G
 year_breaks <- seq(2025, 2095, 10)
 
 report_theme <- function() {
-  theme_classic(base_size = 11) +
+  theme_classic(base_size = 10) +
     theme(
       # plot.title            = element_text(face = "bold", size = 14),
       # plot.subtitle         = element_text(size = 10, margin = margin(b = 6)),
@@ -32,8 +34,8 @@ report_theme <- function() {
       # plot.caption          = element_text(hjust = 0, colour = "grey45", size = 9),
       legend.position       = "top",
       legend.justification  = "center",
-      legend.text           = element_text(size = 10),
-      legend.title          = element_text(face = "bold"),
+      legend.text           = element_text(size = 9),
+      legend.title          = element_text(size = 10),
       legend.margin         = margin(b = -4),
       panel.grid.major.y    = element_blank(),
       panel.grid.minor      = element_blank(),
@@ -57,7 +59,14 @@ focus_countries <- file.path(prepdata_path, "assigned_farms_final.qs") %>%
   mutate(
     clean_country = make_clean_names(country, case = "title"),
     dir_name = file.path(reports_dir, paste0(clean_country, " - ", ISO3_Code))
-  ) # %>% mutate(dir_name = file.path(reports_dir))        # temporary so I can see them all together
+  ) %>% 
+  # filter(ISO3_Code %in% c("ALB")) %>% 
+  arrange(country)
+
+# focus_countries <- focus_countries %>% 
+  # mutate(dir_name = file.path(reports_dir)) %>%         # temporary so I can see them all together
+  # filter(ISO3_Code %in% c("ALB"))
+
 walk(focus_countries$dir_name, dir.create, showWarnings = F)
 
 # Step 2: Create maps of the farm locations
@@ -65,17 +74,6 @@ source(here("scripts_for_outputs/01_map_of_farms.R"))
 
 # Step 3: Collate country summary tables (farms per model, excluded farms, FAO production) into one csv per country
 source(here("scripts_for_outputs/02_country_info.R"))
-
-  # Step 3a: consolidate all the stats together so it's easier to transfer
-  file.path(outs_path, "for_report") %>% 
-    list.files(recursive = T, pattern = "country_info_", full.name = T) %>% 
-    str_subset("all.csv", negate = T) %>% 
-    map_dfr(read_csv, show_col_types = FALSE) %>% 
-    # Exclude these for now, once decisions.xlsx is up to date these will be correct
-    filter(table != "excluded_farms") %>% 
-    arrange(table, -production_t) %>% 
-    dplyr::select(-any_of(c("n_farms", "production_perfarm_t", "reason"))) %>% 
-    write.csv(file.path(outs_path, "for_report", "country_info_all.csv"), na = "", row.names = FALSE)
 
 # Step 4: Dot-and-line plot of projected biomass change per model at each GLW
 source(here("scripts_for_outputs/03_production_change.R"))
@@ -88,12 +86,3 @@ source(here("scripts_for_outputs/05_habitat_suitability_change.R"))
 
 # Step 7: Tables of mean habitat suitability and % change at each GLW (whole EEZ and within 50 km of the coast)
 source(here("scripts_for_outputs/06_habitat_suitability_change_stats.R"))
-
-  # Step 7a: consolidate all the stats together so it's easier to transfer
-  file.path(outs_path, "for_report") %>% 
-    list.files(recursive = T, pattern = "HS_change_stats_", full.name = T) %>% 
-    str_subset("all.csv", negate = T) %>% 
-    map_dfr(read_csv, show_col_types = FALSE) %>% 
-    arrange(zone, ISO3_Code, model_name) %>% 
-    write.csv(file.path(outs_path, "for_report", "HS_change_stats_all.csv"), na = "", row.names = FALSE)
-
